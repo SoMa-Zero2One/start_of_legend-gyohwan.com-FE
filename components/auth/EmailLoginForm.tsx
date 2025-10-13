@@ -52,7 +52,7 @@ export default function EmailLoginForm() {
       {/* 이메일 입력 영역 */}
       <div className="relative">
         {/* 포커스 시 말풍선 */}
-        {!isFocused &&
+        {isFocused &&
           <div className="absolute w-full -top-full animate-fadeIn">
             {/* 말풍선 본체 */}
             <div className="bg-black text-white text-[12px] py-2 px-4 rounded-md">
