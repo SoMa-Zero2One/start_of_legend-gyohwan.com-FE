@@ -3,7 +3,6 @@
 import { initiateGoogleLogin } from "@/lib/oauth/google";
 
 export default function GoogleLoginButton() {
-
     return (
       <button
         onClick={initiateGoogleLogin}
