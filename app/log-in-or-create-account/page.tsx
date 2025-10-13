@@ -14,7 +14,7 @@ export default function LoginOrCreateAccount() {
             </h1>
           </div>
 
-          <div className='flex flex-col gap-[20px]'>
+          <div className="flex flex-col gap-[20px]">
             <div className="flex flex-col gap-[8px] pb-[20px]">
             {/* 구글 로그인 */}
             <GoogleLoginButton />
