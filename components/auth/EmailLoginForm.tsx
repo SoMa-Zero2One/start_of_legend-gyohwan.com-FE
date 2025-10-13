@@ -81,7 +81,7 @@ export default function EmailLoginForm() {
 
       {/* 계속 버튼 */}
       <button
-        disabled={!email}
+        disabled={!email || !isValidEmail(email)}
         className="w-full py-3 px-4 bg-gray-100 text-gray-600
                    font-medium rounded-lg
                    transition-colors disabled:cursor-not-allowed"
