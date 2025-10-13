@@ -37,15 +37,19 @@ export const getOAuthConfig = (provider: OAuthProvider): OAuthConfig => {
   };
 };
 
+function uint8ArrayToBase64(bytes: Uint8Array): string {
+  // Browser-safe base64 encoding
+  return btoa(String.fromCharCode(...bytes));
+}
+
 /**
  * CSRF 방지를 위한 랜덤 state 생성
  */
 export const generateState = (): string => {
-  return (
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15)
-  );
-};
+  const array = new Uint8Array(16);
+  window.crypto.getRandomValues(array);
+  return uint8ArrayToBase64(array);
+}
 
 /**
  * State 값을 검증합니다 (CSRF 방지)
