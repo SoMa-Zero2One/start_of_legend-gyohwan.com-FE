@@ -9,7 +9,7 @@ export default function KakaoLoginButton() {
       className="relative w-full h-[44px] flex items-center justify-center
                  bg-[#FFE83B] hover:bg-[#FDD835]
                  text-[#2E2E2E] font-medium rounded-[4px]
-                 transition-colors"
+                 transition-colors cursor-pointer"
     >
       {/* 아이콘은 왼쪽에 고정 */}
       <svg

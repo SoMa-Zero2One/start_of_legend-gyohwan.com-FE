@@ -48,22 +48,22 @@ export default function EmailLoginForm() {
   };
 
   return (
-    <div className="space-y-3">
+    <div className={`relative space-y-3 transition-all duration-300 ${isFocused ? 'mt-0' : 'mt-[36px]'}`}>
       {/* 이메일 입력 영역 */}
       <div className="relative">
-        {/* 포커스 시 말풍선 */}
-        {isFocused &&
-          <div className="absolute w-full -top-full animate-fadeIn">
-            {/* 말풍선 본체 */}
-            <div className="bg-black text-white text-[12px] py-2 px-4 rounded-md">
-              학교 이메일로 로그인 시 학교 인증도 같이 진행할 수 있어요!
-            </div>
-            {/* 말풍선 꼬리 */}
-            <div className="absolute left-1/2 -bottom-[5px] -translate-x-1/2 w-0 h-0 
-                            border-l-8 border-l-transparent border-r-8 border-r-transparent 
-                            border-t-8 border-t-black" />
+        {/* 말풍선 */}
+        <div
+          className={`absolute w-full -top-full transition-opacity duration-300 ${
+            isFocused ? 'opacity-0' : 'opacity-100'
+          }`}
+        >
+          <div className="bg-black text-white text-[12px] py-2 px-4 rounded-md">
+            학교 이메일로 로그인 시 학교 인증도 같이 진행할 수 있어요!
           </div>
-        }
+          <div className="absolute left-1/2 -bottom-[5px] -translate-x-1/2 w-0 h-0 
+                          border-l-8 border-l-transparent border-r-8 border-r-transparent 
+                          border-t-8 border-t-black" />
+        </div>
 
         {/* 이메일 입력창 */}
         <input
@@ -82,9 +82,9 @@ export default function EmailLoginForm() {
       {/* 계속 버튼 */}
       <button
         disabled={!email || !isValidEmail(email)}
-        className="w-full py-3 px-4 bg-gray-100 text-gray-600
+        className="w-full py-3 px-4 bg-[#000000] text-[#FFFFFF] disabled:bg-[#ECECEC] disabled:text-[#7F7F7F]
                    font-medium rounded-lg
-                   transition-colors disabled:cursor-not-allowed"
+                   transition-colors cursor-pointer disabled:cursor-default"
       >
         계속
       </button>
