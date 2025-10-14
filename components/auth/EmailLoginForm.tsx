@@ -48,7 +48,7 @@ export default function EmailLoginForm() {
   };
 
   return (
-    <div className={`relative space-y-3 transition-all duration-300 ${isFocused ? 'mt-0' : 'mt-[36px]'}`}>
+    <div className={`relative space-y-3 transition-all duration-300 ${isFocused ? 'mt-0' : 'mt-9'}`}>
       {/* 이메일 입력 영역 */}
       <div className="relative">
         {/* 말풍선 */}
