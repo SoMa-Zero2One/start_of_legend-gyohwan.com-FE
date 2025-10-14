@@ -1,16 +1,17 @@
 import KakaoLoginButton from '@/components/auth/KakaoLoginButton';
 import EmailLoginForm from '@/components/auth/EmailLoginForm';
 import GoogleLoginButton from '@/components/auth/GoogleLoginButton';
+import TermsAgreement from '@/components/auth/TermsAgreement';
 
 export default function LoginOrCreateAccount() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="w-full space-y-6 flex flex-col justify-center items-center">
+    <div className="min-h-screen flex flex-col items-center pt-[60px]">
+      <div className="w-full space-y-6 flex flex-col items-center">
         <div className="w-[320px] flex flex-col justify-center gap-[60px]">
           {/* 헤더 */}
           <div className="text-center">
-            <h1 className="text-[36px] font-bold">
-              교환닷컴에 오신 걸<br /> 환영합니다
+            <h1 className="text-[24px] font-bold">
+              교환닷컴에 오신 걸 환영합니다
             </h1>
           </div>
 
@@ -37,13 +38,10 @@ export default function LoginOrCreateAccount() {
             {/* 이메일 로그인 */}
             <EmailLoginForm />
           </div>
+        </div>
 
-          {/* 약관 동의 */}
-          <div className="flex items-center justify-center gap-[20px] text-xs text-center text-gray-500">
-            <a href="#" className="underline block">이용약관</a>
-            <a href="#" className="underline block">개인정보처리방침</a>
-          </div>
-          </div>
+        {/* 약관 동의 */}
+        <TermsAgreement />
       </div>
     </div>
   );
