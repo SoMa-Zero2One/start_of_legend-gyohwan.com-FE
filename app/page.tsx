@@ -54,7 +54,7 @@ export default function Home() {
             다른 지원자들의 정보를 한눈에 볼 수 있어요.
           </p>
         </div>
-        <div className="relative border-1 border-[#056DFF] text-[#056DFF] rounded-[10px] p-[16px] w-fit">
+        <div className="relative border border-[#056DFF] text-[#056DFF] rounded-[10px] p-[16px] w-fit">
           <span className="absolute -top-3 left-[12px] bg-white font-bold text-[14px] px-[8px] text-sm">
             Point!
           </span>
