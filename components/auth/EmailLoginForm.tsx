@@ -53,7 +53,7 @@ export default function EmailLoginForm() {
       <div className="relative">
         {/* 말풍선 */}
         <div
-          className={`absolute w-full -top-full transition-opacity duration-300 ${
+          className={`absolute w-full -top-full text-center transition-opacity duration-300 ${
             isFocused ? 'opacity-0' : 'opacity-100'
           }`}
         >
