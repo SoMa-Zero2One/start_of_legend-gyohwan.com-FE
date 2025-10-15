@@ -47,7 +47,7 @@ export default function Home() {
         ></div>
         <div className="flex flex-col gap-[20px] z-10">
           <p className="text-[30px] font-bold">
-            지원 대학과 <span className="text-[#056DFF]">성적을 공유하며</span><br /> 한께 전략을 세워보세요
+            지원 대학과 <span className="text-[#056DFF]">성적을 공유하며</span><br /> 함께 전략을 세워보세요
           </p>
           <p className="text-[#2E2E2E]">
             어학 점수와 학점을 입력하면<br />
