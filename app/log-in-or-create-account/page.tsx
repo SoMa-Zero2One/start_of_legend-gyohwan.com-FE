@@ -46,5 +46,6 @@ export default function LoginOrCreateAccount() {
         {/* 약관 동의 */}
         <TermsAgreement />
     </div>
-  </div> );
+  </div>
+  );
 }
