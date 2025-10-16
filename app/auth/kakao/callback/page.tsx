@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { validateState, cleanupOAuthSession } from '@/lib/oauth/config';
+import { loginWithKakao } from '@/lib/api/auth';
 import type { AuthSuccessResponse } from '@/types/auth';
 
 function KakaoCallbackContent() {
@@ -40,33 +41,7 @@ function KakaoCallbackContent() {
 
       try {
         // 백엔드로 인증 코드 전송
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-        if (!backendUrl) {
-          setError('서버 환경변수가 올바르게 설정되지 않았습니다. (NEXT_PUBLIC_BACKEND_URL 누락)');
-          cleanupOAuthSession();
-          setTimeout(() => router.push('/log-in-or-create-account'), 2000);
-          return;
-        }
-
-        const response = await fetch(
-          `${backendUrl}/v1/auth/login/social/kakao`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code }),
-          }
-        );
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(
-            `로그인에 실패했습니다. (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
-          );
-        }
-
-        const data: AuthSuccessResponse = await response.json();
+        const data: AuthSuccessResponse = await loginWithKakao(code);
 
         // 토큰 저장 (sessionStorage: 브라우저 닫으면 자동 로그아웃)
         if (data.accessToken) {
