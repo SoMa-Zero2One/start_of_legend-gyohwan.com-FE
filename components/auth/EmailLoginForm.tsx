@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { checkEmailExists } from '@/lib/api/auth';
 
 export default function EmailLoginForm() {
   const router = useRouter();
@@ -28,22 +29,25 @@ export default function EmailLoginForm() {
     setIsLoading(true);
 
     try {
-      // 백엔드에 이메일 확인 요청
+      // 이메일 존재 여부 확인
+      const emailExists = await checkEmailExists(email);
 
+      // SessionStorage에 이메일 저장 (새로고침 대응)
+      sessionStorage.setItem('pendingEmail', email);
 
-      //// 회원가입 여부에 따라 페이지 이동
-      //if (data.isRegistered) {
-        //// 기존 회원 → 로그인 페이지
-        //router.push(`/log-in/password?email=${encodeURIComponent(email)}`);
-      //} else {
-        //// 신규 회원 → 회원가입 페이지
-        //router.push(`/create-account/password?email=${encodeURIComponent(email)}`);
-      //}
+      // 회원가입 여부에 따라 페이지 이동 (URL 파라미터도 함께 전달)
+      if (emailExists) {
+        // 기존 회원 → 로그인 페이지
+        router.push(`/log-in/password?email=${encodeURIComponent(email)}`);
+      } else {
+        // 신규 회원 → 회원가입 페이지
+        router.push(`/create-account/password?email=${encodeURIComponent(email)}`);
+      }
     } catch (err) {
-      //console.error('Email check error:', err);
-      //setError('이메일 확인 중 오류가 발생했습니다.');
+      console.error('Email check error:', err);
+      setError('이메일 확인 중 오류가 발생했습니다.');
     } finally {
-      //setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -60,8 +64,8 @@ export default function EmailLoginForm() {
           <div className="bg-black text-white text-[12px] py-2 px-4 rounded-md">
             학교 이메일로 로그인 시 학교 인증도 같이 진행할 수 있어요!
           </div>
-          <div className="absolute left-1/2 -bottom-[5px] -translate-x-1/2 w-0 h-0 
-                          border-l-8 border-l-transparent border-r-8 border-r-transparent 
+          <div className="absolute left-1/2 -bottom-[5px] -translate-x-1/2 w-0 h-0
+                          border-l-8 border-l-transparent border-r-8 border-r-transparent
                           border-t-8 border-t-black" />
         </div>
 
@@ -76,17 +80,24 @@ export default function EmailLoginForm() {
           className="w-full px-4 py-3 border border-gray-300 rounded-lg
                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                      transition-all"
+          disabled={isLoading}
         />
       </div>
 
+      {/* 에러 메시지 */}
+      {error && (
+        <p className="text-red-500 text-sm">{error}</p>
+      )}
+
       {/* 계속 버튼 */}
       <button
-        disabled={!email || !isValidEmail(email)}
+        onClick={handleClick}
+        disabled={!email || !isValidEmail(email) || isLoading}
         className="w-full py-3 px-4 bg-[#000000] text-[#FFFFFF] disabled:bg-[#ECECEC] disabled:text-[#7F7F7F]
                    font-medium rounded-lg
                    transition-colors cursor-pointer disabled:cursor-default"
       >
-        계속
+        {isLoading ? '확인 중...' : '계속'}
       </button>
     </div>
   );
