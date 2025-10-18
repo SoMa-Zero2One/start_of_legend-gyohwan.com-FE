@@ -74,7 +74,7 @@ function KakaoCallbackContent() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="text-red-500 text-center">
+      <div className="text-[#FF4242] text-center">
         <p className="text-lg font-medium">{error}</p>
         <p className="text-sm text-gray-600 mt-2">
           잠시 후 로그인 페이지로 이동합니다...
