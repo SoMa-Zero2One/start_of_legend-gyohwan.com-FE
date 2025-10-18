@@ -59,7 +59,7 @@ export default function CreateAccountComplete() {
       <div className="flex-1 flex flex-col items-center px-[10px]">
         <div className="w-[330px] flex flex-col items-center gap-[60px] pt-[60px]">
           {/* 헤더 */}
-          <div className="flex flex-col item-center text-center gap-[12px]">
+          <div className="flex flex-col items-center text-center gap-[12px]">
             <h1 className="text-[24px] font-bold">
               {nickname}님<br /> 환영합니다
             </h1>
