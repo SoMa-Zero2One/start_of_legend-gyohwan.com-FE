@@ -85,7 +85,9 @@ export default function PasswordInput({
                        ? 'border-gray-300'
                        : hasError
                        ? 'border-transparent ring-2 ring-[#FF4242]'
-                       : 'border-transparent ring-2 ring-[#056DFF]'
+                       : hasSuccess
+                       ? 'border-transparent ring-2 ring-[#056DFF]'
+                       : 'border-gray-300'
                      }`}
           disabled={disabled}
         />
