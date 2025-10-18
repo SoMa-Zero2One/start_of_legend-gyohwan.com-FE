@@ -95,3 +95,60 @@ export const loginWithKakao = async (code: string): Promise<AuthSuccessResponse>
 
   return await response.json();
 };
+
+/**
+ * 이메일 회원가입 (이메일 인증 발송)
+ * @param email - 이메일 주소
+ * @param password - 비밀번호
+ * @throws {Error} 회원가입 실패 시
+ */
+export const signupWithEmail = async (email: string, password: string): Promise<void> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(
+    `${backendUrl}/v1/auth/signup/email`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `회원가입 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
+    );
+  }
+};
+
+/**
+ * 이메일 인증 코드 확인
+ * @param email - 이메일 주소
+ * @param code - 인증 코드
+ * @throws {Error} 인증 실패 시
+ */
+export const confirmEmailSignup = async (email: string, code: string): Promise<void> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(
+    `${backendUrl}/v1/auth/signup/email/confirm`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // 쿠키 설정을 위해 필요
+      body: JSON.stringify({ email, code }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `이메일 인증 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
+    );
+  }
+};
