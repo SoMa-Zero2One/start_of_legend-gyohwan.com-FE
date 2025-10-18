@@ -14,7 +14,7 @@ interface SignupFormProps {
   onEmailChange?: (email: string) => void;
 }
 
-export default function SignupForm({ onStepChange, onEmailChange }: SignupFormProps = {}) {
+export default function SignupForm({ onStepChange, onEmailChange }: SignupFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
