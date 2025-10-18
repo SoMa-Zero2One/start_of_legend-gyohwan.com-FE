@@ -26,6 +26,8 @@ export default function Header({ children, title }: HeaderProps) {
               priority
             />
           </Link>
+
+          {/* children */}
           {children}
         </>
       )}

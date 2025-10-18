@@ -4,12 +4,13 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { validateState, cleanupOAuthSession } from '@/lib/oauth/config';
 import { loginWithKakao } from '@/lib/api/auth';
-import type { AuthSuccessResponse } from '@/types/auth';
+import { useAuthStore } from '@/stores/authStore';
 
 function KakaoCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
+  const fetchUser = useAuthStore((state) => state.fetchUser);
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -40,19 +41,14 @@ function KakaoCallbackContent() {
       }
 
       try {
-        // 백엔드로 인증 코드 전송
-        const data: AuthSuccessResponse = await loginWithKakao(code);
-
-        // 토큰 저장 (sessionStorage: 브라우저 닫으면 자동 로그아웃)
-        if (data.accessToken) {
-          sessionStorage.setItem('accessToken', data.accessToken);
-          if (data.refreshToken) {
-            sessionStorage.setItem('refreshToken', data.refreshToken);
-          }
-        }
+        // 백엔드로 인증 코드 전송 (쿠키로 accessToken 받음)
+        await loginWithKakao(code);
 
         // OAuth 세션 정리
         cleanupOAuthSession();
+
+        // 사용자 정보 가져오기
+        await fetchUser();
 
         // 로그인 성공 후 리다이렉트
         router.push('/');
