@@ -32,7 +32,6 @@ export default function TermsStep({
       {/* 약관 체크박스 */}
       <div className="space-y-4">
         {/* 이용약관 */}
-                {/* 체크박스 그룹 */}
         <div className="flex flex-col gap-[20px]">
           {/* 전체 동의 */}
           <label className="flex items-center gap-3 cursor-pointer select-none">
