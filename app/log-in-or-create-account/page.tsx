@@ -7,7 +7,7 @@ import Header from '@/components/layout/Header';
 export default function LoginOrCreateAccount() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header title="로그인" />
       <div className="flex-1 flex flex-col items-center justify-between pt-[60px] pb-[36px]">
         <div className="w-full space-y-6 flex flex-col items-center px-[10px]">
           <div className="w-[330px] flex flex-col justify-center gap-[60px]">
@@ -31,10 +31,10 @@ export default function LoginOrCreateAccount() {
               {/* 구분선 */}
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
+                  <div className="w-full border-t border-[#ECECEC]"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-gray-50 text-gray-500">또는</span>
+                  <span className="px-2 bg-white text-[#7F7F7F]">또는</span>
                 </div>
               </div>
 
