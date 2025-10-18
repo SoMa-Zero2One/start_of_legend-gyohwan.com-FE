@@ -45,7 +45,7 @@ export default function Header({ children, title }: HeaderProps) {
             <div className="flex items-center gap-2">
               <div className="w-[32px] h-[32px] bg-[#ECECEC] rounded-full flex items-center justify-center">
                 <Image
-                  src="/icon/ico_profile.svg"
+                  src="/icons/ico_profile.svg"
                   alt="Profile"
                   width={20}
                   height={20}
