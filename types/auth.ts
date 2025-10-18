@@ -27,3 +27,8 @@ export interface AuthErrorResponse {
   detail: string;
   instance: string;
 }
+
+// 이메일 존재 여부 확인 응답
+export interface EmailCheckResponse {
+  exists: boolean;
+}

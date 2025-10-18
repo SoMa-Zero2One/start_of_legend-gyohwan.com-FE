@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { validateState, cleanupOAuthSession } from '@/lib/oauth/config';
+import { loginWithGoogle } from '@/lib/api/auth';
 import type { AuthSuccessResponse } from '@/types/auth';
 
 function GoogleCallbackContent() {
@@ -40,30 +41,7 @@ function GoogleCallbackContent() {
 
       try {
         // 백엔드로 인증 코드 전송
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-        if (!backendUrl) {
-          setError('서버 환경변수가 올바르게 설정되지 않았습니다. (NEXT_PUBLIC_BACKEND_URL 누락)');
-          cleanupOAuthSession();
-          setTimeout(() => router.push('/log-in-or-create-account'), 2000);
-          return;
-        }
-
-        const response = await fetch(
-          `${backendUrl}/v1/auth/login/social/google`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code }),
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error('로그인에 실패했습니다.');
-        }
-
-        const data: AuthSuccessResponse = await response.json();
+        const data: AuthSuccessResponse = await loginWithGoogle(code);
 
         // 토큰 저장 (sessionStorage: 브라우저 닫으면 자동 로그아웃)
         if (data.accessToken) {
@@ -89,42 +67,18 @@ function GoogleCallbackContent() {
     handleCallback();
   }, [searchParams, router]);
 
+  // 에러가 있을 때만 UI 표시, 정상 처리는 빈 화면
+  if (!error) {
+    return null;
+  }
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
-      <div className="w-full max-w-sm space-y-6 text-center">
-        {error ? (
-          <>
-            <div className="text-red-500">
-              <svg
-                className="w-16 h-16 mx-auto mb-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <p className="text-lg font-medium">{error}</p>
-              <p className="text-sm text-gray-600 mt-2">
-                잠시 후 로그인 페이지로 이동합니다...
-              </p>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900 mx-auto"></div>
-            <h2 className="text-xl font-semibold text-gray-900">
-              로그인 처리 중...
-            </h2>
-            <p className="text-sm text-gray-600">
-              구글 계정으로 로그인하고 있습니다.
-            </p>
-          </>
-        )}
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="text-[#FF4242] text-center">
+        <p className="text-lg font-medium">{error}</p>
+        <p className="text-sm text-gray-600 mt-2">
+          잠시 후 로그인 페이지로 이동합니다...
+        </p>
       </div>
     </div>
   );
@@ -132,16 +86,7 @@ function GoogleCallbackContent() {
 
 export default function GoogleCallback() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900 mx-auto"></div>
-          <h2 className="text-xl font-semibold text-gray-900 mt-4">
-            로딩 중...
-          </h2>
-        </div>
-      }
-    >
+    <Suspense fallback={null}>
       <GoogleCallbackContent />
     </Suspense>
   );
