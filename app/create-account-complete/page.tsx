@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-// import { getUserMe } from '@/lib/api/user'; // TODO: 쿠키 문제 해결 후 사용
+import { getUserMe } from '@/lib/api/user';
 import Header from '@/components/layout/Header';
 
 export default function CreateAccountComplete() {
@@ -14,14 +14,8 @@ export default function CreateAccountComplete() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        // 임시: 쿠키 문제로 인해 더미 데이터 사용
-        // TODO: 백엔드 쿠키 설정 수정 후 실제 API 호출로 변경
-        // const user = await getUserMe();
-        // setNickname(user.nickname);
-
-        // 임시 더미 데이터
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        setNickname('테스트사용자');
+        const user = await getUserMe();
+        setNickname(user.nickname);
       } catch (err) {
         console.error('User info fetch error:', err);
         setError('사용자 정보를 불러오는데 실패했습니다.');
