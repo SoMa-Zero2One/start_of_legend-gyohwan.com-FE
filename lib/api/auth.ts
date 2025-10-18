@@ -55,6 +55,7 @@ export const loginWithGoogle = async (code: string): Promise<AuthSuccessResponse
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // 쿠키 설정을 위해 필요
       body: JSON.stringify({ code }),
     }
   );
@@ -82,6 +83,7 @@ export const loginWithKakao = async (code: string): Promise<AuthSuccessResponse>
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // 쿠키 설정을 위해 필요
       body: JSON.stringify({ code }),
     }
   );
