@@ -16,7 +16,11 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header>
-        {isLoggedIn && !isLoading ? (
+        {isLoading ? (
+          <div className="flex items-center gap-2">
+            <div className="w-[32px] h-[32px] bg-[#ECECEC] rounded-full animate-pulse"></div>
+          </div>
+        ) : isLoggedIn ? (
           <div className="flex items-center gap-2">
             <div className="w-[32px] h-[32px] bg-[#ECECEC] rounded-full flex items-center justify-center">
               <Image
