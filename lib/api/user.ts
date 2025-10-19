@@ -11,9 +11,6 @@ export const getUserMe = async (): Promise<User> => {
 
   const response = await fetch(`${backendUrl}/v1/users/me`, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     credentials: 'include', // 쿠키 포함
   });
 
