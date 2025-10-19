@@ -7,6 +7,7 @@ import Header from "@/components/layout/Header";
 import HeroSection from "@/components/home/HeroSection";
 import FeatureSection from "@/components/home/FeatureSection";
 import { useAuthStore } from "@/stores/authStore";
+import StrategyRoomEntrances from "@/components/home/StrategyRoomEntrances";
 
 export default function Home() {
   const { isLoading, isLoggedIn, fetchUser } = useAuthStore();
@@ -49,6 +50,7 @@ export default function Home() {
       </Header>
       <HeroSection />
       <FeatureSection />
+      <StrategyRoomEntrances />
     </div>
   );
 }
