@@ -44,7 +44,7 @@ export default function StrategyRoomEntrances() {
     };
 
     fetchSeasons();
-  }, [user]);
+  }, [user?.domesticUniversity]);
 
   if (isLoading) {
     return (

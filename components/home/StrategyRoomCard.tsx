@@ -41,7 +41,7 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
               {/* 오른쪽 D-Day */}
               {dDay !== null && (
                 <span className="text-[12px] font-bold rounded-[4px] px-[8px] py-[4px] bg-[#FC507B] text-[#FFFFFF]">
-                  D-{dDay}
+                  {dDay > 0 ? `D-${dDay}` : dDay === 0 ? 'D-Day' : `D+${Math.abs(dDay)}`}
                 </span>
               )}
             </span>
