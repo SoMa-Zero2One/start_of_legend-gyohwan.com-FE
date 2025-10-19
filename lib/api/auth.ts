@@ -1,16 +1,5 @@
 import type { AuthSuccessResponse, EmailCheckResponse } from '@/types/auth';
-
-/**
- * 백엔드 API Base URL 가져오기
- * @throws {Error} 환경변수가 설정되지 않은 경우
- */
-const getBackendUrl = (): string => {
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-  if (!backendUrl) {
-    throw new Error('NEXT_PUBLIC_BACKEND_URL 환경변수가 설정되지 않았습니다.');
-  }
-  return backendUrl;
-};
+import { getBackendUrl } from '@/lib/utils/api';
 
 /**
  * 이메일 존재 여부 확인 (회원가입 vs 로그인 분기용)
@@ -153,4 +142,36 @@ export const confirmEmailSignup = async (email: string, code: string): Promise<v
       `이메일 인증 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
     );
   }
+};
+
+/**
+ * 이메일 로그인
+ * @param email - 이메일 주소
+ * @param password - 비밀번호
+ * @returns 액세스 토큰 및 리프레시 토큰
+ * @throws {Error} 로그인 실패 시
+ */
+export const loginWithEmail = async (email: string, password: string): Promise<AuthSuccessResponse> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(
+    `${backendUrl}/v1/auth/login/email`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // 쿠키 설정을 위해 필요
+      body: JSON.stringify({ email, password }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `이메일 로그인 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
+    );
+  }
+
+  return await response.json();
 };

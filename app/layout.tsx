@@ -35,9 +35,11 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body
-        className={`flex flex-col items-center ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`m-auto max-w-[455px] ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <div className="flex flex-col">
         {children}
+        </div>
       </body>
     </html>
   );
