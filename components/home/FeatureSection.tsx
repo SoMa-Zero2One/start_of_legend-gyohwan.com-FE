@@ -6,7 +6,7 @@ export default function FeatureSection() {
     <div className="relative py-[60px] flex flex-col px-[20px] gap-[40px] overflow-hidden">
       {/* 그라데이션 배경 */}
       <div
-        className="absolute w-[80px] h-[80px] top-[220px] left-[350px] rounded-full
+        className="absolute w-[80px] h-[80px] top-[220px] -right-[40px] rounded-full
                   opacity-10 bg-gradient-to-br from-[#00D0FF] via-[#029EFA] to-[#056DFF]"
       ></div>
       <div

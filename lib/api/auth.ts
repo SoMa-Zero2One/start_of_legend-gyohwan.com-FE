@@ -141,3 +141,35 @@ export const confirmEmailSignup = async (email: string, code: string): Promise<v
     );
   }
 };
+
+/**
+ * 이메일 로그인
+ * @param email - 이메일 주소
+ * @param password - 비밀번호
+ * @returns 액세스 토큰 및 리프레시 토큰
+ * @throws {Error} 로그인 실패 시
+ */
+export const loginWithEmail = async (email: string, password: string): Promise<AuthSuccessResponse> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(
+    `${backendUrl}/v1/auth/login/email`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // 쿠키 설정을 위해 필요
+      body: JSON.stringify({ email, password }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `이메일 로그인 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
+    );
+  }
+
+  return await response.json();
+};
