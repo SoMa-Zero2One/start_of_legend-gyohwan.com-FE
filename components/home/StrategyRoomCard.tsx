@@ -27,6 +27,7 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
               src={domesticUniversityLogoUri}
               alt={`${domesticUniversity} 로고`}
               fill
+              sizes="80px"
               className="object-contain"
             />
           </div>
