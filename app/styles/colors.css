@@ -5,15 +5,15 @@
 @theme {
   /* Colors - Black & White */
   --color-black: #000000;
-  --color-white: #FFFFFF;
+  --color-white: #ffffff;
 
   /* Colors - Greyscale */
-  --color-grey-100: #F3F3F3;
-  --color-grey-300: #ECECEC;
-  --color-grey-500: #C3C3C3;
-  --color-grey-700: #7F7F7F;
-  --color-grey-900: #2E2E2E;
+  --color-gray-100: #f3f3f3;
+  --color-gray-300: #ececec;
+  --color-gray-500: #c3c3c3;
+  --color-gray-700: #7f7f7f;
+  --color-gray-900: #2e2e2e;
 
   /* Colors - Primary */
-  --color-blue: #056DFF;
+  --color-blue: #056dff;
 }
