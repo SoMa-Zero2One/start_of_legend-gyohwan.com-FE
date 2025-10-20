@@ -10,15 +10,15 @@
   width: 100%;
   cursor: pointer;
   border-radius: 4px;
-  background-color: #000000;
+  background-color: var(--color-black);
   padding: 12px;
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 .btn-primary:disabled {
   cursor: default;
-  background-color: #ececec;
-  color: #7f7f7f;
+  background-color: var(--color-gray-300);
+  color: var(--color-gray-700);
 }
 
 .btn-primary:not(:disabled):hover {
