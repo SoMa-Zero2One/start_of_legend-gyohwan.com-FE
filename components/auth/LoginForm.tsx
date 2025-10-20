@@ -1,28 +1,28 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { loginWithEmail } from '@/lib/api/auth';
-import PasswordInput from './PasswordInput';
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { loginWithEmail } from "@/lib/api/auth";
+import PasswordInput from "./PasswordInput";
 
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   // 이메일 가져오기 (URL 파라미터 우선, 없으면 SessionStorage)
   useEffect(() => {
-    const emailFromUrl = searchParams.get('email');
-    const emailFromStorage = sessionStorage.getItem('pendingEmail');
-    const finalEmail = emailFromUrl || emailFromStorage || '';
+    const emailFromUrl = searchParams.get("email");
+    const emailFromStorage = sessionStorage.getItem("pendingEmail");
+    const finalEmail = emailFromUrl || emailFromStorage || "";
 
     if (!finalEmail) {
       // 이메일이 없으면 처음 페이지로 리다이렉트
-      router.push('/log-in-or-create-account');
+      router.push("/log-in-or-create-account");
       return;
     }
 
@@ -31,16 +31,16 @@ export default function LoginForm() {
 
   // 이메일 편집
   const handleEdit = () => {
-    sessionStorage.removeItem('pendingEmail');
-    router.push('/log-in-or-create-account');
+    sessionStorage.removeItem("pendingEmail");
+    router.push("/log-in-or-create-account");
   };
 
   // 로그인 처리
   const handleLogin = async () => {
-    setError('');
+    setError("");
 
     if (!password) {
-      setError('비밀번호를 입력해주세요.');
+      setError("비밀번호를 입력해주세요.");
       return;
     }
 
@@ -51,10 +51,10 @@ export default function LoginForm() {
       await loginWithEmail(email, password);
 
       // 성공 시 세션 정리 및 홈으로 이동
-      sessionStorage.removeItem('pendingEmail');
-      router.push('/');
+      sessionStorage.removeItem("pendingEmail");
+      router.push("/");
     } catch (err) {
-      setError('이메일 또는 비밀번호가 올바르지 않습니다.');
+      setError("이메일 또는 비밀번호가 올바르지 않습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -62,7 +62,7 @@ export default function LoginForm() {
 
   // Enter 키 처리
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && password && !isLoading) {
+    if (e.key === "Enter" && password && !isLoading) {
       handleLogin();
     }
   };
@@ -70,17 +70,9 @@ export default function LoginForm() {
   return (
     <div className="flex flex-col gap-[10px]">
       {/* 이메일 표시 */}
-      <div className="flex items-center gap-2 p-3 bg-[#ECECEC] rounded-lg mb-[10px]">
-        <input
-          type="email"
-          value={email}
-          disabled
-          className="flex-1 bg-transparent text-gray-700 outline-none"
-        />
-        <button
-          onClick={handleEdit}
-          className="text-blue-500 text-sm font-medium hover:text-blue-600 transition-colors"
-        >
+      <div className="mb-[10px] flex items-center gap-2 rounded-[4px] bg-gray-100 p-3">
+        <input type="email" value={email} disabled className="flex-1 text-gray-700 outline-none" />
+        <button onClick={handleEdit} className="text-primary-blue cursor-pointer hover:text-blue-700">
           편집
         </button>
       </div>
@@ -97,15 +89,10 @@ export default function LoginForm() {
       />
 
       {/* 에러 메시지 */}
-      {error && (
-        <p className="text-[#FF4242] text-sm">{error}</p>
-      )}
+      {error && <p className="text-error-red">{error}</p>}
 
       {/* 비밀번호 찾기 */}
-      <button
-        type="button"
-        className="text-[16px] text-left mb-[10px]"
-      >
+      <button type="button" className="body-2 mb-[10px] text-left">
         비밀번호를 잊으셨나요?
       </button>
 
@@ -113,11 +100,9 @@ export default function LoginForm() {
       <button
         onClick={handleLogin}
         disabled={!password || isLoading}
-        className="w-full py-3 px-4 bg-[#000000] text-[#FFFFFF] disabled:bg-[#ECECEC] disabled:text-[#7F7F7F]
-                   font-medium rounded-lg
-                   transition-colors cursor-pointer disabled:cursor-default"
+        className="w-full cursor-pointer rounded-lg bg-black px-4 py-3 font-medium text-white disabled:cursor-default disabled:bg-gray-300 disabled:text-gray-700"
       >
-        {isLoading ? '로그인 중...' : '계속'}
+        {isLoading ? "로그인 중..." : "계속"}
       </button>
     </div>
   );

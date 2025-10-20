@@ -31,7 +31,7 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
         <div className="flex flex-col">
           <span className="subhead-2">{domesticUniversity}</span>
           <span>
-            <span className="body-3 mr-[5px]">{formattedDate}</span>
+            <span className="mr-[5px]">{formattedDate}</span>
             {/* 오른쪽 D-Day */}
             {dDay !== null && (
               <span className="rounded-[4px] bg-[#FC507B] px-[8px] py-[4px] text-[12px] font-bold text-white">
@@ -43,7 +43,7 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
       </div>
 
       {/* 하단 버튼 2개 */}
-      <div className="body-3 flex gap-[10px]">
+      <div className="flex gap-[10px]">
         <button className="flex-1 rounded-[50px] bg-black py-[8px] text-white">실시간 경쟁률 보기</button>
         <button className="bg-primary-blue/15 text-primary-blue flex-1 rounded-[50px] py-[8px]">성적 공유하기</button>
       </div>

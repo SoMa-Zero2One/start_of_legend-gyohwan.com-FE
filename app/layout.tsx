@@ -23,12 +23,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body
-        className="m-auto max-w-[455px] font-pretendard antialiased"
-      >
-        <div className="flex flex-col">
-        {children}
-        </div>
+      <body className="body-3 m-auto max-w-[430px] antialiased">
+        <div className="flex flex-col">{children}</div>
       </body>
     </html>
   );

@@ -1,3 +1,26 @@
 @import "tailwindcss";
 @import "./styles/fonts.css";
 @import "./styles/colors.css";
+
+/* ========================================
+   Custom Utility Classes
+   ======================================== */
+
+.btn-primary {
+  width: 100%;
+  cursor: pointer;
+  border-radius: 4px;
+  background-color: #000000;
+  padding: 12px;
+  color: #ffffff;
+}
+
+.btn-primary:disabled {
+  cursor: default;
+  background-color: #ececec;
+  color: #7f7f7f;
+}
+
+.btn-primary:hover {
+  background-color: #333333;
+}

@@ -15,5 +15,8 @@
   --color-gray-900: #2e2e2e;
 
   /* Colors - Primary */
-  --color-blue: #056dff;
+  --color-primary-blue: #056dff;
+
+  /* Colors - error */
+  --color-error-red: #ff4242;
 }

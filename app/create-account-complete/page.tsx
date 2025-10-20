@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { getUserMe } from '@/lib/api/user';
-import Header from '@/components/layout/Header';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { getUserMe } from "@/lib/api/user";
+import Header from "@/components/layout/Header";
 
 export default function CreateAccountComplete() {
   const router = useRouter();
-  const [nickname, setNickname] = useState('');
+  const [nickname, setNickname] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -17,8 +17,8 @@ export default function CreateAccountComplete() {
         const user = await getUserMe();
         setNickname(user.nickname);
       } catch (err) {
-        console.error('User info fetch error:', err);
-        setError('사용자 정보를 불러오는데 실패했습니다.');
+        console.error("User info fetch error:", err);
+        setError("사용자 정보를 불러오는데 실패했습니다.");
       } finally {
         setIsLoading(false);
       }
@@ -28,14 +28,14 @@ export default function CreateAccountComplete() {
   }, []);
 
   const handleGoHome = () => {
-    router.push('/');
+    router.push("/");
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="flex min-h-screen flex-col">
         <Header />
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex flex-1 items-center justify-center">
           <p className="text-gray-500">로딩 중...</p>
         </div>
       </div>
@@ -44,37 +44,30 @@ export default function CreateAccountComplete() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="flex min-h-screen flex-col">
         <Header />
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-red-500">{error}</p>
+        <div className="flex flex-1 items-center justify-center">
+          <p className="text-error-red">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <div className="flex-1 flex flex-col items-center px-[10px]">
-        <div className="w-[330px] flex flex-col items-center gap-[60px] pt-[60px]">
+      <div className="flex flex-1 flex-col items-center px-[20px]">
+        <div className="flex w-[330px] flex-col items-center gap-[60px] pt-[60px]">
           {/* 헤더 */}
-          <div className="flex flex-col items-center text-center gap-[12px]">
-            <h1 className="text-[24px] font-bold">
+          <div className="flex flex-col items-center gap-[12px] text-center">
+            <h1 className="head-4">
               {nickname}님<br /> 환영합니다
             </h1>
-            <p className="text-[16px] text-[#2E2E2E]">
-              교환학생 준비, 교환닷컴과 함께하세요.
-            </p>
+            <p className="body-2 text-gray-900">교환학생 준비, 교환닷컴과 함께하세요.</p>
           </div>
 
           {/* 홈으로 버튼 */}
-          <button
-            onClick={handleGoHome}
-            className="w-full py-3 px-4 bg-[#000000] text-[#FFFFFF]
-                       font-medium rounded-lg
-                       transition-colors cursor-pointer hover:bg-[#333333]"
-          >
+          <button onClick={handleGoHome} className="btn-primary">
             홈으로
           </button>
         </div>
