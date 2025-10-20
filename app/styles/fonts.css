@@ -70,7 +70,6 @@
     font-family: var(--font-family-pretendard);
     font-size: var(--font-size-head-1);
     font-weight: 700;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -78,7 +77,6 @@
     font-family: var(--font-family-pretendard);
     font-size: var(--font-size-head-2);
     font-weight: 700;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -86,7 +84,6 @@
     font-family: var(--font-family-pretendard);
     font-size: var(--font-size-head-3);
     font-weight: 700;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -94,7 +91,6 @@
     font-family: var(--font-family-pretendard);
     font-size: var(--font-size-head-4);
     font-weight: 700;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -103,7 +99,6 @@
     font-family: var(--font-family-pretendard);
     font-size: var(--font-size-subhead-1);
     font-weight: 700;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -111,7 +106,6 @@
     font-family: var(--font-family-pretendard);
     font-size: var(--font-size-subhead-2);
     font-weight: 700;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -120,7 +114,6 @@
     font-family: var(--font-family-pretendard);
     font-size: var(--font-size-body-1);
     font-weight: 400;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -128,7 +121,6 @@
     font-family: var(--font-family-pretendard);
     font-size: var(--font-size-body-2);
     font-weight: 400;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -136,7 +128,6 @@
     font-family: var(--font-family-pretendard);
     font-size: var(--font-size-body-3);
     font-weight: 400;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -145,7 +136,6 @@
     font-family: var(--font-family-pretendard);
     font-size: var(--font-size-caption-1);
     font-weight: 400;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -153,7 +143,6 @@
     font-family: var(--font-family-pretendard);
     font-size: var(--font-size-caption-2);
     font-weight: 400;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -162,7 +151,6 @@
     font-family: var(--font-family-gmarket);
     font-size: var(--font-size-head-1);
     font-weight: 700;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -170,7 +158,6 @@
     font-family: var(--font-family-gmarket);
     font-size: var(--font-size-head-2);
     font-weight: 700;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -178,7 +165,6 @@
     font-family: var(--font-family-gmarket);
     font-size: var(--font-size-head-3);
     font-weight: 700;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -186,7 +172,6 @@
     font-family: var(--font-family-gmarket);
     font-size: var(--font-size-head-4);
     font-weight: 700;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -195,7 +180,6 @@
     font-family: var(--font-family-gmarket);
     font-size: var(--font-size-subhead-1);
     font-weight: 700;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -203,7 +187,6 @@
     font-family: var(--font-family-gmarket);
     font-size: var(--font-size-subhead-2);
     font-weight: 700;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -211,7 +194,6 @@
     font-family: var(--font-family-gmarket);
     font-size: var(--font-size-subhead-3);
     font-weight: 700;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -220,7 +202,6 @@
     font-family: var(--font-family-gmarket);
     font-size: var(--font-size-body-1);
     font-weight: 500;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -228,7 +209,6 @@
     font-family: var(--font-family-gmarket);
     font-size: var(--font-size-body-2);
     font-weight: 500;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -236,7 +216,6 @@
     font-family: var(--font-family-gmarket);
     font-size: var(--font-size-body-3);
     font-weight: 500;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -245,7 +224,6 @@
     font-family: var(--font-family-gmarket);
     font-size: var(--font-size-caption-1);
     font-weight: 500;
-    line-height: auto;
     letter-spacing: 0;
   }
 
@@ -253,7 +231,6 @@
     font-family: var(--font-family-gmarket);
     font-size: var(--font-size-caption-2);
     font-weight: 500;
-    line-height: auto;
     letter-spacing: 0;
   }
 }
