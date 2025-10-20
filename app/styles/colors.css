@@ -1,0 +1,19 @@
+/* ========================================
+   Color Theme Configuration
+   ======================================== */
+
+@theme {
+  /* Colors - Black & White */
+  --color-black: #000000;
+  --color-white: #FFFFFF;
+
+  /* Colors - Greyscale */
+  --color-grey-100: #F3F3F3;
+  --color-grey-300: #ECECEC;
+  --color-grey-500: #C3C3C3;
+  --color-grey-700: #7F7F7F;
+  --color-grey-900: #2E2E2E;
+
+  /* Colors - Primary */
+  --color-blue: #056DFF;
+}

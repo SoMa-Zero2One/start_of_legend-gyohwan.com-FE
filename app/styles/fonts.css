@@ -1,0 +1,250 @@
+/* ========================================
+   Font Face Definitions
+   ======================================== */
+
+/* Pretendard Variable Font */
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+}
+
+/* Gmarket Sans */
+@font-face {
+  font-family: 'Gmarket Sans';
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/GmarketSansLight.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Gmarket Sans';
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/GmarketSansMedium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Gmarket Sans';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/GmarketSansBold.woff2') format('woff2');
+}
+
+/* ========================================
+   Font Theme Configuration
+   ======================================== */
+
+@theme {
+  /* Font Families */
+  --font-family-pretendard: 'Pretendard Variable', sans-serif;
+  --font-family-gmarket: 'Gmarket Sans', sans-serif;
+
+  /* Font Sizes - Typography Tokens */
+  --font-size-head-1: 42px;
+  --font-size-head-2: 36px;
+  --font-size-head-3: 30px;
+  --font-size-head-4: 24px;
+  --font-size-subhead-1: 20px;
+  --font-size-subhead-2: 18px;
+  --font-size-body-1: 20px;
+  --font-size-body-2: 16px;
+  --font-size-body-3: 14px;
+  --font-size-caption-1: 13px;
+  --font-size-caption-2: 12px;
+}
+
+/* ========================================
+   Typography Utility Classes
+   ======================================== */
+
+@layer utilities {
+  /* Pretendard - Head Styles */
+  .head-1 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-head-1);
+    font-weight: 700;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .head-2 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-head-2);
+    font-weight: 700;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .head-3 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-head-3);
+    font-weight: 700;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .head-4 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-head-4);
+    font-weight: 700;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  /* Pretendard - Subhead Styles */
+  .subhead-1 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-subhead-1);
+    font-weight: 700;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .subhead-2 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-subhead-2);
+    font-weight: 700;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  /* Pretendard - Body Styles */
+  .body-1 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-body-1);
+    font-weight: 400;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .body-2 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-body-2);
+    font-weight: 400;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .body-3 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-body-3);
+    font-weight: 400;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  /* Pretendard - Caption Styles */
+  .caption-1 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-caption-1);
+    font-weight: 400;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .caption-2 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-caption-2);
+    font-weight: 400;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  /* Gmarket Sans - Head Styles */
+  .g-head-1 {
+    font-family: var(--font-family-gmarket);
+    font-size: var(--font-size-head-1);
+    font-weight: 700;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .g-head-2 {
+    font-family: var(--font-family-gmarket);
+    font-size: var(--font-size-head-2);
+    font-weight: 700;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .g-head-3 {
+    font-family: var(--font-family-gmarket);
+    font-size: var(--font-size-head-3);
+    font-weight: 700;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .g-head-4 {
+    font-family: var(--font-family-gmarket);
+    font-size: var(--font-size-head-4);
+    font-weight: 700;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  /* Gmarket Sans - Subhead Styles */
+  .g-subhead-1 {
+    font-family: var(--font-family-gmarket);
+    font-size: var(--font-size-subhead-1);
+    font-weight: 700;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .g-subhead-2 {
+    font-family: var(--font-family-gmarket);
+    font-size: var(--font-size-subhead-2);
+    font-weight: 700;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  /* Gmarket Sans - Body Styles */
+  .g-body-1 {
+    font-family: var(--font-family-gmarket);
+    font-size: var(--font-size-body-1);
+    font-weight: 500;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .g-body-2 {
+    font-family: var(--font-family-gmarket);
+    font-size: var(--font-size-body-2);
+    font-weight: 500;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .g-body-3 {
+    font-family: var(--font-family-gmarket);
+    font-size: var(--font-size-body-3);
+    font-weight: 500;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  /* Gmarket Sans - Caption Styles */
+  .g-caption-1 {
+    font-family: var(--font-family-gmarket);
+    font-size: var(--font-size-caption-1);
+    font-weight: 500;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+
+  .g-caption-2 {
+    font-family: var(--font-family-gmarket);
+    font-size: var(--font-size-caption-2);
+    font-weight: 500;
+    line-height: auto;
+    letter-spacing: 0;
+  }
+}
