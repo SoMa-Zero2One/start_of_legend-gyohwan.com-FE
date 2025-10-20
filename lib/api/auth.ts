@@ -173,3 +173,29 @@ export const loginWithEmail = async (email: string, password: string): Promise<A
 
   return await response.json();
 };
+
+/**
+ * 로그아웃
+ * @throws {Error} 로그아웃 실패 시
+ */
+export const logout = async (): Promise<void> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(
+    `${backendUrl}/v1/auth/logout`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // 쿠키 전송을 위해 필요
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `로그아웃 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
+    );
+  }
+};

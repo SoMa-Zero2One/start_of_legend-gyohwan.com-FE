@@ -8,6 +8,7 @@ import HeroSection from "@/components/home/HeroSection";
 import FeatureSection from "@/components/home/FeatureSection";
 import { useAuthStore } from "@/stores/authStore";
 import StrategyRoomEntrances from "@/components/home/StrategyRoomEntrances";
+import ProfileMenu from "@/components/layout/ProfileMenu";
 
 export default function Home() {
   const { isLoading, isLoggedIn, fetchUser } = useAuthStore();
@@ -20,20 +21,9 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Header>
         {isLoading ? (
-          <div className="flex items-center gap-2">
-            <div className="w-[32px] h-[32px] bg-[#ECECEC] rounded-full animate-pulse"></div>
-          </div>
+          <div className="w-[32px] h-[32px] bg-[#ECECEC] rounded-full animate-pulse"></div>
         ) : isLoggedIn ? (
-          <div className="flex items-center gap-2">
-            <div className="w-[32px] h-[32px] bg-[#ECECEC] rounded-full flex items-center justify-center">
-              <Image
-                src="/icons/ico_profile.svg"
-                alt="Profile"
-                width={20}
-                height={20}
-              />
-            </div>
-          </div>
+          <ProfileMenu />
         ) : (
           <Link
             href="/log-in-or-create-account"
