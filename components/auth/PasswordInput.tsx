@@ -116,7 +116,7 @@ export default function PasswordInput({
       </div>
 
       {/* 검증 메시지 */}
-      {hasError && <p className="caption-2 mt-1 text-[#FF4242]">{validationMessage}</p>}
+      {hasError && <p className="caption-2 text-error-red mt-1">{validationMessage}</p>}
       {hasSuccess && <p className="caption-2 mt-1 text-green-500">{validationMessage}</p>}
     </div>
   );

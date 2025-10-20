@@ -71,7 +71,7 @@ export default function LoginForm() {
     <div className="flex flex-col gap-[10px]">
       {/* 이메일 표시 */}
       <div className="mb-[10px] flex items-center gap-2 rounded-[4px] bg-gray-100 p-3">
-        <input type="email" value={email} disabled className="flex-1 text-gray-700 outline-none" />
+        <input type="email" value={email} disabled className="flex-1 bg-transparent text-gray-700 outline-none" />
         <button onClick={handleEdit} className="text-primary-blue cursor-pointer hover:text-blue-700">
           편집
         </button>
