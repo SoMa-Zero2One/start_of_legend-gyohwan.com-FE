@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { getUserMe } from '@/lib/api/user';
+import { logout as apiLogout } from '@/lib/api/auth';
 import type { User } from '@/types/user';
 
 interface AuthState {
@@ -38,8 +39,14 @@ export const useAuthStore = create<AuthStore>((set) => ({
     set({ user, isLoggedIn: !!user, isLoading: false });
   },
 
-  logout: () => {
-    set({ user: null, isLoggedIn: false, isLoading: false });
-    // TODO: 로그아웃 API 호출 추가
+  logout: async () => {
+    try {
+      await apiLogout();
+      set({ user: null, isLoggedIn: false, isLoading: false });
+    } catch (error) {
+      console.error('Failed to logout:', error);
+      // 로그아웃 API 실패해도 클라이언트 상태는 초기화
+      set({ user: null, isLoggedIn: false, isLoading: false });
+    }
   },
 }));
