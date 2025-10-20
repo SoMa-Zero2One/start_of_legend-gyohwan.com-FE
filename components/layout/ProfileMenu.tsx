@@ -41,7 +41,7 @@ export default function ProfileMenu() {
 
       {/* Dropdown 메뉴 */}
       {isMenuOpen && (
-        <div className="absolute right-0 top-[42px] w-[100px] h-[84px] p-[12px] bg-white shadow-md border border-[#ECECEC] rounded-[10px] flex flex-col items-center justify-between text-[14px] font-weight z-50">
+        <div className="absolute right-0 top-[42px] w-[100px] h-[84px] p-[12px] bg-white shadow-md border border-[#ECECEC] rounded-[10px] flex flex-col items-center justify-between text-[14px] font-medium z-50">
           <Link href="/my-page" className="w-full text-center">
             내 정보 관리
           </Link>
