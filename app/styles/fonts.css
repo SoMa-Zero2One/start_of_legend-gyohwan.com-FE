@@ -109,6 +109,42 @@
     letter-spacing: 0;
   }
 
+  /* Pretendard - Medium Styles */
+  .medium-body-1 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-body-1);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .medium-body-2 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-body-2);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .medium-body-3 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-body-3);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .medium-caption-1 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-caption-1);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .medium-caption-2 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-caption-2);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
   /* Pretendard - Body Styles */
   .body-1 {
     font-family: var(--font-family-pretendard);
