@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 interface PasswordInputProps {
   value: string;
@@ -54,58 +54,46 @@ export default function PasswordInput({
       {/* 말풍선 (옵션) */}
       {showTooltip && tooltipMessage && (
         <div
-          className={`absolute w-full -top-[50px] text-center transition-opacity duration-300 z-10 ${
-            isFocused ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          className={`absolute -top-[50px] z-10 w-full text-center duration-300 ${
+            isFocused ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
         >
-          <div className="bg-black text-white text-[12px] py-2 px-4 rounded-md inline-block">
-            {tooltipMessage}
-          </div>
-          <div
-            className="absolute left-1/2 -bottom-[5px] -translate-x-1/2 w-0 h-0
-                          border-l-8 border-l-transparent border-r-8 border-r-transparent
-                          border-t-8 border-t-black"
-          />
+          <div className="caption-2 inline-block rounded-md bg-black px-4 py-2 text-white">{tooltipMessage}</div>
+          <div className="absolute -bottom-[5px] left-1/2 h-0 w-0 -translate-x-1/2 border-t-8 border-r-8 border-l-8 border-t-black border-r-transparent border-l-transparent" />
         </div>
       )}
 
       {/* 입력칸 */}
       <div className="relative">
         <input
-          type={showPassword ? 'text' : 'password'}
+          type={showPassword ? "text" : "password"}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={handleFocus}
           onBlur={handleBlur}
           onKeyDown={onKeyDown}
           placeholder={placeholder}
-          className={`w-full px-4 py-3 pr-12 border rounded-lg
-                     focus:outline-none transition-all
-                     ${!value
-                       ? 'border-gray-300'
-                       : hasError
-                       ? 'border-transparent ring-2 ring-[#FF4242]'
-                       : hasSuccess
-                       ? 'border-transparent ring-2 ring-[#056DFF]'
-                       : 'border-gray-300'
-                     }`}
+          className={`w-full rounded-[4px] border p-3 pr-12 focus:outline-none ${
+            !value
+              ? "border-gray-300"
+              : hasError
+                ? "ring-error-red border-transparent ring-2"
+                : hasSuccess
+                  ? "ring-primary-blue border-transparent ring-2"
+                  : "border-gray-300"
+          }`}
           disabled={disabled}
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+          className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700"
           tabIndex={-1}
         >
           {showPassword ? (
             // 눈 열림 (비밀번호 보임)
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -115,7 +103,7 @@ export default function PasswordInput({
             </svg>
           ) : (
             // 눈 감김 (비밀번호 숨김)
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -128,12 +116,8 @@ export default function PasswordInput({
       </div>
 
       {/* 검증 메시지 */}
-      {hasError && (
-        <p className="text-[#FF4242] text-xs mt-1">{validationMessage}</p>
-      )}
-      {hasSuccess && (
-        <p className="text-green-500 text-xs mt-1">{validationMessage}</p>
-      )}
+      {hasError && <p className="caption-2 text-error-red mt-1">{validationMessage}</p>}
+      {hasSuccess && <p className="caption-2 mt-1 text-green-500">{validationMessage}</p>}
     </div>
   );
 }

@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { getSeasons } from '@/lib/api/season';
-import { Season } from '@/types/season';
-import { useAuthStore } from '@/stores/authStore';
-import StrategyRoomCard from './StrategyRoomCard';
+import { useEffect, useState } from "react";
+import { getSeasons } from "@/lib/api/season";
+import { Season } from "@/types/season";
+import { useAuthStore } from "@/stores/authStore";
+import StrategyRoomCard from "./StrategyRoomCard";
+import StrategyRoomCardSkeleton from "./StrategyRoomCardSkeleton";
 
 export default function StrategyRoomEntrances() {
   const [seasons, setSeasons] = useState<Season[]>([]);
@@ -32,12 +33,12 @@ export default function StrategyRoomEntrances() {
           }
 
           // 둘 다 사용자 학교가 아니거나, 둘 다 사용자 학교면 가나다순
-          return a.domesticUniversity.localeCompare(b.domesticUniversity, 'ko-KR');
+          return a.domesticUniversity.localeCompare(b.domesticUniversity, "ko-KR");
         });
 
         setSeasons(sortedSeasons);
       } catch (err) {
-        setError(err instanceof Error ? err.message : '시즌 목록을 불러오는데 실패했습니다.');
+        setError(err instanceof Error ? err.message : "시즌 목록을 불러오는데 실패했습니다.");
       } finally {
         setIsLoading(false);
       }
@@ -48,10 +49,18 @@ export default function StrategyRoomEntrances() {
 
   if (isLoading) {
     return (
-      <div className="relative py-[20px] flex flex-col px-[20px] gap-[40px] overflow-hidden">
-        <div>
-          <p className="h-6 bg-gray-200 rounded animate-pulse w-48"></p>
-          <p className="h-8 bg-gray-200 rounded animate-pulse w-24 mt-2"></p>
+      <div className="relative flex flex-col gap-[40px] p-[20px]">
+        {/* 헤더 스켈레톤 */}
+        <div className="flex flex-col items-center gap-[12px]">
+          <div className="h-[24px] w-[240px] animate-pulse rounded bg-gray-200" />
+          <div className="h-[36px] w-[100px] animate-pulse rounded bg-gray-200" />
+        </div>
+
+        {/* 카드 스켈레톤 3개 */}
+        <div className="grid grid-cols-1 gap-3">
+          {[1, 2, 3].map((i) => (
+            <StrategyRoomCardSkeleton key={i} />
+          ))}
         </div>
       </div>
     );
@@ -59,7 +68,7 @@ export default function StrategyRoomEntrances() {
 
   if (error) {
     return (
-      <div className="relative py-[20px] flex flex-col px-[20px] gap-[40px] overflow-hidden">
+      <div className="relative flex flex-col gap-[40px] p-[20px] text-center">
         <div>
           <p className="text-red-500">{error}</p>
         </div>
@@ -68,16 +77,12 @@ export default function StrategyRoomEntrances() {
   }
 
   return (
-    <div className="relative py-[20px] flex flex-col px-[20px] gap-[40px] overflow-hidden">
+    <div className="relative flex flex-col gap-[40px] p-[20px]">
       <div className="flex flex-col items-center gap-[12px]">
-        <p className='text-[24px] font-bold leading-none'>
-          교환 프로그램 진행 중인 대학
-        </p>
-        <p className='text-[36px] font-bold text-[#056DFF] leading-none'>
-          {seasons.length}개 대학
-        </p>
+        <p className="head-4">교환 프로그램 진행 중인 대학</p>
+        <p className="g-head-2 text-primary-blue">{seasons.length}개 대학</p>
       </div>
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 gap-[12px]">
         {seasons.map((season) => (
           <StrategyRoomCard key={season.seasonId} data={season} />
         ))}

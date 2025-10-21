@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Suspense, useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { validateState, cleanupOAuthSession } from '@/lib/oauth/config';
-import { loginWithGoogle } from '@/lib/api/auth';
-import { useAuthStore } from '@/stores/authStore';
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { validateState, cleanupOAuthSession } from "@/lib/oauth/config";
+import { loginWithGoogle } from "@/lib/api/auth";
+import { useAuthStore } from "@/stores/authStore";
 
 function GoogleCallbackContent() {
   const router = useRouter();
@@ -14,29 +14,29 @@ function GoogleCallbackContent() {
 
   useEffect(() => {
     const handleCallback = async () => {
-      const code = searchParams.get('code');
-      const state = searchParams.get('state');
-      const errorParam = searchParams.get('error');
+      const code = searchParams.get("code");
+      const state = searchParams.get("state");
+      const errorParam = searchParams.get("error");
 
       if (errorParam) {
-        setError('구글 로그인이 취소되었습니다.');
+        setError("구글 로그인이 취소되었습니다.");
         cleanupOAuthSession();
-        setTimeout(() => router.push('/log-in-or-create-account'), 2000);
+        setTimeout(() => router.push("/log-in-or-create-account"), 2000);
         return;
       }
 
       if (!code || !state) {
-        setError('인증 코드를 받지 못했습니다.');
+        setError("인증 코드를 받지 못했습니다.");
         cleanupOAuthSession();
-        setTimeout(() => router.push('/log-in-or-create-account'), 2000);
+        setTimeout(() => router.push("/log-in-or-create-account"), 2000);
         return;
       }
 
       // CSRF 방어: state 검증
       if (!validateState(state)) {
-        setError('잘못된 요청입니다. (CSRF 검증 실패)');
+        setError("잘못된 요청입니다. (CSRF 검증 실패)");
         cleanupOAuthSession();
-        setTimeout(() => router.push('/log-in-or-create-account'), 2000);
+        setTimeout(() => router.push("/log-in-or-create-account"), 2000);
         return;
       }
 
@@ -51,12 +51,12 @@ function GoogleCallbackContent() {
         await fetchUser();
 
         // 로그인 성공 후 리다이렉트
-        router.push('/');
+        router.push("/");
       } catch (err) {
-        console.error('Google login error:', err);
-        setError('로그인 처리 중 오류가 발생했습니다.');
+        console.error("Google login error:", err);
+        setError("로그인 처리 중 오류가 발생했습니다.");
         cleanupOAuthSession();
-        setTimeout(() => router.push('/log-in-or-create-account'), 2000);
+        setTimeout(() => router.push("/log-in-or-create-account"), 2000);
       }
     };
 
@@ -69,12 +69,10 @@ function GoogleCallbackContent() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="text-[#FF4242] text-center">
-        <p className="text-lg font-medium">{error}</p>
-        <p className="text-sm text-gray-600 mt-2">
-          잠시 후 로그인 페이지로 이동합니다...
-        </p>
+    <div className="flex min-h-screen flex-col items-center justify-center p-4">
+      <div className="text-error-red text-center">
+        <p className="body-1">{error}</p>
+        <p className="mt-2 text-gray-700">잠시 후 로그인 페이지로 이동합니다...</p>
       </div>
     </div>
   );

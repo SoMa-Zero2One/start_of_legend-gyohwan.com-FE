@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { signupWithEmail, confirmEmailSignup } from '@/lib/api/auth';
-import PasswordStep from './signUpSteps/PasswordStep';
-import TermsStep from './signUpSteps/TermsStep';
-import VerificationStep from './signUpSteps/VerificationStep';
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signupWithEmail, confirmEmailSignup } from "@/lib/api/auth";
+import PasswordStep from "./signUpSteps/PasswordStep";
+import TermsStep from "./signUpSteps/TermsStep";
+import VerificationStep from "./signUpSteps/VerificationStep";
 
-type Step = 'password' | 'terms' | 'verification';
+type Step = "password" | "terms" | "verification";
 
 interface SignupFormProps {
   onStepChange?: (step: Step) => void;
@@ -19,30 +19,30 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
   const searchParams = useSearchParams();
 
   // Step 관리
-  const [step, setStep] = useState<Step>('password');
+  const [step, setStep] = useState<Step>("password");
 
   // 이메일 및 비밀번호 상태
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
 
   // 약관 동의 상태
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
 
   // UI 상태
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   // 이메일 가져오기 (URL 파라미터 우선, 없으면 SessionStorage)
   useEffect(() => {
-    const emailFromUrl = searchParams.get('email');
-    const emailFromStorage = sessionStorage.getItem('pendingEmail');
-    const finalEmail = emailFromUrl || emailFromStorage || '';
+    const emailFromUrl = searchParams.get("email");
+    const emailFromStorage = sessionStorage.getItem("pendingEmail");
+    const finalEmail = emailFromUrl || emailFromStorage || "";
 
     if (!finalEmail) {
       // 이메일이 없으면 처음 페이지로 리다이렉트
-      router.push('/log-in-or-create-account');
+      router.push("/log-in-or-create-account");
       return;
     }
 
@@ -67,35 +67,35 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
 
   // 이메일 편집
   const handleEdit = () => {
-    sessionStorage.removeItem('pendingEmail');
-    router.push('/log-in-or-create-account');
+    sessionStorage.removeItem("pendingEmail");
+    router.push("/log-in-or-create-account");
   };
 
   // 비밀번호 입력 완료 후 약관 동의 화면으로 이동
   const handlePasswordSubmit = () => {
-    setError('');
+    setError("");
 
     // 비밀번호 검증
     if (!isValidPassword(password)) {
-      setError('비밀번호는 12글자 이상으로 설정해주세요!');
+      setError("비밀번호는 12글자 이상으로 설정해주세요!");
       return;
     }
 
     if (!isPasswordMatch()) {
-      setError('비밀번호가 일치하지 않습니다.');
+      setError("비밀번호가 일치하지 않습니다.");
       return;
     }
 
     // 약관 동의 화면으로 이동
-    setStep('terms');
+    setStep("terms");
   };
 
   // 약관 동의 후 회원가입 API 호출
   const handleTermsSubmit = async () => {
-    setError('');
+    setError("");
 
     if (!agreeTerms || !agreePrivacy) {
-      setError('모든 약관에 동의해주세요.');
+      setError("모든 약관에 동의해주세요.");
       return;
     }
 
@@ -106,10 +106,10 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
       await signupWithEmail(email, password);
 
       // 성공 시 이메일 인증 화면으로 전환
-      setStep('verification');
+      setStep("verification");
     } catch (err) {
-      console.error('Signup error:', err);
-      setError('회원가입 중 오류가 발생했습니다.');
+      console.error("Signup error:", err);
+      setError("회원가입 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -117,14 +117,14 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
 
   // 이메일 재전송 핸들러
   const handleResendEmail = async () => {
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
       await signupWithEmail(email, password);
     } catch (err) {
-      console.error('Resend error:', err);
-      setError('이메일 재전송 중 오류가 발생했습니다.');
+      console.error("Resend error:", err);
+      setError("이메일 재전송 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -132,7 +132,7 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
 
   // 인증코드 검증 핸들러
   const handleVerifyCode = async (code: string) => {
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
@@ -140,18 +140,18 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
       await confirmEmailSignup(email, code);
 
       // 성공 시 세션 정리 및 회원가입 완료 페이지로 이동
-      sessionStorage.removeItem('pendingEmail');
-      router.push('/create-account-complete');
+      sessionStorage.removeItem("pendingEmail");
+      router.push("/create-account-complete");
     } catch (err) {
-      console.error('Verification error:', err);
-      setError('인증코드가 올바르지 않습니다.');
+      console.error("Verification error:", err);
+      setError("인증코드가 올바르지 않습니다.");
     } finally {
       setIsLoading(false);
     }
   };
 
   // Step에 따라 적절한 컴포넌트 렌더링
-  if (step === 'password') {
+  if (step === "password") {
     return (
       <PasswordStep
         email={email}
@@ -167,7 +167,7 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
     );
   }
 
-  if (step === 'terms') {
+  if (step === "terms") {
     return (
       <TermsStep
         agreeTerms={agreeTerms}
@@ -182,11 +182,6 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
   }
 
   return (
-    <VerificationStep
-      onVerify={handleVerifyCode}
-      onResend={handleResendEmail}
-      error={error}
-      isLoading={isLoading}
-    />
+    <VerificationStep onVerify={handleVerifyCode} onResend={handleResendEmail} error={error} isLoading={isLoading} />
   );
 }

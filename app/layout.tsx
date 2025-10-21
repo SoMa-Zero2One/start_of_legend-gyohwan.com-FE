@@ -1,16 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "교환닷컴",
@@ -34,12 +23,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body
-        className={`m-auto max-w-[455px] ${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <div className="flex flex-col">
-        {children}
-        </div>
+      <body className="body-3 m-auto max-w-[430px] antialiased">
+        <div className="flex flex-col">{children}</div>
       </body>
     </html>
   );

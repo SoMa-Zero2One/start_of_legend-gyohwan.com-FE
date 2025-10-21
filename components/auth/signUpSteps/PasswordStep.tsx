@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import PasswordInput from '../PasswordInput';
+import { useState } from "react";
+import PasswordInput from "../PasswordInput";
 
 interface PasswordStepProps {
   email: string;
@@ -34,27 +34,27 @@ export default function PasswordStep({
     return password.length >= 12;
   };
 
+  // 버튼 활성화 조건
+  const isSubmitEnabled =
+    password.length > 0 &&
+    passwordConfirm.length > 0 &&
+    isValidPassword(password) &&
+    password === passwordConfirm &&
+    !isLoading;
+
   // Enter 키 처리
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && password && passwordConfirm && !isLoading) {
+    if (e.key === "Enter" && isSubmitEnabled) {
       onSubmit();
     }
   };
 
   return (
-    <div className="flex flex-col gap-[20px]">
+    <div className="flex flex-col gap-[10px]">
       {/* 이메일 표시 */}
-      <div className="flex items-center gap-2 p-3 bg-[#ECECEC] rounded-lg">
-        <input
-          type="email"
-          value={email}
-          disabled
-          className="flex-1 bg-transparent text-gray-700 outline-none"
-        />
-        <button
-          onClick={onEdit}
-          className="text-blue-500 text-sm font-medium hover:text-blue-600 transition-colors"
-        >
+      <div className="mb-[10px] flex items-center gap-2 rounded-[4px] bg-gray-100 p-3">
+        <input type="email" value={email} disabled className="flex-1 bg-transparent text-gray-700 outline-none" />
+        <button onClick={onEdit} className="text-primary-blue hover:text-blue-700">
           편집
         </button>
       </div>
@@ -76,8 +76,8 @@ export default function PasswordStep({
           !isValidPassword(password)
             ? `비밀번호는 12글자 이상이어야 합니다. (현재: ${password.length}글자)`
             : passwordFocused
-            ? '✓ 사용 가능한 비밀번호입니다.'
-            : undefined
+              ? "✓ 사용 가능한 비밀번호입니다."
+              : undefined
         }
       />
 
@@ -91,30 +91,24 @@ export default function PasswordStep({
         placeholder="비밀번호 확인"
         disabled={isLoading}
         showValidation={passwordConfirm.length > 0}
-        isValid={password === passwordConfirm}
+        isValid={isValidPassword(password) && password === passwordConfirm}
         validationMessage={
-          password !== passwordConfirm
-            ? '비밀번호가 일치하지 않습니다.'
-            : passwordConfirmFocused
-            ? '✓ 비밀번호가 일치합니다.'
-            : undefined
+          !isValidPassword(password)
+            ? undefined
+            : password !== passwordConfirm
+              ? "비밀번호가 일치하지 않습니다."
+              : passwordConfirmFocused
+                ? "✓ 비밀번호가 일치합니다."
+                : undefined
         }
       />
 
       {/* 에러 메시지 */}
-      {error && (
-        <p className="text-[#FF4242] text-sm">{error}</p>
-      )}
+      {error && <p className="text-error-red">{error}</p>}
 
       {/* 계속 버튼 */}
-      <button
-        onClick={onSubmit}
-        disabled={!password || !passwordConfirm || isLoading}
-        className="w-full py-3 px-4 bg-[#000000] text-[#FFFFFF] disabled:bg-[#ECECEC] disabled:text-[#7F7F7F]
-                   font-medium rounded-lg
-                   transition-colors cursor-pointer disabled:cursor-default"
-      >
-        {isLoading ? '처리 중...' : '계속'}
+      <button onClick={onSubmit} disabled={!isSubmitEnabled} className="btn-primary">
+        {isLoading ? "처리 중..." : "계속"}
       </button>
     </div>
   );
