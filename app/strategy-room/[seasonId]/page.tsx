@@ -101,11 +101,7 @@ export default function StrategyRoomPage() {
 
       {/* 제목 */}
       <section className="px-[20px] py-[16px]">
-        <h2 className="text-[20px] leading-snug font-bold">
-          {data.seasonName.split(" ")[0]}
-          <br />
-          교환학생
-        </h2>
+        <h2 className="text-[20px] leading-snug font-bold">{data.seasonName.split(" ")[0]} 교환학생</h2>
         <div className="mt-[10px] flex items-center gap-2">
           <span className="rounded-full bg-[#E9F1FF] px-3 py-1 text-[13px] text-[#056DFF]">
             🔥 총 {}명 성적 공유 참여 중!
@@ -114,19 +110,34 @@ export default function StrategyRoomPage() {
       </section>
 
       {/* 탭 메뉴 */}
-      <div className="flex items-center justify-around border-b border-gray-200">
-        {["지망한 대학", "지원자가 있는 대학", "모든 대학"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setSelectedTab(tab as any)}
-            className={`relative py-[12px] text-[15px] font-medium ${
-              selectedTab === tab ? "text-black" : "text-gray-400"
-            }`}
-          >
-            {tab}
-            {selectedTab === tab && <span className="absolute bottom-0 left-0 h-[2px] w-full rounded-full bg-black" />}
-          </button>
-        ))}
+      <div className="flex border-b border-gray-200">
+        {["지망한 대학", "지원자가 있는 대학", "모든 대학"].map((tab) => {
+          // 각 탭별 개수 계산
+          let count = 0;
+          if (tab === "지망한 대학") {
+            count = !hasSharedGrade ? 0 : myChosenUniversities.length;
+          } else if (tab === "지원자가 있는 대학") {
+            count = data.slots.filter((slot) => slot.choiceCount >= 1).length;
+          } else if (tab === "모든 대학") {
+            count = data.slots.length;
+          }
+
+          return (
+            <button
+              key={tab}
+              onClick={() => setSelectedTab(tab as any)}
+              className={`relative flex flex-1 cursor-pointer flex-col items-center py-[12px] text-[15px] font-medium ${
+                selectedTab === tab ? "text-black" : "text-gray-700"
+              }`}
+            >
+              <span>{tab}</span>
+              <span className="mt-[2px] text-[12px]">({count})</span>
+              {selectedTab === tab && (
+                <span className="absolute bottom-0 left-0 h-[2px] w-full rounded-full bg-black" />
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {/* 대학 리스트 */}
