@@ -23,3 +23,54 @@ export const getUserMe = async (): Promise<User> => {
 
   return await response.json();
 };
+
+/**
+ * 학교 이메일 인증 코드 발송
+ * @param schoolEmail - 학교 이메일 주소
+ * @throws {Error} API 호출 실패 시
+ */
+export const sendSchoolEmailVerification = async (schoolEmail: string): Promise<void> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(`${backendUrl}/v1/users/me/school-email`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // 쿠키 포함
+    body: JSON.stringify({ schoolEmail }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `학교 이메일 인증 코드 발송 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
+    );
+  }
+};
+
+/**
+ * 학교 이메일 인증 코드 확인
+ * @param schoolEmail - 학교 이메일 주소
+ * @param code - 인증 코드
+ * @throws {Error} API 호출 실패 시
+ */
+export const confirmSchoolEmailVerification = async (schoolEmail: string, code: string): Promise<void> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(`${backendUrl}/v1/users/me/school-email/confirm`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // 쿠키 포함
+    body: JSON.stringify({ schoolEmail, code }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `학교 이메일 인증 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
+    );
+  }
+};
