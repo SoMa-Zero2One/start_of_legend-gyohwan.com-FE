@@ -3,11 +3,12 @@
  */
 export interface User {
   userId: number;
-  email: string;
+  email: string | null;
   schoolEmail: string | null;
   nickname: string;
   domesticUniversity: string | null;
   schoolVerified: boolean;
   loginType: 'BASIC' | 'SOCIAL';
   socialType: string | null;
+  profileUrl?: string | null;
 }
