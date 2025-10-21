@@ -1,16 +1,16 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
+import ProfileIcon from '@/components/icons/ProfileIcon';
 
 export default function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const logout = useAuthStore((state) => state.logout);
+  const { user, logout } = useAuthStore();
 
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
@@ -34,9 +34,9 @@ export default function ProfileMenu() {
       {/* 프로필 버튼 */}
       <button
         onClick={() => setIsMenuOpen((prev) => !prev)}
-        className="w-[32px] h-[32px] bg-[#ECECEC] rounded-full flex items-center justify-center cursor-pointer"
+        className="cursor-pointer"
       >
-        <Image src="/icons/ico_profile.svg" alt="Profile" width={20} height={20} />
+        <ProfileIcon profileUrl={user?.profileUrl} size={32} />
       </button>
 
       {/* Dropdown 메뉴 */}
