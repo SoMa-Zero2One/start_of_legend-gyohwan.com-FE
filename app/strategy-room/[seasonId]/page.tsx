@@ -15,15 +15,14 @@ export default function StrategyRoomPage() {
   const [data, setData] = useState<SeasonSlotsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTab, setSelectedTab] = useState<"지망한 대학" | "지원자가 있는 대학" | "모든 대학">(
-    "지원자가 있는 대학"
-  );
+  type TabType = "지망한 대학" | "지원자가 있는 대학" | "모든 대학";
+  const [selectedTab, setSelectedTab] = useState<TabType>("지원자가 있는 대학");
 
   // 임시: 성적 공유 여부 (나중에 API로 확인)
-  const [hasSharedGrade, setHasSharedGrade] = useState(false);
+  const [hasSharedGrade] = useState(false);
 
   // 임시: 내가 지원한 대학 목록 (slotId 배열)
-  const myChosenUniversities = [2, 3]; // 임시 데이터
+  const myChosenUniversities = useMemo(() => [2, 3], []); // 임시 데이터
 
   useEffect(() => {
     const fetchData = async () => {
@@ -125,7 +124,7 @@ export default function StrategyRoomPage() {
           return (
             <button
               key={tab}
-              onClick={() => setSelectedTab(tab as any)}
+              onClick={() => setSelectedTab(tab as TabType)}
               className={`relative flex flex-1 cursor-pointer flex-col items-center py-[12px] text-[15px] font-medium ${
                 selectedTab === tab ? "text-black" : "text-gray-700"
               }`}

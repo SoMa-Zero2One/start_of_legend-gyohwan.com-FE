@@ -61,7 +61,7 @@ function KakaoCallbackContent() {
     };
 
     handleCallback();
-  }, [searchParams, router]);
+  }, [searchParams, router, fetchUser]);
 
   // 에러가 있을 때만 UI 표시, 정상 처리는 빈 화면
   if (!error) {
