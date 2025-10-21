@@ -9,7 +9,7 @@ type Step = "password" | "terms" | "verification";
 
 function PasswordSignupContent() {
   const [currentStep, setCurrentStep] = useState<Step>("password");
-  const [email, setEmail] = useState("");
+  const [, setEmail] = useState("");
 
   const headerContent = {
     password: {

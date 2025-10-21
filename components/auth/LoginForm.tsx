@@ -53,7 +53,7 @@ export default function LoginForm() {
       // 성공 시 세션 정리 및 홈으로 이동
       sessionStorage.removeItem("pendingEmail");
       router.push("/");
-    } catch (err) {
+    } catch {
       setError("이메일 또는 비밀번호가 올바르지 않습니다.");
     } finally {
       setIsLoading(false);

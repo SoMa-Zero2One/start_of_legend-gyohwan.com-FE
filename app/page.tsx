@@ -13,7 +13,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [fetchUser]);
 
   return (
     <div className="flex min-h-screen flex-col">
