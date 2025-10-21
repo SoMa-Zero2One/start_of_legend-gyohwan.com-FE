@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Season } from "@/types/season";
 import { calculateDDay } from "@/lib/utils/date";
 
@@ -7,7 +8,7 @@ interface StrategyRoomCardProps {
 }
 
 export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
-  const { domesticUniversity, domesticUniversityLogoUri, startDate, endDate } = data;
+  const { seasonId, domesticUniversity, domesticUniversityLogoUri, startDate, endDate } = data;
 
   // 날짜 포맷
   const formattedDate = startDate && endDate ? `${startDate} ~ ${endDate}` : "일정 미정";
@@ -44,7 +45,9 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
 
       {/* 하단 버튼 2개 */}
       <div className="flex gap-[10px]">
-        <button className="flex-1 rounded-[50px] bg-black py-[8px] text-white">실시간 경쟁률 보기</button>
+        <Link href={`/strategy-room/${seasonId}`} className="flex-1 cursor-pointer">
+          <button className="w-full rounded-[50px] bg-black py-[8px] text-white">실시간 경쟁률 보기</button>
+        </Link>
         <button className="bg-primary-blue/15 text-primary-blue flex-1 rounded-[50px] py-[8px]">성적 공유하기</button>
       </div>
     </div>
