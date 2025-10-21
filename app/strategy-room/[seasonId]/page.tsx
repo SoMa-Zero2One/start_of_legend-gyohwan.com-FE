@@ -110,7 +110,7 @@ export default function StrategyRoomPage() {
       </section>
 
       {/* 탭 메뉴 */}
-      <div className="flex border-b border-gray-200">
+      <div className="relative flex border-b border-gray-200">
         {["지망한 대학", "지원자가 있는 대학", "모든 대학"].map((tab) => {
           // 각 탭별 개수 계산
           let count = 0;
@@ -132,12 +132,22 @@ export default function StrategyRoomPage() {
             >
               <span>{tab}</span>
               <span className="mt-[2px] text-[12px]">({count})</span>
-              {selectedTab === tab && (
-                <span className="absolute bottom-0 left-0 h-[2px] w-full rounded-full bg-black" />
-              )}
             </button>
           );
         })}
+        {/* 애니메이션 적용된 탭 인디케이터 */}
+        <span
+          className="absolute bottom-0 h-[2px] rounded-full bg-black transition-all duration-300 ease-in-out"
+          style={{
+            width: "33.333%",
+            left:
+              selectedTab === "지망한 대학"
+                ? "0%"
+                : selectedTab === "지원자가 있는 대학"
+                  ? "33.333%"
+                  : "66.666%",
+          }}
+        />
       </div>
 
       {/* 대학 리스트 */}
