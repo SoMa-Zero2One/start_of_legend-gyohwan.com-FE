@@ -1,53 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import Header from "@/components/layout/Header";
-import type { User } from "@/types/user";
 import ChevronRightIcon from "@/components/icons/ChevronRightIcon";
 import PencilIcon from "@/components/icons/PencilIcon";
 import GoogleIcon from "@/components/icons/GoogleIcon";
 import KakaoIcon from "@/components/icons/KakaoIcon";
 import ProfileIcon from "@/components/icons/ProfileIcon";
 import ProfileField from "@/components/my-page/ProfileField";
-
-// Mock 데이터
-const MOCK_USERS: { [key: string]: User } = {
-  email: {
-    userId: 96,
-    email: "yoonc01@cau.ac.kr",
-    schoolEmail: null,
-    nickname: "부드러운 배629",
-    domesticUniversity: null,
-    schoolVerified: false,
-    loginType: "BASIC",
-    socialType: null,
-  },
-  google: {
-    userId: 89,
-    email: null,
-    schoolEmail: null,
-    nickname: "f60e1816-2207-47f2-8e65-c90f854908fb",
-    domesticUniversity: null,
-    schoolVerified: false,
-    loginType: "SOCIAL",
-    socialType: "GOOGLE",
-  },
-  kakao: {
-    userId: 88,
-    email: null,
-    schoolEmail: null,
-    nickname: "6254b019-7e18-4a4b-a6eb-c0d5a1053dc4",
-    domesticUniversity: null,
-    schoolVerified: false,
-    loginType: "SOCIAL",
-    socialType: "KAKAO",
-  },
-};
+import { useAuthStore } from "@/stores/authStore";
 
 export default function MyInfoPage() {
-  // Mock 데이터 선택 (email, google, kakao 중 하나)
-  const [mockType] = useState<"email" | "google" | "kakao">("email");
-  const user = MOCK_USERS[mockType];
+  const { user, fetchUser } = useAuthStore();
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  // 로그인되지 않은 경우
+  if (!user) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Header title="내 정보 관리" />
+        <div className="flex flex-col items-center justify-center py-20">
+          <p className="text-gray-700">로그인이 필요합니다.</p>
+        </div>
+      </div>
+    );
+  }
 
   const isBasicLogin = user.loginType === "BASIC";
   const isSocialLogin = user.loginType === "SOCIAL";
