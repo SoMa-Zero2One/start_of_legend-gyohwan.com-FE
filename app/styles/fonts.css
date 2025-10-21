@@ -109,6 +109,13 @@
     letter-spacing: 0;
   }
 
+  .subhead-3 {
+    font-family: var(--font-family-pretendard);
+    font-size: var(--font-size-subhead-3);
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
   /* Pretendard - Medium Styles */
   .medium-body-1 {
     font-family: var(--font-family-pretendard);
