@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import ChevronRightIcon from "@/components/icons/ChevronRightIcon";
 import PencilIcon from "@/components/icons/PencilIcon";
@@ -12,6 +13,7 @@ import { useAuthStore } from "@/stores/authStore";
 
 export default function MyInfoPage() {
   const { user, fetchUser } = useAuthStore();
+  const router = useRouter();
 
   useEffect(() => {
     fetchUser();
@@ -22,8 +24,10 @@ export default function MyInfoPage() {
     return (
       <div className="flex min-h-screen flex-col">
         <Header title="내 정보 관리" />
-        <div className="flex flex-col items-center justify-center py-20">
-          <p className="text-gray-700">로그인이 필요합니다.</p>
+        <div className="flex w-full flex-col items-center justify-center py-[40px]">
+          <button onClick={() => router.push("/log-in-or-create-account")} className="btn-primary">
+            로그인하러 가기
+          </button>
         </div>
       </div>
     );
