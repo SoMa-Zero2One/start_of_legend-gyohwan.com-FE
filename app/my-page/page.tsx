@@ -4,11 +4,11 @@ import { useState } from "react";
 import Header from "@/components/layout/Header";
 import type { User } from "@/types/user";
 import ChevronRightIcon from "@/components/icons/ChevronRightIcon";
-import CheckIcon from "@/components/icons/CheckIcon";
 import PencilIcon from "@/components/icons/PencilIcon";
 import GoogleIcon from "@/components/icons/GoogleIcon";
 import KakaoIcon from "@/components/icons/KakaoIcon";
 import ProfileIcon from "@/components/icons/ProfileIcon";
+import ProfileField from "@/components/my-page/ProfileField";
 
 // Mock 데이터
 const MOCK_USERS: { [key: string]: User } = {
@@ -78,18 +78,7 @@ export default function MyInfoPage() {
 
         {/* 닉네임 */}
         <div className="flex flex-col gap-[8px]">
-          <div className="flex items-center justify-between">
-            <label className="medium-body-3">닉네임</label>
-            <button onClick={handleComingSoon} className="text-primary-blue cursor-pointer hover:underline">
-              변경하기
-            </button>
-          </div>
-          <input
-            type="text"
-            value={user.nickname}
-            disabled
-            className="w-full rounded-[4px] bg-gray-100 px-4 py-3 text-gray-700"
-          />
+          <ProfileField label="닉네임" value={user.nickname} buttonText="변경하기" onButtonClick={handleComingSoon} />
           <p className="text-gray-700">
             * 한글/영문 포함 최대 10자 이내로 가능합니다.
             <br />* 닉네임은 변경 후 30일이 지나야 바꿀 수 있어요.
@@ -119,50 +108,23 @@ export default function MyInfoPage() {
 
         {/* 이메일 (BASIC 로그인만 표시) */}
         {isBasicLogin && user.email && (
-          <div className="flex flex-col gap-[6px]">
-            <div className="medium-body-3 flex items-center justify-between">
-              <label>이메일</label>
-              <button onClick={handleComingSoon} className="text-primary-blue cursor-pointer hover:underline">
-                변경하기
-              </button>
-            </div>
-            <div className="relative">
-              <input
-                type="text"
-                value={user.email}
-                disabled
-                className="w-full rounded-[4px] bg-gray-100 px-4 py-3 text-gray-700"
-              />
-              <CheckIcon size={20} className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500" />
-            </div>
-          </div>
+          <ProfileField
+            label="이메일"
+            value={user.email}
+            buttonText="변경하기"
+            onButtonClick={handleComingSoon}
+            showCheckIcon
+          />
         )}
 
         {/* 학교 인증 */}
-        <div className="flex flex-col gap-[6px]">
-          <div className="medium-body-3 flex items-center justify-between">
-            <label>학교 인증</label>
-            {user.schoolVerified ? (
-              <span className="text-primary-blue">인증 완료</span>
-            ) : (
-              <button onClick={handleComingSoon} className="text-primary-blue cursor-pointer hover:underline">
-                {user.schoolEmail ? "변경하기" : "등록하기"}
-              </button>
-            )}
-          </div>
-
-          <div className="relative">
-            <input
-              type="text"
-              value={user.schoolEmail || "학교 인증을 진행하지 않았습니다."}
-              disabled
-              className="w-full rounded-[4px] bg-gray-100 px-4 py-3 text-gray-700"
-            />
-            {user.schoolVerified && (
-              <CheckIcon size={20} className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500" />
-            )}
-          </div>
-        </div>
+        <ProfileField
+          label="학교 인증"
+          value={user.schoolEmail || "학교 인증을 진행하지 않았습니다."}
+          buttonText={user.schoolEmail ? "변경하기" : "등록하기"}
+          onButtonClick={handleComingSoon}
+          showCheckIcon={user.schoolVerified}
+        />
 
         {/* 기타 메뉴 */}
         <div className="flex flex-col">
