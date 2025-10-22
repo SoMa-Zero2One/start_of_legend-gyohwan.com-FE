@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
+import { useAuthStore } from "@/stores/authStore";
+import { saveRedirectUrl } from "@/lib/utils/redirect";
 
 interface ShareGradeCTAProps {
   seasonId: string;
@@ -18,6 +20,30 @@ export default function ShareGradeCTA({
 }: ShareGradeCTAProps) {
   const router = useRouter();
   const ctaButtonRef = useRef<HTMLButtonElement>(null);
+  const { user, isLoggedIn } = useAuthStore();
+
+  const handleClick = () => {
+    const targetUrl = `/strategy-room/${seasonId}/applications/new`;
+
+    // 로그인 확인
+    if (!isLoggedIn || !user) {
+      // 리다이렉트 URL 저장 후 로그인 페이지로 이동
+      saveRedirectUrl(targetUrl);
+      router.push("/log-in-or-create-account");
+      return;
+    }
+
+    // 학교 인증 확인
+    if (!user.schoolVerified) {
+      // 리다이렉트 URL 저장 후 학교 인증 페이지로 이동
+      saveRedirectUrl(targetUrl);
+      router.push("/school-verification");
+      return;
+    }
+
+    // 모두 완료된 경우 바로 이동
+    router.push(targetUrl);
+  };
 
   return (
     <div className="fixed bottom-0 left-1/2 w-full max-w-[420px] -translate-x-1/2 bg-white px-[20px] pb-[20px]">
@@ -34,7 +60,7 @@ export default function ShareGradeCTA({
 
       <button
         ref={ctaButtonRef}
-        onClick={() => router.push(`/strategy-room/${seasonId}/applications/new`)}
+        onClick={handleClick}
         className={`bg-primary-blue medium-body-2 w-full rounded-[8px] py-[16px] text-white shadow-[0_0_8px_rgba(0,0,0,0.06)] ${
           shouldShake ? "animate-shake" : ""
         }`}
