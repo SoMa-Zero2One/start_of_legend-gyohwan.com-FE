@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { getUserMe } from '@/lib/api/user';
 import { logout as apiLogout } from '@/lib/api/auth';
+import { clearRedirectUrl } from '@/lib/utils/redirect';
 import type { User } from '@/types/user';
 
 interface AuthState {
@@ -42,10 +43,12 @@ export const useAuthStore = create<AuthStore>((set) => ({
   logout: async () => {
     try {
       await apiLogout();
+      clearRedirectUrl(); // 로그아웃 시 저장된 리다이렉트 URL 삭제
       set({ user: null, isLoggedIn: false, isLoading: false });
     } catch (error) {
       console.error('Failed to logout:', error);
       // 로그아웃 API 실패해도 클라이언트 상태는 초기화
+      clearRedirectUrl();
       set({ user: null, isLoggedIn: false, isLoading: false });
     }
   },
