@@ -29,8 +29,8 @@ export default function StrategyTabs({ selectedTab, onTabChange, counts }: Strat
       <span
         className="absolute bottom-0 h-[2px] rounded-full bg-black transition-all duration-300 ease-in-out"
         style={{
-          width: "33.333%",
-          left: selectedTab === "지망한 대학" ? "0%" : selectedTab === "지원자가 있는 대학" ? "33.333%" : "66.666%",
+          width: `${100 / tabs.length}%`,
+          left: `${tabs.indexOf(selectedTab) * (100 / tabs.length)}%`,
         }}
       />
     </div>
