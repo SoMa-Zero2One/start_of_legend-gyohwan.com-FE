@@ -24,8 +24,8 @@ export default function MyInfoPage() {
     return (
       <div className="flex min-h-screen flex-col">
         <Header title="내 정보 관리" showPrevButton />
-        <div className="flex w-full flex-col items-center justify-center py-[40px]">
-          <button onClick={() => router.push("/log-in-or-create-account")} className="btn-primary">
+        <div className="flex w-full flex-col items-center justify-center py-[40px] px-[20px]">
+          <button onClick={() => router.push("/log-in-or-create-account")} className="btn-secondary w-full rounded-[4px] p-[12px]">
             로그인하러 가기
           </button>
         </div>

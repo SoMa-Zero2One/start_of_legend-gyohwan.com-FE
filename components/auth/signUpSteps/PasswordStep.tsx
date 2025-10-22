@@ -107,7 +107,7 @@ export default function PasswordStep({
       {error && <p className="text-error-red">{error}</p>}
 
       {/* 계속 버튼 */}
-      <button onClick={onSubmit} disabled={!isSubmitEnabled} className="btn-primary">
+      <button onClick={onSubmit} disabled={!isSubmitEnabled} className="btn-secondary w-full rounded-[4px] p-[12px]">
         {isLoading ? "처리 중..." : "계속"}
       </button>
     </div>

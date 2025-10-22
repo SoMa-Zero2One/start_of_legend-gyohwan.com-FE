@@ -69,7 +69,7 @@ export default function VerificationStep({ onVerify, onResend, error, isLoading 
         <button
           onClick={() => onVerify(code)}
           disabled={code.length !== 6 || timeLeft <= 0}
-          className="btn-primary mt-[12px]"
+          className="btn-secondary w-full rounded-[4px] p-[12px] mt-[12px]"
         >
           계속
         </button>
