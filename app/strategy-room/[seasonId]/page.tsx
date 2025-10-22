@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
 import Header from "@/components/layout/Header";
 import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
@@ -9,17 +9,34 @@ import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import { getSeasonSlots } from "@/lib/api/slot";
 import { SeasonSlotsResponse } from "@/types/slot";
 
+type TabType = "지망한 대학" | "지원자가 있는 대학" | "모든 대학";
+
 export default function StrategyRoomPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const seasonId = params.seasonId as string;
 
   const [data, setData] = useState<SeasonSlotsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  type TabType = "지망한 대학" | "지원자가 있는 대학" | "모든 대학";
-  const [selectedTab, setSelectedTab] = useState<TabType>("지원자가 있는 대학");
+
+  // URL query parameter에서 초기 탭 상태 읽기
+  const tabParam = searchParams.get("tab") as TabType;
+  const initialTab: TabType = tabParam && ["지망한 대학", "지원자가 있는 대학", "모든 대학"].includes(tabParam)
+    ? tabParam
+    : "지원자가 있는 대학";
+
+  const [selectedTab, setSelectedTab] = useState<TabType>(initialTab);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // 탭 변경 핸들러 (URL 업데이트 포함)
+  const handleTabChange = (tab: TabType) => {
+    setSelectedTab(tab);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tab);
+    router.replace(`/strategy-room/${seasonId}?${params.toString()}`, { scroll: false });
+  };
 
   // 임시: 성적 공유 여부 (나중에 API로 확인)
   const [hasSharedGrade] = useState(false);
@@ -113,7 +130,7 @@ export default function StrategyRoomPage() {
         title={data.seasonName}
         showSearchButton
         showHomeButton
-        homeHref={`/strategy-room/${seasonId}`}
+        homeHref={"/"}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         showBorder={false}
@@ -134,7 +151,7 @@ export default function StrategyRoomPage() {
       <Tabs
         tabs={["지망한 대학", "지원자가 있는 대학", "모든 대학"] as const}
         selectedTab={selectedTab}
-        onTabChange={setSelectedTab}
+        onTabChange={handleTabChange}
         counts={{
           "지망한 대학": !hasSharedGrade ? 0 : myChosenUniversities.length,
           "지원자가 있는 대학": data.slots.filter((slot) => slot.choiceCount >= 1).length,

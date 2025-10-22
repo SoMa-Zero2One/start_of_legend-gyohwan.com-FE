@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useMemo, useRef } from "react";
 import Image from "next/image";
 import Header from "@/components/layout/Header";
@@ -13,19 +13,26 @@ import { SlotDetailResponse, Choice } from "@/types/slot";
 type TabType = "지망순위" | "환산점수" | "학점";
 
 // 상수 정의
-const TOOLTIP_DURATION = 3500; // 툴팁 표시 시간 (ms)
+const TOOLTIP_DURATION = 3000; // 툴팁 표시 시간 (ms)
 const SHAKE_ANIMATION_DURATION = 500; // Shake 애니메이션 시간 (ms)
 
 export default function SlotDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const slotId = params.slotId as string;
   const seasonId = params.seasonId as string;
 
   const [data, setData] = useState<SlotDetailResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTab, setSelectedTab] = useState<TabType>("지망순위");
+
+  // URL query parameter에서 초기 정렬 상태 읽기
+  const sortParam = searchParams.get("sort") as TabType;
+  const initialSort: TabType =
+    sortParam && ["지망순위", "환산점수", "학점"].includes(sortParam) ? sortParam : "지망순위";
+
+  const [selectedTab, setSelectedTab] = useState<TabType>(initialSort);
   const [showTooltip, setShowTooltip] = useState(false);
   const [shouldShake, setShouldShake] = useState(false);
 
@@ -94,6 +101,14 @@ export default function SlotDetailPage() {
     }
   };
 
+  // 정렬 변경 핸들러 (URL 업데이트 포함)
+  const handleSortChange = (sort: TabType) => {
+    setSelectedTab(sort);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("sort", sort);
+    router.replace(`/strategy-room/${seasonId}/slots/${slotId}?${params.toString()}`, { scroll: false });
+  };
+
   // 탭에 따른 정렬된 지원자 목록
   const sortedChoices = useMemo(() => {
     if (!data) return [];
@@ -148,7 +163,7 @@ export default function SlotDetailPage() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* 상단 헤더 */}
-      <Header title=" " showHomeButton homeHref={`/strategy-room/${seasonId}`} showBorder={false} />
+      <Header title=" " showHomeButton homeHref={"/"} showBorder={false} />
 
       {/* 대학 정보 */}
       <section className="border-b border-gray-100 p-[20px]">
@@ -192,7 +207,7 @@ export default function SlotDetailPage() {
       </section>
 
       {/* 탭 메뉴 */}
-      <Tabs tabs={["지망순위", "환산점수", "학점"] as const} selectedTab={selectedTab} onTabChange={setSelectedTab} />
+      <Tabs tabs={["지망순위", "환산점수", "학점"] as const} selectedTab={selectedTab} onTabChange={handleSortChange} />
 
       {/* 지원자 목록 */}
       <div className="flex flex-1 flex-col gap-[10px] p-[20px] pb-[100px]">
