@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { loginWithEmail } from "@/lib/api/auth";
+import { getRedirectUrl, clearRedirectUrl, saveRedirectUrl } from "@/lib/utils/redirect";
+import { useAuthStore } from "@/stores/authStore";
 import PasswordInput from "./PasswordInput";
 
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { fetchUser } = useAuthStore();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,9 +53,31 @@ export default function LoginForm() {
       // 이메일 로그인 API 호출
       await loginWithEmail(email, password);
 
-      // 성공 시 세션 정리 및 홈으로 이동
+      // 성공 시 세션 정리
       sessionStorage.removeItem("pendingEmail");
-      router.push("/");
+
+      // 사용자 정보 가져오기
+      await fetchUser();
+
+      // 리다이렉트 URL 확인
+      const redirectUrl = getRedirectUrl();
+
+      if (redirectUrl) {
+        const { user } = useAuthStore.getState();
+
+        // 학교 인증 확인
+        if (!user?.schoolVerified) {
+          // 학교 인증 필요 - redirectUrl 유지하고 학교 인증 페이지로
+          router.push("/school-verification");
+        } else {
+          // 학교 인증 완료 - redirectUrl로 이동
+          clearRedirectUrl();
+          router.push(redirectUrl);
+        }
+      } else {
+        // redirectUrl 없으면 홈으로
+        router.push("/");
+      }
     } catch {
       setError("이메일 또는 비밀번호가 올바르지 않습니다.");
     } finally {
