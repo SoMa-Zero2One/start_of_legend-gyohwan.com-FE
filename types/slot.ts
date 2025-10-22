@@ -18,3 +18,36 @@ export interface SeasonSlotsResponse {
   seasonName: string;
   slots: Slot[];
 }
+
+/**
+ * 지원자 정보
+ */
+export interface Choice {
+  applicationId: number;
+  nickname: string;
+  choice: number;
+  gpaScore: number | null;
+  gpaCriteria: number | null;
+  languageTest: string | null;
+  languageGrade: string | null;
+  languageScore: string | null;
+  extraScore: number | null;
+  score: number | null;
+  etc: string;
+}
+
+/**
+ * 슬롯 상세 조회 응답
+ */
+export interface SlotDetailResponse {
+  slotId: number;
+  isApplied: boolean;
+  seasonId: number;
+  name: string;
+  country: string;
+  choiceCount: number;
+  slotCount: string;
+  duration: string;
+  etc: string | null;
+  choices: Choice[];
+}
