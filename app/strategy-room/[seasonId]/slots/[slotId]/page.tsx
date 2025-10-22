@@ -1,17 +1,24 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { useEffect, useState, useMemo } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState, useMemo, useRef } from "react";
 import Image from "next/image";
 import Header from "@/components/layout/Header";
 import ApplicantCard from "@/components/strategy-room/ApplicantCard";
+import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
+import Tabs from "@/components/common/Tabs";
 import { getSlotDetail } from "@/lib/api/slot";
 import { SlotDetailResponse, Choice } from "@/types/slot";
 
 type TabType = "지망순위" | "환산점수" | "학점";
 
+// 상수 정의
+const TOOLTIP_DURATION = 3500; // 툴팁 표시 시간 (ms)
+const SHAKE_ANIMATION_DURATION = 500; // Shake 애니메이션 시간 (ms)
+
 export default function SlotDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const slotId = params.slotId as string;
   const seasonId = params.seasonId as string;
 
@@ -19,6 +26,12 @@ export default function SlotDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState<TabType>("지망순위");
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [shouldShake, setShouldShake] = useState(false);
+
+  // Timeout ID를 저장하기 위한 ref
+  const tooltipTimeoutRef = useRef<number | null>(null);
+  const shakeTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +51,48 @@ export default function SlotDetailPage() {
       fetchData();
     }
   }, [slotId]);
+
+  // Cleanup: 컴포넌트 언마운트 시 타이머 정리
+  useEffect(() => {
+    return () => {
+      if (tooltipTimeoutRef.current) {
+        clearTimeout(tooltipTimeoutRef.current);
+      }
+      if (shakeTimeoutRef.current) {
+        clearTimeout(shakeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // 지원자 카드 클릭 핸들러
+  const handleApplicantClick = (applicationId: number) => {
+    if (data?.isApplied) {
+      // 성적 공유 참여 시 -> 상세 페이지로 이동
+      router.push(`/strategy-room/${seasonId}/applicants/${applicationId}`);
+    } else {
+      // 이전 타이머가 있다면 정리
+      if (tooltipTimeoutRef.current) {
+        clearTimeout(tooltipTimeoutRef.current);
+      }
+      if (shakeTimeoutRef.current) {
+        clearTimeout(shakeTimeoutRef.current);
+      }
+
+      // 성적 공유 미참여 시 -> 툴팁 표시 + 버튼 흔들기
+      setShouldShake(true);
+      setShowTooltip(true);
+
+      // 툴팁 숨김 타이머
+      tooltipTimeoutRef.current = setTimeout(() => {
+        setShowTooltip(false);
+      }, TOOLTIP_DURATION);
+
+      // Shake 애니메이션 종료 타이머
+      shakeTimeoutRef.current = setTimeout(() => {
+        setShouldShake(false);
+      }, SHAKE_ANIMATION_DURATION);
+    }
+  };
 
   // 탭에 따른 정렬된 지원자 목록
   const sortedChoices = useMemo(() => {
@@ -137,36 +192,30 @@ export default function SlotDetailPage() {
       </section>
 
       {/* 탭 메뉴 */}
-      <div className="relative flex border-b border-gray-200">
-        {(["지망순위", "환산점수", "학점"] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setSelectedTab(tab)}
-            className={`relative flex flex-1 cursor-pointer flex-col items-center py-[12px] text-[15px] font-medium ${
-              selectedTab === tab ? "text-black" : "text-gray-700"
-            }`}
-          >
-            <span>{tab}</span>
-          </button>
-        ))}
-        {/* 애니메이션 적용된 탭 인디케이터 */}
-        <span
-          className="absolute bottom-0 h-[2px] rounded-full bg-black transition-all duration-300 ease-in-out"
-          style={{
-            width: "33.333%",
-            left: selectedTab === "지망순위" ? "0%" : selectedTab === "환산점수" ? "33.333%" : "66.666%",
-          }}
-        />
-      </div>
+      <Tabs tabs={["지망순위", "환산점수", "학점"] as const} selectedTab={selectedTab} onTabChange={setSelectedTab} />
 
       {/* 지원자 목록 */}
-      <div className="flex flex-1 flex-col gap-[10px] p-[20px]">
+      <div className="flex flex-1 flex-col gap-[10px] p-[20px] pb-[100px]">
         {sortedChoices.length === 0 ? (
           <p className="text-center text-gray-500">지원자가 없습니다.</p>
         ) : (
-          sortedChoices.map((choice) => <ApplicantCard key={choice.applicationId} choice={choice} />)
+          sortedChoices.map((choice) => (
+            <ApplicantCard
+              key={choice.applicationId}
+              choice={choice}
+              onClick={() => handleApplicantClick(choice.applicationId)}
+            />
+          ))
         )}
       </div>
+
+      {/* 하단 고정 CTA */}
+      <ShareGradeCTA
+        seasonId={seasonId}
+        showTooltip={showTooltip}
+        shouldShake={shouldShake}
+        tooltipMessage="성적 공유하면 지원자들이 어느 학교에 지원했는지 확인할 수 있어요!"
+      />
     </div>
   );
 }

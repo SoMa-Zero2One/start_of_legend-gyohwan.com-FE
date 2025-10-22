@@ -4,7 +4,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
 import Header from "@/components/layout/Header";
 import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
-import StrategyTabs from "@/components/strategy-room/StrategyTabs";
+import Tabs from "@/components/common/Tabs";
+import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import { getSeasonSlots } from "@/lib/api/slot";
 import { SeasonSlotsResponse } from "@/types/slot";
 
@@ -130,7 +131,8 @@ export default function StrategyRoomPage() {
       </section>
 
       {/* 탭 메뉴 */}
-      <StrategyTabs
+      <Tabs
+        tabs={["지망한 대학", "지원자가 있는 대학", "모든 대학"] as const}
         selectedTab={selectedTab}
         onTabChange={setSelectedTab}
         counts={{
@@ -178,18 +180,7 @@ export default function StrategyRoomPage() {
       </div>
 
       {/* 하단 고정 CTA (미참여 시에는 숨김) */}
-      {!shouldShowBlur && (
-        <div className="fixed bottom-0 left-1/2 w-full max-w-[420px] -translate-x-1/2 bg-white px-[20px] pb-[20px]">
-          <div className="pointer-events-none absolute -top-[60px] left-0 h-[60px] w-full bg-gradient-to-t from-white to-transparent" />
-
-          <button
-            onClick={() => router.push(`/strategy-room/${seasonId}/applications/new`)}
-            className="w-full rounded-[12px] bg-[#056DFF] py-[16px] font-medium text-white shadow-[0_0_8px_rgba(0,0,0,0.06)]"
-          >
-            성적 공유하고 전체 확인하기 🚀
-          </button>
-        </div>
-      )}
+      {!shouldShowBlur && <ShareGradeCTA seasonId={seasonId} />}
     </div>
   );
 }

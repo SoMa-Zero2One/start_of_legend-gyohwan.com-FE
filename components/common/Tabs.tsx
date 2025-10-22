@@ -1,16 +1,16 @@
-interface StrategyTabsProps {
-  selectedTab: "지망한 대학" | "지원자가 있는 대학" | "모든 대학";
-  onTabChange: (tab: "지망한 대학" | "지원자가 있는 대학" | "모든 대학") => void;
-  counts: {
-    "지망한 대학": number;
-    "지원자가 있는 대학": number;
-    "모든 대학": number;
-  };
+interface Tab {
+  label: string;
+  count?: number;
 }
 
-export default function StrategyTabs({ selectedTab, onTabChange, counts }: StrategyTabsProps) {
-  const tabs = ["지망한 대학", "지원자가 있는 대학", "모든 대학"] as const;
+interface TabsProps<T extends string> {
+  tabs: readonly T[] | T[];
+  selectedTab: T;
+  onTabChange: (tab: T) => void;
+  counts?: Record<T, number>;
+}
 
+export default function Tabs<T extends string>({ tabs, selectedTab, onTabChange, counts }: TabsProps<T>) {
   return (
     <div className="relative flex border-b border-gray-200">
       {tabs.map((tab) => (
@@ -22,7 +22,7 @@ export default function StrategyTabs({ selectedTab, onTabChange, counts }: Strat
           }`}
         >
           <span>{tab}</span>
-          <span className="mt-[2px] text-[12px]">({counts[tab]})</span>
+          {counts && <span className="mt-[2px] text-[12px]">({counts[tab]})</span>}
         </button>
       ))}
       {/* 애니메이션 적용된 탭 인디케이터 */}
