@@ -12,7 +12,7 @@ export default function ApplicantCard({ choice }: ApplicantCardProps) {
   // 어학성적 표시 (languageTest languageGrade languageScore 형식)
   const languageDisplay =
     choice.languageTest && choice.languageGrade
-      ? `${choice.languageTest} ${choice.languageGrade} ${choice.languageScore || ""}`
+      ? [choice.languageTest, choice.languageGrade, choice.languageScore].filter(Boolean).join(' ')
       : choice.languageTest
         ? choice.languageTest
         : "-";
