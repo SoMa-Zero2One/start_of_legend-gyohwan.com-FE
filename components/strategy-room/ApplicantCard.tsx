@@ -3,9 +3,10 @@ import { Choice } from "@/types/slot";
 
 interface ApplicantCardProps {
   choice: Choice;
+  onClick?: () => void;
 }
 
-export default function ApplicantCard({ choice }: ApplicantCardProps) {
+export default function ApplicantCard({ choice, onClick }: ApplicantCardProps) {
   // 지망 순위에 따른 이미지 경로 (5지망 이상은 5지망 이미지 사용)
   const priorityImage = choice.choice <= 5 ? `/images/priority-${choice.choice}.png` : "/images/priority-5.png";
 
@@ -21,7 +22,10 @@ export default function ApplicantCard({ choice }: ApplicantCardProps) {
   const scoreDisplay = choice.score !== null ? choice.score.toFixed(2) : "-";
 
   return (
-    <div className="flex cursor-pointer flex-col gap-[16px] rounded-[8px] bg-white p-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+    <div
+      onClick={onClick}
+      className="flex cursor-pointer flex-col gap-[16px] rounded-[8px] bg-white p-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:bg-gray-50"
+    >
       {/* 닉네임 */}
       <h3 className="subhead-3">{choice.nickname}</h3>
 
