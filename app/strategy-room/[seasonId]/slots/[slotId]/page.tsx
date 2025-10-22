@@ -30,8 +30,8 @@ export default function SlotDetailPage() {
   const [shouldShake, setShouldShake] = useState(false);
 
   // Timeout ID를 저장하기 위한 ref
-  const tooltipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const shakeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const tooltipTimeoutRef = useRef<number | null>(null);
+  const shakeTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
