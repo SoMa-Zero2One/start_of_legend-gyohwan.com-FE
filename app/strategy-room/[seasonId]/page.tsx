@@ -17,6 +17,7 @@ export default function StrategyRoomPage() {
   const [error, setError] = useState<string | null>(null);
   type TabType = "지망한 대학" | "지원자가 있는 대학" | "모든 대학";
   const [selectedTab, setSelectedTab] = useState<TabType>("지원자가 있는 대학");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // 임시: 성적 공유 여부 (나중에 API로 확인)
   const [hasSharedGrade] = useState(false);
@@ -43,24 +44,29 @@ export default function StrategyRoomPage() {
     }
   }, [seasonId]);
 
-  // 필터링된 슬롯 목록
+  // 필터링된 슬롯 목록 (탭 + 검색)
   const filteredSlots = useMemo(() => {
     if (!data) return [];
 
+    // 1단계: 탭에 따른 필터링
+    let slots = data.slots;
+
     if (selectedTab === "지원자가 있는 대학") {
-      return data.slots.filter((slot) => slot.choiceCount >= 1);
+      slots = data.slots.filter((slot) => slot.choiceCount >= 1);
+    } else if (selectedTab === "지망한 대학") {
+      slots = data.slots.filter((slot) => myChosenUniversities.includes(slot.slotId));
     }
 
-    if (selectedTab === "모든 대학") {
-      return data.slots;
+    // 2단계: 검색어에 따른 필터링
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      slots = slots.filter(
+        (slot) => slot.name.toLowerCase().includes(query) || slot.country.toLowerCase().includes(query)
+      );
     }
 
-    if (selectedTab === "지망한 대학") {
-      return data.slots.filter((slot) => myChosenUniversities.includes(slot.slotId));
-    }
-
-    return data.slots;
-  }, [selectedTab, data, myChosenUniversities]);
+    return slots;
+  }, [selectedTab, data, myChosenUniversities, searchQuery]);
 
   // "지망한 대학" 탭 + 미참여 시 blur 처리
   const shouldShowBlur = selectedTab === "지망한 대학" && !hasSharedGrade;
@@ -74,7 +80,7 @@ export default function StrategyRoomPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="전략실" />
+        <Header title="전략실" showPrevButton />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-gray-500">로딩 중...</p>
         </div>
@@ -85,22 +91,34 @@ export default function StrategyRoomPage() {
   if (error || !data) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="전략실" />
+        <Header title="전략실" showPrevButton />
         <div className="flex flex-1 items-center justify-center">
-          <p className="text-red-500">{error || "데이터를 찾을 수 없습니다."}</p>
+          <p className="text-error-red">{error || "데이터를 찾을 수 없습니다."}</p>
         </div>
       </div>
     );
   }
 
+  // seasonName 파싱: "인천대학교 2026-1 모집" -> "26-1 학기"
+  const match = data.seasonName.match(/(\d{4})-(\d)/);
+  const parsedSemester = match ? `${match[1].slice(-2)}-${match[2]} 학기` : "";
+
   return (
     <div className="flex min-h-screen flex-col">
       {/* 상단 헤더 */}
-      <Header />
+      <Header
+        title={data.seasonName}
+        showSearchButton
+        showHomeButton
+        homeHref={`/strategy-room/${seasonId}`}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        showBorder={false}
+      />
 
       {/* 제목 */}
       <section className="px-[20px] py-[16px]">
-        <h2 className="text-[20px] leading-snug font-bold">{data.seasonName.split(" ")[0]} 교환학생</h2>
+        <h2 className="text-[20px] leading-snug font-bold">{parsedSemester}</h2>
         <div className="mt-[10px] flex items-center gap-2">
           <span className="rounded-full bg-[#E9F1FF] px-3 py-1 text-[13px] text-[#056DFF]">
             🔥 총 {}명 성적 공유 참여 중!
@@ -139,12 +157,7 @@ export default function StrategyRoomPage() {
           className="absolute bottom-0 h-[2px] rounded-full bg-black transition-all duration-300 ease-in-out"
           style={{
             width: "33.333%",
-            left:
-              selectedTab === "지망한 대학"
-                ? "0%"
-                : selectedTab === "지원자가 있는 대학"
-                  ? "33.333%"
-                  : "66.666%",
+            left: selectedTab === "지망한 대학" ? "0%" : selectedTab === "지원자가 있는 대학" ? "33.333%" : "66.666%",
           }}
         />
       </div>

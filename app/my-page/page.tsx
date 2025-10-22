@@ -23,7 +23,7 @@ export default function MyInfoPage() {
   if (!user) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="내 정보 관리" />
+        <Header title="내 정보 관리" showPrevButton />
         <div className="flex w-full flex-col items-center justify-center py-[40px]">
           <button onClick={() => router.push("/log-in-or-create-account")} className="btn-primary">
             로그인하러 가기
@@ -43,7 +43,7 @@ export default function MyInfoPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header title="내 정보 관리" />
+      <Header title="내 정보 관리" showPrevButton />
 
       <div className="flex w-full flex-col gap-[24px] px-[20px] pt-[30px]">
         <p className="subhead-1">내 정보</p>

@@ -1,3 +1,5 @@
+"use client";
+
 import KakaoLoginButton from "@/components/auth/KakaoLoginButton";
 import EmailLoginForm from "@/components/auth/EmailLoginForm";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
@@ -7,7 +9,7 @@ import Header from "@/components/layout/Header";
 export default function LoginOrCreateAccount() {
   return (
     <div className="flex min-h-screen flex-col">
-      <Header title="로그인" />
+      <Header title="로그인" showPrevButton />
       <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px]">
         <div className="flex w-full flex-col items-center gap-[24px] px-[20px]">
           <div className="flex w-full flex-col justify-center gap-[60px]">
