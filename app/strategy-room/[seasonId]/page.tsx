@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
 import Header from "@/components/layout/Header";
 import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
+import StrategyTabs from "@/components/strategy-room/StrategyTabs";
 import { getSeasonSlots } from "@/lib/api/slot";
 import { SeasonSlotsResponse } from "@/types/slot";
 
@@ -99,7 +100,8 @@ export default function StrategyRoomPage() {
     );
   }
 
-  // seasonName 파싱: "인천대학교 2026-1 모집" -> "26-1 학기"
+  // seasonName 파싱: "인천대학교 2026-1 모집" -> "인천대학교", "26-1 학기"
+  const universityName = data.seasonName.split(" ")[0]; // "영남대학교"
   const match = data.seasonName.match(/(\d{4})-(\d)/);
   const parsedSemester = match ? `${match[1].slice(-2)}-${match[2]} 학기` : "";
 
@@ -118,49 +120,25 @@ export default function StrategyRoomPage() {
 
       {/* 제목 */}
       <section className="px-[20px] py-[16px]">
-        <h2 className="text-[20px] leading-snug font-bold">{parsedSemester}</h2>
-        <div className="mt-[10px] flex items-center gap-2">
-          <span className="rounded-full bg-[#E9F1FF] px-3 py-1 text-[13px] text-[#056DFF]">
+        <h2 className="caption-1">{parsedSemester}</h2>
+        <h2 className="head-4 mt-[8px]">{universityName} 교환학생</h2>
+        <div className="relative mt-[12px] inline-block overflow-hidden rounded-full bg-gradient-to-r from-[#056DFF] via-[#029EFA] to-[#00D0FF] p-[1px]">
+          <span className="text-primary-blue caption-2 block rounded-full bg-[#E9F1FF] px-3 py-1">
             🔥 총 {}명 성적 공유 참여 중!
           </span>
         </div>
       </section>
 
       {/* 탭 메뉴 */}
-      <div className="relative flex border-b border-gray-200">
-        {["지망한 대학", "지원자가 있는 대학", "모든 대학"].map((tab) => {
-          // 각 탭별 개수 계산
-          let count = 0;
-          if (tab === "지망한 대학") {
-            count = !hasSharedGrade ? 0 : myChosenUniversities.length;
-          } else if (tab === "지원자가 있는 대학") {
-            count = data.slots.filter((slot) => slot.choiceCount >= 1).length;
-          } else if (tab === "모든 대학") {
-            count = data.slots.length;
-          }
-
-          return (
-            <button
-              key={tab}
-              onClick={() => setSelectedTab(tab as TabType)}
-              className={`relative flex flex-1 cursor-pointer flex-col items-center py-[12px] text-[15px] font-medium ${
-                selectedTab === tab ? "text-black" : "text-gray-700"
-              }`}
-            >
-              <span>{tab}</span>
-              <span className="mt-[2px] text-[12px]">({count})</span>
-            </button>
-          );
-        })}
-        {/* 애니메이션 적용된 탭 인디케이터 */}
-        <span
-          className="absolute bottom-0 h-[2px] rounded-full bg-black transition-all duration-300 ease-in-out"
-          style={{
-            width: "33.333%",
-            left: selectedTab === "지망한 대학" ? "0%" : selectedTab === "지원자가 있는 대학" ? "33.333%" : "66.666%",
-          }}
-        />
-      </div>
+      <StrategyTabs
+        selectedTab={selectedTab}
+        onTabChange={setSelectedTab}
+        counts={{
+          "지망한 대학": !hasSharedGrade ? 0 : myChosenUniversities.length,
+          "지원자가 있는 대학": data.slots.filter((slot) => slot.choiceCount >= 1).length,
+          "모든 대학": data.slots.length,
+        }}
+      />
 
       {/* 대학 리스트 */}
       <div className="relative flex flex-1 flex-col gap-[10px] p-[20px]">
