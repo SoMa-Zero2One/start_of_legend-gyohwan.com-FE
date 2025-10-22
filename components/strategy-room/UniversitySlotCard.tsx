@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { Slot } from "@/types/slot";
 import { countryFlags } from "@/lib/utils/countryFlags";
 
@@ -7,8 +9,12 @@ interface UniversitySlotCardProps {
 }
 
 export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
+  const params = useParams();
+  const seasonId = params.seasonId as string;
+
   return (
-    <div className="flex cursor-pointer flex-col items-end gap-[16px] rounded-[10px] border border-gray-100 p-[16px] shadow-[0_0_8px_rgba(0,0,0,0.06)] hover:bg-gray-100">
+    <Link href={`/strategy-room/${seasonId}/slots/${slot.slotId}`}>
+      <div className="flex cursor-pointer flex-col items-end gap-[16px] rounded-[10px] border border-gray-100 p-[16px] shadow-[0_0_8px_rgba(0,0,0,0.06)] hover:bg-gray-100">
       <div className="flex w-full items-center justify-between">
         <div className="flex items-center justify-center gap-[8px]">
           {/* 학교 로고 (임시 플레이스홀더) */}
@@ -39,5 +45,6 @@ export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
         </div>
       </div>
     </div>
+    </Link>
   );
 }
