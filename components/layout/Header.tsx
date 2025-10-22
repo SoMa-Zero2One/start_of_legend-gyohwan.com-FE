@@ -120,7 +120,7 @@ function SearchHeader({
           value={searchQuery}
           onChange={(e) => onSearchChange?.(e.target.value)}
           placeholder="대학명 또는 국가로 검색..."
-          className="w-full rounded-[4px] bg-gray-100 px-4 py-2 pr-14 pl-10 text-[14px] focus:outline-none"
+          className="w-full rounded-[4px] bg-gray-100 py-2 pr-14 pl-10 text-[14px] focus:outline-none"
           autoFocus
         />
         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
