@@ -28,7 +28,7 @@ function PasswordSignupContent() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header title="회원 가입" />
+      <Header title="회원 가입" showPrevButton />
       <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px]">
         <div className="flex w-full flex-col items-center gap-[24px] px-[10px]">
           <div className="flex w-[330px] flex-col justify-center gap-[60px]">
