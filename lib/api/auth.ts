@@ -1,5 +1,5 @@
-import type { AuthSuccessResponse, EmailCheckResponse } from '@/types/auth';
-import { getBackendUrl } from '@/lib/utils/api';
+import type { AuthSuccessResponse, EmailCheckResponse } from "@/types/auth";
+import { getBackendUrl } from "@/lib/utils/api";
 
 /**
  * 이메일 존재 여부 확인 (회원가입 vs 로그인 분기용)
@@ -10,15 +10,12 @@ import { getBackendUrl } from '@/lib/utils/api';
 export const checkEmailExists = async (email: string): Promise<boolean> => {
   const backendUrl = getBackendUrl();
 
-  const response = await fetch(
-    `${backendUrl}/v1/auth/signup/email/check?email=${encodeURIComponent(email)}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  const response = await fetch(`${backendUrl}/v1/auth/signup/email/check?email=${encodeURIComponent(email)}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
   if (!response.ok) {
     throw new Error(`이메일 확인 실패 (HTTP ${response.status})`);
@@ -37,16 +34,14 @@ export const checkEmailExists = async (email: string): Promise<boolean> => {
 export const loginWithGoogle = async (code: string): Promise<AuthSuccessResponse> => {
   const backendUrl = getBackendUrl();
 
-  const response = await fetch(
-    `${backendUrl}/v1/auth/login/social/google`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ code }),
-    }
-  );
+  const response = await fetch(`${backendUrl}/v1/auth/login/social/google`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ code }),
+  });
 
   if (!response.ok) {
     throw new Error(`Google 로그인 실패 (HTTP ${response.status})`);
@@ -64,22 +59,18 @@ export const loginWithGoogle = async (code: string): Promise<AuthSuccessResponse
 export const loginWithKakao = async (code: string): Promise<AuthSuccessResponse> => {
   const backendUrl = getBackendUrl();
 
-  const response = await fetch(
-    `${backendUrl}/v1/auth/login/social/kakao`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ code }),
-    }
-  );
+  const response = await fetch(`${backendUrl}/v1/auth/login/social/kakao`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ code }),
+  });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `Kakao 로그인 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
-    );
+    throw new Error(`Kakao 로그인 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
   }
 
   return await response.json();
@@ -94,22 +85,17 @@ export const loginWithKakao = async (code: string): Promise<AuthSuccessResponse>
 export const signupWithEmail = async (email: string, password: string): Promise<void> => {
   const backendUrl = getBackendUrl();
 
-  const response = await fetch(
-    `${backendUrl}/v1/auth/signup/email`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    }
-  );
+  const response = await fetch(`${backendUrl}/v1/auth/signup/email`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `회원가입 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
-    );
+    throw new Error(`회원가입 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
   }
 };
 
@@ -122,23 +108,18 @@ export const signupWithEmail = async (email: string, password: string): Promise<
 export const confirmEmailSignup = async (email: string, code: string): Promise<void> => {
   const backendUrl = getBackendUrl();
 
-  const response = await fetch(
-    `${backendUrl}/v1/auth/signup/email/confirm`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include', // 쿠키 설정을 위해 필요
-      body: JSON.stringify({ email, code }),
-    }
-  );
+  const response = await fetch(`${backendUrl}/v1/auth/signup/email/confirm`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include", // 쿠키 설정을 위해 필요
+    body: JSON.stringify({ email, code }),
+  });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `이메일 인증 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
-    );
+    throw new Error(`이메일 인증 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
   }
 };
 
@@ -152,23 +133,18 @@ export const confirmEmailSignup = async (email: string, code: string): Promise<v
 export const loginWithEmail = async (email: string, password: string): Promise<AuthSuccessResponse> => {
   const backendUrl = getBackendUrl();
 
-  const response = await fetch(
-    `${backendUrl}/v1/auth/login/email`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include', // 쿠키 설정을 위해 필요
-      body: JSON.stringify({ email, password }),
-    }
-  );
+  const response = await fetch(`${backendUrl}/v1/auth/login/email`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include", // 쿠키 설정을 위해 필요
+    body: JSON.stringify({ email, password }),
+  });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `이메일 로그인 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
-    );
+    throw new Error(`이메일 로그인 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
   }
 
   return await response.json();
@@ -181,21 +157,16 @@ export const loginWithEmail = async (email: string, password: string): Promise<A
 export const logout = async (): Promise<void> => {
   const backendUrl = getBackendUrl();
 
-  const response = await fetch(
-    `${backendUrl}/v1/auth/logout`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include', // 쿠키 전송을 위해 필요
-    }
-  );
+  const response = await fetch(`${backendUrl}/v1/auth/logout`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include", // 쿠키 전송을 위해 필요
+  });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `로그아웃 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
-    );
+    throw new Error(`로그아웃 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
   }
 };
