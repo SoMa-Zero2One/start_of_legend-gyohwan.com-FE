@@ -15,7 +15,7 @@ type Step = "email" | "verification";
 function SchoolVerificationContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isLoggedIn, user, fetchUser } = useAuthStore();
+  const { isLoggedIn, user, fetchUser, isLoading: authLoading } = useAuthStore();
 
   // URL 쿼리 파라미터에서 step 읽기
   const step = (searchParams.get("step") as Step) || "email";
@@ -26,12 +26,15 @@ function SchoolVerificationContent() {
 
   // 로그인 체크: 로그인되지 않은 경우 리다이렉트
   useEffect(() => {
+    // authStore 로딩 완료 후에만 체크
+    if (authLoading) return;
+
     if (!isLoggedIn || !user) {
       const currentUrl = "/school-verification";
       saveRedirectUrl(currentUrl);
       router.push("/log-in-or-create-account");
     }
-  }, [isLoggedIn, user, router]);
+  }, [isLoggedIn, user, router, authLoading]);
 
   // Step 1: 학교 이메일 입력 후 인증 코드 발송
   const handleEmailSubmit = async (schoolEmail: string) => {
