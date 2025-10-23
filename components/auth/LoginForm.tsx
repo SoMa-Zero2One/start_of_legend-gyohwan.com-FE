@@ -10,7 +10,9 @@ import PasswordInput from "./PasswordInput";
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { fetchUser } = useAuthStore();
+
+  // Selector를 사용하여 fetchUser만 구독 (함수는 안 바뀌므로 리렌더링 방지)
+  const fetchUser = useAuthStore((state) => state.fetchUser);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

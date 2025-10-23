@@ -2,37 +2,32 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getUserMe } from "@/lib/api/user";
 import { getRedirectUrl, clearRedirectUrl, saveRedirectUrl } from "@/lib/utils/redirect";
+import { useAuthStore } from "@/stores/authStore";
 import Header from "@/components/layout/Header";
-import { User } from "@/types/user";
 
 export default function CreateAccountComplete() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const { user, isLoggedIn, isLoading: authLoading, fetchUser } = useAuthStore();
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
 
+  // 회원가입 직후이므로 최신 사용자 정보 가져오기
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const userData = await getUserMe();
-        setUser(userData);
+    fetchUser();
 
-        // 리다이렉트 URL 확인
-        const storedRedirectUrl = getRedirectUrl();
-        setRedirectUrl(storedRedirectUrl);
-      } catch (err) {
-        console.error("User info fetch error:", err);
-        setError("사용자 정보를 불러오는데 실패했습니다.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    const storedRedirectUrl = getRedirectUrl();
+    setRedirectUrl(storedRedirectUrl);
+  }, [fetchUser]);
 
-    fetchUserInfo();
-  }, []);
+  // authStore 로딩 완료 후 로그인 체크
+  useEffect(() => {
+    if (authLoading) return;
+
+    // 로그인 안 된 사용자는 로그인 페이지로
+    if (!isLoggedIn || !user) {
+      router.push("/log-in-or-create-account");
+    }
+  }, [authLoading, isLoggedIn, user, router]);
 
   const handleGoToShare = () => {
     if (!redirectUrl || !user) return;
@@ -54,23 +49,13 @@ export default function CreateAccountComplete() {
     router.push("/");
   };
 
-  if (isLoading) {
+  // authStore 로딩 중이거나 user 정보 없으면 로딩 표시
+  if (authLoading || !user) {
     return (
       <div className="flex min-h-screen flex-col">
         <Header />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-gray-500">로딩 중...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex min-h-screen flex-col">
-        <Header />
-        <div className="flex flex-1 items-center justify-center">
-          <p className="text-error-red">{error}</p>
         </div>
       </div>
     );

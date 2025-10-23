@@ -53,3 +53,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 }));
+
+// 앱 초기화 시 자동으로 사용자 정보 가져오기
+useAuthStore.getState().fetchUser();
