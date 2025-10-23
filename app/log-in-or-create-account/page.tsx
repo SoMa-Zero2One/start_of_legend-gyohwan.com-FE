@@ -1,12 +1,28 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import KakaoLoginButton from "@/components/auth/KakaoLoginButton";
 import EmailLoginForm from "@/components/auth/EmailLoginForm";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import TermsAgreement from "@/components/auth/TermsAgreement";
 import Header from "@/components/layout/Header";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function LoginOrCreateAccount() {
+  const router = useRouter();
+  const { isLoggedIn, user, isLoading: authLoading } = useAuthStore();
+
+  // 이미 로그인된 사용자는 홈으로 리다이렉트
+  useEffect(() => {
+    // authStore 로딩 완료 후에만 체크
+    if (authLoading) return;
+
+    if (isLoggedIn && user) {
+      router.push("/");
+    }
+  }, [isLoggedIn, user, router, authLoading]);
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header title="로그인" showPrevButton />

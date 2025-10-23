@@ -10,7 +10,10 @@ export default function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+
+  // Selector를 사용하여 필요한 값만 구독
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
 
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {

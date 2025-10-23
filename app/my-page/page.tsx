@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import ChevronRightIcon from "@/components/icons/ChevronRightIcon";
@@ -12,15 +11,11 @@ import ProfileField from "@/components/my-page/ProfileField";
 import { useAuthStore } from "@/stores/authStore";
 
 export default function MyInfoPage() {
-  const { user, fetchUser } = useAuthStore();
+  const { user, isLoading: authLoading } = useAuthStore();
   const router = useRouter();
 
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
-
-  // 로그인되지 않은 경우
-  if (!user) {
+  // authStore 로딩 중이거나 로그인되지 않은 경우
+  if (authLoading || !user) {
     return (
       <div className="flex min-h-screen flex-col">
         <Header title="내 정보 관리" showPrevButton />
