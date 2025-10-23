@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { validateState, cleanupOAuthSession } from "@/lib/oauth/config";
 import { loginWithGoogle } from "@/lib/api/auth";
 import { useAuthStore } from "@/stores/authStore";
+import { getRedirectUrl, clearRedirectUrl } from "@/lib/utils/redirect";
 
 function GoogleCallbackContent() {
   const router = useRouter();
@@ -50,8 +51,25 @@ function GoogleCallbackContent() {
         // 사용자 정보 가져오기
         await fetchUser();
 
-        // 로그인 성공 후 리다이렉트
-        router.push("/");
+        // 리다이렉트 URL 확인
+        const redirectUrl = getRedirectUrl();
+
+        if (redirectUrl) {
+          const { user } = useAuthStore.getState();
+
+          // 학교 인증 확인
+          if (!user?.schoolVerified) {
+            // 학교 인증 필요 - redirectUrl 유지하고 학교 인증 페이지로
+            router.push("/school-verification");
+          } else {
+            // 학교 인증 완료 - redirectUrl로 이동
+            clearRedirectUrl();
+            router.push(redirectUrl);
+          }
+        } else {
+          // redirectUrl 없으면 홈으로
+          router.push("/");
+        }
       } catch (err) {
         console.error("Google login error:", err);
         setError("로그인 처리 중 오류가 발생했습니다.");

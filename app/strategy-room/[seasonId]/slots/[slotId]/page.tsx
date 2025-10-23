@@ -8,7 +8,7 @@ import ApplicantCard from "@/components/strategy-room/ApplicantCard";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import Tabs from "@/components/common/Tabs";
 import { getSlotDetail } from "@/lib/api/slot";
-import { SlotDetailResponse, Choice } from "@/types/slot";
+import { SlotDetailResponse } from "@/types/slot";
 
 type TabType = "지망순위" | "환산점수" | "학점";
 

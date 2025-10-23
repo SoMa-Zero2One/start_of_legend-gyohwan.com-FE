@@ -18,8 +18,8 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Step 관리
-  const [step, setStep] = useState<Step>("password");
+  // URL 쿼리 파라미터에서 step 읽기
+  const step = (searchParams.get("step") as Step) || "password";
 
   // 이메일 및 비밀번호 상태
   const [email, setEmail] = useState("");
@@ -86,8 +86,9 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
       return;
     }
 
-    // 약관 동의 화면으로 이동
-    setStep("terms");
+    // 약관 동의 화면으로 이동 (URL 업데이트)
+    const emailParam = searchParams.get("email") || email;
+    router.push(`/create-account/password?email=${encodeURIComponent(emailParam)}&step=terms`);
   };
 
   // 약관 동의 후 회원가입 API 호출
@@ -105,8 +106,9 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
       // 백엔드 회원가입 API 호출 (이메일 인증 발송)
       await signupWithEmail(email, password);
 
-      // 성공 시 이메일 인증 화면으로 전환
-      setStep("verification");
+      // 성공 시 이메일 인증 화면으로 전환 (URL 업데이트)
+      const emailParam = searchParams.get("email") || email;
+      router.push(`/create-account/password?email=${encodeURIComponent(emailParam)}&step=verification`);
     } catch (err) {
       console.error("Signup error:", err);
       setError("회원가입 중 오류가 발생했습니다.");

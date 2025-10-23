@@ -40,7 +40,7 @@ export default function VerificationStep({ onVerify, onResend, error, isLoading 
   };
 
   return (
-    <div className="flex flex-col items-center gap-[30px]">
+    <div className="flex w-full flex-col items-center gap-[30px]">
       {/* 입력 영역 */}
       <div className={`w-full ${isLoading ? "pointer-events-none cursor-not-allowed opacity-50" : ""}`}>
         <div className="relative mb-[8px]">
@@ -69,7 +69,7 @@ export default function VerificationStep({ onVerify, onResend, error, isLoading 
         <button
           onClick={() => onVerify(code)}
           disabled={code.length !== 6 || timeLeft <= 0}
-          className="btn-secondary w-full rounded-[4px] p-[12px] mt-[12px]"
+          className="btn-secondary mt-[12px] w-full rounded-[4px] p-[12px]"
         >
           계속
         </button>
