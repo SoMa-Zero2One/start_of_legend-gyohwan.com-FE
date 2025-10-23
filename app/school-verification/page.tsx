@@ -1,12 +1,12 @@
 "use client";
 
-import { Suspense, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import EmailStep from "@/components/school-verification/EmailStep";
 import VerificationStep from "@/components/school-verification/VerificationStep";
 import { sendSchoolEmailVerification, confirmSchoolEmailVerification } from "@/lib/api/user";
-import { getRedirectUrl, clearRedirectUrl } from "@/lib/utils/redirect";
+import { getRedirectUrl, clearRedirectUrl, saveRedirectUrl } from "@/lib/utils/redirect";
 import { useAuthStore } from "@/stores/authStore";
 import TermsAgreement from "@/components/auth/TermsAgreement";
 
@@ -14,12 +14,24 @@ type Step = "email" | "verification";
 
 function SchoolVerificationContent() {
   const router = useRouter();
-  const { fetchUser } = useAuthStore();
+  const searchParams = useSearchParams();
+  const { isLoggedIn, user, fetchUser } = useAuthStore();
 
-  const [step, setStep] = useState<Step>("email");
+  // URL 쿼리 파라미터에서 step 읽기
+  const step = (searchParams.get("step") as Step) || "email";
+
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // 로그인 체크: 로그인되지 않은 경우 리다이렉트
+  useEffect(() => {
+    if (!isLoggedIn || !user) {
+      const currentUrl = "/school-verification";
+      saveRedirectUrl(currentUrl);
+      router.push("/log-in-or-create-account");
+    }
+  }, [isLoggedIn, user, router]);
 
   // Step 1: 학교 이메일 입력 후 인증 코드 발송
   const handleEmailSubmit = async (schoolEmail: string) => {
@@ -29,7 +41,8 @@ function SchoolVerificationContent() {
     try {
       await sendSchoolEmailVerification(schoolEmail);
       setEmail(schoolEmail);
-      setStep("verification");
+      // URL 업데이트로 step 변경
+      router.push("/school-verification?step=verification");
     } catch (err) {
       console.error("School email verification error:", err);
       setError("인증 메일 발송 중 오류가 발생했습니다.");
@@ -106,7 +119,14 @@ function SchoolVerificationContent() {
           </div>
 
           {/* Step 컴포넌트 */}
-          {step === "email" && <EmailStep onSubmit={handleEmailSubmit} error={error} isLoading={isLoading} />}
+          {step === "email" && (
+            <EmailStep
+              onSubmit={handleEmailSubmit}
+              error={error}
+              isLoading={isLoading}
+              onErrorClear={() => setError("")}
+            />
+          )}
           {step === "verification" && (
             <VerificationStep
               onVerify={handleCodeVerify}

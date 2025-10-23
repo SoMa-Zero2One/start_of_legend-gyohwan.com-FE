@@ -6,9 +6,10 @@ interface EmailStepProps {
   onSubmit: (email: string) => void;
   error: string;
   isLoading: boolean;
+  onErrorClear?: () => void;
 }
 
-export default function EmailStep({ onSubmit, error, isLoading }: EmailStepProps) {
+export default function EmailStep({ onSubmit, error, isLoading, onErrorClear }: EmailStepProps) {
   const [email, setEmail] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [showEmailError, setShowEmailError] = useState(false);
@@ -22,6 +23,11 @@ export default function EmailStep({ onSubmit, error, isLoading }: EmailStepProps
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newEmail = e.target.value;
     setEmail(newEmail);
+
+    // 부모 컴포넌트의 error 초기화
+    if (onErrorClear) {
+      onErrorClear();
+    }
 
     // 입력 도중에도 실시간으로 이메일 형식 검증
     if (newEmail && !isValidEmail(newEmail)) {
