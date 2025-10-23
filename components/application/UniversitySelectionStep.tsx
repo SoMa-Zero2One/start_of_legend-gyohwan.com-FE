@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import SearchIcon from "@/components/icons/SearchIcon";
 import DragHandleIcon from "@/components/icons/DragHandleIcon";
+import CTAButton from "@/components/common/CTAButton";
+import { submitApplication } from "@/lib/api/application";
 import type { Slot } from "@/types/slot";
+import type { SubmitApplicationRequest } from "@/types/application";
 
 interface UniversitySelectionStepProps {
   seasonId: number;
@@ -18,9 +22,13 @@ interface SelectedUniversity {
 }
 
 export default function UniversitySelectionStep({ seasonId, gpaId, languageId, slots }: UniversitySelectionStepProps) {
+  const router = useRouter();
   const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>([]);
   const [extraScore, setExtraScore] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [tooltipMessage, setTooltipMessage] = useState<string>("");
+  const [shouldShake, setShouldShake] = useState(false);
 
   // 지망 카드 클릭 핸들러
   const handleChoiceCardClick = (choice: number) => {
@@ -34,9 +42,63 @@ export default function UniversitySelectionStep({ seasonId, gpaId, languageId, s
   };
 
   // 저장 버튼 핸들러
-  const handleSubmit = () => {
-    // TODO: 최종 확인 모달 표시 후 POST
-    console.log("Submit:", { extraScore, selectedUniversities, gpaId, languageId });
+  const handleSubmit = async () => {
+    // Validation
+    if (!gpaId || !languageId) {
+      setTooltipMessage("성적 정보가 없습니다. Step 1부터 다시 진행해주세요.");
+      setShouldShake(true);
+      setTimeout(() => {
+        setTooltipMessage("");
+        setShouldShake(false);
+      }, 2000);
+      return;
+    }
+
+    if (selectedUniversities.length === 0) {
+      setTooltipMessage("최소 1개 이상의 지망 대학을 선택해주세요.");
+      setShouldShake(true);
+      setTimeout(() => {
+        setTooltipMessage("");
+        setShouldShake(false);
+      }, 2000);
+      return;
+    }
+
+    // TODO: 최종 확인 모달 표시
+    const confirmed = confirm(
+      "지원서를 제출하시겠습니까?\n제출 후에는 성적 정보를 수정할 수 없습니다."
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setIsSubmitting(true);
+
+      const requestData: SubmitApplicationRequest = {
+        extraScore: extraScore ? parseFloat(extraScore) : 0,
+        gpaId,
+        languageId,
+        choices: selectedUniversities.map((u) => ({
+          choice: u.choice,
+          slotId: u.slot.slotId,
+        })),
+      };
+
+      await submitApplication(seasonId, requestData);
+
+      // TODO: 성공 후 실시간 경쟁률 페이지로 이동
+      router.push(`/strategy-room/${seasonId}`);
+    } catch (error) {
+      console.error("Application submission error:", error);
+      setTooltipMessage("지원서 제출에 실패했습니다. 다시 시도해주세요.");
+      setShouldShake(true);
+      setTimeout(() => {
+        setTooltipMessage("");
+        setShouldShake(false);
+      }, 2000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // 1~5지망 배열 생성
@@ -123,12 +185,13 @@ export default function UniversitySelectionStep({ seasonId, gpaId, languageId, s
         </section>
       </div>
 
-      {/* 하단 고정 버튼 */}
-      <div className="fixed bottom-0 left-1/2 w-full max-w-[420px] -translate-x-1/2 px-[20px] pb-[20px]">
-        <button onClick={handleSubmit} className="btn-primary body-1 w-full rounded-[4px] p-[12px]">
-          완료하기
-        </button>
-      </div>
+      <CTAButton
+        message="완료하기"
+        onClick={handleSubmit}
+        isLoading={isSubmitting}
+        tooltipMessage={tooltipMessage}
+        shouldShake={shouldShake}
+      />
     </div>
   );
 }

@@ -83,8 +83,6 @@ export interface CreateLanguageResponse {
 export interface ApplicationChoice {
   choice: number;
   slotId: number;
-  gpaId: number;
-  languageId: number;
 }
 
 /**
@@ -92,5 +90,7 @@ export interface ApplicationChoice {
  */
 export interface SubmitApplicationRequest {
   extraScore: number;
+  gpaId: number;
+  languageId: number;
   choices: ApplicationChoice[];
 }

@@ -47,17 +47,17 @@ function ApplicationNewContent() {
           return;
         }
 
-        // 2. 기존 성적 데이터 확인
+        // 2. 기존 성적 데이터 확인 (배열의 마지막 값이 최신 값)
         const [gpasData, languagesData] = await Promise.all([getGpas(), getLanguages()]);
 
         if (gpasData.gpas.length > 0) {
-          const gpa = gpasData.gpas[0];
+          const gpa = gpasData.gpas[gpasData.gpas.length - 1];
           setGpaId(gpa.gpaId);
           setExistingGpa(gpa);
         }
 
         if (languagesData.languages.length > 0) {
-          const language = languagesData.languages[0];
+          const language = languagesData.languages[languagesData.languages.length - 1];
           setLanguageId(language.languageId);
           setExistingLanguage(language);
         }

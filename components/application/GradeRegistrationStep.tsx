@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import CTAButton from "@/components/common/CTAButton";
 import { createGpa } from "@/lib/api/gpa";
 import { createLanguage } from "@/lib/api/language";
 import type { Gpa, Language, CreateLanguageRequest } from "@/types/application";
@@ -57,7 +58,8 @@ export default function GradeRegistrationStep({
   const [score, setScore] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [tooltipMessage, setTooltipMessage] = useState("");
+  const [shouldShake, setShouldShake] = useState(false);
 
   // 기존 데이터로 초기화
   useEffect(() => {
@@ -76,36 +78,45 @@ export default function GradeRegistrationStep({
     }
   }, [existingGpa, existingLanguage]);
 
+  const showError = (message: string) => {
+    setTooltipMessage(message);
+    setShouldShake(true);
+    setTimeout(() => {
+      setTooltipMessage("");
+      setShouldShake(false);
+    }, 2000);
+  };
+
   const handleSubmit = async () => {
-    setError("");
+    setTooltipMessage("");
 
     // 학점 유효성 검사
     const gpaValue = parseFloat(gpaScore);
     if (!gpaScore || isNaN(gpaValue)) {
-      setError("학점을 입력해주세요.");
+      showError("학점을 입력해주세요.");
       return;
     }
 
     if (gpaValue < 0 || gpaValue > gpaCriteria) {
-      setError(`학점은 0 ~ ${gpaCriteria} 사이의 값이어야 합니다.`);
+      showError(`학점은 0 ~ ${gpaCriteria} 사이의 값이어야 합니다.`);
       return;
     }
 
     // 어학 시험 종류 검사
     if (!testType) {
-      setError("어학 시험 종류를 선택해주세요.");
+      showError("어학 시험 종류를 선택해주세요.");
       return;
     }
 
     // 어학 점수 검사
     if (testType === "기타") {
       if (!score) {
-        setError("어학 시험과 점수를 입력해주세요.");
+        showError("어학 시험과 점수를 입력해주세요.");
         return;
       }
     } else {
       if (!score) {
-        setError("점수를 입력해주세요.");
+        showError("점수를 입력해주세요.");
         return;
       }
 
@@ -115,12 +126,12 @@ export default function GradeRegistrationStep({
 
       if (scoreRange) {
         if (isNaN(scoreValue)) {
-          setError("올바른 점수를 입력해주세요.");
+          showError("올바른 점수를 입력해주세요.");
           return;
         }
 
         if (scoreValue < scoreRange.min || scoreValue > scoreRange.max) {
-          setError(`${testType} 점수는 ${scoreRange.min} ~ ${scoreRange.max} 사이의 값이어야 합니다.`);
+          showError(`${testType} 점수는 ${scoreRange.min} ~ ${scoreRange.max} 사이의 값이어야 합니다.`);
           return;
         }
       }
@@ -163,7 +174,7 @@ export default function GradeRegistrationStep({
       onSubmit(gpaResponse.gpaId, languageResponse.languageId);
     } catch (error) {
       console.error("Submit error:", error);
-      setError("성적 등록 중 오류가 발생했습니다.");
+      showError("성적 등록 중 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }
@@ -232,20 +243,15 @@ export default function GradeRegistrationStep({
           </div>
         </section>
 
-        {/* 에러 메시지 */}
-        {error && <p className="caption-2 text-error-red mt-[16px]">{error}</p>}
       </div>
 
-      {/* 하단 고정 버튼 */}
-      <div className="fixed bottom-0 left-1/2 w-full max-w-[420px] -translate-x-1/2 px-[20px] pb-[20px]">
-        <button
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-          className="btn-primary body-1 w-full rounded-[4px] p-[12px]"
-        >
-          {isSubmitting ? "등록 중..." : "다음"}
-        </button>
-      </div>
+      <CTAButton
+        message="다음"
+        onClick={handleSubmit}
+        isLoading={isSubmitting}
+        tooltipMessage={tooltipMessage}
+        shouldShake={shouldShake}
+      />
     </div>
   );
 }
