@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
+import ProgressBar from "@/components/common/ProgressBar";
 import GradeRegistrationStep from "@/components/application/GradeRegistrationStep";
 import UniversitySelectionStep from "@/components/application/UniversitySelectionStep";
 import { getSeasonSlots } from "@/lib/api/slot";
@@ -85,7 +86,8 @@ function ApplicationNewContent() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header title="성적 공유" showPrevButton />
+      <Header title="성적 공유" showPrevButton showBorder={false} />
+      <ProgressBar currentStep={step === "university-selection" ? 2 : 1} totalSteps={2} />
 
       {/* Step 1: 성적 등록 */}
       {step === "grade-registration" && (
