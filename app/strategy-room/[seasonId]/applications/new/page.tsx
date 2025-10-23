@@ -10,6 +10,7 @@ import { getSeasonSlots } from "@/lib/api/slot";
 import { getGpas } from "@/lib/api/gpa";
 import { getLanguages } from "@/lib/api/language";
 import type { Gpa, Language } from "@/types/application";
+import type { Slot } from "@/types/slot";
 
 type Step = "grade-registration" | "university-selection";
 
@@ -27,6 +28,7 @@ function ApplicationNewContent() {
   const [languageId, setLanguageId] = useState<number | null>(null);
   const [existingGpa, setExistingGpa] = useState<Gpa | null>(null);
   const [existingLanguage, setExistingLanguage] = useState<Language | null>(null);
+  const [slots, setSlots] = useState<Slot[]>([]);
 
   // 초기 데이터 로드 및 isApplied 확인
   useEffect(() => {
@@ -34,8 +36,10 @@ function ApplicationNewContent() {
       try {
         setIsLoading(true);
 
-        // 1. isApplied 확인
+        // 1. isApplied 확인 및 slots 데이터 저장
         const slotsData = await getSeasonSlots(seasonId);
+        setSlots(slotsData.slots);
+
         if (slotsData.isApplied) {
           // 이미 지원한 경우 -> 실시간 경쟁률 페이지로 리다이렉트
           // TODO: 실시간 경쟁률 페이지 URL 확정 후 수정 필요
@@ -101,7 +105,12 @@ function ApplicationNewContent() {
 
       {/* Step 2: 지망 대학 등록 */}
       {step === "university-selection" && (
-        <UniversitySelectionStep seasonId={seasonId} gpaId={gpaId} languageId={languageId} />
+        <UniversitySelectionStep
+          seasonId={seasonId}
+          gpaId={gpaId}
+          languageId={languageId}
+          slots={slots}
+        />
       )}
     </div>
   );
