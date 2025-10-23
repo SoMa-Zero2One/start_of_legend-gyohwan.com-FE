@@ -28,6 +28,20 @@ const LANGUAGE_TEST_TYPES = [
   "기타",
 ];
 
+// 어학 시험별 점수 범위
+const LANGUAGE_SCORE_RANGES: Record<string, { min: number; max: number }> = {
+  TOEIC: { min: 10, max: 990 },
+  "TOEFL IBT": { min: 0, max: 120 },
+  "TOEFL ITP": { min: 310, max: 677 },
+  IELTS: { min: 0, max: 9 },
+  "JLPT N1": { min: 0, max: 180 },
+  "JLPT N2": { min: 0, max: 180 },
+  "JLPT N3": { min: 0, max: 180 },
+  "HSK 4급": { min: 0, max: 300 },
+  "HSK 5급": { min: 0, max: 300 },
+  "HSK 6급": { min: 0, max: 300 },
+};
+
 export default function GradeRegistrationStep({
   seasonId,
   existingGpa,
@@ -65,17 +79,25 @@ export default function GradeRegistrationStep({
   const handleSubmit = async () => {
     setError("");
 
-    // 유효성 검사
-    if (!gpaScore || parseFloat(gpaScore) <= 0) {
+    // 학점 유효성 검사
+    const gpaValue = parseFloat(gpaScore);
+    if (!gpaScore || isNaN(gpaValue)) {
       setError("학점을 입력해주세요.");
       return;
     }
 
+    if (gpaValue < 0 || gpaValue > gpaCriteria) {
+      setError(`학점은 0 ~ ${gpaCriteria} 사이의 값이어야 합니다.`);
+      return;
+    }
+
+    // 어학 시험 종류 검사
     if (!testType) {
       setError("어학 시험 종류를 선택해주세요.");
       return;
     }
 
+    // 어학 점수 검사
     if (testType === "기타") {
       if (!score) {
         setError("어학 시험과 점수를 입력해주세요.");
@@ -85,6 +107,22 @@ export default function GradeRegistrationStep({
       if (!score) {
         setError("점수를 입력해주세요.");
         return;
+      }
+
+      // 점수 범위 검사
+      const scoreValue = parseFloat(score);
+      const scoreRange = LANGUAGE_SCORE_RANGES[testType];
+
+      if (scoreRange) {
+        if (isNaN(scoreValue)) {
+          setError("올바른 점수를 입력해주세요.");
+          return;
+        }
+
+        if (scoreValue < scoreRange.min || scoreValue > scoreRange.max) {
+          setError(`${testType} 점수는 ${scoreRange.min} ~ ${scoreRange.max} 사이의 값이어야 합니다.`);
+          return;
+        }
       }
     }
 
