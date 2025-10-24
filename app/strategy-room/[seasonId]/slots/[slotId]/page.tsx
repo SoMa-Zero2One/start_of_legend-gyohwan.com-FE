@@ -80,7 +80,7 @@ export default function SlotDetailPage() {
   const handleApplicantClick = (applicationId: number) => {
     if (data?.hasApplied) {
       // 성적 공유 참여 시 -> 상세 페이지로 이동
-      router.push(`/strategy-room/${seasonId}/applicants/${applicationId}`);
+      router.push(`/strategy-room/${seasonId}/applications/${applicationId}`);
     } else {
       // 이전 타이머가 있다면 정리
       if (tooltipTimeoutRef.current) {

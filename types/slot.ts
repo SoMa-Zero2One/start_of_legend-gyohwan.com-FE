@@ -82,3 +82,8 @@ export interface MyApplicationResponse {
     };
   }>;
 }
+
+/**
+ * 지원자 상세 정보 조회 응답 (MyApplicationResponse와 동일한 구조)
+ */
+export type ApplicationDetailResponse = MyApplicationResponse;

@@ -8,6 +8,8 @@ import Tabs from "@/components/common/Tabs";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import { getSeasonSlots, getMyApplication } from "@/lib/api/slot";
 import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
+import { useAuthStore } from "@/stores/authStore";
+import { saveRedirectUrl } from "@/lib/utils/redirect";
 
 type TabType = "지망한 대학" | "지원자가 있는 대학" | "모든 대학";
 
@@ -16,6 +18,7 @@ export default function StrategyRoomPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const seasonId = params.seasonId as string;
+  const { user, isLoggedIn } = useAuthStore();
 
   const [data, setData] = useState<SeasonSlotsResponse | null>(null);
   const [myApplication, setMyApplication] = useState<MyApplicationResponse | null>(null);
@@ -111,6 +114,30 @@ export default function StrategyRoomPage() {
     return data.slots.filter((slot) => slot.choiceCount >= 1);
   }, [data]);
 
+  // CTA 버튼 클릭 핸들러 (ShareGradeCTA의 handleClick과 동일한 로직)
+  const handleCTAClick = () => {
+    const targetUrl = `/strategy-room/${seasonId}/applications/new`;
+
+    // 로그인 확인
+    if (!isLoggedIn || !user) {
+      // 리다이렉트 URL 저장 후 로그인 페이지로 이동
+      saveRedirectUrl(targetUrl);
+      router.push("/log-in-or-create-account");
+      return;
+    }
+
+    // 학교 인증 확인
+    if (!user.schoolVerified) {
+      // 리다이렉트 URL 저장 후 학교 인증 페이지로 이동
+      saveRedirectUrl(targetUrl);
+      router.push("/school-verification");
+      return;
+    }
+
+    // 모두 완료된 경우 바로 이동
+    router.push(targetUrl);
+  };
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen flex-col">
@@ -190,7 +217,7 @@ export default function StrategyRoomPage() {
               <div className="medium-body-2 flex w-full max-w-[350px] flex-col items-center gap-[20px] px-[20px]">
                 <div>성적 공유하고 지금 바로 경쟁률을 확인하세요.</div>
                 <button
-                  onClick={() => router.push(`/strategy-room/${seasonId}/applications/new`)}
+                  onClick={handleCTAClick}
                   className="bg-primary-blue w-full rounded-[8px] py-[16px] text-white shadow-[0_4px_12px_rgba(5,109,255,0.3)]"
                 >
                   성적 공유하고 전체 확인하기 🚀
