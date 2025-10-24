@@ -13,7 +13,7 @@ export default function ApplicantCard({ choice, onClick }: ApplicantCardProps) {
   // 어학성적 표시 (languageTest languageGrade languageScore 형식)
   const languageDisplay =
     choice.languageTest && choice.languageGrade
-      ? [choice.languageTest, choice.languageGrade, choice.languageScore].filter(Boolean).join(' ')
+      ? [choice.languageTest, choice.languageGrade, choice.languageScore].filter(Boolean).join(" ")
       : choice.languageTest
         ? choice.languageTest
         : "-";
@@ -46,7 +46,7 @@ export default function ApplicantCard({ choice, onClick }: ApplicantCardProps) {
         <div className="flex items-center justify-between">
           <span className="text-gray-700">환산점수</span>
           <span>
-            <span className="font-bold">{scoreDisplay}</span> {choice.score !== null ? "점" : ""}
+            <span className="font-bold">{scoreDisplay}</span> {choice.score && "점"}
           </span>
         </div>
 
@@ -54,8 +54,8 @@ export default function ApplicantCard({ choice, onClick }: ApplicantCardProps) {
         <div className="flex items-center justify-between">
           <span className="text-gray-700">학점</span>
           <span>
-            <span className="font-bold">{choice.gpaScore !== null ? choice.gpaScore : "-"}</span>
-            {choice.gpaCriteria !== null ? `/${choice.gpaCriteria} 점` : ""}
+            <span className="font-bold">{choice.gpaScore || "-"}</span>
+            {choice.gpaCriteria && `/${choice.gpaCriteria} 점`}
           </span>
         </div>
 
@@ -64,6 +64,12 @@ export default function ApplicantCard({ choice, onClick }: ApplicantCardProps) {
           <span className="text-gray-700">어학성적</span>
           <span>
             <span className="font-bold">{languageDisplay}</span>
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-gray-700">가산점</span>
+          <span>
+            <span className="font-bold">{choice.extraScore || "-"}</span> {choice.extraScore && "점"}
           </span>
         </div>
       </div>
