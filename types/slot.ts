@@ -43,7 +43,7 @@ export interface Choice {
  */
 export interface SlotDetailResponse {
   slotId: number;
-  hasApplied: boolean;
+  hasAppied: boolean; // 백엔드 오타: hasApplied가 아닌 hasAppied로 옴
   seasonId: number;
   name: string;
   country: string;

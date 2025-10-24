@@ -78,7 +78,7 @@ export default function SlotDetailPage() {
 
   // 지원자 카드 클릭 핸들러
   const handleApplicantClick = (applicationId: number) => {
-    if (data?.hasApplied) {
+    if (data?.hasAppied) {
       // 성적 공유 참여 시 -> 상세 페이지로 이동
       router.push(`/strategy-room/${seasonId}/applications/${applicationId}`);
     } else {
@@ -224,7 +224,7 @@ export default function SlotDetailPage() {
               key={choice.applicationId}
               choice={choice}
               onClick={() => handleApplicantClick(choice.applicationId)}
-              isBlurred={!data?.hasApplied}
+              isBlurred={!data?.hasAppied}
               isMe={myApplication?.applicationId === choice.applicationId}
             />
           ))
@@ -232,7 +232,7 @@ export default function SlotDetailPage() {
       </div>
 
       {/* 하단 고정 CTA */}
-      {!data?.hasApplied && (
+      {!data?.hasAppied && (
         <ShareGradeCTA
           seasonId={seasonId}
           showTooltip={showTooltip}
