@@ -73,7 +73,7 @@ export default function SlotDetailPage() {
 
   // 지원자 카드 클릭 핸들러
   const handleApplicantClick = (applicationId: number) => {
-    if (data?.isApplied) {
+    if (data?.hasApplied) {
       // 성적 공유 참여 시 -> 상세 페이지로 이동
       router.push(`/strategy-room/${seasonId}/applicants/${applicationId}`);
     } else {

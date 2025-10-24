@@ -30,17 +30,17 @@ function ApplicationNewContent() {
   const [existingLanguage, setExistingLanguage] = useState<Language | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
 
-  // 초기 데이터 로드 및 isApplied 확인
+  // 초기 데이터 로드 및 hasApplied 확인
   useEffect(() => {
     const checkApplicationStatus = async () => {
       try {
         setIsLoading(true);
 
-        // 1. isApplied 확인 및 slots 데이터 저장
+        // 1. hasApplied 확인 및 slots 데이터 저장
         const slotsData = await getSeasonSlots(seasonId);
         setSlots(slotsData.slots);
 
-        if (slotsData.isApplied) {
+        if (slotsData.hasApplied) {
           // 이미 지원한 경우 -> 실시간 경쟁률 페이지로 리다이렉트
           router.push(`/strategy-room/${seasonId}`);
           return;

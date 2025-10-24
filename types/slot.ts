@@ -16,7 +16,7 @@ export interface Slot {
 export interface SeasonSlotsResponse {
   seasonId: number;
   seasonName: string;
-  isApplied?: boolean; // 사용자가 이미 지원했는지 여부
+  hasApplied: boolean; // 사용자가 이미 지원했는지 여부
   slots: Slot[];
 }
 
@@ -42,7 +42,7 @@ export interface Choice {
  */
 export interface SlotDetailResponse {
   slotId: number;
-  isApplied: boolean;
+  hasApplied: boolean;
   seasonId: number;
   name: string;
   country: string;
