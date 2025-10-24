@@ -144,8 +144,7 @@ export default function StrategyRoomPage() {
       <Header
         title={data.seasonName}
         showSearchButton
-        showHomeButton
-        homeHref={"/"}
+        showPrevButton
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         showBorder={false}

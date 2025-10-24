@@ -2,18 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import PrevIcon from "@/components/icons/PrevIcon";
-import HomeIcon from "@/components/icons/HomeIcon";
 import SearchIcon from "@/components/icons/SearchIcon";
 
 interface HeaderProps {
   children?: React.ReactNode;
   title?: string;
   showPrevButton?: boolean;
-  showHomeButton?: boolean; // 홈 버튼 (전략실 메인으로)
-  homeHref?: string; // 홈 버튼 링크
   showSearchButton?: boolean;
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
@@ -24,8 +21,6 @@ export default function Header({
   children,
   title,
   showPrevButton = false,
-  showHomeButton = false,
-  homeHref = "/",
   showSearchButton = false,
   searchQuery = "",
   onSearchChange,
@@ -39,12 +34,10 @@ export default function Header({
 
   const handleSearchCancel = () => {
     setIsSearchMode(false);
-    if (onSearchChange) {
-      onSearchChange("");
-    }
+    onSearchChange?.("");
   };
 
-  // 검색 모드 Header
+  // 검색 모드
   if (isSearchMode && showSearchButton) {
     return (
       <SearchHeader
@@ -52,20 +45,16 @@ export default function Header({
         onSearchChange={onSearchChange}
         onCancel={handleSearchCancel}
         showBorder={showBorder}
-        showHomeButton={showHomeButton}
         showPrevButton={showPrevButton}
-        homeHref={homeHref}
       />
     );
   }
 
-  // 일반 모드 Header
+  // 일반 모드
   return (
     <NormalHeader
       title={title}
       showPrevButton={showPrevButton}
-      showHomeButton={showHomeButton}
-      homeHref={homeHref}
       showSearchButton={showSearchButton}
       onSearchClick={handleSearchClick}
       showBorder={showBorder}
@@ -75,23 +64,19 @@ export default function Header({
   );
 }
 
-// 검색 모드 Header 컴포넌트
+// 🔍 검색 모드 Header
 function SearchHeader({
   searchQuery,
   onSearchChange,
   onCancel,
   showBorder,
-  showHomeButton,
   showPrevButton,
-  homeHref,
 }: {
   searchQuery: string;
   onSearchChange?: (query: string) => void;
   onCancel: () => void;
   showBorder: boolean;
-  showHomeButton: boolean;
   showPrevButton: boolean;
-  homeHref: string;
 }) {
   const router = useRouter();
 
@@ -99,21 +84,15 @@ function SearchHeader({
     <header
       className={`flex h-[50px] items-center gap-3 px-[20px] ${showBorder ? "border-b-[1px] border-b-gray-500" : ""}`}
     >
-      {/* 왼쪽: 홈 또는 뒤로 가기 버튼 유지 */}
-      {showHomeButton ? (
-        <Link href={homeHref} className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center">
-          <HomeIcon size={20} />
-        </Link>
-      ) : showPrevButton ? (
+      {showPrevButton && (
         <button
           onClick={() => router.back()}
           className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center"
         >
           <PrevIcon size={14} />
         </button>
-      ) : null}
+      )}
 
-      {/* 검색 입력창 */}
       <div className="relative flex flex-1">
         <input
           type="text"
@@ -123,7 +102,7 @@ function SearchHeader({
           className="w-full rounded-[4px] bg-gray-100 py-2 pr-14 pl-10 text-[14px] focus:outline-none"
           autoFocus
         />
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+        <div className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400">
           <SearchIcon size={16} />
         </div>
         <button
@@ -137,13 +116,11 @@ function SearchHeader({
   );
 }
 
-// 일반 모드 Header 컴포넌트
+// 🧭 일반 모드 Header
 function NormalHeader({
   children,
   title,
   showPrevButton,
-  showHomeButton,
-  homeHref,
   showSearchButton,
   onSearchClick,
   showBorder,
@@ -151,8 +128,6 @@ function NormalHeader({
   children?: React.ReactNode;
   title?: string;
   showPrevButton: boolean;
-  showHomeButton: boolean;
-  homeHref: string;
   showSearchButton: boolean;
   onSearchClick: () => void;
   showBorder: boolean;
@@ -161,23 +136,21 @@ function NormalHeader({
 
   return (
     <header
-      className={`flex h-[50px] items-center justify-between px-[20px] ${showBorder ? "border-b-[1px] border-b-gray-500" : ""}`}
+      className={`flex h-[50px] items-center justify-between px-[20px] ${
+        showBorder ? "border-b-[1px] border-b-gray-500" : ""
+      }`}
     >
       {title ? (
         <div className="relative flex flex-1 items-center justify-center">
-          {/* 왼쪽: 뒤로 가기 또는 홈 버튼 */}
-          {showHomeButton ? (
-            <Link href={homeHref} className="absolute left-0 flex h-[20px] w-[20px] cursor-pointer items-center">
-              <HomeIcon size={20} />
-            </Link>
-          ) : showPrevButton ? (
+          {/* 왼쪽: 뒤로가기 버튼 */}
+          {showPrevButton && (
             <button
               onClick={() => router.back()}
               className="absolute left-0 flex h-[20px] w-[20px] cursor-pointer items-center"
             >
               <PrevIcon size={14} />
             </button>
-          ) : null}
+          )}
 
           {/* 중앙: 제목 */}
           <h1 className="body-2">{title}</h1>
