@@ -21,6 +21,9 @@ interface UniversitySelectionStepProps {
   languageScore?: string | null;
   languageGrade?: string | null;
   slots: Slot[];
+  mode?: "new" | "edit"; // new: 신규 등록, edit: 수정
+  initialSelections?: SelectedUniversity[]; // edit 모드일 때 초기 선택값
+  initialExtraScore?: string; // edit 모드일 때 초기 가산점
 }
 
 interface SelectedUniversity {
@@ -36,10 +39,13 @@ export default function UniversitySelectionStep({
   languageScore,
   languageGrade,
   slots,
+  mode = "new",
+  initialSelections = [],
+  initialExtraScore = "",
 }: UniversitySelectionStepProps) {
   const router = useRouter();
-  const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>([]);
-  const [extraScore, setExtraScore] = useState("");
+  const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>(initialSelections);
+  const [extraScore, setExtraScore] = useState(initialExtraScore);
   const [showSearch, setShowSearch] = useState(false);
   const [currentChoice, setCurrentChoice] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -258,8 +264,8 @@ export default function UniversitySelectionStep({
         {/* Step 타이틀 */}
         <div className="mb-[24px] flex items-center justify-between">
           <div>
-            <p className="caption-1 text-primary-blue mb-[8px]">Step 02</p>
-            <h1 className="head-4">지망 대학 등록하기</h1>
+            {mode === "new" && <p className="caption-1 text-primary-blue mb-[8px]">Step 02</p>}
+            <h1 className="head-4">{mode === "edit" ? "지망 대학 변경하기" : "지망 대학 등록하기"}</h1>
           </div>
           {/* 검색 아이콘 - 빠른 추가용 */}
           <button
@@ -353,21 +359,23 @@ export default function UniversitySelectionStep({
           </button>
         </div>
         {/* 가산점 입력 */}
-        <section>
-          <label className="body-2 mb-[12px] block font-semibold">가산점</label>
-          <input
-            type="number"
-            step="0.1"
-            placeholder="가산점을 입력하세요 (선택)"
-            value={extraScore}
-            onChange={(e) => setExtraScore(e.target.value)}
-            className="body-2 focus:border-primary-blue w-full rounded-[8px] border border-gray-300 px-[16px] py-[14px] focus:outline-none"
-          />
-        </section>
+        {mode === "new" && (
+          <section>
+            <label className="body-2 mb-[12px] block font-semibold">가산점</label>
+            <input
+              type="number"
+              step="0.1"
+              placeholder="가산점을 입력하세요 (선택)"
+              value={extraScore}
+              onChange={(e) => setExtraScore(e.target.value)}
+              className="body-2 focus:border-primary-blue w-full rounded-[8px] border border-gray-300 px-[16px] py-[14px] focus:outline-none"
+            />
+          </section>
+        )}
       </div>
 
       <CTAButton
-        message="완료하기"
+        message={mode === "edit" ? "수정 완료하기" : "완료하기"}
         onClick={handleSubmit}
         isLoading={isSubmitting}
         tooltipMessage={tooltipMessage}
@@ -399,9 +407,13 @@ export default function UniversitySelectionStep({
       {/* 확인 모달 */}
       <ConfirmModal
         isOpen={showConfirmModal}
-        title="지원서 제출"
-        message={"지원서를 제출하시겠습니까?\n제출 후에는 성적 정보를 수정할 수 없습니다."}
-        confirmText="제출하기"
+        title={mode === "edit" ? "지망 대학 수정" : "지원서 제출"}
+        message={
+          mode === "edit"
+            ? "지망 대학을 수정하시겠습니까?"
+            : "지원서를 제출하시겠습니까?\n제출 후에는 성적 정보를 수정할 수 없습니다."
+        }
+        confirmText={mode === "edit" ? "수정하기" : "제출하기"}
         cancelText="취소"
         onConfirm={handleConfirmSubmit}
         onCancel={() => setShowConfirmModal(false)}
