@@ -7,8 +7,8 @@ import Header from "@/components/layout/Header";
 import ApplicantCard from "@/components/strategy-room/ApplicantCard";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import Tabs from "@/components/common/Tabs";
-import { getSlotDetail } from "@/lib/api/slot";
-import { SlotDetailResponse } from "@/types/slot";
+import { getSlotDetail, getMyApplication } from "@/lib/api/slot";
+import { SlotDetailResponse, MyApplicationResponse } from "@/types/slot";
 
 type TabType = "지망순위" | "환산점수" | "학점";
 
@@ -24,6 +24,7 @@ export default function SlotDetailPage() {
   const seasonId = params.seasonId as string;
 
   const [data, setData] = useState<SlotDetailResponse | null>(null);
+  const [myApplication, setMyApplication] = useState<MyApplicationResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,11 +45,15 @@ export default function SlotDetailPage() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const result = await getSlotDetail(parseInt(slotId));
-        setData(result);
+        const [slotResult, applicationResult] = await Promise.all([
+          getSlotDetail(parseInt(slotId)),
+          getMyApplication(parseInt(seasonId)).catch(() => null), // 지원서가 없을 수 있음
+        ]);
+        setData(slotResult);
+        setMyApplication(applicationResult);
       } catch (err) {
-        console.error("Slot detail fetch error:", err);
-        setError("슬롯 상세 정보를 불러오는데 실패했습니다.");
+        console.error("Data fetch error:", err);
+        setError("데이터를 불러오는데 실패했습니다.");
       } finally {
         setIsLoading(false);
       }
@@ -57,7 +62,7 @@ export default function SlotDetailPage() {
     if (slotId) {
       fetchData();
     }
-  }, [slotId]);
+  }, [slotId, seasonId]);
 
   // Cleanup: 컴포넌트 언마운트 시 타이머 정리
   useEffect(() => {
@@ -219,13 +224,15 @@ export default function SlotDetailPage() {
               key={choice.applicationId}
               choice={choice}
               onClick={() => handleApplicantClick(choice.applicationId)}
+              isBlurred={!data?.hasApplied}
+              isMe={myApplication?.applicationId === choice.applicationId}
             />
           ))
         )}
       </div>
 
       {/* 하단 고정 CTA */}
-      {data?.hasApplied && (
+      {!data?.hasApplied && (
         <ShareGradeCTA
           seasonId={seasonId}
           showTooltip={showTooltip}
