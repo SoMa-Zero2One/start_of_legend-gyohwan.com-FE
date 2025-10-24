@@ -17,8 +17,8 @@ const GPA_CRITERIA_OPTIONS = [4.5, 4.3, 4.0];
 
 const LANGUAGE_TEST_TYPES = [
   "TOEIC",
-  "TOEFL IBT",
-  "TOEFL ITP",
+  "TOEFL_IBT",
+  "TOEFL_ITP",
   "IELTS",
   "JLPT N1",
   "JLPT N2",
@@ -32,8 +32,8 @@ const LANGUAGE_TEST_TYPES = [
 // 어학 시험별 점수 범위
 const LANGUAGE_SCORE_RANGES: Record<string, { min: number; max: number }> = {
   TOEIC: { min: 10, max: 990 },
-  "TOEFL IBT": { min: 0, max: 120 },
-  "TOEFL ITP": { min: 310, max: 677 },
+  TOEFL_IBT: { min: 0, max: 120 },
+  TOEFL_ITP: { min: 310, max: 677 },
   IELTS: { min: 0, max: 9 },
   "JLPT N1": { min: 0, max: 180 },
   "JLPT N2": { min: 0, max: 180 },
@@ -242,7 +242,6 @@ export default function GradeRegistrationStep({
             )}
           </div>
         </section>
-
       </div>
 
       <CTAButton
