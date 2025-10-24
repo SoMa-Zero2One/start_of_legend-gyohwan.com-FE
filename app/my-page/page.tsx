@@ -105,10 +105,8 @@ export default function MyInfoPage() {
         <ProfileField
           label="학교 인증"
           value={user.schoolEmail || "학교 인증을 진행하지 않았습니다."}
-          {...(!user.schoolVerified && {
-            buttonText: "인증하기",
-            onButtonClick: handleSchoolVerification,
-          })}
+          buttonText={!user.schoolVerified ? "인증하기" : undefined}
+          onButtonClick={!user.schoolVerified ? handleSchoolVerification : undefined}
           showCheckIcon={user.schoolVerified}
         />
 
