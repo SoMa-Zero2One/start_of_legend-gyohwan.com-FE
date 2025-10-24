@@ -52,3 +52,32 @@ export interface SlotDetailResponse {
   etc: string | null;
   choices: Choice[];
 }
+
+/**
+ * 내 지원서 조회 응답
+ */
+export interface MyApplicationResponse {
+  applicationId: number;
+  seasonId: number;
+  nickname: string;
+  gpa: {
+    score: number;
+    criteria: string;
+  };
+  language: {
+    testType: string;
+    score: string;
+    grade: string | null;
+  };
+  choices: Array<{
+    choice: number;
+    slot: {
+      slotId: number;
+      name: string;
+      country: string;
+      choiceCount: number;
+      slotCount: string;
+      duration: string;
+    };
+  }>;
+}

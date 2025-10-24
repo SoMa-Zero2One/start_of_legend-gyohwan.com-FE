@@ -6,8 +6,8 @@ import Header from "@/components/layout/Header";
 import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
 import Tabs from "@/components/common/Tabs";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
-import { getSeasonSlots } from "@/lib/api/slot";
-import { SeasonSlotsResponse } from "@/types/slot";
+import { getSeasonSlots, getMyApplication } from "@/lib/api/slot";
+import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
 
 type TabType = "지망한 대학" | "지원자가 있는 대학" | "모든 대학";
 
@@ -18,6 +18,7 @@ export default function StrategyRoomPage() {
   const seasonId = params.seasonId as string;
 
   const [data, setData] = useState<SeasonSlotsResponse | null>(null);
+  const [myApplication, setMyApplication] = useState<MyApplicationResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,21 +39,28 @@ export default function StrategyRoomPage() {
     router.replace(`/strategy-room/${seasonId}?${params.toString()}`, { scroll: false });
   };
 
-  // 임시: 성적 공유 여부 (나중에 API로 확인)
-  const [hasSharedGrade] = useState(false);
+  // API에서 받아온 성적 공유 여부
+  const hasSharedGrade = data?.hasApplied ?? false;
 
-  // 임시: 내가 지원한 대학 목록 (slotId 배열)
-  const myChosenUniversities = useMemo(() => [2, 3], []); // 임시 데이터
+  // 내가 지원한 대학 목록 (slotId 배열)
+  const myChosenUniversities = useMemo(() => {
+    if (!myApplication) return [];
+    return myApplication.choices.map((choice) => choice.slot.slotId);
+  }, [myApplication]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const result = await getSeasonSlots(parseInt(seasonId));
-        setData(result);
+        const [slotsResult, applicationResult] = await Promise.all([
+          getSeasonSlots(parseInt(seasonId)),
+          getMyApplication(parseInt(seasonId)).catch(() => null), // 지원서가 없을 수 있으므로 에러 무시
+        ]);
+        setData(slotsResult);
+        setMyApplication(applicationResult);
       } catch (err) {
-        console.error("Slots fetch error:", err);
-        setError("슬롯 정보를 불러오는데 실패했습니다.");
+        console.error("Data fetch error:", err);
+        setError("데이터를 불러오는데 실패했습니다.");
       } finally {
         setIsLoading(false);
       }
