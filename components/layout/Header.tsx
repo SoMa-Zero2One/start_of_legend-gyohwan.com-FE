@@ -6,11 +6,13 @@ import Image from "next/image";
 import Link from "next/link";
 import PrevIcon from "@/components/icons/PrevIcon";
 import SearchIcon from "@/components/icons/SearchIcon";
+import HomeIcon from "@/components/icons/HomeIcon";
 
 interface HeaderProps {
   children?: React.ReactNode;
   title?: string;
   showPrevButton?: boolean;
+  showHomeButton?: boolean;
   showSearchButton?: boolean;
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
@@ -21,6 +23,7 @@ export default function Header({
   children,
   title,
   showPrevButton = false,
+  showHomeButton = false,
   showSearchButton = false,
   searchQuery = "",
   onSearchChange,
@@ -55,6 +58,7 @@ export default function Header({
     <NormalHeader
       title={title}
       showPrevButton={showPrevButton}
+      showHomeButton={showHomeButton}
       showSearchButton={showSearchButton}
       onSearchClick={handleSearchClick}
       showBorder={showBorder}
@@ -121,6 +125,7 @@ function NormalHeader({
   children,
   title,
   showPrevButton,
+  showHomeButton,
   showSearchButton,
   onSearchClick,
   showBorder,
@@ -128,6 +133,7 @@ function NormalHeader({
   children?: React.ReactNode;
   title?: string;
   showPrevButton: boolean;
+  showHomeButton: boolean;
   showSearchButton: boolean;
   onSearchClick: () => void;
   showBorder: boolean;
@@ -142,15 +148,19 @@ function NormalHeader({
     >
       {title ? (
         <div className="relative flex flex-1 items-center justify-center">
-          {/* 왼쪽: 뒤로가기 버튼 */}
-          {showPrevButton && (
-            <button
-              onClick={() => router.back()}
-              className="absolute left-0 flex h-[20px] w-[20px] cursor-pointer items-center"
-            >
-              <PrevIcon size={14} />
-            </button>
-          )}
+          {/* 왼쪽: 뒤로가기 + 홈 버튼 */}
+          <div className="absolute left-0 flex items-center gap-[12px]">
+            {showPrevButton && (
+              <button onClick={() => router.back()} className="flex h-[20px] w-[20px] cursor-pointer items-center">
+                <PrevIcon size={14} />
+              </button>
+            )}
+            {showHomeButton && (
+              <Link href="/" className="flex h-[20px] w-[20px] cursor-pointer items-center">
+                <HomeIcon size={20} />
+              </Link>
+            )}
+          </div>
 
           {/* 중앙: 제목 */}
           <h1 className="body-2">{title}</h1>
