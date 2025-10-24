@@ -80,7 +80,7 @@ export default function SlotDetailPage() {
   const handleApplicantClick = (applicationId: number) => {
     if (data?.hasApplied) {
       // 성적 공유 참여 시 -> 상세 페이지로 이동
-      router.push(`/strategy-room/${seasonId}/applicants/${applicationId}`);
+      router.push(`/strategy-room/${seasonId}/applications/${applicationId}`);
     } else {
       // 이전 타이머가 있다면 정리
       if (tooltipTimeoutRef.current) {
@@ -146,7 +146,7 @@ export default function SlotDetailPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="지원자 목록" showPrevButton />
+        <Header title="지원자 목록" showPrevButton showBorder />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-gray-500">로딩 중...</p>
         </div>
@@ -157,7 +157,7 @@ export default function SlotDetailPage() {
   if (error || !data) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="지원자 목록" showPrevButton />
+        <Header title="지원자 목록" showPrevButton showBorder />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-error-red">{error || "데이터를 찾을 수 없습니다."}</p>
         </div>
@@ -168,7 +168,7 @@ export default function SlotDetailPage() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* 상단 헤더 */}
-      <Header title=" " showPrevButton showBorder={false} />
+      <Header title=" " showPrevButton />
 
       {/* 대학 정보 */}
       <section className="border-b border-gray-100 p-[20px]">

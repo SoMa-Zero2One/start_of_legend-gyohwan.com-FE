@@ -17,6 +17,7 @@ export interface SeasonSlotsResponse {
   seasonId: number;
   seasonName: string;
   hasApplied: boolean; // 사용자가 이미 지원했는지 여부
+  applicantCount: number;
   slots: Slot[];
 }
 
@@ -81,3 +82,8 @@ export interface MyApplicationResponse {
     };
   }>;
 }
+
+/**
+ * 지원자 상세 정보 조회 응답 (MyApplicationResponse와 동일한 구조)
+ */
+export type ApplicationDetailResponse = MyApplicationResponse;

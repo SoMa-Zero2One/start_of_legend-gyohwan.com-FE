@@ -8,6 +8,8 @@ import Tabs from "@/components/common/Tabs";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import { getSeasonSlots, getMyApplication } from "@/lib/api/slot";
 import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
+import { useAuthStore } from "@/stores/authStore";
+import { saveRedirectUrl } from "@/lib/utils/redirect";
 
 type TabType = "지망한 대학" | "지원자가 있는 대학" | "모든 대학";
 
@@ -16,6 +18,7 @@ export default function StrategyRoomPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const seasonId = params.seasonId as string;
+  const { user, isLoggedIn } = useAuthStore();
 
   const [data, setData] = useState<SeasonSlotsResponse | null>(null);
   const [myApplication, setMyApplication] = useState<MyApplicationResponse | null>(null);
@@ -111,10 +114,34 @@ export default function StrategyRoomPage() {
     return data.slots.filter((slot) => slot.choiceCount >= 1);
   }, [data]);
 
+  // CTA 버튼 클릭 핸들러 (ShareGradeCTA의 handleClick과 동일한 로직)
+  const handleCTAClick = () => {
+    const targetUrl = `/strategy-room/${seasonId}/applications/new`;
+
+    // 로그인 확인
+    if (!isLoggedIn || !user) {
+      // 리다이렉트 URL 저장 후 로그인 페이지로 이동
+      saveRedirectUrl(targetUrl);
+      router.push("/log-in-or-create-account");
+      return;
+    }
+
+    // 학교 인증 확인
+    if (!user.schoolVerified) {
+      // 리다이렉트 URL 저장 후 학교 인증 페이지로 이동
+      saveRedirectUrl(targetUrl);
+      router.push("/school-verification");
+      return;
+    }
+
+    // 모두 완료된 경우 바로 이동
+    router.push(targetUrl);
+  };
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="전략실" showPrevButton />
+        <Header title="전략실" showPrevButton showBorder />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-gray-500">로딩 중...</p>
         </div>
@@ -125,7 +152,7 @@ export default function StrategyRoomPage() {
   if (error || !data) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="전략실" showPrevButton />
+        <Header title="전략실" showPrevButton showBorder />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-error-red">{error || "데이터를 찾을 수 없습니다."}</p>
         </div>
@@ -145,18 +172,28 @@ export default function StrategyRoomPage() {
         title={data.seasonName}
         showSearchButton
         showPrevButton
+        showHomeButton
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        showBorder={false}
       />
 
       {/* 제목 */}
       <section className="px-[20px] py-[16px]">
         <h2 className="caption-1">{parsedSemester}</h2>
-        <h2 className="head-4 mt-[8px]">{universityName} 교환학생</h2>
+        <div className="mt-[8px] flex items-center justify-between">
+          <h2 className="head-4">{universityName} 교환학생</h2>
+          {hasSharedGrade && (
+            <button
+              onClick={() => router.push(`/strategy-room/${seasonId}/applications/new`)}
+              className="rounded-[6px] bg-gray-100 px-[12px] py-[6px] text-[12px] text-gray-700 hover:bg-gray-200"
+            >
+              지원 대학교 변경
+            </button>
+          )}
+        </div>
         <div className="relative mt-[12px] inline-block overflow-hidden rounded-full bg-gradient-to-r from-[#056DFF] via-[#029EFA] to-[#00D0FF] p-[1px]">
           <span className="text-primary-blue caption-2 block rounded-full bg-[#E9F1FF] px-3 py-1">
-            🔥 총 {}명 성적 공유 참여 중!
+            🔥 총 {data.applicantCount}명 성적 공유 참여 중!
           </span>
         </div>
       </section>
@@ -190,7 +227,7 @@ export default function StrategyRoomPage() {
               <div className="medium-body-2 flex w-full max-w-[350px] flex-col items-center gap-[20px] px-[20px]">
                 <div>성적 공유하고 지금 바로 경쟁률을 확인하세요.</div>
                 <button
-                  onClick={() => router.push(`/strategy-room/${seasonId}/applications/new`)}
+                  onClick={handleCTAClick}
                   className="bg-primary-blue w-full rounded-[8px] py-[16px] text-white shadow-[0_4px_12px_rgba(5,109,255,0.3)]"
                 >
                   성적 공유하고 전체 확인하기 🚀
