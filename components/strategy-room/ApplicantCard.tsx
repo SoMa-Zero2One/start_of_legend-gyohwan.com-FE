@@ -25,11 +25,11 @@ export default function ApplicantCard({ choice, onClick, isBlurred = false, isMe
   const scoreDisplay = isBlurred ? "95.50" : choice.score !== null ? choice.score.toFixed(2) : "-";
 
   // 학점 표시
-  const gpaDisplay = isBlurred ? "4.3" : choice.gpaScore || "-";
+  const gpaDisplay = isBlurred ? "4.3" : choice.gpaScore !== null ? choice.gpaScore : "-";
   const gpaCriteriaDisplay = isBlurred ? "4.5" : choice.gpaCriteria;
 
   // 가산점 표시
-  const extraScoreDisplay = isBlurred ? "5.0" : choice.extraScore || "-";
+  const extraScoreDisplay = isBlurred ? "5.0" : choice.extraScore !== null ? choice.extraScore : "-";
 
   return (
     <div
@@ -61,7 +61,7 @@ export default function ApplicantCard({ choice, onClick, isBlurred = false, isMe
         <div className="flex items-center justify-between">
           <span className="text-gray-700">환산점수</span>
           <span className={isBlurred ? "select-none blur-sm" : ""}>
-            <span className="font-bold">{scoreDisplay}</span> {(isBlurred || choice.score) && "점"}
+            <span className="font-bold">{scoreDisplay}</span> {(isBlurred || choice.score !== null) && "점"}
           </span>
         </div>
 
@@ -84,7 +84,7 @@ export default function ApplicantCard({ choice, onClick, isBlurred = false, isMe
         <div className="flex items-center justify-between">
           <span className="text-gray-700">가산점</span>
           <span className={isBlurred ? "select-none blur-sm" : ""}>
-            <span className="font-bold">{extraScoreDisplay}</span> {(isBlurred || choice.extraScore) && "점"}
+            <span className="font-bold">{extraScoreDisplay}</span> {(isBlurred || choice.extraScore !== null) && "점"}
           </span>
         </div>
       </div>
