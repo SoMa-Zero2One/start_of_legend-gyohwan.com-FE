@@ -8,7 +8,7 @@ export interface Season {
   name: string;
   startDate: string | null;
   endDate: string | null;
-  isApplied: boolean;
+  hasApplied: boolean;
 }
 
 /**

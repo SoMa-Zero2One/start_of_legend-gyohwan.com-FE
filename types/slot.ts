@@ -16,7 +16,7 @@ export interface Slot {
 export interface SeasonSlotsResponse {
   seasonId: number;
   seasonName: string;
-  isApplied?: boolean; // 사용자가 이미 지원했는지 여부
+  hasApplied: boolean; // 사용자가 이미 지원했는지 여부
   slots: Slot[];
 }
 
@@ -42,7 +42,7 @@ export interface Choice {
  */
 export interface SlotDetailResponse {
   slotId: number;
-  isApplied: boolean;
+  hasApplied: boolean;
   seasonId: number;
   name: string;
   country: string;
@@ -51,4 +51,33 @@ export interface SlotDetailResponse {
   duration: string;
   etc: string | null;
   choices: Choice[];
+}
+
+/**
+ * 내 지원서 조회 응답
+ */
+export interface MyApplicationResponse {
+  applicationId: number;
+  seasonId: number;
+  nickname: string;
+  gpa: {
+    score: number;
+    criteria: string;
+  };
+  language: {
+    testType: string;
+    score: string;
+    grade: string | null;
+  };
+  choices: Array<{
+    choice: number;
+    slot: {
+      slotId: number;
+      name: string;
+      country: string;
+      choiceCount: number;
+      slotCount: string;
+      duration: string;
+    };
+  }>;
 }

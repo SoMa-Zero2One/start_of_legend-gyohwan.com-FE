@@ -6,8 +6,8 @@ import Header from "@/components/layout/Header";
 import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
 import Tabs from "@/components/common/Tabs";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
-import { getSeasonSlots } from "@/lib/api/slot";
-import { SeasonSlotsResponse } from "@/types/slot";
+import { getSeasonSlots, getMyApplication } from "@/lib/api/slot";
+import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
 
 type TabType = "지망한 대학" | "지원자가 있는 대학" | "모든 대학";
 
@@ -18,16 +18,16 @@ export default function StrategyRoomPage() {
   const seasonId = params.seasonId as string;
 
   const [data, setData] = useState<SeasonSlotsResponse | null>(null);
+  const [myApplication, setMyApplication] = useState<MyApplicationResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // URL query parameter에서 초기 탭 상태 읽기
   const tabParam = searchParams.get("tab") as TabType;
-  const initialTab: TabType = tabParam && ["지망한 대학", "지원자가 있는 대학", "모든 대학"].includes(tabParam)
-    ? tabParam
-    : "지원자가 있는 대학";
 
-  const [selectedTab, setSelectedTab] = useState<TabType>(initialTab);
+  const [selectedTab, setSelectedTab] = useState<TabType>(
+    tabParam && ["지망한 대학", "지원자가 있는 대학", "모든 대학"].includes(tabParam) ? tabParam : "지원자가 있는 대학"
+  );
   const [searchQuery, setSearchQuery] = useState("");
 
   // 탭 변경 핸들러 (URL 업데이트 포함)
@@ -38,21 +38,28 @@ export default function StrategyRoomPage() {
     router.replace(`/strategy-room/${seasonId}?${params.toString()}`, { scroll: false });
   };
 
-  // 임시: 성적 공유 여부 (나중에 API로 확인)
-  const [hasSharedGrade] = useState(false);
+  // API에서 받아온 성적 공유 여부
+  const hasSharedGrade = data?.hasApplied ?? false;
 
-  // 임시: 내가 지원한 대학 목록 (slotId 배열)
-  const myChosenUniversities = useMemo(() => [2, 3], []); // 임시 데이터
+  // 내가 지원한 대학 목록 (slotId 배열)
+  const myChosenUniversities = useMemo(() => {
+    if (!myApplication) return [];
+    return myApplication.choices.map((choice) => choice.slot.slotId);
+  }, [myApplication]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const result = await getSeasonSlots(parseInt(seasonId));
-        setData(result);
+        const [slotsResult, applicationResult] = await Promise.all([
+          getSeasonSlots(parseInt(seasonId)),
+          getMyApplication(parseInt(seasonId)).catch(() => null), // 지원서가 없을 수 있으므로 에러 무시
+        ]);
+        setData(slotsResult);
+        setMyApplication(applicationResult);
       } catch (err) {
-        console.error("Slots fetch error:", err);
-        setError("슬롯 정보를 불러오는데 실패했습니다.");
+        console.error("Data fetch error:", err);
+        setError("데이터를 불러오는데 실패했습니다.");
       } finally {
         setIsLoading(false);
       }
@@ -62,6 +69,14 @@ export default function StrategyRoomPage() {
       fetchData();
     }
   }, [seasonId]);
+
+  // hasApplied가 true이고 URL에 tab 파라미터가 없으면 "지망한 대학" 탭으로 자동 설정
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (data?.hasApplied && !tabParam) {
+      setSelectedTab("지망한 대학");
+    }
+  }, [data?.hasApplied, searchParams]);
 
   // 필터링된 슬롯 목록 (탭 + 검색)
   const filteredSlots = useMemo(() => {
@@ -129,8 +144,7 @@ export default function StrategyRoomPage() {
       <Header
         title={data.seasonName}
         showSearchButton
-        showHomeButton
-        homeHref={"/"}
+        showPrevButton
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         showBorder={false}
@@ -197,7 +211,7 @@ export default function StrategyRoomPage() {
       </div>
 
       {/* 하단 고정 CTA (미참여 시에는 숨김) */}
-      {!shouldShowBlur && <ShareGradeCTA seasonId={seasonId} />}
+      {!hasSharedGrade && selectedTab !== "지망한 대학" && <ShareGradeCTA seasonId={seasonId} />}
     </div>
   );
 }

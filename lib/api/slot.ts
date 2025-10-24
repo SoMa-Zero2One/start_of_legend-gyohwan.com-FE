@@ -1,4 +1,4 @@
-import type { SeasonSlotsResponse, SlotDetailResponse } from '@/types/slot';
+import type { SeasonSlotsResponse, SlotDetailResponse, MyApplicationResponse } from '@/types/slot';
 import { getBackendUrl } from '@/lib/utils/api';
 
 /**
@@ -20,6 +20,30 @@ export const getSeasonSlots = async (seasonId: number): Promise<SeasonSlotsRespo
 
   if (!response.ok) {
     throw new Error(`슬롯 목록 조회 실패 (HTTP ${response.status})`);
+  }
+
+  return await response.json();
+};
+
+/**
+ * 내 지원서 조회
+ * @param seasonId - 시즌 ID
+ * @returns 내 지원서 정보
+ * @throws {Error} API 호출 실패 시
+ */
+export const getMyApplication = async (seasonId: number): Promise<MyApplicationResponse> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(`${backendUrl}/v1/seasons/${seasonId}/my-application`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // 쿠키 포함
+  });
+
+  if (!response.ok) {
+    throw new Error(`내 지원서 조회 실패 (HTTP ${response.status})`);
   }
 
   return await response.json();
