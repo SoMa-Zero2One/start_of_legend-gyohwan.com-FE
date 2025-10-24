@@ -17,8 +17,8 @@ const GPA_CRITERIA_OPTIONS = [4.5, 4.3, 4.0];
 
 const LANGUAGE_TEST_TYPES = [
   "TOEIC",
-  "TOEFL_IBT",
-  "TOEFL_ITP",
+  "TOEFL IBT",
+  "TOEFL ITP",
   "IELTS",
   "JLPT N1",
   "JLPT N2",
@@ -32,8 +32,8 @@ const LANGUAGE_TEST_TYPES = [
 // 어학 시험별 점수 범위
 const LANGUAGE_SCORE_RANGES: Record<string, { min: number; max: number }> = {
   TOEIC: { min: 10, max: 990 },
-  TOEFL_IBT: { min: 0, max: 120 },
-  TOEFL_ITP: { min: 310, max: 677 },
+  "TOEFL IBT": { min: 0, max: 120 },
+  "TOEFL ITP": { min: 310, max: 677 },
   IELTS: { min: 0, max: 9 },
   "JLPT N1": { min: 0, max: 180 },
   "JLPT N2": { min: 0, max: 180 },
@@ -69,10 +69,19 @@ export default function GradeRegistrationStep({
     }
 
     if (existingLanguage) {
+      // 백엔드에서 온 "TOEFL_IBT" -> UI에서는 "TOEFL IBT"로 변환
+      let displayTestType = existingLanguage.testType;
+      if (displayTestType === "TOEFL_IBT") {
+        displayTestType = "TOEFL IBT";
+      } else if (displayTestType === "TOEFL_ITP") {
+        displayTestType = "TOEFL ITP";
+      }
+
       // JLPT N1, HSK 1급 형태로 합쳐서 저장
-      const displayTestType = existingLanguage.grade
-        ? `${existingLanguage.testType} ${existingLanguage.grade}`
-        : existingLanguage.testType;
+      if (existingLanguage.grade) {
+        displayTestType = `${displayTestType} ${existingLanguage.grade}`;
+      }
+
       setTestType(displayTestType);
       setScore(existingLanguage.score || "");
     }
@@ -146,14 +155,21 @@ export default function GradeRegistrationStep({
         criteria: gpaCriteria,
       });
 
-      // testType 파싱: "JLPT N1" -> testType: "JLPT", grade: "N1"
+      // testType 파싱 및 백엔드 형식으로 변환
       let finalTestType = testType;
       let finalGrade: string | undefined = undefined;
 
-      if (testType.startsWith("JLPT ")) {
+      // "TOEFL IBT" -> "TOEFL_IBT" 변환
+      if (testType === "TOEFL IBT") {
+        finalTestType = "TOEFL_IBT";
+      } else if (testType === "TOEFL ITP") {
+        finalTestType = "TOEFL_ITP";
+      } else if (testType.startsWith("JLPT ")) {
+        // "JLPT N1" -> testType: "JLPT", grade: "N1"
         finalTestType = "JLPT";
         finalGrade = testType.replace("JLPT ", "");
       } else if (testType.startsWith("HSK ")) {
+        // "HSK 4급" -> testType: "HSK", grade: "4급"
         finalTestType = "HSK";
         finalGrade = testType.replace("HSK ", "");
       }

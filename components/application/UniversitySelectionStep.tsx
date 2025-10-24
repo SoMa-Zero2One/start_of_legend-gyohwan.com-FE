@@ -71,9 +71,7 @@ export default function UniversitySelectionStep({
 
   // 자동 정렬 함수 - 1번부터 연속되게 정렬
   const reorderChoices = (universities: SelectedUniversity[]): SelectedUniversity[] => {
-    return universities
-      .sort((a, b) => a.choice - b.choice)
-      .map((u, index) => ({ ...u, choice: index + 1 }));
+    return universities.sort((a, b) => a.choice - b.choice).map((u, index) => ({ ...u, choice: index + 1 }));
   };
 
   // 대학 선택/토글 핸들러
@@ -168,15 +166,17 @@ export default function UniversitySelectionStep({
 
     if (!sourceUniv) return;
 
-    const updated = selectedUniversities.map((u) => {
-      if (u.choice === sourceChoice) {
-        return targetUniv ? { ...targetUniv, choice: sourceChoice } : null;
-      }
-      if (u.choice === targetChoice) {
-        return { ...sourceUniv, choice: targetChoice };
-      }
-      return u;
-    }).filter((u): u is SelectedUniversity => u !== null);
+    const updated = selectedUniversities
+      .map((u) => {
+        if (u.choice === sourceChoice) {
+          return targetUniv ? { ...targetUniv, choice: sourceChoice } : null;
+        }
+        if (u.choice === targetChoice) {
+          return { ...sourceUniv, choice: targetChoice };
+        }
+        return u;
+      })
+      .filter((u): u is SelectedUniversity => u !== null);
 
     // targetChoice에 아무것도 없었던 경우
     if (!targetUniv) {
@@ -213,9 +213,7 @@ export default function UniversitySelectionStep({
     }
 
     // Check for sequential choices (1 → 2 → 3...)
-    const sortedChoices = selectedUniversities
-      .map((u) => u.choice)
-      .sort((a, b) => a - b);
+    const sortedChoices = selectedUniversities.map((u) => u.choice).sort((a, b) => a - b);
 
     for (let i = 0; i < sortedChoices.length; i++) {
       if (sortedChoices[i] !== i + 1) {
@@ -322,7 +320,7 @@ export default function UniversitySelectionStep({
                         className="object-cover"
                       />
                     </div>
-                    <span className="body-3 flex-1 font-medium text-left">{selected.slot.name}</span>
+                    <span className="medium-body-3 w-0 flex-1 truncate text-left">{selected.slot.name}</span>
                     {/* 어학 시험 태그 */}
                     {languageTest && (
                       <span className="caption-2 bg-primary-blue rounded-[4px] px-[8px] py-[4px] text-white">
@@ -342,7 +340,9 @@ export default function UniversitySelectionStep({
                 )}
 
                 {/* 드래그 핸들 */}
-                <div className={`p-[4px] ${selected ? "cursor-grab active:cursor-grabbing" : "cursor-not-allowed opacity-30"}`}>
+                <div
+                  className={`p-[4px] ${selected ? "cursor-grab active:cursor-grabbing" : "cursor-not-allowed opacity-30"}`}
+                >
                   <DragHandleIcon size={20} />
                 </div>
               </div>
@@ -352,7 +352,10 @@ export default function UniversitySelectionStep({
 
         <div className="flex items-center justify-center">
           {/* 지망 대학 초기화 버튼 */}
-          <button onClick={handleReset} className="caption-1 mb-[32px] flex cursor-pointer items-center gap-[8px] text-primary-blue">
+          <button
+            onClick={handleReset}
+            className="caption-1 text-primary-blue mb-[32px] flex cursor-pointer items-center gap-[8px]"
+          >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M1 4V10H7M19 16V10H13M18.364 14C17.6762 15.5026 16.5677 16.7759 15.1661 17.6666C13.7645 18.5574 12.1315 19.0291 10.4662 19.0267C8.80095 19.0242 7.16932 18.548 5.77026 17.6535C4.3712 16.7589 3.26658 15.4827 2.583 14M1.636 6C2.32379 4.49738 3.43231 3.22411 4.83391 2.33336C6.23551 1.44261 7.86849 0.970868 9.53383 0.973316C11.1992 0.975765 12.8308 1.45198 14.2299 2.34652C15.6289 3.24107 16.7336 4.51729 17.417 6"

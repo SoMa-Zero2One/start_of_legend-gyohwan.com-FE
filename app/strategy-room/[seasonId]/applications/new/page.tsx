@@ -69,7 +69,7 @@ function ApplicationNewContent() {
     };
 
     checkApplicationStatus();
-  }, [seasonId, router]);
+  }, [seasonId, router, step]);
 
   const handleGradeSubmit = (newGpaId: number, newLanguageId: number) => {
     setGpaId(newGpaId);
