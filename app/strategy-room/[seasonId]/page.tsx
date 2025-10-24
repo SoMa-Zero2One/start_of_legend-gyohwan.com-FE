@@ -2,6 +2,7 @@
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
+import Link from "next/link";
 import Header from "@/components/layout/Header";
 import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
 import Tabs from "@/components/common/Tabs";
@@ -183,12 +184,12 @@ export default function StrategyRoomPage() {
         <div className="mt-[8px] flex items-center justify-between">
           <h2 className="head-4">{universityName} 교환학생</h2>
           {hasSharedGrade && (
-            <button
-              onClick={() => router.push(`/strategy-room/${seasonId}/applications/new`)}
-              className="rounded-[6px] bg-gray-100 px-[12px] py-[6px] text-[12px] text-gray-700 hover:bg-gray-200"
+            <Link
+              href={`/strategy-room/${seasonId}/applications/re-select-university`}
+              className="cursor-pointer rounded-full bg-gray-300 px-[12px] py-[6px] text-[12px]"
             >
               지원 대학교 변경
-            </button>
+            </Link>
           )}
         </div>
         <div className="relative mt-[12px] inline-block overflow-hidden rounded-full bg-gradient-to-r from-[#056DFF] via-[#029EFA] to-[#00D0FF] p-[1px]">
