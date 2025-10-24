@@ -51,16 +51,16 @@ export default function LanguageChart({ testType, score, grade }: LanguageChartP
 
         {/* 바 */}
         <div
-          className="w-full rounded-t-[4px] transition-all"
+          className="w-[16px] rounded-t-[4px] transition-all"
           style={{
             height: `${barHeight}px`,
             backgroundColor: barColor,
           }}
         />
-      </div>
 
-      {/* 시험 종류 */}
-      <span className="text-center text-[12px] text-gray-600">{displayName}</span>
+        {/* 시험 종류 */}
+        <span className="text-center text-[12px] text-gray-600">{displayName}</span>
+      </div>
     </div>
   );
 }

@@ -146,8 +146,12 @@ export default function ApplicationDetailPage() {
           {/* 어학 */}
           <div className="flex flex-col gap-[12px]">
             <h3 className="text-[14px] font-medium text-gray-700">어학</h3>
-            <div className="flex justify-start gap-[24px] py-[12px]">
-              <LanguageChart testType={data.language.testType} score={data.language.score} grade={data.language.grade} />
+            <div className="flex justify-center gap-[24px] py-[12px]">
+              <LanguageChart
+                testType={data.language.testType}
+                score={data.language.score}
+                grade={data.language.grade}
+              />
             </div>
           </div>
         </div>
