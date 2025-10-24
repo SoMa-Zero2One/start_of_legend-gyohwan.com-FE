@@ -47,11 +47,6 @@ export default function UniversitySelectionStep({
   const [shouldShake, setShouldShake] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  // 디버깅: 지망 순서 변경 시 console.log
-  useEffect(() => {
-    // Debugging logs removed for production.
-  }, [selectedUniversities]);
-
   // 지망 카드 클릭 핸들러
   const handleChoiceCardClick = (choice: number) => {
     setCurrentChoice(choice);
@@ -405,7 +400,7 @@ export default function UniversitySelectionStep({
       <ConfirmModal
         isOpen={showConfirmModal}
         title="지원서 제출"
-        message={'지원서를 제출하시겠습니까?\n제출 후에는 성적 정보를 수정할 수 없습니다.'}
+        message={"지원서를 제출하시겠습니까?\n제출 후에는 성적 정보를 수정할 수 없습니다."}
         confirmText="제출하기"
         cancelText="취소"
         onConfirm={handleConfirmSubmit}
