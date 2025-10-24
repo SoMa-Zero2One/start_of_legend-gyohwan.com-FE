@@ -98,7 +98,7 @@ export default function MyInfoPage() {
 
         {/* 이메일 (BASIC 로그인만 표시) */}
         {isBasicLogin && user.email && (
-          <ProfileField label="이메일" value={user.email} onButtonClick={handleComingSoon} showCheckIcon />
+          <ProfileField label="이메일" value={user.email} showCheckIcon />
         )}
 
         {/* 학교 인증 */}
