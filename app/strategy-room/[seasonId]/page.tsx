@@ -180,7 +180,17 @@ export default function StrategyRoomPage() {
       {/* 제목 */}
       <section className="px-[20px] py-[16px]">
         <h2 className="caption-1">{parsedSemester}</h2>
-        <h2 className="head-4 mt-[8px]">{universityName} 교환학생</h2>
+        <div className="mt-[8px] flex items-center justify-between">
+          <h2 className="head-4">{universityName} 교환학생</h2>
+          {hasSharedGrade && (
+            <button
+              onClick={() => router.push(`/strategy-room/${seasonId}/applications/new`)}
+              className="rounded-[6px] bg-gray-100 px-[12px] py-[6px] text-[12px] text-gray-700 hover:bg-gray-200"
+            >
+              지원 대학교 변경
+            </button>
+          )}
+        </div>
         <div className="relative mt-[12px] inline-block overflow-hidden rounded-full bg-gradient-to-r from-[#056DFF] via-[#029EFA] to-[#00D0FF] p-[1px]">
           <span className="text-primary-blue caption-2 block rounded-full bg-[#E9F1FF] px-3 py-1">
             🔥 총 {data.applicantCount}명 성적 공유 참여 중!
