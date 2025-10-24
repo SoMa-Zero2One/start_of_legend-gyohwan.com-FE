@@ -225,12 +225,14 @@ export default function SlotDetailPage() {
       </div>
 
       {/* 하단 고정 CTA */}
-      <ShareGradeCTA
-        seasonId={seasonId}
-        showTooltip={showTooltip}
-        shouldShake={shouldShake}
-        tooltipMessage="성적 공유하면 지원자들이 어느 학교에 지원했는지 확인할 수 있어요!"
-      />
+      {data?.hasApplied && (
+        <ShareGradeCTA
+          seasonId={seasonId}
+          showTooltip={showTooltip}
+          shouldShake={shouldShake}
+          tooltipMessage="성적 공유하면 지원자들이 어느 학교에 지원했는지 확인할 수 있어요!"
+        />
+      )}
     </div>
   );
 }

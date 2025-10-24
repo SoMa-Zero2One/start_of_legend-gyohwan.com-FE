@@ -26,9 +26,7 @@ export default function StrategyRoomPage() {
   const tabParam = searchParams.get("tab") as TabType;
 
   const [selectedTab, setSelectedTab] = useState<TabType>(
-    tabParam && ["지망한 대학", "지원자가 있는 대학", "모든 대학"].includes(tabParam)
-      ? tabParam
-      : "지원자가 있는 대학"
+    tabParam && ["지망한 대학", "지원자가 있는 대학", "모든 대학"].includes(tabParam) ? tabParam : "지원자가 있는 대학"
   );
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -214,7 +212,7 @@ export default function StrategyRoomPage() {
       </div>
 
       {/* 하단 고정 CTA (미참여 시에는 숨김) */}
-      {!shouldShowBlur && <ShareGradeCTA seasonId={seasonId} />}
+      {!hasSharedGrade && selectedTab !== "지망한 대학" && <ShareGradeCTA seasonId={seasonId} />}
     </div>
   );
 }
