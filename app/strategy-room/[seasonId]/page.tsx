@@ -175,7 +175,6 @@ export default function StrategyRoomPage() {
         showHomeButton
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        showBorder={false}
       />
 
       {/* 제목 */}

@@ -27,7 +27,7 @@ export default function Header({
   showSearchButton = false,
   searchQuery = "",
   onSearchChange,
-  showBorder = true,
+  showBorder = false,
 }: HeaderProps) {
   const [isSearchMode, setIsSearchMode] = useState(false);
 
