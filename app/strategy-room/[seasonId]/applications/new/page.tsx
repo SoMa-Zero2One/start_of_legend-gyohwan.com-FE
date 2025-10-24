@@ -42,7 +42,6 @@ function ApplicationNewContent() {
 
         if (slotsData.isApplied) {
           // 이미 지원한 경우 -> 실시간 경쟁률 페이지로 리다이렉트
-          // TODO: 실시간 경쟁률 페이지 URL 확정 후 수정 필요
           router.push(`/strategy-room/${seasonId}`);
           return;
         }
