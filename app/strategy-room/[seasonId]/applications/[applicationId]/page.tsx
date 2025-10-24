@@ -101,7 +101,7 @@ export default function ApplicationDetailPage() {
   return (
     <div className="relative flex min-h-screen flex-col">
       {/* hasApplied = false일 때 오버레이 */}
-      {hasApplied && (
+      {!hasApplied && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/95">
           <div className="medium-body-2 flex w-full max-w-[350px] flex-col items-center gap-[20px] px-[20px]">
             <div className="text-center">성적 공유하고 지금 바로 경쟁률을 확인하세요.</div>
