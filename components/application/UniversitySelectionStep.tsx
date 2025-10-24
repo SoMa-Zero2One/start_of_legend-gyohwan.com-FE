@@ -15,15 +15,15 @@ import type { SubmitApplicationRequest } from "@/types/application";
 
 interface UniversitySelectionStepProps {
   seasonId: number;
-  gpaId: number | null;
-  languageId: number | null;
+  gpaId?: number | null; // edit 모드에서는 optional
+  languageId?: number | null; // edit 모드에서는 optional
   languageTest?: string | null;
   languageScore?: string | null;
   languageGrade?: string | null;
   slots: Slot[];
   mode?: "new" | "edit"; // new: 신규 등록, edit: 수정
   initialSelections?: SelectedUniversity[]; // edit 모드일 때 초기 선택값
-  initialExtraScore?: string; // edit 모드일 때 초기 가산점
+  initialExtraScore?: string; // edit 모드일 때 초기 가산점 (optional)
 }
 
 interface SelectedUniversity {
@@ -181,8 +181,8 @@ export default function UniversitySelectionStep({
 
   // 저장 버튼 핸들러
   const handleSubmit = async () => {
-    // Validation
-    if (!gpaId || !languageId) {
+    // Validation (new 모드에서만 성적 정보 체크)
+    if (mode === "new" && (!gpaId || !languageId)) {
       setTooltipMessage("성적 정보가 없습니다. Step 1부터 다시 진행해주세요.");
       setShouldShake(true);
       setTimeout(() => {
@@ -228,23 +228,39 @@ export default function UniversitySelectionStep({
     try {
       setIsSubmitting(true);
 
-      const requestData: SubmitApplicationRequest = {
-        extraScore: extraScore ? parseFloat(extraScore) : 0,
-        gpaId: gpaId!,
-        languageId: languageId!,
-        choices: selectedUniversities.map((u) => ({
-          choice: u.choice,
-          slotId: u.slot.slotId,
-        })),
-      };
+      if (mode === "edit") {
+        // TODO: 지망 대학 수정 API 호출
+        console.log("지망 대학 수정:", {
+          extraScore: extraScore ? parseFloat(extraScore) : 0,
+          choices: selectedUniversities.map((u) => ({
+            choice: u.choice,
+            slotId: u.slot.slotId,
+          })),
+        });
+        // 임시: 2초 후 이동
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      } else {
+        // 신규 지원서 제출
+        const requestData: SubmitApplicationRequest = {
+          extraScore: extraScore ? parseFloat(extraScore) : 0,
+          gpaId: gpaId!,
+          languageId: languageId!,
+          choices: selectedUniversities.map((u) => ({
+            choice: u.choice,
+            slotId: u.slot.slotId,
+          })),
+        };
 
-      await submitApplication(seasonId, requestData);
+        await submitApplication(seasonId, requestData);
+      }
 
       // 성공 후 실시간 경쟁률 페이지로 이동
       router.push(`/strategy-room/${seasonId}`);
     } catch (error) {
       console.error("Application submission error:", error);
-      setTooltipMessage("지원서 제출에 실패했습니다. 다시 시도해주세요.");
+      const errorMessage =
+        mode === "edit" ? "지망 대학 수정에 실패했습니다. 다시 시도해주세요." : "지원서 제출에 실패했습니다. 다시 시도해주세요.";
+      setTooltipMessage(errorMessage);
       setShouldShake(true);
       setTimeout(() => {
         setTooltipMessage("");
