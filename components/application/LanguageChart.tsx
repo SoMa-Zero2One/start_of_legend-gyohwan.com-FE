@@ -39,9 +39,9 @@ export default function LanguageChart({ testType, score, grade }: LanguageChartP
   const displayName = grade ? `${testType} ${grade}` : testType;
 
   return (
-    <div className="flex flex-col items-center gap-[8px]">
+    <div className="flex flex-col gap-[4px]">
       {/* 바 차트 컨테이너 */}
-      <div className="relative flex h-[170px] w-[60px] flex-col items-center justify-end">
+      <div className="relative flex h-[170px] flex-col items-center justify-end border-b border-gray-300">
         {/* 점수 표시 */}
         <div className="mb-[4px]">
           <span className="text-[18px] font-bold" style={{ color: barColor }}>
@@ -57,10 +57,10 @@ export default function LanguageChart({ testType, score, grade }: LanguageChartP
             backgroundColor: barColor,
           }}
         />
-
-        {/* 시험 종류 */}
-        <span className="text-center text-[12px] text-gray-600">{displayName}</span>
       </div>
+
+      {/* 시험 종류 */}
+      <span className="text-center text-[12px] text-gray-700">{displayName}</span>
     </div>
   );
 }
