@@ -172,6 +172,7 @@ export default function StrategyRoomPage() {
         title={data.seasonName}
         showSearchButton
         showPrevButton
+        showHomeButton
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         showBorder={false}
