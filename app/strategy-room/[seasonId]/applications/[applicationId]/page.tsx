@@ -32,14 +32,19 @@ export default function ApplicationDetailPage() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const [applicationResult, myAppResult, seasonResult] = await Promise.all([
-          getApplicationDetail(applicationId),
+
+        // seasonData는 항상 필요 (hasApplied 확인용)
+        const seasonResult = await getSeasonSlots(seasonId);
+        setSeasonData(seasonResult);
+
+        // hasApplied=false면 applicationDetail 실패해도 오버레이 표시
+        const [applicationResult, myAppResult] = await Promise.all([
+          getApplicationDetail(applicationId).catch(() => null),
           getMyApplication(seasonId).catch(() => null),
-          getSeasonSlots(seasonId),
         ]);
+
         setData(applicationResult);
         setMyApplication(myAppResult);
-        setSeasonData(seasonResult);
       } catch (err) {
         console.error("Data fetch error:", err);
         setError("데이터를 불러오는데 실패했습니다.");
@@ -83,7 +88,8 @@ export default function ApplicationDetailPage() {
     );
   }
 
-  if (error || !data) {
+  // hasApplied=false면 data가 없어도 오버레이를 보여주기 위해 렌더링
+  if (error || (!data && hasApplied)) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-red-500">{error || "데이터를 찾을 수 없습니다."}</div>
@@ -92,8 +98,8 @@ export default function ApplicationDetailPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-gray-50">
-      <Header title={isMe ? "내 프로필" : "프로필"} showPrevButton />
+    <div className="relative flex min-h-screen flex-col">
+      <Header title={isMe ? "내 프로필" : "프로필"} showPrevButton showHomeButton showBorder />
 
       {/* hasApplied = false일 때 오버레이 */}
       {!hasApplied && (
@@ -110,70 +116,74 @@ export default function ApplicationDetailPage() {
         </div>
       )}
 
-      {/* 메인 콘텐츠 */}
-      <div className="flex flex-col gap-[24px] p-[20px]">
-        {/* 상단 요약 */}
-        <div className="flex flex-col gap-[12px] rounded-[12px] bg-white p-[20px] shadow-sm">
-          {/* 닉네임 + ME 배지 */}
-          <div className="flex items-center gap-[8px]">
-            <h1 className="text-[24px] font-bold">{data.nickname}</h1>
-            {isMe && (
-              <span className="rounded-[4px] bg-[#056DFF] px-[6px] py-[2px] text-[11px] font-bold text-white">ME</span>
-            )}
+      {/* 메인 콘텐츠 - data가 있을 때만 렌더링 */}
+      {data && (
+        <div className="flex flex-col gap-[24px] p-[20px]">
+          {/* 상단 요약 */}
+          <div className="flex flex-col gap-[12px] rounded-[12px] bg-white p-[20px] shadow-sm">
+            {/* 닉네임 + ME 배지 */}
+            <div className="flex items-center gap-[8px]">
+              <h1 className="text-[24px] font-bold">{data.nickname}</h1>
+              {isMe && (
+                <span className="rounded-[4px] bg-[#056DFF] px-[6px] py-[2px] text-[11px] font-bold text-white">
+                  ME
+                </span>
+              )}
+            </div>
+
+            {/* 지망 대학교 / 어학 성적 개수 */}
+            <div className="flex items-center gap-[24px] text-[14px] text-gray-600">
+              <div>
+                지망 대학교 <span className="font-bold text-black">{data.choices.length}</span>
+              </div>
+              <div>
+                어학 성적 <span className="font-bold text-black">1</span>
+              </div>
+            </div>
           </div>
 
-          {/* 지망 대학교 / 어학 성적 개수 */}
-          <div className="flex items-center gap-[24px] text-[14px] text-gray-600">
-            <div>
-              지망 대학교 <span className="font-bold text-black">{data.choices.length}</span>
+          {/* 성적 정보 */}
+          <div className="flex flex-col gap-[20px] rounded-[12px] bg-white p-[20px] shadow-sm">
+            <h2 className="text-[18px] font-bold">성적 정보</h2>
+
+            {/* 학점 */}
+            <div className="flex flex-col gap-[12px]">
+              <h3 className="text-[14px] font-medium text-gray-700">학점</h3>
+              <GradeProgressBar score={data.gpa.score} criteria={data.gpa.criteria} />
             </div>
-            <div>
-              어학 성적 <span className="font-bold text-black">1</span>
+
+            {/* 어학 */}
+            <div className="flex flex-col gap-[12px]">
+              <h3 className="text-[14px] font-medium text-gray-700">어학</h3>
+              <div className="flex justify-center gap-[24px] py-[12px]">
+                <LanguageChart
+                  testType={data.language.testType}
+                  score={data.language.score}
+                  grade={data.language.grade}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 지망한 대학교 */}
+          <div className="flex flex-col gap-[16px] rounded-[12px] bg-white p-[20px] shadow-sm">
+            <div className="flex items-center justify-between">
+              <h2 className="text-[18px] font-bold">지망한 대학교 ({data.choices.length}개)</h2>
+              {isMe && (
+                <button className="rounded-[6px] bg-gray-100 px-[12px] py-[6px] text-[12px] text-gray-700 hover:bg-gray-200">
+                  지원 대학교 변경
+                </button>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-[12px]">
+              {data.choices.map((choiceItem) => (
+                <UniversitySlotCard key={choiceItem.choice} slot={choiceItem.slot} />
+              ))}
             </div>
           </div>
         </div>
-
-        {/* 성적 정보 */}
-        <div className="flex flex-col gap-[20px] rounded-[12px] bg-white p-[20px] shadow-sm">
-          <h2 className="text-[18px] font-bold">성적 정보</h2>
-
-          {/* 학점 */}
-          <div className="flex flex-col gap-[12px]">
-            <h3 className="text-[14px] font-medium text-gray-700">학점</h3>
-            <GradeProgressBar score={data.gpa.score} criteria={data.gpa.criteria} />
-          </div>
-
-          {/* 어학 */}
-          <div className="flex flex-col gap-[12px]">
-            <h3 className="text-[14px] font-medium text-gray-700">어학</h3>
-            <div className="flex justify-center gap-[24px] py-[12px]">
-              <LanguageChart
-                testType={data.language.testType}
-                score={data.language.score}
-                grade={data.language.grade}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* 지망한 대학교 */}
-        <div className="flex flex-col gap-[16px] rounded-[12px] bg-white p-[20px] shadow-sm">
-          <div className="flex items-center justify-between">
-            <h2 className="text-[18px] font-bold">지망한 대학교 ({data.choices.length}개)</h2>
-            {isMe && (
-              <button className="rounded-[6px] bg-gray-100 px-[12px] py-[6px] text-[12px] text-gray-700 hover:bg-gray-200">
-                지원 대학교 변경
-              </button>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-[12px]">
-            {data.choices.map((choiceItem) => (
-              <UniversitySlotCard key={choiceItem.choice} slot={choiceItem.slot} />
-            ))}
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
