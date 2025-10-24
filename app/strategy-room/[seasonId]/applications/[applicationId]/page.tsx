@@ -93,7 +93,7 @@ export default function ApplicationDetailPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-gray-50">
-      <Header title={isMe ? "내 프로필" : "프로필"} />
+      <Header title={isMe ? "내 프로필" : "프로필"} showPrevButton />
 
       {/* hasApplied = false일 때 오버레이 */}
       {!hasApplied && (
@@ -118,9 +118,7 @@ export default function ApplicationDetailPage() {
           <div className="flex items-center gap-[8px]">
             <h1 className="text-[24px] font-bold">{data.nickname}</h1>
             {isMe && (
-              <span className="rounded-[4px] bg-[#056DFF] px-[6px] py-[2px] text-[11px] font-bold text-white">
-                ME
-              </span>
+              <span className="rounded-[4px] bg-[#056DFF] px-[6px] py-[2px] text-[11px] font-bold text-white">ME</span>
             )}
           </div>
 

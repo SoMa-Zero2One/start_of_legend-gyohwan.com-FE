@@ -10,7 +10,6 @@ export default function LanguageChart({ testType, score }: LanguageChartProps) {
     "TOEFL IBT": 120,
     "TOEFL ITP": 677,
     IELTS: 9,
-    TEPS: 600,
   };
 
   const numericScore = parseFloat(score);
@@ -27,7 +26,7 @@ export default function LanguageChart({ testType, score }: LanguageChartProps) {
             style={{ height: `${heightPercentage * 2}px` }} // 200px 기준
           />
           {/* 점수 표시 */}
-          <div className="absolute left-1/2 top-[-32px] -translate-x-1/2">
+          <div className="absolute top-[-32px] left-1/2 -translate-x-1/2">
             <span className="text-[20px] font-bold text-[#056DFF]">{score}</span>
           </div>
         </div>
