@@ -49,18 +49,7 @@ export default function UniversitySelectionStep({
 
   // 디버깅: 지망 순서 변경 시 console.log
   useEffect(() => {
-    console.log("📋 현재 지망 순서:");
-    selectedUniversities
-      .sort((a, b) => a.choice - b.choice)
-      .forEach((u) => {
-        console.log(`  ${u.choice}지망: ${u.slot.name} (slotId: ${u.slot.slotId})`);
-      });
-    console.log("POST 데이터:", {
-      choices: selectedUniversities.map((u) => ({
-        choice: u.choice,
-        slotId: u.slot.slotId,
-      })),
-    });
+    // Debugging logs removed for production.
   }, [selectedUniversities]);
 
   // 지망 카드 클릭 핸들러
