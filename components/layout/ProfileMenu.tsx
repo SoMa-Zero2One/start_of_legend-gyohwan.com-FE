@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/stores/authStore';
-import ProfileIcon from '@/components/icons/ProfileIcon';
+import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/authStore";
+import ProfileIcon from "@/components/icons/ProfileIcon";
 
 export default function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,36 +22,30 @@ export default function ProfileMenu() {
         setIsMenuOpen(false);
       }
     }
-    window.addEventListener('click', handleClickOutside);
-    return () => window.removeEventListener('click', handleClickOutside);
+    window.addEventListener("click", handleClickOutside);
+    return () => window.removeEventListener("click", handleClickOutside);
   }, []);
 
   const handleLogout = async () => {
     await logout();
     setIsMenuOpen(false);
-    router.push('/');
+    router.push("/");
   };
 
   return (
     <div className="relative" ref={menuRef}>
       {/* 프로필 버튼 */}
-      <button
-        onClick={() => setIsMenuOpen((prev) => !prev)}
-        className="cursor-pointer"
-      >
+      <button onClick={() => setIsMenuOpen((prev) => !prev)} className="cursor-pointer">
         <ProfileIcon profileUrl={user?.profileUrl} size={32} />
       </button>
 
       {/* Dropdown 메뉴 */}
       {isMenuOpen && (
-        <div className="absolute right-0 top-[42px] w-[100px] h-[84px] p-[12px] bg-white shadow-md border border-[#ECECEC] rounded-[10px] flex flex-col items-center justify-between text-[14px] font-medium z-50">
+        <div className="medium-body-3 absolute top-[42px] right-0 z-50 flex h-[84px] w-[100px] flex-col items-center justify-between rounded-[10px] border border-[#ECECEC] bg-white p-[12px] text-[14px] shadow-md">
           <Link href="/my-page" className="w-full text-center">
             내 정보 관리
           </Link>
-          <button
-            className="w-full cursor-pointer"
-            onClick={handleLogout}
-          >
+          <button className="w-full cursor-pointer" onClick={handleLogout}>
             로그아웃
           </button>
         </div>

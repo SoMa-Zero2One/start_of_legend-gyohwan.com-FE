@@ -127,7 +127,7 @@ export default function LoginForm() {
       <button
         onClick={handleLogin}
         disabled={!password || isLoading}
-        className="w-full cursor-pointer rounded-lg bg-black px-4 py-3 font-medium text-white disabled:cursor-default disabled:bg-gray-300 disabled:text-gray-700"
+        className="medium-body-3 w-full cursor-pointer rounded-lg bg-black px-4 py-3 text-white disabled:cursor-default disabled:bg-gray-300 disabled:text-gray-700"
       >
         {isLoading ? "로그인 중..." : "계속"}
       </button>
