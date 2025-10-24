@@ -24,11 +24,12 @@ export default function StrategyRoomPage() {
 
   // URL query parameter에서 초기 탭 상태 읽기
   const tabParam = searchParams.get("tab") as TabType;
-  const initialTab: TabType = tabParam && ["지망한 대학", "지원자가 있는 대학", "모든 대학"].includes(tabParam)
-    ? tabParam
-    : "지원자가 있는 대학";
 
-  const [selectedTab, setSelectedTab] = useState<TabType>(initialTab);
+  const [selectedTab, setSelectedTab] = useState<TabType>(
+    tabParam && ["지망한 대학", "지원자가 있는 대학", "모든 대학"].includes(tabParam)
+      ? tabParam
+      : "지원자가 있는 대학"
+  );
   const [searchQuery, setSearchQuery] = useState("");
 
   // 탭 변경 핸들러 (URL 업데이트 포함)
@@ -70,6 +71,14 @@ export default function StrategyRoomPage() {
       fetchData();
     }
   }, [seasonId]);
+
+  // hasApplied가 true이고 URL에 tab 파라미터가 없으면 "지망한 대학" 탭으로 자동 설정
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (data?.hasApplied && !tabParam) {
+      setSelectedTab("지망한 대학");
+    }
+  }, [data?.hasApplied, searchParams]);
 
   // 필터링된 슬롯 목록 (탭 + 검색)
   const filteredSlots = useMemo(() => {
