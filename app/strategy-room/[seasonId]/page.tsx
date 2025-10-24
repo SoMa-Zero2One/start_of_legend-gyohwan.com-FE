@@ -156,7 +156,7 @@ export default function StrategyRoomPage() {
         <h2 className="head-4 mt-[8px]">{universityName} 교환학생</h2>
         <div className="relative mt-[12px] inline-block overflow-hidden rounded-full bg-gradient-to-r from-[#056DFF] via-[#029EFA] to-[#00D0FF] p-[1px]">
           <span className="text-primary-blue caption-2 block rounded-full bg-[#E9F1FF] px-3 py-1">
-            🔥 총 {}명 성적 공유 참여 중!
+            🔥 총 {data.applicantCount}명 성적 공유 참여 중!
           </span>
         </div>
       </section>

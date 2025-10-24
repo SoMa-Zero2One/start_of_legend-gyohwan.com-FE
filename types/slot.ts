@@ -17,6 +17,7 @@ export interface SeasonSlotsResponse {
   seasonId: number;
   seasonName: string;
   hasApplied: boolean; // 사용자가 이미 지원했는지 여부
+  applicantCount: number;
   slots: Slot[];
 }
 
