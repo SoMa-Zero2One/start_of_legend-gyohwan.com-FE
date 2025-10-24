@@ -109,6 +109,9 @@ function ApplicationNewContent() {
           seasonId={seasonId}
           gpaId={gpaId}
           languageId={languageId}
+          languageTest={existingLanguage?.testType}
+          languageScore={existingLanguage?.score}
+          languageGrade={existingLanguage?.grade}
           slots={slots}
         />
       )}
