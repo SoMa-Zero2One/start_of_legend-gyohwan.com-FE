@@ -233,7 +233,7 @@ export default function UniversitySelectionStep({
       } else {
         // 신규 지원서 제출
         const requestData: SubmitApplicationRequest = {
-          extraScore: parseFloat(extraScore) || 0,
+          extraScore: extraScore ? parseFloat(extraScore) : 0,
           gpaId: gpaId!,
           languageId: languageId!,
           choices,
