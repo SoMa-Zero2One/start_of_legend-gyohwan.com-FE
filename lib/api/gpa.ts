@@ -1,4 +1,4 @@
-import type { GpasResponse, CreateGpaRequest, CreateGpaResponse } from '@/types/application';
+import type { GpasResponse, CreateGpaRequest, CreateGpaResponse } from '@/types/grade';
 import { getBackendUrl } from '@/lib/utils/api';
 
 /**

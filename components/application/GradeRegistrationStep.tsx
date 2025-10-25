@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import CTAButton from "@/components/common/CTAButton";
 import { createGpa } from "@/lib/api/gpa";
 import { createLanguage } from "@/lib/api/language";
-import type { Gpa, Language, CreateLanguageRequest } from "@/types/application";
+import type { Gpa, Language, CreateLanguageRequest } from "@/types/grade";
 
 interface GradeRegistrationStepProps {
   seasonId: number;

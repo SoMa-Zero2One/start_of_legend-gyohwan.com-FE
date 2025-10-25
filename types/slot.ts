@@ -41,19 +41,21 @@ export interface Choice {
 
 /**
  * 슬롯 상세 조회 응답
+ * Slot 타입을 확장하여 중복 방지
  */
-export interface SlotDetailResponse {
-  slotId: number;
+export interface SlotDetailResponse extends Slot {
   hasApplied: boolean;
   seasonId: number;
-  name: string;
-  country: string;
-  choiceCount: number;
-  slotCount: string;
-  duration: string;
-  logoImageUrl?: string | null; // 학교 로고 이미지 URL (백엔드 추가 예정)
   etc: string | null;
   choices: Choice[];
+}
+
+/**
+ * 지원서의 지망 선택 정보
+ */
+export interface ApplicationChoiceWithSlot {
+  choice: number;
+  slot: Slot;
 }
 
 /**
@@ -72,18 +74,7 @@ export interface MyApplicationResponse {
     score: string;
     grade: string | null;
   };
-  choices: Array<{
-    choice: number;
-    slot: {
-      slotId: number;
-      name: string;
-      country: string;
-      choiceCount: number;
-      slotCount: string;
-      duration: string;
-      logoImageUrl?: string | null; // 학교 로고 이미지 URL (백엔드 추가 예정)
-    };
-  }>;
+  choices: ApplicationChoiceWithSlot[];
 }
 
 /**
