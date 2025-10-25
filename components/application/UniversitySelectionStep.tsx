@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import SearchIcon from "@/components/icons/SearchIcon";
@@ -22,7 +22,6 @@ interface UniversitySelectionStepProps {
   mode?: "new" | "edit"; // new: 신규 등록, edit: 수정
   initialSelections?: SelectedUniversity[]; // edit 모드일 때 초기 선택값
   initialExtraScore?: number; // edit 모드일 때 초기 가산점
-  applicationId?: number; // edit 모드일 때 필요
 }
 
 interface SelectedUniversity {
@@ -39,7 +38,6 @@ export default function UniversitySelectionStep({
   mode = "new",
   initialSelections = [],
   initialExtraScore = 0,
-  applicationId,
 }: UniversitySelectionStepProps) {
   const router = useRouter();
   const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>(initialSelections);
@@ -233,10 +231,7 @@ export default function UniversitySelectionStep({
 
       if (mode === "edit") {
         // 지망 대학 수정 API 호출 (choices만 전송)
-        if (!applicationId) {
-          throw new Error("applicationId가 없습니다.");
-        }
-        await updateApplication(applicationId, { choices });
+        await updateApplication(seasonId, { choices });
       } else {
         // 신규 지원서 제출
         const requestData: SubmitApplicationRequest = {

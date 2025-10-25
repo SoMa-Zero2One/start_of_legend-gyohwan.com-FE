@@ -91,7 +91,6 @@ function ApplicationEditContent() {
         slots={slots}
         mode="edit"
         initialSelections={initialSelections}
-        applicationId={myApplication.applicationId}
       />
     </div>
   );

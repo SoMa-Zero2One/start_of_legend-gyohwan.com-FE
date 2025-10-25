@@ -29,17 +29,17 @@ export const submitApplication = async (
 
 /**
  * 지원서 수정 (지망 대학 재선택)
- * @param applicationId - 지원서 ID
+ * @param seasonId - 시즌 ID
  * @param data - 지망 선택 목록
  * @throws {Error} API 호출 실패 시
  */
 export const updateApplication = async (
-  applicationId: number,
+  seasonId: number,
   data: UpdateApplicationRequest
 ): Promise<void> => {
   const backendUrl = getBackendUrl();
 
-  const response = await fetch(`${backendUrl}/v1/seasons/${applicationId}`, {
+  const response = await fetch(`${backendUrl}/v1/seasons/${seasonId}/my-application`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
