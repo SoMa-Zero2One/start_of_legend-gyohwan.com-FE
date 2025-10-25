@@ -77,7 +77,7 @@ export default function StrategyRoomEntrances() {
   }
 
   return (
-    <div className="relative flex flex-col gap-[40px] p-[20px]">
+    <div className="relative flex flex-col gap-[40px] px-[20px] pb-[100px]">
       <div className="flex flex-col items-center gap-[12px]">
         <p className="head-4">교환 프로그램 진행 중인 대학</p>
         <p className="g-head-2 text-primary-blue">{seasons.length}개 대학</p>

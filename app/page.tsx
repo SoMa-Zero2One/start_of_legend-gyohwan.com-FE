@@ -1,6 +1,7 @@
 "use client";
 
 import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/home/HeroSection";
 import FeatureSection from "@/components/home/FeatureSection";
 import StrategyRoomEntrances from "@/components/home/StrategyRoomEntrances";
@@ -16,6 +17,7 @@ export default function Home() {
       <HeroSection />
       <FeatureSection />
       <StrategyRoomEntrances />
+      <Footer />
     </div>
   );
 }
