@@ -51,7 +51,7 @@ interface SortableChoiceCardProps {
 
 function SortableChoiceCard({ choice, selected, displayLanguage, onChoiceCardClick }: SortableChoiceCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: selected ? selected.slot.slotId : `empty-${choice}`,
+    id: selected ? `slot-${selected.slot.slotId}` : `empty-${choice}`,
     disabled: !selected, // 빈 카드는 드래그 불가
   });
 
@@ -243,8 +243,17 @@ export default function UniversitySelectionStep({
     // choice 순서대로 정렬된 배열
     const sortedUniversities = [...selectedUniversities].sort((a, b) => a.choice - b.choice);
 
-    const oldIndex = sortedUniversities.findIndex((u) => u.slot.slotId === active.id);
-    const newIndex = sortedUniversities.findIndex((u) => u.slot.slotId === over.id);
+    // ID에서 슬롯 ID 추출 (slot- prefix 제거)
+    const getSlotId = (id: string | number): number => {
+      const idStr = String(id);
+      return idStr.startsWith("slot-") ? parseInt(idStr.replace("slot-", "")) : parseInt(idStr);
+    };
+
+    const activeSlotId = getSlotId(active.id);
+    const overSlotId = getSlotId(over.id);
+
+    const oldIndex = sortedUniversities.findIndex((u) => u.slot.slotId === activeSlotId);
+    const newIndex = sortedUniversities.findIndex((u) => u.slot.slotId === overSlotId);
 
     if (oldIndex === -1 || newIndex === -1) return;
 
@@ -381,7 +390,7 @@ export default function UniversitySelectionStep({
           <SortableContext
             items={choices.map((choice) => {
               const selected = selectedUniversities.find((u) => u.choice === choice);
-              return selected ? selected.slot.slotId : `empty-${choice}`;
+              return selected ? `slot-${selected.slot.slotId}` : `empty-${choice}`;
             })}
             strategy={verticalListSortingStrategy}
           >
@@ -404,7 +413,14 @@ export default function UniversitySelectionStep({
           <DragOverlay>
             {activeId
               ? (() => {
-                  const draggedUniversity = selectedUniversities.find((u) => u.slot.slotId === activeId);
+                  // ID에서 슬롯 ID 추출 (slot- prefix 제거)
+                  const getSlotId = (id: string | number): number => {
+                    const idStr = String(id);
+                    return idStr.startsWith("slot-") ? parseInt(idStr.replace("slot-", "")) : parseInt(idStr);
+                  };
+
+                  const activeSlotId = getSlotId(activeId);
+                  const draggedUniversity = selectedUniversities.find((u) => u.slot.slotId === activeSlotId);
                   if (!draggedUniversity) return null;
 
                   const draggedChoice = draggedUniversity.choice;
