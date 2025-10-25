@@ -2,11 +2,11 @@
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useMemo, useRef } from "react";
-import Image from "next/image";
 import Header from "@/components/layout/Header";
 import ApplicantCard from "@/components/strategy-room/ApplicantCard";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import Tabs from "@/components/common/Tabs";
+import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 import { getSlotDetail, getMyApplication } from "@/lib/api/slot";
 import { SlotDetailResponse, MyApplicationResponse } from "@/types/slot";
 
@@ -175,11 +175,11 @@ export default function SlotDetailPage() {
         {/* 학교 로고 */}
         <div>
           <div className="relative mb-[8px] h-[40px] w-[40px] overflow-hidden rounded-full">
-            <Image
-              src="/icons/ico_profile.svg"
-              alt="University Logo"
-              width={80}
-              height={80}
+            <SchoolLogoWithFallback
+              src={data.logoImageUrl}
+              alt={`${data.name} 로고`}
+              width={40}
+              height={40}
               className="object-contain"
             />
           </div>
