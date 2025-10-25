@@ -21,7 +21,6 @@ interface UniversitySelectionStepProps {
   slots: Slot[];
   mode?: "new" | "edit"; // new: 신규 등록, edit: 수정
   initialSelections?: SelectedUniversity[]; // edit 모드일 때 초기 선택값
-  initialExtraScore?: number; // edit 모드일 때 초기 가산점
 }
 
 interface SelectedUniversity {
@@ -37,11 +36,10 @@ export default function UniversitySelectionStep({
   slots,
   mode = "new",
   initialSelections = [],
-  initialExtraScore = 0,
 }: UniversitySelectionStepProps) {
   const router = useRouter();
   const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>(initialSelections);
-  const [extraScore, setExtraScore] = useState<number>(initialExtraScore);
+  const [extraScore, setExtraScore] = useState<string>("");
   const [showSearch, setShowSearch] = useState(false);
   const [currentChoice, setCurrentChoice] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -235,7 +233,7 @@ export default function UniversitySelectionStep({
       } else {
         // 신규 지원서 제출
         const requestData: SubmitApplicationRequest = {
-          extraScore: extraScore || 0,
+          extraScore: parseFloat(extraScore) || 0,
           gpaId: gpaId!,
           languageId: languageId!,
           choices,
@@ -372,7 +370,7 @@ export default function UniversitySelectionStep({
               step="0.1"
               placeholder="가산점을 입력하세요 (선택)"
               value={extraScore}
-              onChange={(e) => setExtraScore(parseFloat(e.target.value) || 0)}
+              onChange={(e) => setExtraScore(e.target.value)}
               className="body-2 focus:border-primary-blue w-full rounded-[8px] border border-gray-300 px-[16px] py-[14px] focus:outline-none"
             />
           </section>
