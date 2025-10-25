@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import SearchIcon from "@/components/icons/SearchIcon";
 import DragHandleIcon from "@/components/icons/DragHandleIcon";
 import PencilIcon from "@/components/icons/PencilIcon";
 import CTAButton from "@/components/common/CTAButton";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import UniversitySearchModal from "@/components/application/UniversitySearchModal";
+import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 import { submitApplication, updateApplication } from "@/lib/api/application";
 import type { Slot } from "@/types/slot";
 import type { SubmitApplicationRequest } from "@/types/application";
@@ -305,8 +305,8 @@ export default function UniversitySelectionStep({
                   >
                     {/* 대학 로고 */}
                     <div className="relative h-[32px] w-[32px] flex-shrink-0 overflow-hidden rounded-full">
-                      <Image
-                        src="/icons/ico_profile.svg"
+                      <SchoolLogoWithFallback
+                        src={selected.slot.logoImageUrl}
                         alt={selected.slot.name}
                         width={32}
                         height={32}

@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Season } from "@/types/season";
 import { calculateDDay } from "@/lib/utils/date";
 import { useAuthStore } from "@/stores/authStore";
 import { saveRedirectUrl } from "@/lib/utils/redirect";
+import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 
 interface StrategyRoomCardProps {
   data: Season;
@@ -51,7 +51,7 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
       {/* 상단: 로고 + 학교명 + 날짜 + D-Day */}
       <div className="flex items-center gap-[12px]">
         <div className="relative h-[80px] w-[80px]">
-          <Image
+          <SchoolLogoWithFallback
             src={domesticUniversityLogoUri}
             alt={`${domesticUniversity} 로고`}
             fill

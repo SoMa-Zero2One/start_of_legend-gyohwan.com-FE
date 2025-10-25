@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import PrevIcon from "@/components/icons/PrevIcon";
 import SearchIcon from "@/components/icons/SearchIcon";
 import CheckIcon from "@/components/icons/CheckIcon";
+import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 import type { Slot } from "@/types/slot";
 
 interface SelectedUniversity {
@@ -141,8 +141,8 @@ export default function UniversitySearchModal({
                 >
                   {/* 대학 로고 */}
                   <div className="relative h-[40px] w-[40px] flex-shrink-0 overflow-hidden rounded-full">
-                    <Image
-                      src="/icons/ico_profile.svg"
+                    <SchoolLogoWithFallback
+                      src={slot.logoImageUrl}
                       alt={slot.name}
                       width={40}
                       height={40}
@@ -200,8 +200,8 @@ export default function UniversitySearchModal({
                 >
                   {/* 대학 로고 */}
                   <div className="relative h-[40px] w-[40px] flex-shrink-0 overflow-hidden rounded-full">
-                    <Image
-                      src="/icons/ico_profile.svg"
+                    <SchoolLogoWithFallback
+                      src={slot.logoImageUrl}
                       alt={slot.name}
                       width={40}
                       height={40}
