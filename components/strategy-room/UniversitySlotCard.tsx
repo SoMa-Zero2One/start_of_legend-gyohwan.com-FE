@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Slot } from "@/types/slot";
-import { countryFlags } from "@/lib/utils/countryFlags";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
+import CountryFlag from "@/components/common/CountryFlag";
 
 interface UniversitySlotCardProps {
   slot: Slot;
@@ -30,7 +30,7 @@ export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
             <div className="subhead-3 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{slot.name}</div>
           </div>
           <div className="flex items-center gap-[4px]">
-            <div className="text-[20px]">{countryFlags[slot.country] || "🌍"}</div>
+            <CountryFlag country={slot.country} size={20} />
             <div className="caption-1">{slot.country}</div>
           </div>
         </div>
