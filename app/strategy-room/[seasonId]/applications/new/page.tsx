@@ -9,7 +9,7 @@ import UniversitySelectionStep from "@/components/application/UniversitySelectio
 import { getSeasonSlots } from "@/lib/api/slot";
 import { getGpas } from "@/lib/api/gpa";
 import { getLanguages } from "@/lib/api/language";
-import type { Gpa, Language } from "@/types/application";
+import type { Gpa, Language } from "@/types/grade";
 import type { Slot } from "@/types/slot";
 
 type Step = "grade-registration" | "university-selection";

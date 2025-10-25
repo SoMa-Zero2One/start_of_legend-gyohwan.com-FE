@@ -2,7 +2,7 @@ import type {
   LanguagesResponse,
   CreateLanguageRequest,
   CreateLanguageResponse,
-} from '@/types/application';
+} from '@/types/grade';
 import { getBackendUrl } from '@/lib/utils/api';
 
 /**
