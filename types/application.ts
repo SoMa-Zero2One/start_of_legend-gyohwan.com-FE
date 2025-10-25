@@ -94,3 +94,10 @@ export interface SubmitApplicationRequest {
   languageId: number;
   choices: ApplicationChoice[];
 }
+
+/**
+ * 지원서 수정 요청 (지망 대학 재선택)
+ */
+export interface UpdateApplicationRequest {
+  choices: ApplicationChoice[];
+}

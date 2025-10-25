@@ -9,21 +9,20 @@ import PencilIcon from "@/components/icons/PencilIcon";
 import CTAButton from "@/components/common/CTAButton";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import UniversitySearchModal from "@/components/application/UniversitySearchModal";
-import { submitApplication } from "@/lib/api/application";
+import { submitApplication, updateApplication } from "@/lib/api/application";
 import type { Slot } from "@/types/slot";
 import type { SubmitApplicationRequest } from "@/types/application";
 
 interface UniversitySelectionStepProps {
   seasonId: number;
-  gpaId?: number | null; // edit 모드에서는 optional
-  languageId?: number | null; // edit 모드에서는 optional
-  languageTest?: string | null;
-  languageScore?: string | null;
-  languageGrade?: string | null;
+  gpaId?: number | null; // new 모드에서만 필수
+  languageId?: number | null; // new 모드에서만 필수
+  displayLanguage?: string; // 화면에 표시할 어학 성적 문자열 (예: "TOEIC 920")
   slots: Slot[];
   mode?: "new" | "edit"; // new: 신규 등록, edit: 수정
   initialSelections?: SelectedUniversity[]; // edit 모드일 때 초기 선택값
-  initialExtraScore?: string; // edit 모드일 때 초기 가산점 (optional)
+  initialExtraScore?: number; // edit 모드일 때 초기 가산점
+  applicationId?: number; // edit 모드일 때 필요
 }
 
 interface SelectedUniversity {
@@ -35,17 +34,16 @@ export default function UniversitySelectionStep({
   seasonId,
   gpaId,
   languageId,
-  languageTest,
-  languageScore,
-  languageGrade,
+  displayLanguage,
   slots,
   mode = "new",
   initialSelections = [],
-  initialExtraScore = "",
+  initialExtraScore = 0,
+  applicationId,
 }: UniversitySelectionStepProps) {
   const router = useRouter();
   const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>(initialSelections);
-  const [extraScore, setExtraScore] = useState(initialExtraScore);
+  const [extraScore, setExtraScore] = useState<number>(initialExtraScore);
   const [showSearch, setShowSearch] = useState(false);
   const [currentChoice, setCurrentChoice] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -228,29 +226,25 @@ export default function UniversitySelectionStep({
     try {
       setIsSubmitting(true);
 
+      const choices = selectedUniversities.map((u) => ({
+        choice: u.choice,
+        slotId: u.slot.slotId,
+      }));
+
       if (mode === "edit") {
-        // TODO: 지망 대학 수정 API 호출
-        console.log("지망 대학 수정:", {
-          extraScore: extraScore ? parseFloat(extraScore) : 0,
-          choices: selectedUniversities.map((u) => ({
-            choice: u.choice,
-            slotId: u.slot.slotId,
-          })),
-        });
-        // 임시: 2초 후 이동
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // 지망 대학 수정 API 호출 (choices만 전송)
+        if (!applicationId) {
+          throw new Error("applicationId가 없습니다.");
+        }
+        await updateApplication(applicationId, { choices });
       } else {
         // 신규 지원서 제출
         const requestData: SubmitApplicationRequest = {
-          extraScore: extraScore ? parseFloat(extraScore) : 0,
+          extraScore: extraScore || 0,
           gpaId: gpaId!,
           languageId: languageId!,
-          choices: selectedUniversities.map((u) => ({
-            choice: u.choice,
-            slotId: u.slot.slotId,
-          })),
+          choices,
         };
-
         await submitApplication(seasonId, requestData);
       }
 
@@ -328,9 +322,9 @@ export default function UniversitySelectionStep({
                     </div>
                     <span className="medium-body-3 w-0 flex-1 truncate text-left">{selected.slot.name}</span>
                     {/* 어학 시험 태그 */}
-                    {languageTest && (
+                    {displayLanguage && (
                       <span className="caption-2 bg-primary-blue rounded-[4px] px-[8px] py-[4px] text-white">
-                        {`${languageTest} ${languageGrade || ""} ${languageScore || ""}`.trim()}
+                        {displayLanguage}
                       </span>
                     )}
                     {/* 수정 아이콘 */}
@@ -383,7 +377,7 @@ export default function UniversitySelectionStep({
               step="0.1"
               placeholder="가산점을 입력하세요 (선택)"
               value={extraScore}
-              onChange={(e) => setExtraScore(e.target.value)}
+              onChange={(e) => setExtraScore(parseFloat(e.target.value) || 0)}
               className="body-2 focus:border-primary-blue w-full rounded-[8px] border border-gray-300 px-[16px] py-[14px] focus:outline-none"
             />
           </section>
