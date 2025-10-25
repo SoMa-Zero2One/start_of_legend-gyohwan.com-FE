@@ -87,9 +87,7 @@ function ApplicationEditContent() {
 
       <UniversitySelectionStep
         seasonId={seasonId}
-        languageTest={myApplication.language.testType}
-        languageScore={myApplication.language.score}
-        languageGrade={myApplication.language.grade}
+        displayLanguage={`${myApplication.language.testType} ${myApplication.language.grade || ""} ${myApplication.language.score || ""}`.trim()}
         slots={slots}
         mode="edit"
         initialSelections={initialSelections}

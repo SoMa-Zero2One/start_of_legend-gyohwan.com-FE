@@ -108,9 +108,11 @@ function ApplicationNewContent() {
           seasonId={seasonId}
           gpaId={gpaId}
           languageId={languageId}
-          languageTest={existingLanguage?.testType}
-          languageScore={existingLanguage?.score}
-          languageGrade={existingLanguage?.grade}
+          displayLanguage={
+            existingLanguage
+              ? `${existingLanguage.testType} ${existingLanguage.grade || ""} ${existingLanguage.score || ""}`.trim()
+              : undefined
+          }
           slots={slots}
         />
       )}
