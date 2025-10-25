@@ -2,6 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  DndContext,
+  closestCenter,
+  DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
+  useSensor,
+  useSensors,
+  MouseSensor,
+  TouchSensor,
+  KeyboardSensor,
+} from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import SearchIcon from "@/components/icons/SearchIcon";
 import DragHandleIcon from "@/components/icons/DragHandleIcon";
 import PencilIcon from "@/components/icons/PencilIcon";
@@ -28,6 +42,75 @@ interface SelectedUniversity {
   slot: Slot;
 }
 
+interface SortableChoiceCardProps {
+  choice: number;
+  selected: SelectedUniversity | undefined;
+  displayLanguage?: string;
+  onChoiceCardClick: (choice: number) => void;
+}
+
+function SortableChoiceCard({ choice, selected, displayLanguage, onChoiceCardClick }: SortableChoiceCardProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: selected ? `slot-${selected.slot.slotId}` : `empty-${choice}`,
+    disabled: !selected, // 빈 카드는 드래그 불가
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="flex items-center gap-[12px]">
+      <span className="medium-body-3">{choice}지망</span>
+
+      {selected ? (
+        <button
+          onClick={() => onChoiceCardClick(choice)}
+          className="flex flex-1 cursor-pointer items-center gap-[12px] rounded-[4px] border border-gray-300 p-[12px] transition-colors hover:bg-gray-50"
+        >
+          {/* 대학 로고 */}
+          <div className="relative h-[32px] w-[32px] flex-shrink-0 overflow-hidden rounded-full">
+            <SchoolLogoWithFallback
+              src={selected.slot.logoImageUrl}
+              alt={selected.slot.name}
+              width={32}
+              height={32}
+              className="object-cover"
+            />
+          </div>
+          <span className="medium-body-3 w-0 flex-1 truncate text-left">{selected.slot.name}</span>
+          {/* 어학 시험 태그 */}
+          {displayLanguage && (
+            <span className="caption-2 bg-primary-blue rounded-[4px] px-[8px] py-[4px] text-white">
+              {displayLanguage}
+            </span>
+          )}
+          {/* 수정 아이콘 */}
+          <PencilIcon size={16} className="text-gray-500" />
+        </button>
+      ) : (
+        <button
+          onClick={() => onChoiceCardClick(choice)}
+          className="flex-1 cursor-pointer rounded-[4px] border border-gray-300 p-[16px] text-left text-gray-700"
+        >
+          지망 대학을 추가하세요
+        </button>
+      )}
+
+      {/* 드래그 핸들 */}
+      <div
+        {...attributes}
+        {...listeners}
+        className={`p-[4px] ${selected ? "cursor-grab active:cursor-grabbing" : "cursor-not-allowed opacity-30"}`}
+      >
+        <DragHandleIcon size={20} />
+      </div>
+    </div>
+  );
+}
+
 export default function UniversitySelectionStep({
   seasonId,
   gpaId,
@@ -46,6 +129,23 @@ export default function UniversitySelectionStep({
   const [tooltipMessage, setTooltipMessage] = useState<string>("");
   const [shouldShake, setShouldShake] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [activeId, setActiveId] = useState<number | string | null>(null);
+
+  // 센서 설정 - 마우스, 터치, 키보드 모두 지원
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 8, // 8px 이동 후 드래그 활성화
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 100, // 100ms 누르고 있으면 드래그 활성화
+        tolerance: 8, // 8px 허용 오차
+      },
+    }),
+    useSensor(KeyboardSensor)
+  );
 
   // 지망 카드 클릭 핸들러
   const handleChoiceCardClick = (choice: number) => {
@@ -127,50 +227,46 @@ export default function UniversitySelectionStep({
     setSelectedUniversities([]);
   };
 
-  // 드래그 앤 드롭 핸들러
-  const handleDragStart = (e: React.DragEvent, choice: number) => {
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/plain", choice.toString());
+  // 드래그 시작 핸들러
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-  };
+  // 드래그 종료 핸들러
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
 
-  const handleDrop = (e: React.DragEvent, targetChoice: number) => {
-    e.preventDefault();
-    const sourceChoice = parseInt(e.dataTransfer.getData("text/plain"));
+    setActiveId(null);
 
-    if (sourceChoice === targetChoice) return;
+    if (!over || active.id === over.id) return;
 
-    // 두 지망의 대학을 교환
-    const sourceUniv = selectedUniversities.find((u) => u.choice === sourceChoice);
-    const targetUniv = selectedUniversities.find((u) => u.choice === targetChoice);
+    // choice 순서대로 정렬된 배열
+    const sortedUniversities = [...selectedUniversities].sort((a, b) => a.choice - b.choice);
 
-    if (!sourceUniv) return;
+    // ID에서 슬롯 ID 추출 (slot- prefix 제거)
+    const getSlotId = (id: string | number): number => {
+      const idStr = String(id);
+      return idStr.startsWith("slot-") ? parseInt(idStr.replace("slot-", "")) : parseInt(idStr);
+    };
 
-    const updated = selectedUniversities
-      .map((u) => {
-        if (u.choice === sourceChoice) {
-          return targetUniv ? { ...targetUniv, choice: sourceChoice } : null;
-        }
-        if (u.choice === targetChoice) {
-          return { ...sourceUniv, choice: targetChoice };
-        }
-        return u;
-      })
-      .filter((u): u is SelectedUniversity => u !== null);
+    const activeSlotId = getSlotId(active.id);
+    const overSlotId = getSlotId(over.id);
 
-    // targetChoice에 아무것도 없었던 경우
-    if (!targetUniv) {
-      const newUpdated = selectedUniversities
-        .filter((u) => u.choice !== sourceChoice)
-        .concat({ choice: targetChoice, slot: sourceUniv.slot });
-      setSelectedUniversities(newUpdated);
-    } else {
-      setSelectedUniversities(updated);
-    }
+    const oldIndex = sortedUniversities.findIndex((u) => u.slot.slotId === activeSlotId);
+    const newIndex = sortedUniversities.findIndex((u) => u.slot.slotId === overSlotId);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    // arrayMove로 배열 순서 변경
+    const reordered = arrayMove(sortedUniversities, oldIndex, newIndex);
+
+    // choice 값 재계산 (배열 인덱스 기반으로 1, 2, 3, 4, 5 부여)
+    const withUpdatedChoices = reordered.map((u, index) => ({
+      ...u,
+      choice: index + 1,
+    }));
+
+    setSelectedUniversities(withUpdatedChoices);
   };
 
   // 저장 버튼 핸들러
@@ -246,7 +342,9 @@ export default function UniversitySelectionStep({
     } catch (error) {
       console.error("Application submission error:", error);
       const errorMessage =
-        mode === "edit" ? "지망 대학 수정에 실패했습니다. 다시 시도해주세요." : "지원서 제출에 실패했습니다. 다시 시도해주세요.";
+        mode === "edit"
+          ? "지망 대학 수정에 실패했습니다. 다시 시도해주세요."
+          : "지원서 제출에 실패했습니다. 다시 시도해주세요.";
       setTooltipMessage(errorMessage);
       setShouldShake(true);
       setTimeout(() => {
@@ -283,65 +381,82 @@ export default function UniversitySelectionStep({
         </div>
 
         {/* 지망 카드 리스트 */}
-        <section className="mb-[32px] flex flex-col gap-[8px]">
-          {choices.map((choice) => {
-            const selected = selectedUniversities.find((u) => u.choice === choice);
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={choices.map((choice) => {
+              const selected = selectedUniversities.find((u) => u.choice === choice);
+              return selected ? `slot-${selected.slot.slotId}` : `empty-${choice}`;
+            })}
+            strategy={verticalListSortingStrategy}
+          >
+            <section className="mb-[32px] flex flex-col gap-[8px]">
+              {choices.map((choice) => {
+                const selected = selectedUniversities.find((u) => u.choice === choice);
 
-            return (
-              <div
-                key={choice}
-                className="flex items-center gap-[12px]"
-                draggable={!!selected}
-                onDragStart={(e) => handleDragStart(e, choice)}
-                onDragOver={handleDragOver}
-                onDrop={(e) => handleDrop(e, choice)}
-              >
-                <span className="medium-body-3">{choice}지망</span>
+                return (
+                  <SortableChoiceCard
+                    key={choice}
+                    choice={choice}
+                    selected={selected}
+                    displayLanguage={displayLanguage}
+                    onChoiceCardClick={handleChoiceCardClick}
+                  />
+                );
+              })}
+            </section>
+          </SortableContext>
+          <DragOverlay>
+            {activeId
+              ? (() => {
+                  // ID에서 슬롯 ID 추출 (slot- prefix 제거)
+                  const getSlotId = (id: string | number): number => {
+                    const idStr = String(id);
+                    return idStr.startsWith("slot-") ? parseInt(idStr.replace("slot-", "")) : parseInt(idStr);
+                  };
 
-                {selected ? (
-                  <button
-                    onClick={() => handleChoiceCardClick(choice)}
-                    className="flex flex-1 cursor-pointer items-center gap-[12px] rounded-[4px] border border-gray-300 p-[12px] transition-colors hover:bg-gray-50"
-                  >
-                    {/* 대학 로고 */}
-                    <div className="relative h-[32px] w-[32px] flex-shrink-0 overflow-hidden rounded-full">
-                      <SchoolLogoWithFallback
-                        src={selected.slot.logoImageUrl}
-                        alt={selected.slot.name}
-                        width={32}
-                        height={32}
-                        className="object-cover"
-                      />
+                  const activeSlotId = getSlotId(activeId);
+                  const draggedUniversity = selectedUniversities.find((u) => u.slot.slotId === activeSlotId);
+                  if (!draggedUniversity) return null;
+
+                  const draggedChoice = draggedUniversity.choice;
+
+                  return (
+                    <div className="flex items-center gap-[12px] opacity-90">
+                      <span className="medium-body-3">{draggedChoice}지망</span>
+                      <div className="flex flex-1 items-center gap-[12px] rounded-[4px] border border-gray-300 bg-white p-[12px] shadow-lg">
+                        <div className="relative h-[32px] w-[32px] flex-shrink-0 overflow-hidden rounded-full">
+                          <SchoolLogoWithFallback
+                            src={draggedUniversity.slot.logoImageUrl}
+                            alt={draggedUniversity.slot.name}
+                            width={32}
+                            height={32}
+                            className="object-cover"
+                          />
+                        </div>
+                        <span className="medium-body-3 w-0 flex-1 truncate text-left">
+                          {draggedUniversity.slot.name}
+                        </span>
+                        {displayLanguage && (
+                          <span className="caption-2 bg-primary-blue rounded-[4px] px-[8px] py-[4px] text-white">
+                            {displayLanguage}
+                          </span>
+                        )}
+                        <PencilIcon size={16} className="text-gray-500" />
+                      </div>
+                      <div className="p-[4px]">
+                        <DragHandleIcon size={20} />
+                      </div>
                     </div>
-                    <span className="medium-body-3 w-0 flex-1 truncate text-left">{selected.slot.name}</span>
-                    {/* 어학 시험 태그 */}
-                    {displayLanguage && (
-                      <span className="caption-2 bg-primary-blue rounded-[4px] px-[8px] py-[4px] text-white">
-                        {displayLanguage}
-                      </span>
-                    )}
-                    {/* 수정 아이콘 */}
-                    <PencilIcon size={16} className="text-gray-500" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleChoiceCardClick(choice)}
-                    className="flex-1 cursor-pointer rounded-[4px] border border-gray-300 p-[16px] text-left text-gray-700"
-                  >
-                    지망 대학을 추가하세요
-                  </button>
-                )}
-
-                {/* 드래그 핸들 */}
-                <div
-                  className={`p-[4px] ${selected ? "cursor-grab active:cursor-grabbing" : "cursor-not-allowed opacity-30"}`}
-                >
-                  <DragHandleIcon size={20} />
-                </div>
-              </div>
-            );
-          })}
-        </section>
+                  );
+                })()
+              : null}
+          </DragOverlay>
+        </DndContext>
 
         <div className="flex items-center justify-center">
           {/* 지망 대학 초기화 버튼 */}
