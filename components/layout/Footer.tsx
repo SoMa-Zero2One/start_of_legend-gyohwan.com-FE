@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -17,12 +18,12 @@ export default function Footer() {
 
         {/* 링크 섹션 */}
         <div className="flex items-center gap-[24px] border-b-[1px] border-gray-700 pb-[12px]">
-          <a href="/terms" className="caption-1 font-bold text-white hover:underline">
+          <Link href="/terms" className="caption-1 font-bold text-white hover:underline">
             서비스 이용약관
-          </a>
-          <a href="/privacy" className="caption-1 font-bold text-white hover:underline">
+          </Link>
+          <Link href="/privacy" className="caption-1 font-bold text-white hover:underline">
             개인정보처리방침
-          </a>
+          </Link>
         </div>
 
         {/* 저작권 정보 */}
