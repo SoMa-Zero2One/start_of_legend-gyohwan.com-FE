@@ -3,15 +3,28 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { validateState, cleanupOAuthSession } from "@/lib/oauth/config";
-import { loginWithKakao } from "@/lib/api/auth";
+import { loginWithGoogle, loginWithKakao } from "@/lib/api/auth";
 import { useAuthStore } from "@/stores/authStore";
 import { getRedirectUrl, clearRedirectUrl } from "@/lib/utils/redirect";
 
-function KakaoCallbackContent() {
+interface OAuthCallbackContentProps {
+  provider: "google" | "kakao";
+}
+
+// Provider별 로그인 함수 매핑 (컴포넌트 외부로 이동)
+const LOGIN_FUNCTIONS = {
+  google: loginWithGoogle,
+  kakao: loginWithKakao,
+} as const;
+
+function OAuthCallbackContent({ provider }: OAuthCallbackContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const fetchUser = useAuthStore((state) => state.fetchUser);
+
+  // Provider별 표시 이름
+  const providerName = provider === "google" ? "구글" : "카카오";
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -20,7 +33,7 @@ function KakaoCallbackContent() {
       const errorParam = searchParams.get("error");
 
       if (errorParam) {
-        setError("카카오 로그인이 취소되었습니다.");
+        setError(`${providerName} 로그인이 취소되었습니다.`);
         cleanupOAuthSession();
         setTimeout(() => router.push("/log-in-or-create-account"), 2000);
         return;
@@ -43,7 +56,7 @@ function KakaoCallbackContent() {
 
       try {
         // 백엔드로 인증 코드 전송 (쿠키로 accessToken 받음)
-        await loginWithKakao(code);
+        await LOGIN_FUNCTIONS[provider](code);
 
         // OAuth 세션 정리
         cleanupOAuthSession();
@@ -71,7 +84,7 @@ function KakaoCallbackContent() {
           router.push("/");
         }
       } catch (err) {
-        console.error("Kakao login error:", err);
+        console.error(`${provider} login error:`, err);
         setError("로그인 처리 중 오류가 발생했습니다.");
         cleanupOAuthSession();
         setTimeout(() => router.push("/log-in-or-create-account"), 2000);
@@ -79,7 +92,7 @@ function KakaoCallbackContent() {
     };
 
     handleCallback();
-  }, [searchParams, router, fetchUser]);
+  }, [searchParams, router, fetchUser, provider]);
 
   // 에러가 있을 때만 UI 표시, 정상 처리는 빈 화면
   if (!error) {
@@ -96,10 +109,26 @@ function KakaoCallbackContent() {
   );
 }
 
-export default function KakaoCallback() {
+export default function OAuthCallback({ params }: { params: { provider: string } }) {
+  // Provider 유효성 검사 (타입 가드)
+  const isValidProvider = (provider: string): provider is "google" | "kakao" => {
+    return provider === "google" || provider === "kakao";
+  };
+
+  if (!isValidProvider(params.provider)) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center p-4">
+        <div className="text-center text-red-500">
+          <p className="body-1">지원하지 않는 로그인 방식입니다.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 여기서는 params.provider가 "google" | "kakao" 타입으로 좁혀짐
   return (
     <Suspense fallback={null}>
-      <KakaoCallbackContent />
+      <OAuthCallbackContent provider={params.provider} />
     </Suspense>
   );
 }
