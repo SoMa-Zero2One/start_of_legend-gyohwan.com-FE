@@ -4,8 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Season } from "@/types/season";
 import { calculateDDay } from "@/lib/utils/date";
-import { useAuthStore } from "@/stores/authStore";
-import { saveRedirectUrl } from "@/lib/utils/redirect";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 
 interface StrategyRoomCardProps {
@@ -15,7 +13,6 @@ interface StrategyRoomCardProps {
 export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
   const { seasonId, domesticUniversity, domesticUniversityLogoUri, startDate, endDate } = data;
   const router = useRouter();
-  const { user, isLoggedIn } = useAuthStore();
 
   // 날짜 포맷
   const formattedDate = startDate && endDate ? `${startDate} ~ ${endDate}` : "일정 미정";
@@ -23,27 +20,9 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
   // D-Day 계산
   const dDay = startDate ? calculateDDay(startDate) : null;
 
+  // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
   const handleShareClick = () => {
-    const targetUrl = `/strategy-room/${seasonId}/applications/new`;
-
-    // 로그인 확인
-    if (!isLoggedIn || !user) {
-      // 리다이렉트 URL 저장 후 로그인 페이지로 이동
-      saveRedirectUrl(targetUrl);
-      router.push("/log-in-or-create-account");
-      return;
-    }
-
-    // 학교 인증 확인
-    if (!user.schoolVerified) {
-      // 리다이렉트 URL 저장 후 학교 인증 페이지로 이동
-      saveRedirectUrl(targetUrl);
-      router.push("/school-verification");
-      return;
-    }
-
-    // 모두 완료된 경우 바로 이동
-    router.push(targetUrl);
+    router.push(`/strategy-room/${seasonId}/applications/new`);
   };
 
   return (
