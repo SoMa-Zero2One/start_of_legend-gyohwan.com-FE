@@ -377,7 +377,7 @@ export default function UniversitySelectionStep({
             className="flex flex-shrink-0 items-center gap-[6px] rounded-[8px] bg-blue-50 px-[12px] py-[8px] transition-colors hover:bg-blue-100"
           >
             <SearchIcon size={18} className="text-primary-blue" />
-            <span className="caption-1 text-primary-blue font-semibold">한번에 추가</span>
+            <span className="caption-1 text-primary-blue font-semibold">지망 대학 한번에 추가하기</span>
           </button>
         </div>
 
