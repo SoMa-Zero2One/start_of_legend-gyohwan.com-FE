@@ -368,7 +368,7 @@ export default function UniversitySelectionStep({
         {/* Step 타이틀 */}
         <div className="mb-[24px]">
           {mode === "new" && <p className="caption-1 text-primary-blue mb-[8px]">Step 02</p>}
-          <div className="flex items-center gap-[12px]">
+          <div className="flex items-center justify-between">
             <h1 className="head-4">{mode === "edit" ? "지망 대학 변경하기" : "지망 대학 등록하기"}</h1>
             {/* 빠른 추가 버튼 */}
             <button
@@ -376,7 +376,7 @@ export default function UniversitySelectionStep({
                 setCurrentChoice(null); // null = 빠른 추가 모드
                 setShowSearch(true);
               }}
-              className="flex flex-shrink-0 cursor-pointer items-center justify-between rounded-full bg-blue-50 px-[12px] py-[6px] transition-colors hover:bg-blue-100"
+              className="flex flex-shrink-0 cursor-pointer items-center gap-[6px] rounded-full bg-blue-50 px-[12px] py-[6px] transition-colors hover:bg-blue-100"
             >
               <SearchIcon size={16} className="text-primary-blue" />
               <span className="caption-1 text-primary-blue font-semibold whitespace-nowrap">대학 한 번에 선택하기</span>
