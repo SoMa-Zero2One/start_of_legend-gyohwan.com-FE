@@ -384,21 +384,21 @@ export default function UniversitySelectionStep({
       <div className="px-[20px] pt-[24px] pb-[100px]">
         {/* Step 타이틀 */}
         <div className="mb-[24px]">
-          <div className="mb-[16px]">
-            {mode === "new" && <p className="caption-1 text-primary-blue mb-[8px]">Step 02</p>}
+          {mode === "new" && <p className="caption-1 text-primary-blue mb-[8px]">Step 02</p>}
+          <div className="flex items-center gap-[12px]">
             <h1 className="head-4">{mode === "edit" ? "지망 대학 변경하기" : "지망 대학 등록하기"}</h1>
+            {/* 빠른 추가 버튼 */}
+            <button
+              onClick={() => {
+                setCurrentChoice(null); // null = 빠른 추가 모드
+                setShowSearch(true);
+              }}
+              className="flex flex-shrink-0 items-center gap-[6px] rounded-full bg-blue-50 px-[12px] py-[6px] transition-colors hover:bg-blue-100"
+            >
+              <SearchIcon size={16} className="text-primary-blue" />
+              <span className="caption-1 text-primary-blue font-semibold whitespace-nowrap">한 번에 선택</span>
+            </button>
           </div>
-          {/* 빠른 추가 버튼 */}
-          <button
-            onClick={() => {
-              setCurrentChoice(null); // null = 빠른 추가 모드
-              setShowSearch(true);
-            }}
-            className="flex w-full items-center justify-center gap-[8px] rounded-[8px] bg-blue-50 px-[16px] py-[10px] transition-colors hover:bg-blue-100"
-          >
-            <SearchIcon size={18} className="text-primary-blue" />
-            <span className="body-3 text-primary-blue font-semibold">한 번에 여러 대학 선택하기</span>
-          </button>
         </div>
 
         {/* 지망 카드 리스트 */}
