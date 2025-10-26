@@ -14,7 +14,7 @@ import {
   TouchSensor,
   KeyboardSensor,
 } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from "@dnd-kit/sortable";
+import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import SearchIcon from "@/components/icons/SearchIcon";
 import DragHandleIcon from "@/components/icons/DragHandleIcon";
@@ -240,33 +240,53 @@ export default function UniversitySelectionStep({
 
     if (!over || active.id === over.id) return;
 
-    // choice 순서대로 정렬된 배열
-    const sortedUniversities = [...selectedUniversities].sort((a, b) => a.choice - b.choice);
+    const activeIdStr = String(active.id);
+    const overIdStr = String(over.id);
 
-    // ID에서 슬롯 ID 추출 (slot- prefix 제거)
-    const getSlotId = (id: string | number): number => {
-      const idStr = String(id);
-      return idStr.startsWith("slot-") ? parseInt(idStr.replace("slot-", "")) : parseInt(idStr);
-    };
+    // 드래그한 대학 찾기
+    const draggedUniversity = selectedUniversities.find((u) => {
+      const slotIdStr = `slot-${u.slot.slotId}`;
+      return slotIdStr === activeIdStr;
+    });
 
-    const activeSlotId = getSlotId(active.id);
-    const overSlotId = getSlotId(over.id);
+    if (!draggedUniversity) return;
 
-    const oldIndex = sortedUniversities.findIndex((u) => u.slot.slotId === activeSlotId);
-    const newIndex = sortedUniversities.findIndex((u) => u.slot.slotId === overSlotId);
+    // 목표 choice 찾기
+    let targetChoice: number;
 
-    if (oldIndex === -1 || newIndex === -1) return;
+    if (overIdStr.startsWith("empty-")) {
+      // 빈 슬롯으로 드래그한 경우
+      targetChoice = parseInt(overIdStr.replace("empty-", ""));
+    } else if (overIdStr.startsWith("slot-")) {
+      // 다른 대학이 있는 슬롯으로 드래그한 경우
+      const overSlotId = parseInt(overIdStr.replace("slot-", ""));
+      const overUniversity = selectedUniversities.find((u) => u.slot.slotId === overSlotId);
+      if (!overUniversity) return;
+      targetChoice = overUniversity.choice;
+    } else {
+      return;
+    }
 
-    // arrayMove로 배열 순서 변경
-    const reordered = arrayMove(sortedUniversities, oldIndex, newIndex);
+    const oldChoice = draggedUniversity.choice;
 
-    // choice 값 재계산 (배열 인덱스 기반으로 1, 2, 3, 4, 5 부여)
-    const withUpdatedChoices = reordered.map((u, index) => ({
-      ...u,
-      choice: index + 1,
-    }));
+    if (oldChoice === targetChoice) return;
 
-    setSelectedUniversities(withUpdatedChoices);
+    // 새로운 배열 생성
+    const updated = selectedUniversities.map((u) => {
+      if (u.slot.slotId === draggedUniversity.slot.slotId) {
+        // 드래그한 대학을 목표 choice로 이동
+        return { ...u, choice: targetChoice };
+      } else if (oldChoice < targetChoice && u.choice > oldChoice && u.choice <= targetChoice) {
+        // 드래그한 대학보다 뒤에 있던 대학들을 앞으로 한 칸씩 이동
+        return { ...u, choice: u.choice - 1 };
+      } else if (oldChoice > targetChoice && u.choice >= targetChoice && u.choice < oldChoice) {
+        // 드래그한 대학보다 앞에 있던 대학들을 뒤로 한 칸씩 이동
+        return { ...u, choice: u.choice + 1 };
+      }
+      return u;
+    });
+
+    setSelectedUniversities(updated);
   };
 
   // 저장 버튼 핸들러
@@ -363,21 +383,22 @@ export default function UniversitySelectionStep({
     <div className="flex-1">
       <div className="px-[20px] pt-[24px] pb-[100px]">
         {/* Step 타이틀 */}
-        <div className="mb-[24px] flex items-center justify-between">
-          <div>
-            {mode === "new" && <p className="caption-1 text-primary-blue mb-[8px]">Step 02</p>}
+        <div className="mb-[24px]">
+          {mode === "new" && <p className="caption-1 text-primary-blue mb-[8px]">Step 02</p>}
+          <div className="flex items-center gap-[12px]">
             <h1 className="head-4">{mode === "edit" ? "지망 대학 변경하기" : "지망 대학 등록하기"}</h1>
+            {/* 빠른 추가 버튼 */}
+            <button
+              onClick={() => {
+                setCurrentChoice(null); // null = 빠른 추가 모드
+                setShowSearch(true);
+              }}
+              className="flex flex-shrink-0 items-center gap-[6px] rounded-full bg-blue-50 px-[12px] py-[6px] transition-colors hover:bg-blue-100"
+            >
+              <SearchIcon size={16} className="text-primary-blue" />
+              <span className="caption-1 text-primary-blue font-semibold whitespace-nowrap">한 번에 선택</span>
+            </button>
           </div>
-          {/* 검색 아이콘 - 빠른 추가용 */}
-          <button
-            onClick={() => {
-              setCurrentChoice(null); // null = 빠른 추가 모드
-              setShowSearch(true);
-            }}
-            className="cursor-pointer p-[8px]"
-          >
-            <SearchIcon size={24} />
-          </button>
         </div>
 
         {/* 지망 카드 리스트 */}
