@@ -9,8 +9,6 @@ import Tabs from "@/components/common/Tabs";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import { getSeasonSlots, getMyApplication } from "@/lib/api/slot";
 import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
-import { useAuthStore } from "@/stores/authStore";
-import { saveRedirectUrl } from "@/lib/utils/redirect";
 
 type TabType = "지망한 대학" | "지원자가 있는 대학" | "모든 대학";
 
@@ -19,7 +17,6 @@ export default function StrategyRoomPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const seasonId = params.seasonId as string;
-  const { user, isLoggedIn } = useAuthStore();
 
   const [data, setData] = useState<SeasonSlotsResponse | null>(null);
   const [myApplication, setMyApplication] = useState<MyApplicationResponse | null>(null);
@@ -115,28 +112,10 @@ export default function StrategyRoomPage() {
     return data.slots.filter((slot) => slot.choiceCount >= 1);
   }, [data]);
 
-  // CTA 버튼 클릭 핸들러 (ShareGradeCTA의 handleClick과 동일한 로직)
+  // CTA 버튼 클릭 핸들러
+  // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
   const handleCTAClick = () => {
-    const targetUrl = `/strategy-room/${seasonId}/applications/new`;
-
-    // 로그인 확인
-    if (!isLoggedIn || !user) {
-      // 리다이렉트 URL 저장 후 로그인 페이지로 이동
-      saveRedirectUrl(targetUrl);
-      router.push("/log-in-or-create-account");
-      return;
-    }
-
-    // 학교 인증 확인
-    if (!user.schoolVerified) {
-      // 리다이렉트 URL 저장 후 학교 인증 페이지로 이동
-      saveRedirectUrl(targetUrl);
-      router.push("/school-verification");
-      return;
-    }
-
-    // 모두 완료된 경우 바로 이동
-    router.push(targetUrl);
+    router.push(`/strategy-room/${seasonId}/applications/new`);
   };
 
   if (isLoading) {
