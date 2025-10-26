@@ -65,3 +65,42 @@ export const validateState = (state: string): boolean => {
 export const cleanupOAuthSession = (): void => {
   sessionStorage.removeItem('oauth_state');
 };
+
+/**
+ * 공통 OAuth URL 생성 함수
+ * @param provider - OAuth 제공자 (google, kakao)
+ * @param additionalParams - 추가 파라미터 (scope 등)
+ */
+export const buildOAuthUrl = (
+  provider: OAuthProvider,
+  additionalParams?: Record<string, string>
+): string => {
+  const config = getOAuthConfig(provider);
+  const state = generateState();
+
+  // state를 세션 스토리지에 저장 (CSRF 방지)
+  sessionStorage.setItem('oauth_state', state);
+
+  const params = new URLSearchParams({
+    client_id: config.clientId,
+    redirect_uri: config.redirectUri,
+    response_type: 'code',
+    state,
+    ...additionalParams,
+  });
+
+  return `${config.authorizationEndpoint}?${params.toString()}`;
+};
+
+/**
+ * OAuth 로그인을 시작합니다 (리다이렉트 방식)
+ * @param provider - OAuth 제공자 (google, kakao)
+ * @param additionalParams - 추가 파라미터 (scope 등)
+ */
+export const initiateOAuthLogin = (
+  provider: OAuthProvider,
+  additionalParams?: Record<string, string>
+): void => {
+  const authUrl = buildOAuthUrl(provider, additionalParams);
+  window.location.href = authUrl;
+};
