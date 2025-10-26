@@ -122,7 +122,7 @@ export default function UniversitySelectionStep({
   initialSelections = [],
 }: UniversitySelectionStepProps) {
   const router = useRouter();
-  const { tooltipMessage, shouldShake, showError } = useFormErrorHandler();
+  const { tooltipMessage, shouldShake, showError, clearError } = useFormErrorHandler();
   const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>(initialSelections);
   const [extraScore, setExtraScore] = useState<string>("");
   const [showSearch, setShowSearch] = useState(false);
@@ -291,6 +291,9 @@ export default function UniversitySelectionStep({
 
   // 저장 버튼 핸들러
   const handleSubmit = async () => {
+    // 이전 에러 메시지 초기화
+    clearError();
+
     // Validation (new 모드에서만 성적 정보 체크)
     if (mode === "new" && (!gpaId || !languageId)) {
       showError("성적 정보가 없습니다. Step 1부터 다시 진행해주세요.");
@@ -376,7 +379,9 @@ export default function UniversitySelectionStep({
               className="flex flex-shrink-0 items-center gap-[6px] rounded-full bg-blue-50 px-[12px] py-[6px] transition-colors hover:bg-blue-100"
             >
               <SearchIcon size={16} className="text-primary-blue" />
-              <span className="caption-1 text-primary-blue font-semibold whitespace-nowrap">한 번에 선택</span>
+              <span className="caption-1 text-primary-blue cursor-pointer font-semibold whitespace-nowrap">
+                대학 한 번에 선택하기
+              </span>
             </button>
           </div>
         </div>

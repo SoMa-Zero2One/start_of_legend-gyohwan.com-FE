@@ -50,7 +50,7 @@ export default function GradeRegistrationStep({
   existingLanguage,
   onSubmit,
 }: GradeRegistrationStepProps) {
-  const { tooltipMessage, shouldShake, showError } = useFormErrorHandler();
+  const { tooltipMessage, shouldShake, showError, clearError } = useFormErrorHandler();
 
   // GPA 상태
   const [gpaScore, setGpaScore] = useState("");
@@ -89,6 +89,8 @@ export default function GradeRegistrationStep({
   }, [existingGpa, existingLanguage]);
 
   const handleSubmit = async () => {
+    // 이전 에러 메시지 초기화
+    clearError();
 
     // 학점 유효성 검사
     const gpaValue = parseFloat(gpaScore);
