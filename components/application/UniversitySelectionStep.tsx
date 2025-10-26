@@ -14,7 +14,7 @@ import {
   TouchSensor,
   KeyboardSensor,
 } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from "@dnd-kit/sortable";
+import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import SearchIcon from "@/components/icons/SearchIcon";
 import DragHandleIcon from "@/components/icons/DragHandleIcon";
@@ -240,33 +240,53 @@ export default function UniversitySelectionStep({
 
     if (!over || active.id === over.id) return;
 
-    // choice 순서대로 정렬된 배열
-    const sortedUniversities = [...selectedUniversities].sort((a, b) => a.choice - b.choice);
+    const activeIdStr = String(active.id);
+    const overIdStr = String(over.id);
 
-    // ID에서 슬롯 ID 추출 (slot- prefix 제거)
-    const getSlotId = (id: string | number): number => {
-      const idStr = String(id);
-      return idStr.startsWith("slot-") ? parseInt(idStr.replace("slot-", "")) : parseInt(idStr);
-    };
+    // 드래그한 대학 찾기
+    const draggedUniversity = selectedUniversities.find((u) => {
+      const slotIdStr = `slot-${u.slot.slotId}`;
+      return slotIdStr === activeIdStr;
+    });
 
-    const activeSlotId = getSlotId(active.id);
-    const overSlotId = getSlotId(over.id);
+    if (!draggedUniversity) return;
 
-    const oldIndex = sortedUniversities.findIndex((u) => u.slot.slotId === activeSlotId);
-    const newIndex = sortedUniversities.findIndex((u) => u.slot.slotId === overSlotId);
+    // 목표 choice 찾기
+    let targetChoice: number;
 
-    if (oldIndex === -1 || newIndex === -1) return;
+    if (overIdStr.startsWith("empty-")) {
+      // 빈 슬롯으로 드래그한 경우
+      targetChoice = parseInt(overIdStr.replace("empty-", ""));
+    } else if (overIdStr.startsWith("slot-")) {
+      // 다른 대학이 있는 슬롯으로 드래그한 경우
+      const overSlotId = parseInt(overIdStr.replace("slot-", ""));
+      const overUniversity = selectedUniversities.find((u) => u.slot.slotId === overSlotId);
+      if (!overUniversity) return;
+      targetChoice = overUniversity.choice;
+    } else {
+      return;
+    }
 
-    // arrayMove로 배열 순서 변경
-    const reordered = arrayMove(sortedUniversities, oldIndex, newIndex);
+    const oldChoice = draggedUniversity.choice;
 
-    // choice 값 재계산 (배열 인덱스 기반으로 1, 2, 3, 4, 5 부여)
-    const withUpdatedChoices = reordered.map((u, index) => ({
-      ...u,
-      choice: index + 1,
-    }));
+    if (oldChoice === targetChoice) return;
 
-    setSelectedUniversities(withUpdatedChoices);
+    // 새로운 배열 생성
+    const updated = selectedUniversities.map((u) => {
+      if (u.slot.slotId === draggedUniversity.slot.slotId) {
+        // 드래그한 대학을 목표 choice로 이동
+        return { ...u, choice: targetChoice };
+      } else if (oldChoice < targetChoice && u.choice > oldChoice && u.choice <= targetChoice) {
+        // 드래그한 대학보다 뒤에 있던 대학들을 앞으로 한 칸씩 이동
+        return { ...u, choice: u.choice - 1 };
+      } else if (oldChoice > targetChoice && u.choice >= targetChoice && u.choice < oldChoice) {
+        // 드래그한 대학보다 앞에 있던 대학들을 뒤로 한 칸씩 이동
+        return { ...u, choice: u.choice + 1 };
+      }
+      return u;
+    });
+
+    setSelectedUniversities(updated);
   };
 
   // 저장 버튼 핸들러
