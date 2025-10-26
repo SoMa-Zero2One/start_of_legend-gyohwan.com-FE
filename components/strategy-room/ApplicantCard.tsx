@@ -15,11 +15,9 @@ export default function ApplicantCard({ choice, onClick, isBlurred = false, isMe
   // 어학성적 표시 (languageTest languageGrade languageScore 형식)
   const languageDisplay = isBlurred
     ? "TOEFL 110"
-    : choice.languageTest && choice.languageGrade
+    : choice.languageTest
       ? [choice.languageTest, choice.languageGrade, choice.languageScore].filter(Boolean).join(" ")
-      : choice.languageTest
-        ? choice.languageTest
-        : "-";
+      : "-";
 
   // 환산점수 표시
   const scoreDisplay = isBlurred ? "95.50" : choice.score !== null ? choice.score.toFixed(2) : "-";
