@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 import {
   DndContext,
   closestCenter,
@@ -121,13 +122,12 @@ export default function UniversitySelectionStep({
   initialSelections = [],
 }: UniversitySelectionStepProps) {
   const router = useRouter();
+  const { tooltipMessage, shouldShake, showError, clearError } = useFormErrorHandler();
   const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>(initialSelections);
   const [extraScore, setExtraScore] = useState<string>("");
   const [showSearch, setShowSearch] = useState(false);
   const [currentChoice, setCurrentChoice] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [tooltipMessage, setTooltipMessage] = useState<string>("");
-  const [shouldShake, setShouldShake] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [activeId, setActiveId] = useState<number | string | null>(null);
 
@@ -291,24 +291,17 @@ export default function UniversitySelectionStep({
 
   // 저장 버튼 핸들러
   const handleSubmit = async () => {
+    // 이전 에러 메시지 초기화
+    clearError();
+
     // Validation (new 모드에서만 성적 정보 체크)
     if (mode === "new" && (!gpaId || !languageId)) {
-      setTooltipMessage("성적 정보가 없습니다. Step 1부터 다시 진행해주세요.");
-      setShouldShake(true);
-      setTimeout(() => {
-        setTooltipMessage("");
-        setShouldShake(false);
-      }, 2000);
+      showError("성적 정보가 없습니다. Step 1부터 다시 진행해주세요.");
       return;
     }
 
     if (selectedUniversities.length === 0) {
-      setTooltipMessage("최소 1개 이상의 지망 대학을 선택해주세요.");
-      setShouldShake(true);
-      setTimeout(() => {
-        setTooltipMessage("");
-        setShouldShake(false);
-      }, 2000);
+      showError("최소 1개 이상의 지망 대학을 선택해주세요.");
       return;
     }
 
@@ -317,12 +310,7 @@ export default function UniversitySelectionStep({
 
     for (let i = 0; i < sortedChoices.length; i++) {
       if (sortedChoices[i] !== i + 1) {
-        setTooltipMessage("1지망부터 순서대로 채워주세요.");
-        setShouldShake(true);
-        setTimeout(() => {
-          setTooltipMessage("");
-          setShouldShake(false);
-        }, 2000);
+        showError("1지망부터 순서대로 채워주세요.");
         return;
       }
     }
@@ -365,12 +353,7 @@ export default function UniversitySelectionStep({
         mode === "edit"
           ? "지망 대학 수정에 실패했습니다. 다시 시도해주세요."
           : "지원서 제출에 실패했습니다. 다시 시도해주세요.";
-      setTooltipMessage(errorMessage);
-      setShouldShake(true);
-      setTimeout(() => {
-        setTooltipMessage("");
-        setShouldShake(false);
-      }, 2000);
+      showError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -393,10 +376,10 @@ export default function UniversitySelectionStep({
                 setCurrentChoice(null); // null = 빠른 추가 모드
                 setShowSearch(true);
               }}
-              className="flex flex-shrink-0 items-center gap-[6px] rounded-full bg-blue-50 px-[12px] py-[6px] transition-colors hover:bg-blue-100"
+              className="flex flex-shrink-0 cursor-pointer items-center gap-[6px] rounded-full bg-blue-50 px-[12px] py-[6px] transition-colors hover:bg-blue-100"
             >
               <SearchIcon size={16} className="text-primary-blue" />
-              <span className="caption-1 text-primary-blue font-semibold whitespace-nowrap">한 번에 선택</span>
+              <span className="caption-1 text-primary-blue font-semibold whitespace-nowrap">대학 한 번에 선택하기</span>
             </button>
           </div>
         </div>

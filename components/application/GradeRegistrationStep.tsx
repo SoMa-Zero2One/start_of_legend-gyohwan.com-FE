@@ -5,6 +5,7 @@ import CTAButton from "@/components/common/CTAButton";
 import { createGpa } from "@/lib/api/gpa";
 import { createLanguage } from "@/lib/api/language";
 import type { Gpa, Language, CreateLanguageRequest } from "@/types/grade";
+import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 
 interface GradeRegistrationStepProps {
   seasonId: number;
@@ -49,6 +50,8 @@ export default function GradeRegistrationStep({
   existingLanguage,
   onSubmit,
 }: GradeRegistrationStepProps) {
+  const { tooltipMessage, shouldShake, showError, clearError } = useFormErrorHandler();
+
   // GPA 상태
   const [gpaScore, setGpaScore] = useState("");
   const [gpaCriteria, setGpaCriteria] = useState<number>(4.5);
@@ -58,8 +61,6 @@ export default function GradeRegistrationStep({
   const [score, setScore] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [tooltipMessage, setTooltipMessage] = useState("");
-  const [shouldShake, setShouldShake] = useState(false);
 
   // 기존 데이터로 초기화
   useEffect(() => {
@@ -87,17 +88,9 @@ export default function GradeRegistrationStep({
     }
   }, [existingGpa, existingLanguage]);
 
-  const showError = (message: string) => {
-    setTooltipMessage(message);
-    setShouldShake(true);
-    setTimeout(() => {
-      setTooltipMessage("");
-      setShouldShake(false);
-    }, 2000);
-  };
-
   const handleSubmit = async () => {
-    setTooltipMessage("");
+    // 이전 에러 메시지 초기화
+    clearError();
 
     // 학점 유효성 검사
     const gpaValue = parseFloat(gpaScore);
