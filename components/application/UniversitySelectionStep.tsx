@@ -363,20 +363,23 @@ export default function UniversitySelectionStep({
     <div className="flex-1">
       <div className="px-[20px] pt-[24px] pb-[100px]">
         {/* Step 타이틀 */}
-        <div className="mb-[24px] flex items-center justify-between">
-          <div>
-            {mode === "new" && <p className="caption-1 text-primary-blue mb-[8px]">Step 02</p>}
-            <h1 className="head-4">{mode === "edit" ? "지망 대학 변경하기" : "지망 대학 등록하기"}</h1>
+        <div className="mb-[16px]">
+          <div className="mb-[12px] flex items-center justify-between">
+            <div>
+              {mode === "new" && <p className="caption-1 text-primary-blue mb-[8px]">Step 02</p>}
+              <h1 className="head-4">{mode === "edit" ? "지망 대학 변경하기" : "지망 대학 등록하기"}</h1>
+            </div>
           </div>
-          {/* 검색 아이콘 - 빠른 추가용 */}
+          {/* 빠른 추가 버튼 */}
           <button
             onClick={() => {
               setCurrentChoice(null); // null = 빠른 추가 모드
               setShowSearch(true);
             }}
-            className="cursor-pointer p-[8px]"
+            className="flex w-full items-center justify-center gap-[8px] rounded-[8px] bg-blue-50 px-[16px] py-[12px] transition-colors hover:bg-blue-100"
           >
-            <SearchIcon size={24} />
+            <SearchIcon size={20} className="text-primary-blue" />
+            <span className="body-3 text-primary-blue font-semibold">여러 대학 한번에 추가</span>
           </button>
         </div>
 
