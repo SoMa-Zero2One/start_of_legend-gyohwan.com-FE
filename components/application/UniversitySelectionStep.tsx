@@ -374,10 +374,12 @@ export default function UniversitySelectionStep({
               setCurrentChoice(null); // null = 빠른 추가 모드
               setShowSearch(true);
             }}
-            className="flex flex-shrink-0 items-center gap-[6px] rounded-[8px] bg-blue-50 px-[12px] py-[8px] transition-colors hover:bg-blue-100"
+            className="bg-primary-blue/15 flex flex-shrink-0 cursor-pointer items-center gap-[6px] rounded-[8px] px-[12px] py-[8px] transition-colors hover:bg-blue-100"
           >
             <SearchIcon size={18} className="text-primary-blue" />
-            <span className="caption-1 text-primary-blue font-semibold">지망 대학 한번에 추가하기</span>
+            <span className="caption-1 text-primary-blue font-semibold">
+              한번에 {mode === "edit" ? "변경" : "추가"}하기
+            </span>
           </button>
         </div>
 
