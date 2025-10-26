@@ -376,7 +376,7 @@ export default function UniversitySelectionStep({
                 setCurrentChoice(null); // null = 빠른 추가 모드
                 setShowSearch(true);
               }}
-              className="flex flex-shrink-0 cursor-pointer items-center justify-between gap-[6px] rounded-full bg-blue-50 px-[12px] py-[6px] transition-colors hover:bg-blue-100"
+              className="flex flex-shrink-0 cursor-pointer items-center justify-between rounded-full bg-blue-50 px-[12px] py-[6px] transition-colors hover:bg-blue-100"
             >
               <SearchIcon size={16} className="text-primary-blue" />
               <span className="caption-1 text-primary-blue font-semibold whitespace-nowrap">대학 한 번에 선택하기</span>
