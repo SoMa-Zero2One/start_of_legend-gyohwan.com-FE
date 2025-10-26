@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import ChevronRightIcon from "@/components/icons/ChevronRightIcon";
@@ -15,18 +16,23 @@ export default function MyInfoPage() {
   const { user, isLoading: authLoading } = useAuthStore();
   const router = useRouter();
 
-  // authStore 로딩 중이거나 로그인되지 않은 경우
+  // 로그인 체크 - Hard-gate
+  useEffect(() => {
+    if (authLoading) return;
+
+    if (!user) {
+      saveRedirectUrl("/my-page");
+      router.push("/log-in-or-create-account");
+    }
+  }, [authLoading, user, router]);
+
+  // 로딩 중이거나 리다이렉트 진행 중
   if (authLoading || !user) {
     return (
       <div className="flex min-h-screen flex-col">
         <Header title="내 정보 관리" showPrevButton showBorder />
-        <div className="flex w-full flex-col items-center justify-center px-[20px] py-[40px]">
-          <button
-            onClick={() => router.push("/log-in-or-create-account")}
-            className="btn-secondary w-full rounded-[4px] p-[12px]"
-          >
-            로그인하러 가기
-          </button>
+        <div className="flex flex-1 items-center justify-center">
+          <p className="text-gray-500">로딩 중...</p>
         </div>
       </div>
     );
