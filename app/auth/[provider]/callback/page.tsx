@@ -11,6 +11,12 @@ interface OAuthCallbackContentProps {
   provider: "google" | "kakao";
 }
 
+// Provider별 로그인 함수 매핑 (컴포넌트 외부로 이동)
+const LOGIN_FUNCTIONS = {
+  google: loginWithGoogle,
+  kakao: loginWithKakao,
+} as const;
+
 function OAuthCallbackContent({ provider }: OAuthCallbackContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -19,12 +25,6 @@ function OAuthCallbackContent({ provider }: OAuthCallbackContentProps) {
 
   // Provider별 표시 이름
   const providerName = provider === "google" ? "구글" : "카카오";
-
-  // Provider별 로그인 함수
-  const loginFunctions = {
-    google: loginWithGoogle,
-    kakao: loginWithKakao,
-  };
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -56,7 +56,7 @@ function OAuthCallbackContent({ provider }: OAuthCallbackContentProps) {
 
       try {
         // 백엔드로 인증 코드 전송 (쿠키로 accessToken 받음)
-        await loginFunctions[provider](code);
+        await LOGIN_FUNCTIONS[provider](code);
 
         // OAuth 세션 정리
         cleanupOAuthSession();
@@ -92,7 +92,7 @@ function OAuthCallbackContent({ provider }: OAuthCallbackContentProps) {
     };
 
     handleCallback();
-  }, [searchParams, router, fetchUser, provider, providerName]);
+  }, [searchParams, router, fetchUser, provider]);
 
   // 에러가 있을 때만 UI 표시, 정상 처리는 빈 화면
   if (!error) {
@@ -110,10 +110,12 @@ function OAuthCallbackContent({ provider }: OAuthCallbackContentProps) {
 }
 
 export default function OAuthCallback({ params }: { params: { provider: string } }) {
-  // Provider 유효성 검사
-  const provider = params.provider as "google" | "kakao";
+  // Provider 유효성 검사 (타입 가드)
+  const isValidProvider = (provider: string): provider is "google" | "kakao" => {
+    return provider === "google" || provider === "kakao";
+  };
 
-  if (provider !== "google" && provider !== "kakao") {
+  if (!isValidProvider(params.provider)) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center p-4">
         <div className="text-center text-red-500">
@@ -123,9 +125,10 @@ export default function OAuthCallback({ params }: { params: { provider: string }
     );
   }
 
+  // 여기서는 params.provider가 "google" | "kakao" 타입으로 좁혀짐
   return (
     <Suspense fallback={null}>
-      <OAuthCallbackContent provider={provider} />
+      <OAuthCallbackContent provider={params.provider} />
     </Suspense>
   );
 }
