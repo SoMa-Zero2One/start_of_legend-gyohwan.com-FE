@@ -19,7 +19,7 @@ export default function StrategyRoomEntrances() {
         setIsLoading(true);
         const data = await getSeasons();
 
-        // 사용자의 학교를 우선 정렬 + 나머지는 가나다순
+        // 사용자의 학교를 우선 정렬 + 마감일이 가까운 순서 (일정 없으면 가장 뒤)
         const sortedSeasons = [...data.seasons].sort((a, b) => {
           const userUniversity = user?.domesticUniversity;
 
@@ -32,8 +32,20 @@ export default function StrategyRoomEntrances() {
             if (!aMatch && bMatch) return 1;
           }
 
-          // 둘 다 사용자 학교가 아니거나, 둘 다 사용자 학교면 가나다순
-          return a.domesticUniversity.localeCompare(b.domesticUniversity, "ko-KR");
+          // 둘 다 사용자 학교이거나 둘 다 아닐 경우, 마감일 기준으로 정렬
+          const aHasDate = a.endDate !== null;
+          const bHasDate = b.endDate !== null;
+
+          // 일정이 없는 경우 가장 뒤로
+          if (!aHasDate && bHasDate) return 1;
+          if (aHasDate && !bHasDate) return -1;
+          if (!aHasDate && !bHasDate) {
+            // 둘 다 일정이 없으면 가나다순
+            return a.domesticUniversity.localeCompare(b.domesticUniversity, "ko-KR");
+          }
+
+          // 둘 다 일정이 있으면 마감일이 가까운 순서 (오름차순)
+          return new Date(a.endDate!).getTime() - new Date(b.endDate!).getTime();
         });
 
         setSeasons(sortedSeasons);
@@ -79,7 +91,7 @@ export default function StrategyRoomEntrances() {
   return (
     <div className="relative flex flex-col gap-[40px] px-[20px] pb-[100px]">
       <div className="flex flex-col items-center gap-[12px]">
-        <p className="head-4">교환 프로그램 진행 중인 대학</p>
+        <p className="head-4">교환학생 모집 중인 대학</p>
         <p className="g-head-2 text-primary-blue">{seasons.length}개 대학</p>
       </div>
       <div className="grid grid-cols-1 gap-[12px]">
