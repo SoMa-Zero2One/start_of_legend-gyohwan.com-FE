@@ -40,9 +40,9 @@ function ApplicationNewContent() {
         // 1. 지원 가능 여부 확인 (eligibility)
         try {
           await checkEligibility(seasonId);
-        } catch (err: any) {
+        } catch (err) {
           // 403 에러 시 alert 후 전략실로 리다이렉트
-          const errorMessage = err.detail || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
+          const errorMessage = (err as { detail?: string }).detail || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
           alert(errorMessage);
           router.replace(`/strategy-room/${seasonId}`);
           return;
