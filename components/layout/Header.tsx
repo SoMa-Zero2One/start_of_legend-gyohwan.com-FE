@@ -163,7 +163,7 @@ function NormalHeader({
           </div>
 
           {/* 중앙: 제목 */}
-          <h1 className="body-2">{title}</h1>
+          <h1 className="body-2 truncate px-4">{title}</h1>
 
           {/* 오른쪽: 검색 버튼 */}
           {showSearchButton && (

@@ -168,7 +168,7 @@ export default function SlotDetailPage() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* 상단 헤더 */}
-      <Header title=" " showPrevButton />
+      <Header title="지원자 목록" showPrevButton showHomeButton />
 
       {/* 대학 정보 */}
       <section className="border-b border-gray-100 p-[20px]">
