@@ -74,3 +74,23 @@ export const confirmSchoolEmailVerification = async (schoolEmail: string, code: 
     );
   }
 };
+
+/**
+ * 회원 탈퇴
+ * @throws {Error} API 호출 실패 시
+ */
+export const withdrawAccount = async (): Promise<void> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(`${backendUrl}/v1/users/me/withdraw`, {
+    method: 'DELETE',
+    credentials: 'include', // 쿠키 포함
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `회원 탈퇴 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
+    );
+  }
+};

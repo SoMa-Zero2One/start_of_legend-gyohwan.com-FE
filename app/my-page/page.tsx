@@ -125,7 +125,10 @@ export default function MyInfoPage() {
               <ChevronRightIcon size={18} />
             </button>
           )}
-          <button className="medium-body-3 flex cursor-pointer items-center justify-between border-t border-gray-300 py-4 transition-colors hover:bg-gray-100">
+          <button
+            onClick={() => router.push("/delete-account")}
+            className="medium-body-3 flex cursor-pointer items-center justify-between border-t border-gray-300 py-4 transition-colors hover:bg-gray-100"
+          >
             회원 탈퇴
             <ChevronRightIcon size={18} />
           </button>
