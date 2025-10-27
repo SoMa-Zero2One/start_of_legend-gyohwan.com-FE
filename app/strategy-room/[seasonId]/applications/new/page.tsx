@@ -9,6 +9,7 @@ import UniversitySelectionStep from "@/components/application/UniversitySelectio
 import { getSeasonSlots } from "@/lib/api/slot";
 import { getGpas } from "@/lib/api/gpa";
 import { getLanguages } from "@/lib/api/language";
+import { checkEligibility } from "@/lib/api/season";
 import type { Gpa, Language } from "@/types/grade";
 import type { Slot } from "@/types/slot";
 
@@ -36,13 +37,24 @@ function ApplicationNewContent() {
       try {
         setIsLoading(true);
 
-        // 1. hasApplied 확인 및 slots 데이터 저장
+        // 1. 지원 가능 여부 확인 (eligibility)
+        try {
+          await checkEligibility(seasonId);
+        } catch (err: any) {
+          // 403 에러 시 alert 후 전략실로 리다이렉트
+          const errorMessage = err.detail || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
+          alert(errorMessage);
+          router.replace(`/strategy-room/${seasonId}`);
+          return;
+        }
+
+        // 2. hasApplied 확인 및 slots 데이터 저장
         const slotsData = await getSeasonSlots(seasonId);
         setSlots(slotsData.slots);
 
         if (slotsData.hasApplied) {
           // 이미 지원한 경우 -> 실시간 경쟁률 페이지로 리다이렉트
-          router.push(`/strategy-room/${seasonId}`);
+          router.replace(`/strategy-room/${seasonId}`);
           return;
         }
 

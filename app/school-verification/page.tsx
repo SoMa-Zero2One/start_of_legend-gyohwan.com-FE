@@ -32,7 +32,7 @@ function SchoolVerificationContent() {
     if (!isLoggedIn || !user) {
       const currentUrl = "/school-verification";
       saveRedirectUrl(currentUrl);
-      router.push("/log-in-or-create-account");
+      router.replace("/log-in-or-create-account");
     }
   }, [isLoggedIn, user, router, authLoading]);
 

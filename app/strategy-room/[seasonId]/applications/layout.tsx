@@ -19,14 +19,14 @@ export default function ApplicationsLayout({ children }: { children: React.React
     // 1. 로그인 체크
     if (!isLoggedIn || !user) {
       saveRedirectUrl(currentUrl);
-      router.push("/log-in-or-create-account");
+      router.replace("/log-in-or-create-account");
       return;
     }
 
     // 2. 학교 인증 체크
     if (!user.schoolVerified) {
       saveRedirectUrl(currentUrl);
-      router.push("/school-verification");
+      router.replace("/school-verification");
       return;
     }
   }, [authLoading, isLoggedIn, user, router, pathname]);
