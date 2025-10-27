@@ -121,7 +121,7 @@ export default function StrategyRoomPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="전략실" showPrevButton showBorder />
+        <Header title="실시간 경쟁률" showPrevButton showBorder />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-gray-500">로딩 중...</p>
         </div>
@@ -132,7 +132,7 @@ export default function StrategyRoomPage() {
   if (error || !data) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="전략실" showPrevButton showBorder />
+        <Header title="실시간 경쟁률" showPrevButton showBorder />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-error-red">{error || "데이터를 찾을 수 없습니다."}</p>
         </div>

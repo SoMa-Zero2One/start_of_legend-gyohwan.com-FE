@@ -120,7 +120,10 @@ export default function MyInfoPage() {
         <div className="flex flex-col">
           {/* 비밀번호 변경 (BASIC 로그인만 표시) */}
           {isBasicLogin && (
-            <button className="medium-body-3 flex cursor-pointer items-center justify-between border-t border-gray-300 py-4 transition-colors hover:bg-gray-100">
+            <button
+              onClick={() => router.push("/change-password")}
+              className="medium-body-3 flex cursor-pointer items-center justify-between border-t border-gray-300 py-4 transition-colors hover:bg-gray-100"
+            >
               비밀번호 변경
               <ChevronRightIcon size={18} />
             </button>
