@@ -106,6 +106,35 @@ export default function SlotDetailPage() {
     }
   };
 
+  // 환산점수 시스템 사용 여부 확인 (모든 choices의 score를 확인)
+  const hasScoreSystem = useMemo(() => {
+    if (!data || data.choices.length === 0) return false;
+    // 하나라도 score가 null이 아니면 환산점수 있음 (실제로는 다 있거나 다 없음)
+    return data.choices.some((choice) => choice.score !== null);
+  }, [data]);
+
+  // 사용 가능한 탭 목록 (환산점수 없으면 제외)
+  const availableTabs = useMemo(() => {
+    if (hasScoreSystem) {
+      return ["지망순위", "환산점수", "학점"] as const;
+    }
+    return ["지망순위", "학점"] as const;
+  }, [hasScoreSystem]);
+
+  // 환산점수 탭이 없어졌을 때 selectedTab 자동 변경
+  useEffect(() => {
+    if (!hasScoreSystem && selectedTab === "환산점수") {
+      const currentSort = searchParams.get("sort");
+      // 이미 올바른 값이면 업데이트 안 함 (무한 루프 방지)
+      if (currentSort === "지망순위") return;
+
+      setSelectedTab("지망순위");
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("sort", "지망순위");
+      router.replace(`/strategy-room/${seasonId}/slots/${slotId}?${params.toString()}`, { scroll: false });
+    }
+  }, [hasScoreSystem, selectedTab, router, seasonId, slotId]);
+
   // 정렬 변경 핸들러 (URL 업데이트 포함)
   const handleSortChange = (sort: TabType) => {
     setSelectedTab(sort);
@@ -212,7 +241,7 @@ export default function SlotDetailPage() {
       </section>
 
       {/* 탭 메뉴 */}
-      <Tabs tabs={["지망순위", "환산점수", "학점"] as const} selectedTab={selectedTab} onTabChange={handleSortChange} />
+      <Tabs tabs={availableTabs} selectedTab={selectedTab} onTabChange={handleSortChange} />
 
       {/* 지원자 목록 */}
       <div className="flex flex-1 flex-col gap-[10px] p-[20px] pb-[100px]">
