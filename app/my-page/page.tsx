@@ -22,7 +22,7 @@ export default function MyInfoPage() {
 
     if (!user) {
       saveRedirectUrl("/my-page");
-      router.push("/log-in-or-create-account");
+      router.replace("/log-in-or-create-account");
     }
   }, [authLoading, user, router]);
 

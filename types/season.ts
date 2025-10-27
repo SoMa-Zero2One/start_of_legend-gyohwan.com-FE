@@ -17,3 +17,11 @@ export interface Season {
 export interface SeasonsResponse {
   seasons: Season[];
 }
+
+/**
+ * 시즌 지원 가능 여부 응답
+ */
+export interface EligibilityResponse {
+  eligible: boolean;
+  detail: string;
+}

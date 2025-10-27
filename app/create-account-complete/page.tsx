@@ -25,7 +25,7 @@ export default function CreateAccountComplete() {
 
     // 로그인 안 된 사용자는 로그인 페이지로
     if (!isLoggedIn || !user) {
-      router.push("/log-in-or-create-account");
+      router.replace("/log-in-or-create-account");
     }
   }, [authLoading, isLoggedIn, user, router]);
 
