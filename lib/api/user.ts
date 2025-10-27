@@ -94,3 +94,32 @@ export const withdrawAccount = async (): Promise<void> => {
     );
   }
 };
+
+/**
+ * 비밀번호 변경
+ * @param currentPassword - 현재 비밀번호
+ * @param newPassword - 새 비밀번호
+ * @throws {Error} API 호출 실패 시
+ */
+export const changePassword = async (currentPassword: string, newPassword: string): Promise<void> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(`${backendUrl}/v1/users/me/password`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // 쿠키 포함
+    body: JSON.stringify({
+      currentPassword,
+      newPassword,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `비밀번호 변경 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
+    );
+  }
+};
