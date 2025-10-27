@@ -15,6 +15,7 @@ export default function DeleteAccountPage() {
   const [isAgreed, setIsAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [error, setError] = useState("");
 
   // 로그인 체크 - Hard-gate
   useEffect(() => {
@@ -41,12 +42,14 @@ export default function DeleteAccountPage() {
   // 회원 탈퇴 버튼 클릭
   const handleDeleteClick = () => {
     if (!isAgreed) return;
+    setError(""); // 에러 초기화
     setShowConfirmModal(true);
   };
 
   // 최종 확인 후 회원 탈퇴 처리
   const handleConfirmDelete = async () => {
     setIsLoading(true);
+    setError("");
 
     try {
       await withdrawAccount();
@@ -56,10 +59,10 @@ export default function DeleteAccountPage() {
 
       router.push("/");
     } catch (error) {
-      alert(error instanceof Error ? error.message : "회원 탈퇴에 실패했습니다.");
+      setError(error instanceof Error ? error.message : "회원 탈퇴에 실패했습니다.");
+      setShowConfirmModal(false);
     } finally {
       setIsLoading(false);
-      setShowConfirmModal(false);
     }
   };
 
@@ -95,6 +98,13 @@ export default function DeleteAccountPage() {
             <div className="body-3 mb-[20px]">
               <RoundCheckbox checked={isAgreed} onChange={setIsAgreed} label="다음 사항에 모두 동의합니다" />
             </div>
+
+            {/* 에러 메시지 */}
+            {error && (
+              <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3">
+                <p className="body-3 text-red-600">{error}</p>
+              </div>
+            )}
 
             {/* 회원 탈퇴 버튼 */}
             <button

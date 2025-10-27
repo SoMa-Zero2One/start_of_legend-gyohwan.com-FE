@@ -16,6 +16,7 @@ export default function ChangePasswordPage() {
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   // 포커스 상태 관리
   const [newPasswordFocused, setNewPasswordFocused] = useState(false);
@@ -33,8 +34,7 @@ export default function ChangePasswordPage() {
 
     // BASIC 로그인 사용자만 접근 가능
     if (user.loginType === "SOCIAL") {
-      alert("소셜 로그인 사용자는 비밀번호를 변경할 수 없습니다.");
-      router.push("/my-page");
+      router.replace("/my-page");
     }
   }, [authLoading, user, router]);
 
@@ -85,9 +85,13 @@ export default function ChangePasswordPage() {
     try {
       await changePassword(currentPassword, newPassword);
 
-      // 성공 시 마이페이지로 리다이렉트
-      alert("비밀번호가 성공적으로 변경되었습니다.");
-      router.push("/my-page");
+      // 성공 상태로 전환
+      setIsSuccess(true);
+
+      // 1.5초 후 마이페이지로 리다이렉트
+      setTimeout(() => {
+        router.push("/my-page");
+      }, 1500);
     } catch (error) {
       if (error instanceof Error) {
         // 에러 메시지에서 HTTP 상태 코드 확인
@@ -110,6 +114,26 @@ export default function ChangePasswordPage() {
       handleChangePassword();
     }
   };
+
+  // 성공 화면
+  if (isSuccess) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Header title="비밀번호 변경" showPrevButton />
+        <div className="flex flex-1 flex-col items-center justify-center px-[20px]">
+          <div className="flex flex-col items-center gap-[20px]">
+            <div className="flex h-[80px] w-[80px] items-center justify-center rounded-full bg-green-100">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <path d="M10 24L20 34L38 14" stroke="#16A34A" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h2 className="head-4 text-center">비밀번호가 변경되었습니다</h2>
+            <p className="body-3 text-gray-600 text-center">잠시 후 마이페이지로 이동합니다...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col">

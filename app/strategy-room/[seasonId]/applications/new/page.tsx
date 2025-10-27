@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import ProgressBar from "@/components/common/ProgressBar";
+import ConfirmModal from "@/components/common/ConfirmModal";
 import GradeRegistrationStep from "@/components/application/GradeRegistrationStep";
 import UniversitySelectionStep from "@/components/application/UniversitySelectionStep";
 import { getSeasonSlots } from "@/lib/api/slot";
@@ -30,6 +31,8 @@ function ApplicationNewContent() {
   const [existingGpa, setExistingGpa] = useState<Gpa | null>(null);
   const [existingLanguage, setExistingLanguage] = useState<Language | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
+  const [showEligibilityModal, setShowEligibilityModal] = useState(false);
+  const [eligibilityErrorMessage, setEligibilityErrorMessage] = useState("");
 
   // 초기 데이터 로드 및 hasApplied 확인
   useEffect(() => {
@@ -41,10 +44,10 @@ function ApplicationNewContent() {
         try {
           await checkEligibility(seasonId);
         } catch (err) {
-          // 403 에러 시 alert 후 전략실로 리다이렉트
+          // 403 에러 시 모달 표시
           const errorMessage = (err as { detail?: string }).detail || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
-          alert(errorMessage);
-          router.replace(`/strategy-room/${seasonId}`);
+          setEligibilityErrorMessage(errorMessage);
+          setShowEligibilityModal(true);
           return;
         }
 
@@ -128,6 +131,22 @@ function ApplicationNewContent() {
           slots={slots}
         />
       )}
+
+      {/* 지원 불가 모달 */}
+      <ConfirmModal
+        isOpen={showEligibilityModal}
+        title="지원할 수 없습니다"
+        message={eligibilityErrorMessage}
+        confirmText="확인"
+        onConfirm={() => {
+          setShowEligibilityModal(false);
+          router.replace(`/strategy-room/${seasonId}`);
+        }}
+        onCancel={() => {
+          setShowEligibilityModal(false);
+          router.replace(`/strategy-room/${seasonId}`);
+        }}
+      />
     </div>
   );
 }
