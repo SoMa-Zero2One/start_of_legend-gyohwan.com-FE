@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Season } from "@/types/season";
-import { calculateDDay } from "@/lib/utils/date";
+import { calculateDDay, formatDate } from "@/lib/utils/date";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 
 interface StrategyRoomCardProps {
@@ -14,11 +14,11 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
   const { seasonId, domesticUniversity, domesticUniversityLogoUri, startDate, endDate } = data;
   const router = useRouter();
 
-  // 날짜 포맷
-  const formattedDate = startDate && endDate ? `${startDate} ~ ${endDate}` : "일정 미정";
+  // 날짜 포맷 (yyyy.mm.dd ~ yyyy.mm.dd)
+  const formattedDate = startDate && endDate ? `${formatDate(startDate)} ~ ${formatDate(endDate)}` : "일정 미정";
 
-  // D-Day 계산
-  const dDay = startDate ? calculateDDay(startDate) : null;
+  // D-Day 계산 (마감일 기준)
+  const dDay = endDate ? calculateDDay(endDate) : null;
 
   // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
   const handleShareClick = () => {
@@ -29,7 +29,7 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
     <div className="flex w-full flex-col gap-[20px] rounded-[16px] border border-gray-300 p-[20px]">
       {/* 상단: 로고 + 학교명 + 날짜 + D-Day */}
       <div className="flex items-center gap-[12px]">
-        <div className="relative h-[80px] w-[80px]">
+        <div className="relative h-[80px] w-[80px] flex-shrink-0">
           <SchoolLogoWithFallback
             src={domesticUniversityLogoUri}
             alt={`${domesticUniversity} 로고`}
@@ -38,7 +38,7 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
             className="object-contain"
           />
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-1 flex-col">
           <span className="subhead-2">{domesticUniversity}</span>
           <span>
             <span className="mr-[5px]">{formattedDate}</span>
