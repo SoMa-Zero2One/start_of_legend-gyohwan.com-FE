@@ -205,7 +205,7 @@ export default function SlotDetailPage() {
         <div>
           <div className="relative mb-[8px] h-[40px] w-[40px] overflow-hidden rounded-full">
             <SchoolLogoWithFallback
-              src={data.logoImageUrl}
+              src={data.logoUrl}
               alt={`${data.name} 로고`}
               width={40}
               height={40}

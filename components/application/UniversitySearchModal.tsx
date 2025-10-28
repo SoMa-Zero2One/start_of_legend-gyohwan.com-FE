@@ -142,7 +142,7 @@ export default function UniversitySearchModal({
                   {/* 대학 로고 */}
                   <div className="relative h-[40px] w-[40px] flex-shrink-0 overflow-hidden rounded-full">
                     <SchoolLogoWithFallback
-                      src={slot.logoImageUrl}
+                      src={slot.logoUrl}
                       alt={slot.name}
                       width={40}
                       height={40}
@@ -201,7 +201,7 @@ export default function UniversitySearchModal({
                   {/* 대학 로고 */}
                   <div className="relative h-[40px] w-[40px] flex-shrink-0 overflow-hidden rounded-full">
                     <SchoolLogoWithFallback
-                      src={slot.logoImageUrl}
+                      src={slot.logoUrl}
                       alt={slot.name}
                       width={40}
                       height={40}

@@ -78,6 +78,7 @@ function ApplicationEditContent() {
       choiceCount: choiceItem.slot.choiceCount,
       slotCount: choiceItem.slot.slotCount,
       duration: choiceItem.slot.duration,
+      logoUrl: choiceItem.slot.logoUrl,
     },
   }));
 
