@@ -22,16 +22,20 @@ import DragHandleIcon from "@/components/icons/DragHandleIcon";
 import PencilIcon from "@/components/icons/PencilIcon";
 import CTAButton from "@/components/common/CTAButton";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import ApplicationSubmitModal from "@/components/application/ApplicationSubmitModal";
 import UniversitySearchModal from "@/components/application/UniversitySearchModal";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 import { submitApplication, updateApplication } from "@/lib/api/application";
 import type { Slot } from "@/types/slot";
 import type { SubmitApplicationRequest } from "@/types/application";
+import type { Gpa, Language } from "@/types/grade";
 
 interface UniversitySelectionStepProps {
   seasonId: number;
   gpaId?: number | null; // new 모드에서만 필수
   languageId?: number | null; // new 모드에서만 필수
+  selectedGpa?: Gpa | null; // ApplicationSubmitModal에 표시할 GPA 정보
+  selectedLanguage?: Language | null; // ApplicationSubmitModal에 표시할 어학 점수 정보
   displayLanguage?: string; // 화면에 표시할 어학 성적 문자열 (예: "TOEIC 920")
   slots: Slot[];
   mode?: "new" | "edit"; // new: 신규 등록, edit: 수정
@@ -116,6 +120,8 @@ export default function UniversitySelectionStep({
   seasonId,
   gpaId,
   languageId,
+  selectedGpa,
+  selectedLanguage,
   displayLanguage,
   slots,
   mode = "new",
@@ -129,6 +135,7 @@ export default function UniversitySelectionStep({
   const [currentChoice, setCurrentChoice] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [activeId, setActiveId] = useState<number | string | null>(null);
 
   // 센서 설정 - 마우스, 터치, 키보드 모두 지원
@@ -315,13 +322,18 @@ export default function UniversitySelectionStep({
       }
     }
 
-    // 최종 확인 모달 표시
-    setShowConfirmModal(true);
+    // new 모드: ApplicationSubmitModal, edit 모드: ConfirmModal
+    if (mode === "new") {
+      setShowSubmitModal(true);
+    } else {
+      setShowConfirmModal(true);
+    }
   };
 
   // 최종 제출 실행
   const handleConfirmSubmit = async () => {
     setShowConfirmModal(false);
+    setShowSubmitModal(false);
 
     try {
       setIsSubmitting(true);
@@ -357,6 +369,14 @@ export default function UniversitySelectionStep({
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // 다시 입력하기 (ApplicationSubmitModal에서 호출)
+  const handleCancelSubmit = () => {
+    setShowSubmitModal(false);
+    // Step 1로 이동하는 로직은 부모에서 처리해야 하지만,
+    // 현재는 URL 변경으로 처리
+    router.push(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
   };
 
   // 1~5지망 배열 생성
@@ -526,20 +546,27 @@ export default function UniversitySelectionStep({
         }}
       />
 
-      {/* 확인 모달 */}
+      {/* 확인 모달 (edit 모드용) */}
       <ConfirmModal
         isOpen={showConfirmModal}
-        title={mode === "edit" ? "지망 대학 수정" : "지원서 제출"}
-        message={
-          mode === "edit"
-            ? "지망 대학을 수정하시겠습니까?"
-            : "지원서를 제출하시겠습니까?\n제출 후에는 성적 정보를 수정할 수 없습니다."
-        }
-        confirmText={mode === "edit" ? "수정하기" : "제출하기"}
+        title="지망 대학 수정"
+        message="지망 대학을 수정하시겠습니까?"
+        confirmText="수정하기"
         cancelText="취소"
         onConfirm={handleConfirmSubmit}
         onCancel={() => setShowConfirmModal(false)}
       />
+
+      {/* 제출 확인 모달 (new 모드용) */}
+      {selectedGpa && selectedLanguage && (
+        <ApplicationSubmitModal
+          isOpen={showSubmitModal}
+          gpa={selectedGpa}
+          language={selectedLanguage}
+          onConfirm={handleConfirmSubmit}
+          onCancel={handleCancelSubmit}
+        />
+      )}
     </div>
   );
 }
