@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 import {
@@ -22,16 +22,20 @@ import DragHandleIcon from "@/components/icons/DragHandleIcon";
 import PencilIcon from "@/components/icons/PencilIcon";
 import CTAButton from "@/components/common/CTAButton";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import ApplicationSubmitModal from "@/components/application/ApplicationSubmitModal";
 import UniversitySearchModal from "@/components/application/UniversitySearchModal";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 import { submitApplication, updateApplication } from "@/lib/api/application";
 import type { Slot } from "@/types/slot";
 import type { SubmitApplicationRequest } from "@/types/application";
+import type { Gpa, Language } from "@/types/grade";
 
 interface UniversitySelectionStepProps {
   seasonId: number;
   gpaId?: number | null; // new 모드에서만 필수
   languageId?: number | null; // new 모드에서만 필수
+  selectedGpa?: Gpa | null; // ApplicationSubmitModal에 표시할 GPA 정보
+  selectedLanguage?: Language | null; // ApplicationSubmitModal에 표시할 어학 점수 정보
   displayLanguage?: string; // 화면에 표시할 어학 성적 문자열 (예: "TOEIC 920")
   slots: Slot[];
   mode?: "new" | "edit"; // new: 신규 등록, edit: 수정
@@ -116,6 +120,8 @@ export default function UniversitySelectionStep({
   seasonId,
   gpaId,
   languageId,
+  selectedGpa,
+  selectedLanguage,
   displayLanguage,
   slots,
   mode = "new",
@@ -123,13 +129,47 @@ export default function UniversitySelectionStep({
 }: UniversitySelectionStepProps) {
   const router = useRouter();
   const { tooltipMessage, shouldShake, showError, clearError } = useFormErrorHandler();
-  const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>(initialSelections);
+
+  // sessionStorage 키
+  const STORAGE_KEY = `gyohwan_selected_universities_${seasonId}`;
+
+  // sessionStorage에서 초기값 로드 (new 모드일 때만)
+  const getInitialSelections = (): SelectedUniversity[] => {
+    if (mode !== "new" || typeof window === "undefined") {
+      return initialSelections;
+    }
+
+    try {
+      const stored = sessionStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch (error) {
+      console.error("Failed to load selections from sessionStorage:", error);
+    }
+
+    return initialSelections;
+  };
+
+  const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>(getInitialSelections);
   const [extraScore, setExtraScore] = useState<string>("");
   const [showSearch, setShowSearch] = useState(false);
   const [currentChoice, setCurrentChoice] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [activeId, setActiveId] = useState<number | string | null>(null);
+
+  // selectedUniversities 변경 시 sessionStorage에 저장 (new 모드일 때만)
+  useEffect(() => {
+    if (mode === "new" && typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(selectedUniversities));
+      } catch (error) {
+        console.error("Failed to save selections to sessionStorage:", error);
+      }
+    }
+  }, [selectedUniversities, mode, seasonId]);
 
   // 센서 설정 - 마우스, 터치, 키보드 모두 지원
   const sensors = useSensors(
@@ -315,13 +355,18 @@ export default function UniversitySelectionStep({
       }
     }
 
-    // 최종 확인 모달 표시
-    setShowConfirmModal(true);
+    // new 모드: ApplicationSubmitModal, edit 모드: ConfirmModal
+    if (mode === "new") {
+      setShowSubmitModal(true);
+    } else {
+      setShowConfirmModal(true);
+    }
   };
 
   // 최종 제출 실행
   const handleConfirmSubmit = async () => {
     setShowConfirmModal(false);
+    setShowSubmitModal(false);
 
     try {
       setIsSubmitting(true);
@@ -343,6 +388,15 @@ export default function UniversitySelectionStep({
           choices,
         };
         await submitApplication(seasonId, requestData);
+
+        // 제출 성공 시 sessionStorage 클리어
+        if (typeof window !== "undefined") {
+          try {
+            sessionStorage.removeItem(STORAGE_KEY);
+          } catch (error) {
+            console.error("Failed to clear sessionStorage:", error);
+          }
+        }
       }
 
       // 성공 후 실시간 경쟁률 페이지로 이동
@@ -357,6 +411,13 @@ export default function UniversitySelectionStep({
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // 다시 입력하기 (ApplicationSubmitModal에서 호출)
+  const handleCancelSubmit = () => {
+    setShowSubmitModal(false);
+    // TODO: Step 1로 이동하는 로직은 부모에서 처리해야 함 (현재는 URL 변경으로 임시 처리)
+    router.push(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
   };
 
   // 1~5지망 배열 생성
@@ -526,20 +587,27 @@ export default function UniversitySelectionStep({
         }}
       />
 
-      {/* 확인 모달 */}
+      {/* 확인 모달 (edit 모드용) */}
       <ConfirmModal
         isOpen={showConfirmModal}
-        title={mode === "edit" ? "지망 대학 수정" : "지원서 제출"}
-        message={
-          mode === "edit"
-            ? "지망 대학을 수정하시겠습니까?"
-            : "지원서를 제출하시겠습니까?\n제출 후에는 성적 정보를 수정할 수 없습니다."
-        }
-        confirmText={mode === "edit" ? "수정하기" : "제출하기"}
+        title="지망 대학 수정"
+        message="지망 대학을 수정하시겠습니까?"
+        confirmText="수정하기"
         cancelText="취소"
         onConfirm={handleConfirmSubmit}
         onCancel={() => setShowConfirmModal(false)}
       />
+
+      {/* 제출 확인 모달 (new 모드용) */}
+      {selectedGpa && selectedLanguage && (
+        <ApplicationSubmitModal
+          isOpen={showSubmitModal}
+          gpa={selectedGpa}
+          language={selectedLanguage}
+          onConfirm={handleConfirmSubmit}
+          onCancel={handleCancelSubmit}
+        />
+      )}
     </div>
   );
 }

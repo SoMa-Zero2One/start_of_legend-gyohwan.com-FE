@@ -123,6 +123,8 @@ function ApplicationNewContent() {
           seasonId={seasonId}
           gpaId={gpaId}
           languageId={languageId}
+          selectedGpa={existingGpa}
+          selectedLanguage={existingLanguage}
           displayLanguage={
             existingLanguage
               ? `${existingLanguage.testType} ${existingLanguage.grade || ""} ${existingLanguage.score || ""}`.trim()
