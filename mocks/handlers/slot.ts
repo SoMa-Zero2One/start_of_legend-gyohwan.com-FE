@@ -108,6 +108,7 @@ export const slotHandlers = [
       name: slot.name,
       country: slot.country,
       logoUrl: slot.logoUrl,
+      homepageUrl: slot.homepageUrl,
       choiceCount: slot.choiceCount,
       slotCount: slot.slotCount,
       duration: slot.duration,
