@@ -169,7 +169,7 @@ export default function UniversitySelectionStep({
         console.error("Failed to save selections to sessionStorage:", error);
       }
     }
-  }, [selectedUniversities, mode, STORAGE_KEY]);
+  }, [selectedUniversities, mode, seasonId]);
 
   // 센서 설정 - 마우스, 터치, 키보드 모두 지원
   const sensors = useSensors(
@@ -416,8 +416,7 @@ export default function UniversitySelectionStep({
   // 다시 입력하기 (ApplicationSubmitModal에서 호출)
   const handleCancelSubmit = () => {
     setShowSubmitModal(false);
-    // Step 1로 이동하는 로직은 부모에서 처리해야 하지만,
-    // 현재는 URL 변경으로 처리
+    // TODO: Step 1로 이동하는 로직은 부모에서 처리해야 함 (현재는 URL 변경으로 임시 처리)
     router.push(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
   };
 
