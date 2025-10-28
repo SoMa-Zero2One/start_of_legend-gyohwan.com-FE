@@ -78,7 +78,7 @@ function SortableChoiceCard({ choice, selected, displayLanguage, onChoiceCardCli
           {/* 대학 로고 */}
           <div className="relative h-[32px] w-[32px] flex-shrink-0 overflow-hidden rounded-full">
             <SchoolLogoWithFallback
-              src={selected.slot.logoImageUrl}
+              src={selected.slot.logoUrl}
               alt={selected.slot.name}
               width={32}
               height={32}
@@ -496,7 +496,7 @@ export default function UniversitySelectionStep({
                       <div className="flex flex-1 items-center gap-[12px] rounded-[4px] border border-gray-300 bg-white p-[12px] shadow-lg">
                         <div className="relative h-[32px] w-[32px] flex-shrink-0 overflow-hidden rounded-full">
                           <SchoolLogoWithFallback
-                            src={draggedUniversity.slot.logoImageUrl}
+                            src={draggedUniversity.slot.logoUrl}
                             alt={draggedUniversity.slot.name}
                             width={32}
                             height={32}

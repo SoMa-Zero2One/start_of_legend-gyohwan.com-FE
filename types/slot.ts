@@ -8,7 +8,7 @@ export interface Slot {
   choiceCount: number;
   slotCount: string;
   duration: string;
-  logoImageUrl?: string | null; // 학교 로고 이미지 URL (백엔드 추가 예정)
+  logoUrl: string;
 }
 
 /**

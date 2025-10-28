@@ -20,7 +20,7 @@ export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
             {/* 학교 로고 */}
             <div className="relative h-[25px] w-[25px] overflow-hidden">
               <SchoolLogoWithFallback
-                src={slot.logoImageUrl}
+                src={slot.logoUrl}
                 alt={`${slot.name} 로고`}
                 width={25}
                 height={25}
