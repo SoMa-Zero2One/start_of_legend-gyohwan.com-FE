@@ -7,6 +7,7 @@ import ApplicantCard from "@/components/strategy-room/ApplicantCard";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import Tabs from "@/components/common/Tabs";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
+import ExternalLinkIcon from "@/components/icons/ExternalLinkIcon";
 import { getSlotDetail, getMyApplication } from "@/lib/api/slot";
 import { SlotDetailResponse, MyApplicationResponse } from "@/types/slot";
 
@@ -215,7 +216,7 @@ export default function SlotDetailPage() {
         </div>
 
         {/* 학교 이름 */}
-        <h2 className="head-4 mb-[8px]">{data.name}</h2>
+        <h2 className={`head-4 ${data.homepageUrl ? 'mb-[8px]' : 'mb-[20px]'}`}>{data.name}</h2>
 
         {/* 홈페이지 바로가기 버튼 */}
         {data.homepageUrl && (
@@ -226,19 +227,9 @@ export default function SlotDetailPage() {
             className="mb-[20px] inline-flex items-center gap-[4px] rounded-full bg-gray-300 px-[12px] py-[6px] text-[12px] transition-colors hover:bg-gray-400"
           >
             홈페이지 바로가기
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M10 6.66667V10C10 10.1768 9.92976 10.3464 9.80474 10.4714C9.67971 10.5964 9.51014 10.6667 9.33333 10.6667H2C1.82319 10.6667 1.65362 10.5964 1.5286 10.4714C1.40357 10.3464 1.33333 10.1768 1.33333 10V2.66667C1.33333 2.48986 1.40357 2.32029 1.5286 2.19526C1.65362 2.07024 1.82319 2 2 2H5.33333M8 1.33333H10.6667V4M5 7L10.6667 1.33333"
-                stroke="currentColor"
-                strokeWidth="1.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <ExternalLinkIcon />
           </a>
         )}
-
-        {!data.homepageUrl && <div className="mb-[20px]" />}
 
         {/* 정보 목록 */}
         <div className="flex flex-col gap-[12px]">
