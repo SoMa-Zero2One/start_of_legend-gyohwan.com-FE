@@ -17,6 +17,7 @@ interface PasswordInputProps {
   isValid?: boolean;
   showTooltip?: boolean;
   tooltipMessage?: string;
+  autoFocus?: boolean;
 }
 
 export default function PasswordInput({
@@ -32,6 +33,7 @@ export default function PasswordInput({
   isValid,
   showTooltip = false,
   tooltipMessage,
+  autoFocus = false,
 }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -85,6 +87,7 @@ export default function PasswordInput({
                   : "border-gray-300"
           }`}
           disabled={disabled}
+          autoFocus={autoFocus}
         />
         <button
           type="button"
