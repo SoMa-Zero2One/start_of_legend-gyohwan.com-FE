@@ -25,7 +25,7 @@ export default function SchoolLogoWithFallback({
   const [imageError, setImageError] = useState(false);
 
   // src에 프로토콜이 없으면 https:// 추가
-  const imageSrc = src && !src.startsWith('http://') && !src.startsWith('https://')
+  const imageSrc = src && !src.startsWith('http://') && !src.startsWith('https://') && !src.startsWith('//')
     ? `https://${src}`
     : src;
 
