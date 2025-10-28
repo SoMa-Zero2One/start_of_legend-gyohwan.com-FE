@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "d2kydfinz3830f.cloudfront.net",
       },
+      {
+        protocol: "https",
+        hostname: "example.com", // MSW Mock 데이터용
+      },
     ],
   },
 };
