@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 import {
@@ -129,7 +129,29 @@ export default function UniversitySelectionStep({
 }: UniversitySelectionStepProps) {
   const router = useRouter();
   const { tooltipMessage, shouldShake, showError, clearError } = useFormErrorHandler();
-  const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>(initialSelections);
+
+  // sessionStorage 키
+  const STORAGE_KEY = `gyohwan_selected_universities_${seasonId}`;
+
+  // sessionStorage에서 초기값 로드 (new 모드일 때만)
+  const getInitialSelections = (): SelectedUniversity[] => {
+    if (mode !== "new" || typeof window === "undefined") {
+      return initialSelections;
+    }
+
+    try {
+      const stored = sessionStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch (error) {
+      console.error("Failed to load selections from sessionStorage:", error);
+    }
+
+    return initialSelections;
+  };
+
+  const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>(getInitialSelections);
   const [extraScore, setExtraScore] = useState<string>("");
   const [showSearch, setShowSearch] = useState(false);
   const [currentChoice, setCurrentChoice] = useState<number | null>(null);
@@ -137,6 +159,17 @@ export default function UniversitySelectionStep({
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [activeId, setActiveId] = useState<number | string | null>(null);
+
+  // selectedUniversities 변경 시 sessionStorage에 저장 (new 모드일 때만)
+  useEffect(() => {
+    if (mode === "new" && typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(selectedUniversities));
+      } catch (error) {
+        console.error("Failed to save selections to sessionStorage:", error);
+      }
+    }
+  }, [selectedUniversities, mode, STORAGE_KEY]);
 
   // 센서 설정 - 마우스, 터치, 키보드 모두 지원
   const sensors = useSensors(
@@ -355,6 +388,15 @@ export default function UniversitySelectionStep({
           choices,
         };
         await submitApplication(seasonId, requestData);
+
+        // 제출 성공 시 sessionStorage 클리어
+        if (typeof window !== "undefined") {
+          try {
+            sessionStorage.removeItem(STORAGE_KEY);
+          } catch (error) {
+            console.error("Failed to clear sessionStorage:", error);
+          }
+        }
       }
 
       // 성공 후 실시간 경쟁률 페이지로 이동
