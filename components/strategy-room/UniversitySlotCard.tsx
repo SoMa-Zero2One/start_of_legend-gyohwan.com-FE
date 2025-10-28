@@ -18,12 +18,12 @@ export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center justify-center gap-[8px]">
             {/* 학교 로고 */}
-            <div className="relative h-[25px] w-[25px] overflow-hidden">
+            <div className="relative h-[20px] w-[20px] overflow-hidden">
               <SchoolLogoWithFallback
                 src={slot.logoUrl}
                 alt={`${slot.name} 로고`}
-                width={25}
-                height={25}
+                width={20}
+                height={20}
                 className="object-contain"
               />
             </div>
