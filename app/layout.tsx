@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
+import { MSWProvider } from "@/components/providers/MSWProvider";
 
 export const metadata: Metadata = {
   title: "교환닷컴",
@@ -40,7 +41,9 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="body-3 m-auto max-w-[430px] bg-white antialiased">
-        <div className="flex flex-col">{children}</div>
+        <MSWProvider>
+          <div className="flex flex-col">{children}</div>
+        </MSWProvider>
       </body>
     </html>
   );
