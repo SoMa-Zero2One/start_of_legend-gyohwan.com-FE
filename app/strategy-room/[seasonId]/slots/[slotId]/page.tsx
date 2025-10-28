@@ -7,6 +7,7 @@ import ApplicantCard from "@/components/strategy-room/ApplicantCard";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import Tabs from "@/components/common/Tabs";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
+import ExternalLinkIcon from "@/components/icons/ExternalLinkIcon";
 import { getSlotDetail, getMyApplication } from "@/lib/api/slot";
 import { SlotDetailResponse, MyApplicationResponse } from "@/types/slot";
 
@@ -202,8 +203,8 @@ export default function SlotDetailPage() {
       {/* 대학 정보 */}
       <section className="border-b border-gray-100 p-[20px]">
         {/* 학교 로고 */}
-        <div>
-          <div className="relative mb-[8px] h-[40px] w-[40px] overflow-hidden rounded-full">
+        <div className="mb-[8px]">
+          <div className="relative h-[40px] w-[40px] overflow-hidden rounded-full">
             <SchoolLogoWithFallback
               src={data.logoUrl}
               alt={`${data.name} 로고`}
@@ -215,7 +216,20 @@ export default function SlotDetailPage() {
         </div>
 
         {/* 학교 이름 */}
-        <h2 className="head-4 mb-[20px]">{data.name}</h2>
+        <h2 className={`head-4 ${data.homepageUrl ? 'mb-[8px]' : 'mb-[20px]'}`}>{data.name}</h2>
+
+        {/* 홈페이지 바로가기 버튼 */}
+        {data.homepageUrl && (
+          <a
+            href={data.homepageUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mb-[20px] inline-flex items-center gap-[4px] rounded-full bg-gray-300 px-[12px] py-[6px] text-[12px] transition-colors hover:bg-gray-400"
+          >
+            홈페이지 바로가기
+            <ExternalLinkIcon />
+          </a>
+        )}
 
         {/* 정보 목록 */}
         <div className="flex flex-col gap-[12px]">

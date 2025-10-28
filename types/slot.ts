@@ -8,7 +8,8 @@ export interface Slot {
   choiceCount: number;
   slotCount: string;
   duration: string;
-  logoUrl: string;
+  logoUrl: string | null;
+  homepageUrl: string | null; // 대학교 홈페이지 URL
 }
 
 /**
