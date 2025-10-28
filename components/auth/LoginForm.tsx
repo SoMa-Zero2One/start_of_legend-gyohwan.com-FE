@@ -113,6 +113,7 @@ export default function LoginForm() {
         disabled={isLoading}
         showTooltip={false}
         showValidation={false}
+        autoFocus={true}
       />
 
       {/* 에러 메시지 */}

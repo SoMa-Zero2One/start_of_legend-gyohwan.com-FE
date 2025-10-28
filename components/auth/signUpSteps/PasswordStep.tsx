@@ -79,6 +79,7 @@ export default function PasswordStep({
               ? "✓ 사용 가능한 비밀번호입니다."
               : undefined
         }
+        autoFocus={true}
       />
 
       {/* 비밀번호 확인 입력 */}
