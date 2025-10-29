@@ -118,7 +118,7 @@ function ApplicationNewContent() {
         console.error("Failed to load selections from sessionStorage:", error);
       }
     }
-  }, [step, STORAGE_KEY]);
+  }, [step, seasonId]);
 
   // selectedUniversities 변경 시 sessionStorage에 저장
   useEffect(() => {
@@ -129,7 +129,7 @@ function ApplicationNewContent() {
         console.error("Failed to save selections to sessionStorage:", error);
       }
     }
-  }, [selectedUniversities, step, STORAGE_KEY]);
+  }, [selectedUniversities, step, seasonId]);
 
   const handleGradeSubmit = (newGpaId: number, newLanguageId: number) => {
     setGpaId(newGpaId);
