@@ -94,7 +94,10 @@ function SortableChoiceCard({ choice, selected, displayLanguage, onDelete }: Sor
         </div>
       ) : (
         <div className="flex-1 rounded-[4px] border border-dashed border-gray-300 p-[16px]">
-          <span className="body-3 text-gray-400">🔍 위 버튼으로 추가</span>
+          <span className="body-3 flex items-center gap-[6px] text-gray-400">
+            <SearchIcon size={14} className="flex-shrink-0" />
+            <span>위 버튼으로 추가</span>
+          </span>
         </div>
       )}
 
