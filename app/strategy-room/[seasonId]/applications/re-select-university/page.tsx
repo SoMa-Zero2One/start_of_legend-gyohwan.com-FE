@@ -9,6 +9,7 @@ import ConfirmModal from "@/components/common/ConfirmModal";
 import { getMyApplication } from "@/lib/api/slot";
 import { getSeasonSlots } from "@/lib/api/slot";
 import { updateApplication } from "@/lib/api/application";
+import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 import type { Slot } from "@/types/slot";
 import type { MyApplicationResponse } from "@/types/slot";
 
@@ -35,6 +36,9 @@ function ApplicationEditContent() {
   // 대학 선택 관리
   const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 폼 에러 핸들러
+  const { tooltipMessage, shouldShake, showError } = useFormErrorHandler();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -139,7 +143,7 @@ function ApplicationEditContent() {
   const handleSubmit = () => {
     // Validation
     if (selectedUniversities.length === 0) {
-      alert("최소 1개 이상의 지망 대학을 선택해주세요.");
+      showError("최소 1개 이상의 지망 대학을 선택해주세요.");
       return;
     }
 
@@ -147,7 +151,7 @@ function ApplicationEditContent() {
     const sortedChoices = selectedUniversities.map((u) => u.choice).sort((a, b) => a - b);
     for (let i = 0; i < sortedChoices.length; i++) {
       if (sortedChoices[i] !== i + 1) {
-        alert("1지망부터 순서대로 채워주세요.");
+        showError("1지망부터 순서대로 채워주세요.");
         return;
       }
     }
@@ -173,7 +177,7 @@ function ApplicationEditContent() {
       router.push(`/strategy-room/${seasonId}`);
     } catch (error) {
       console.error("Application update error:", error);
-      alert("지망 대학 수정에 실패했습니다. 다시 시도해주세요.");
+      showError("지망 대학 수정에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsSubmitting(false);
     }
@@ -215,6 +219,8 @@ function ApplicationEditContent() {
         displayLanguage={`${myApplication.language.testType} ${myApplication.language.grade || ""} ${myApplication.language.score || ""}`.trim()}
         mode="edit"
         isSubmitting={isSubmitting}
+        tooltipMessage={tooltipMessage}
+        shouldShake={shouldShake}
       />
 
       {/* 대학 검색 모달 */}

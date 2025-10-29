@@ -14,6 +14,7 @@ import { getGpas } from "@/lib/api/gpa";
 import { getLanguages } from "@/lib/api/language";
 import { checkEligibility } from "@/lib/api/season";
 import { submitApplication } from "@/lib/api/application";
+import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 import type { Gpa, Language } from "@/types/grade";
 import type { Slot } from "@/types/slot";
 import type { SubmitApplicationRequest } from "@/types/application";
@@ -51,6 +52,9 @@ function ApplicationNewContent() {
   const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>([]);
   const [extraScore, setExtraScore] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 폼 에러 핸들러
+  const { tooltipMessage, shouldShake, showError } = useFormErrorHandler();
 
   // 초기 데이터 로드 및 hasApplied 확인
   useEffect(() => {
@@ -200,12 +204,12 @@ function ApplicationNewContent() {
   const handleSubmit = () => {
     // Validation
     if (!gpaId || !languageId) {
-      alert("성적 정보가 없습니다. Step 1부터 다시 진행해주세요.");
+      showError("성적 정보가 없습니다. Step 1부터 다시 진행해주세요.");
       return;
     }
 
     if (selectedUniversities.length === 0) {
-      alert("최소 1개 이상의 지망 대학을 선택해주세요.");
+      showError("최소 1개 이상의 지망 대학을 선택해주세요.");
       return;
     }
 
@@ -213,7 +217,7 @@ function ApplicationNewContent() {
     const sortedChoices = selectedUniversities.map((u) => u.choice).sort((a, b) => a - b);
     for (let i = 0; i < sortedChoices.length; i++) {
       if (sortedChoices[i] !== i + 1) {
-        alert("1지망부터 순서대로 채워주세요.");
+        showError("1지망부터 순서대로 채워주세요.");
         return;
       }
     }
@@ -255,7 +259,7 @@ function ApplicationNewContent() {
       router.push(`/strategy-room/${seasonId}`);
     } catch (error) {
       console.error("Application submission error:", error);
-      alert("지원서 제출에 실패했습니다. 다시 시도해주세요.");
+      showError("지원서 제출에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsSubmitting(false);
     }
@@ -312,6 +316,8 @@ function ApplicationNewContent() {
             extraScore={extraScore}
             onExtraScoreChange={setExtraScore}
             isSubmitting={isSubmitting}
+            tooltipMessage={tooltipMessage}
+            shouldShake={shouldShake}
           />
 
           {/* 대학 검색 모달 */}

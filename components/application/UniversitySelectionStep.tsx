@@ -33,6 +33,8 @@ interface UniversitySelectionStepProps {
   extraScore?: string; // new 모드일 때만
   onExtraScoreChange?: (value: string) => void; // new 모드일 때만
   isSubmitting?: boolean; // CTA 버튼 로딩 표시용
+  tooltipMessage?: string; // 에러 툴팁 메시지
+  shouldShake?: boolean; // 버튼 shake 애니메이션
 }
 
 interface SelectedUniversity {
@@ -52,6 +54,8 @@ export default function UniversitySelectionStep({
   extraScore = "",
   onExtraScoreChange,
   isSubmitting = false,
+  tooltipMessage = "",
+  shouldShake = false,
 }: UniversitySelectionStepProps) {
   // 드래그 오버레이용 state만 유지 (순수 UI state)
   const [activeId, setActiveId] = useState<number | string | null>(null);
@@ -268,7 +272,13 @@ export default function UniversitySelectionStep({
         )}
       </div>
 
-      <CTAButton message={mode === "edit" ? "수정 완료하기" : "완료하기"} onClick={onSubmit} isLoading={isSubmitting} />
+      <CTAButton
+        message={mode === "edit" ? "수정 완료하기" : "완료하기"}
+        onClick={onSubmit}
+        isLoading={isSubmitting}
+        tooltipMessage={tooltipMessage}
+        shouldShake={shouldShake}
+      />
     </div>
   );
 }
