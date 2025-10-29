@@ -16,6 +16,7 @@
     "name": "UC Berkeley",
     "country": "US",
     "logoUrl": "https://...",
+    "homepageUrl": "https://example.edu",
     "choiceCount": 15,
     "slotCount": "2명",
     "duration": "1학기",
@@ -39,7 +40,8 @@
   }
   ```
   - `choiceCount`는 `long`이며, 해당 슬롯을 선택한 지원서 수다.
-  - `slotCount`는 문자열이므로 `"2명"`처럼 단위가 포함될 수 있다.
+  - `slotCount`는 문자열이므로 `"2"`, `"2명"`, `"15-20"`처럼 단위나 범위가 포함될 수 있으며, 데이터에 따라 공백 문자가 남아 있을 수도 있다.
+  - `homepageUrl`은 파트너 대학 홈페이지 URL 문자열이며, 데이터가 없으면 `null`.
   - `duration`은 `"1학기"`(SEMESTER), `"1년"`(YEAR), 값이 없으면 `"미정"`.
   - `etc`는 자유 입력 텍스트로, 없으면 `null`.
   - `hasApplied`가 `false`일 때는 `choices` 내 민감한 필드(`gpaScore`, `gpaCriteria`, `languageTest`, `languageGrade`, `languageScore`, `extraScore`, `score`)가 모두 `null`로 내려간다.

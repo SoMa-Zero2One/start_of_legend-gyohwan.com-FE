@@ -25,7 +25,8 @@
     ]
   }
   ```
-  - `startDate`, `endDate`는 ISO-8601 문자열로 직렬화된 `LocalDateTime`.
+  - `startDate`, `endDate`는 ISO-8601 문자열로 직렬화된 `LocalDateTime`이며, 아직 일정이 정해지지 않은 경우 `null`.
+  - `domesticUniversityLogoUri`는 CDN 경로 문자열이나 `null`이 올 수 있다.
   - 현재 서비스 구현(`SeasonService#findSeasons`)은 `isApplied`를 항상 `false`로 반환한다.
 - **오류 응답**: 추가 예외 없음.
 
@@ -78,7 +79,7 @@
   }
   ```
   - `choiceCount`는 `long` (참여한 지원서 수).
-  - `slotCount`는 문자열이므로 `"2명"` 같은 한글 표기가 그대로 온다.
+  - `slotCount`는 문자열이므로 `"2"`, `"2명"`, `"15-20"` 등 다양한 형식이 그대로 온다.
   - `duration`은 `"1학기"`(SEMESTER), `"1년"`(YEAR), 값이 없으면 `"미정"`.
 - **오류 응답**
 
