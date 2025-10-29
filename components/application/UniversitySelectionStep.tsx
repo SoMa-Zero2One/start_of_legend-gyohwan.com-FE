@@ -13,13 +13,12 @@ import {
   TouchSensor,
   KeyboardSensor,
 } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import SearchIcon from "@/components/icons/SearchIcon";
 import DragHandleIcon from "@/components/icons/DragHandleIcon";
-import TrashIcon from "@/components/icons/TrashIcon";
 import CTAButton from "@/components/common/CTAButton";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
+import SortableChoiceCard from "@/components/application/SortableChoiceCard";
 import type { Slot } from "@/types/slot";
 
 interface UniversitySelectionStepProps {
@@ -39,78 +38,6 @@ interface UniversitySelectionStepProps {
 interface SelectedUniversity {
   choice: number; // 1~5지망
   slot: Slot;
-}
-
-interface SortableChoiceCardProps {
-  choice: number;
-  selected: SelectedUniversity | undefined;
-  displayLanguage?: string;
-  onDelete: (choice: number) => void;
-}
-
-function SortableChoiceCard({ choice, selected, displayLanguage, onDelete }: SortableChoiceCardProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: selected ? `slot-${selected.slot.slotId}` : `empty-${choice}`,
-    disabled: !selected, // 빈 카드는 드래그 불가
-  });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  return (
-    <div ref={setNodeRef} style={style} className="flex items-center gap-[12px]">
-      <span className="medium-body-3">{choice}지망</span>
-
-      {selected ? (
-        <div className="flex flex-1 items-center gap-[12px] rounded-[4px] border border-gray-300 p-[12px]">
-          {/* 대학 로고 */}
-          <div className="relative h-[32px] w-[32px] flex-shrink-0 overflow-hidden rounded-full">
-            <SchoolLogoWithFallback
-              src={selected.slot.logoUrl}
-              alt={selected.slot.name}
-              width={32}
-              height={32}
-              className="object-cover"
-            />
-          </div>
-          <span className="medium-body-3 w-0 flex-1 truncate text-left">{selected.slot.name}</span>
-          {/* 어학 시험 태그 */}
-          {displayLanguage && (
-            <span className="caption-2 bg-primary-blue rounded-[4px] px-[8px] py-[4px] text-white">
-              {displayLanguage}
-            </span>
-          )}
-          {/* 삭제 버튼 */}
-          <button
-            onClick={() => onDelete(choice)}
-            className="flex-shrink-0 p-[4px] text-gray-500 transition-colors hover:text-red-500"
-            aria-label="삭제"
-          >
-            <TrashIcon size={16} />
-          </button>
-        </div>
-      ) : (
-        <div className="flex-1 rounded-[4px] border border-dashed border-gray-300 p-[16px]">
-          <span className="body-3 flex items-center gap-[6px] text-gray-400">
-            <SearchIcon size={14} className="flex-shrink-0" />
-            <span>위 버튼으로 추가</span>
-          </span>
-        </div>
-      )}
-
-      {/* 드래그 핸들 */}
-      <div
-        {...attributes}
-        {...listeners}
-        className={`p-[4px] ${selected ? "cursor-grab active:cursor-grabbing" : "cursor-not-allowed opacity-30"}`}
-      >
-        <DragHandleIcon size={20} />
-      </div>
-    </div>
-  );
 }
 
 export default function UniversitySelectionStep({
@@ -340,11 +267,7 @@ export default function UniversitySelectionStep({
         )}
       </div>
 
-      <CTAButton
-        message={mode === "edit" ? "수정 완료하기" : "완료하기"}
-        onClick={onSubmit}
-        isLoading={isSubmitting}
-      />
+      <CTAButton message={mode === "edit" ? "수정 완료하기" : "완료하기"} onClick={onSubmit} isLoading={isSubmitting} />
     </div>
   );
 }
