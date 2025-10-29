@@ -17,14 +17,15 @@ import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-
 import { CSS } from "@dnd-kit/utilities";
 import SearchIcon from "@/components/icons/SearchIcon";
 import DragHandleIcon from "@/components/icons/DragHandleIcon";
-import PencilIcon from "@/components/icons/PencilIcon";
+import TrashIcon from "@/components/icons/TrashIcon";
 import CTAButton from "@/components/common/CTAButton";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 import type { Slot } from "@/types/slot";
 
 interface UniversitySelectionStepProps {
   selectedUniversities: SelectedUniversity[]; // 선택된 대학 목록 (read-only)
-  onOpenSearch: (choice: number | null) => void; // 모달 열기 요청
+  onOpenSearch: () => void; // 모달 열기 요청 (파라미터 없음)
+  onDelete: (choice: number) => void; // 개별 삭제
   onReorder: (universities: SelectedUniversity[]) => void; // 드래그앤드롭 결과 전달
   onReset: () => void; // 초기화 버튼 클릭
   onSubmit: () => void; // 완료 버튼 클릭
@@ -44,10 +45,10 @@ interface SortableChoiceCardProps {
   choice: number;
   selected: SelectedUniversity | undefined;
   displayLanguage?: string;
-  onChoiceCardClick: (choice: number) => void;
+  onDelete: (choice: number) => void;
 }
 
-function SortableChoiceCard({ choice, selected, displayLanguage, onChoiceCardClick }: SortableChoiceCardProps) {
+function SortableChoiceCard({ choice, selected, displayLanguage, onDelete }: SortableChoiceCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: selected ? `slot-${selected.slot.slotId}` : `empty-${choice}`,
     disabled: !selected, // 빈 카드는 드래그 불가
@@ -64,10 +65,7 @@ function SortableChoiceCard({ choice, selected, displayLanguage, onChoiceCardCli
       <span className="medium-body-3">{choice}지망</span>
 
       {selected ? (
-        <button
-          onClick={() => onChoiceCardClick(choice)}
-          className="flex flex-1 cursor-pointer items-center gap-[12px] rounded-[4px] border border-gray-300 p-[12px] transition-colors hover:bg-gray-50"
-        >
+        <div className="flex flex-1 items-center gap-[12px] rounded-[4px] border border-gray-300 p-[12px]">
           {/* 대학 로고 */}
           <div className="relative h-[32px] w-[32px] flex-shrink-0 overflow-hidden rounded-full">
             <SchoolLogoWithFallback
@@ -85,16 +83,19 @@ function SortableChoiceCard({ choice, selected, displayLanguage, onChoiceCardCli
               {displayLanguage}
             </span>
           )}
-          {/* 수정 아이콘 */}
-          <PencilIcon size={16} className="text-gray-500" />
-        </button>
+          {/* 삭제 버튼 */}
+          <button
+            onClick={() => onDelete(choice)}
+            className="flex-shrink-0 p-[4px] text-gray-500 transition-colors hover:text-red-500"
+            aria-label="삭제"
+          >
+            <TrashIcon size={16} />
+          </button>
+        </div>
       ) : (
-        <button
-          onClick={() => onChoiceCardClick(choice)}
-          className="flex-1 cursor-pointer rounded-[4px] border border-gray-300 p-[16px] text-left text-gray-700"
-        >
-          지망 대학을 추가하세요
-        </button>
+        <div className="flex-1 rounded-[4px] border border-dashed border-gray-300 p-[16px]">
+          <span className="body-3 text-gray-400">🔍 위 버튼으로 추가</span>
+        </div>
       )}
 
       {/* 드래그 핸들 */}
@@ -112,6 +113,7 @@ function SortableChoiceCard({ choice, selected, displayLanguage, onChoiceCardCli
 export default function UniversitySelectionStep({
   selectedUniversities,
   onOpenSearch,
+  onDelete,
   onReorder,
   onReset,
   onSubmit,
@@ -213,13 +215,13 @@ export default function UniversitySelectionStep({
           {mode === "new" && <p className="caption-1 text-primary-blue mb-[8px]">Step 02</p>}
           <div className="flex items-center justify-between">
             <h1 className="head-4">{mode === "edit" ? "지망 대학 변경하기" : "지망 대학 등록하기"}</h1>
-            {/* 빠른 추가 버튼 */}
+            {/* 대학 검색 버튼 */}
             <button
-              onClick={() => onOpenSearch(null)} // null = 빠른 추가 모드
+              onClick={onOpenSearch}
               className="flex flex-shrink-0 cursor-pointer items-center gap-[6px] rounded-full bg-blue-50 px-[12px] py-[6px] transition-colors hover:bg-blue-100"
             >
               <SearchIcon size={16} className="text-primary-blue" />
-              <span className="caption-1 text-primary-blue font-semibold whitespace-nowrap">대학 한 번에 선택하기</span>
+              <span className="caption-1 text-primary-blue font-semibold whitespace-nowrap">대학 검색하기</span>
             </button>
           </div>
         </div>
@@ -248,7 +250,7 @@ export default function UniversitySelectionStep({
                     choice={choice}
                     selected={selected}
                     displayLanguage={displayLanguage}
-                    onChoiceCardClick={onOpenSearch}
+                    onDelete={onDelete}
                   />
                 );
               })}
@@ -290,7 +292,6 @@ export default function UniversitySelectionStep({
                             {displayLanguage}
                           </span>
                         )}
-                        <PencilIcon size={16} className="text-gray-500" />
                       </div>
                       <div className="p-[4px]">
                         <DragHandleIcon size={20} />

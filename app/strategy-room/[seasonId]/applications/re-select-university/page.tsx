@@ -34,7 +34,6 @@ function ApplicationEditContent() {
 
   // 대학 선택 관리
   const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>([]);
-  const [currentChoice, setCurrentChoice] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -78,8 +77,7 @@ function ApplicationEditContent() {
   }, [seasonId]);
 
   // 모달 열기 핸들러
-  const handleOpenSearch = (choice: number | null) => {
-    setCurrentChoice(choice);
+  const handleOpenSearch = () => {
     setActiveModal("university-search");
   };
 
@@ -88,7 +86,7 @@ function ApplicationEditContent() {
     return universities.sort((a, b) => a.choice - b.choice).map((u, index) => ({ ...u, choice: index + 1 }));
   };
 
-  // 대학 선택/토글 핸들러
+  // 대학 선택 핸들러 (항상 빠른 추가 모드)
   const handleSelectUniversity = (slot: Slot, shouldCloseModal: boolean = true) => {
     // 이미 선택된 대학인지 확인
     const existingIndex = selectedUniversities.findIndex((u) => u.slot.slotId === slot.slotId);
@@ -98,52 +96,33 @@ function ApplicationEditContent() {
       const updated = selectedUniversities.filter((u) => u.slot.slotId !== slot.slotId);
       const reordered = reorderChoices(updated);
       setSelectedUniversities(reordered);
-
-      if (shouldCloseModal) {
-        setActiveModal(null);
-        setCurrentChoice(null);
-      }
       return;
     }
 
-    // 새로운 대학 선택
-    if (currentChoice !== null) {
-      // 특정 지망 카드 클릭 → 해당 지망에 배치
-      const existingChoiceIndex = selectedUniversities.findIndex((u) => u.choice === currentChoice);
+    // 새로운 대학 선택 → 다음 빈 지망에 자동 배치
+    if (selectedUniversities.length >= 5) {
+      return;
+    }
 
-      if (existingChoiceIndex !== -1) {
-        // 기존 choice에 이미 대학이 있으면 교체
-        const updated = [...selectedUniversities];
-        updated[existingChoiceIndex] = { choice: currentChoice, slot };
-        setSelectedUniversities(updated);
-      } else {
-        // 새로운 선택 추가
-        setSelectedUniversities([...selectedUniversities, { choice: currentChoice, slot }]);
-      }
-
-      if (shouldCloseModal) {
-        setActiveModal(null);
-        setCurrentChoice(null);
-      }
-    } else {
-      // 돋보기 클릭 (빠른 추가) → 다음 빈 지망에 자동 배치
-      if (selectedUniversities.length >= 5) {
-        return;
-      }
-
-      let nextChoice = 1;
-      for (let i = 1; i <= 5; i++) {
-        const isOccupied = selectedUniversities.some((u) => u.choice === i);
-        if (!isOccupied) {
-          nextChoice = i;
-          break;
-        }
-      }
-
-      if (nextChoice <= 5) {
-        setSelectedUniversities([...selectedUniversities, { choice: nextChoice, slot }]);
+    let nextChoice = 1;
+    for (let i = 1; i <= 5; i++) {
+      const isOccupied = selectedUniversities.some((u) => u.choice === i);
+      if (!isOccupied) {
+        nextChoice = i;
+        break;
       }
     }
+
+    if (nextChoice <= 5) {
+      setSelectedUniversities([...selectedUniversities, { choice: nextChoice, slot }]);
+    }
+  };
+
+  // 개별 삭제 핸들러
+  const handleDelete = (choice: number) => {
+    const updated = selectedUniversities.filter((u) => u.choice !== choice);
+    const reordered = reorderChoices(updated);
+    setSelectedUniversities(reordered);
   };
 
   // 지망 대학 초기화
@@ -229,6 +208,7 @@ function ApplicationEditContent() {
       <UniversitySelectionStep
         selectedUniversities={selectedUniversities}
         onOpenSearch={handleOpenSearch}
+        onDelete={handleDelete}
         onReorder={handleReorder}
         onReset={handleReset}
         onSubmit={handleSubmit}
@@ -242,7 +222,6 @@ function ApplicationEditContent() {
         isOpen={activeModal === "university-search"}
         onClose={() => {
           setActiveModal(null);
-          setCurrentChoice(null);
         }}
         slots={slots}
         selectedUniversities={selectedUniversities.map((u) => ({
@@ -250,11 +229,10 @@ function ApplicationEditContent() {
           slotId: u.slot.slotId,
         }))}
         onSelectUniversity={handleSelectUniversity}
-        isQuickAdd={currentChoice === null}
-        currentChoice={currentChoice}
+        isQuickAdd={true}
+        currentChoice={null}
         onSave={() => {
           setActiveModal(null);
-          setCurrentChoice(null);
         }}
       />
 
