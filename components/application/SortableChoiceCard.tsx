@@ -19,7 +19,13 @@ interface SortableChoiceCardProps {
   onOpenSearch: () => void;
 }
 
-export default function SortableChoiceCard({ choice, selected, displayLanguage, onDelete, onOpenSearch }: SortableChoiceCardProps) {
+export default function SortableChoiceCard({
+  choice,
+  selected,
+  displayLanguage,
+  onDelete,
+  onOpenSearch,
+}: SortableChoiceCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: selected ? `slot-${selected.slot.slotId}` : `empty-${choice}`,
     disabled: !selected, // 빈 카드는 드래그 불가
@@ -57,7 +63,7 @@ export default function SortableChoiceCard({ choice, selected, displayLanguage, 
           {/* 삭제 버튼 */}
           <button
             onClick={() => onDelete(choice)}
-            className="flex-shrink-0 p-[4px] text-gray-500 transition-colors hover:text-red-500"
+            className="flex-shrink-0 cursor-pointer p-[4px] text-gray-500 transition-colors hover:text-red-500"
             aria-label="삭제"
           >
             <TrashIcon size={16} />
@@ -66,9 +72,9 @@ export default function SortableChoiceCard({ choice, selected, displayLanguage, 
       ) : (
         <button
           onClick={onOpenSearch}
-          className="flex-1 rounded-[4px] border border-dashed border-gray-300 p-[16px] cursor-pointer transition-colors hover:border-primary-blue hover:bg-blue-50"
+          className="flex-1 cursor-pointer rounded-[4px] border border-gray-300 p-[16px] transition-colors hover:bg-blue-50"
         >
-          <span className="body-3 flex items-center gap-[6px] text-gray-400 hover:text-primary-blue transition-colors">
+          <span className="body-3 hover:text-primary-blue flex items-center gap-[6px] text-gray-400 transition-colors">
             <SearchIcon size={14} className="flex-shrink-0" />
             <span>클릭하여 추가</span>
           </span>
@@ -79,7 +85,7 @@ export default function SortableChoiceCard({ choice, selected, displayLanguage, 
       <div
         {...attributes}
         {...listeners}
-        className={`p-[4px] ${selected ? "cursor-grab active:cursor-grabbing" : "cursor-not-allowed opacity-30"}`}
+        className={`p-[4px] ${selected ? "cursor-grab active:cursor-grabbing" : "opacity-30"}`}
       >
         <DragHandleIcon size={20} />
       </div>
