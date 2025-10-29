@@ -16,9 +16,10 @@ interface SortableChoiceCardProps {
   selected: SelectedUniversity | undefined;
   displayLanguage?: string;
   onDelete: (choice: number) => void;
+  onOpenSearch: () => void;
 }
 
-export default function SortableChoiceCard({ choice, selected, displayLanguage, onDelete }: SortableChoiceCardProps) {
+export default function SortableChoiceCard({ choice, selected, displayLanguage, onDelete, onOpenSearch }: SortableChoiceCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: selected ? `slot-${selected.slot.slotId}` : `empty-${choice}`,
     disabled: !selected, // 빈 카드는 드래그 불가
@@ -63,12 +64,15 @@ export default function SortableChoiceCard({ choice, selected, displayLanguage, 
           </button>
         </div>
       ) : (
-        <div className="flex-1 rounded-[4px] border border-dashed border-gray-300 p-[16px]">
-          <span className="body-3 flex items-center gap-[6px] text-gray-400">
+        <button
+          onClick={onOpenSearch}
+          className="flex-1 rounded-[4px] border border-dashed border-gray-300 p-[16px] cursor-pointer transition-colors hover:border-primary-blue hover:bg-blue-50"
+        >
+          <span className="body-3 flex items-center gap-[6px] text-gray-400 hover:text-primary-blue transition-colors">
             <SearchIcon size={14} className="flex-shrink-0" />
-            <span>위 버튼으로 추가</span>
+            <span>클릭하여 추가</span>
           </span>
-        </div>
+        </button>
       )}
 
       {/* 드래그 핸들 */}

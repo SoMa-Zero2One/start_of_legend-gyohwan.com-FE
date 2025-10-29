@@ -181,6 +181,7 @@ export default function UniversitySelectionStep({
                     selected={selected}
                     displayLanguage={displayLanguage}
                     onDelete={onDelete}
+                    onOpenSearch={onOpenSearch}
                   />
                 );
               })}
