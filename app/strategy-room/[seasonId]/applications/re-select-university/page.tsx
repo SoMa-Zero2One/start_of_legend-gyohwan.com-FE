@@ -1,13 +1,18 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import UniversitySelectionStep from "@/components/application/UniversitySelectionStep";
+import UniversitySearchModal from "@/components/application/UniversitySearchModal";
+import ConfirmModal from "@/components/common/ConfirmModal";
 import { getMyApplication } from "@/lib/api/slot";
 import { getSeasonSlots } from "@/lib/api/slot";
+import { updateApplication } from "@/lib/api/application";
 import type { Slot } from "@/types/slot";
 import type { MyApplicationResponse } from "@/types/slot";
+
+type ModalType = "university-search" | "confirm" | null;
 
 interface SelectedUniversity {
   choice: number;
@@ -16,12 +21,20 @@ interface SelectedUniversity {
 
 function ApplicationEditContent() {
   const params = useParams();
+  const router = useRouter();
   const seasonId = parseInt(params.seasonId as string);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [myApplication, setMyApplication] = useState<MyApplicationResponse | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
+
+  // 모달 관리
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
+
+  // 대학 선택 관리
+  const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +48,23 @@ function ApplicationEditContent() {
 
         setMyApplication(myAppResult);
         setSlots(slotsResult.slots);
+
+        // MyApplicationResponse의 choices를 SelectedUniversity 형식으로 변환
+        const initialSelections: SelectedUniversity[] = myAppResult.choices.map((choiceItem) => ({
+          choice: choiceItem.choice,
+          slot: {
+            slotId: choiceItem.slot.slotId,
+            name: choiceItem.slot.name,
+            country: choiceItem.slot.country,
+            choiceCount: choiceItem.slot.choiceCount,
+            slotCount: choiceItem.slot.slotCount,
+            duration: choiceItem.slot.duration,
+            logoUrl: choiceItem.slot.logoUrl,
+            homepageUrl: choiceItem.slot.homepageUrl,
+          },
+        }));
+
+        setSelectedUniversities(initialSelections);
       } catch (err) {
         console.error("Data fetch error:", err);
         setError("데이터를 불러오는데 실패했습니다.");
@@ -45,6 +75,109 @@ function ApplicationEditContent() {
 
     fetchData();
   }, [seasonId]);
+
+  // 모달 열기 핸들러
+  const handleOpenSearch = () => {
+    setActiveModal("university-search");
+  };
+
+  // 자동 정렬 함수 - 1번부터 연속되게 정렬
+  const reorderChoices = (universities: SelectedUniversity[]): SelectedUniversity[] => {
+    return universities.sort((a, b) => a.choice - b.choice).map((u, index) => ({ ...u, choice: index + 1 }));
+  };
+
+  // 대학 선택 핸들러 (항상 빠른 추가 모드)
+  const handleSelectUniversity = (slot: Slot, shouldCloseModal: boolean = true) => {
+    // 이미 선택된 대학인지 확인
+    const existingIndex = selectedUniversities.findIndex((u) => u.slot.slotId === slot.slotId);
+
+    if (existingIndex !== -1) {
+      // 이미 선택됨 → 토글(제거)
+      const updated = selectedUniversities.filter((u) => u.slot.slotId !== slot.slotId);
+      const reordered = reorderChoices(updated);
+      setSelectedUniversities(reordered);
+      return;
+    }
+
+    // 새로운 대학 선택 → 다음 빈 지망에 자동 배치
+    if (selectedUniversities.length >= 5) {
+      return;
+    }
+
+    let nextChoice = 1;
+    for (let i = 1; i <= 5; i++) {
+      const isOccupied = selectedUniversities.some((u) => u.choice === i);
+      if (!isOccupied) {
+        nextChoice = i;
+        break;
+      }
+    }
+
+    if (nextChoice <= 5) {
+      setSelectedUniversities([...selectedUniversities, { choice: nextChoice, slot }]);
+    }
+  };
+
+  // 개별 삭제 핸들러
+  const handleDelete = (choice: number) => {
+    const updated = selectedUniversities.filter((u) => u.choice !== choice);
+    const reordered = reorderChoices(updated);
+    setSelectedUniversities(reordered);
+  };
+
+  // 지망 대학 초기화
+  const handleReset = () => {
+    setSelectedUniversities([]);
+  };
+
+  // 드래그앤드롭 순서 변경
+  const handleReorder = (reordered: SelectedUniversity[]) => {
+    setSelectedUniversities(reordered);
+  };
+
+  // 제출 버튼 핸들러
+  const handleSubmit = () => {
+    // Validation
+    if (selectedUniversities.length === 0) {
+      alert("최소 1개 이상의 지망 대학을 선택해주세요.");
+      return;
+    }
+
+    // 1지망부터 순서대로 채워졌는지 확인
+    const sortedChoices = selectedUniversities.map((u) => u.choice).sort((a, b) => a - b);
+    for (let i = 0; i < sortedChoices.length; i++) {
+      if (sortedChoices[i] !== i + 1) {
+        alert("1지망부터 순서대로 채워주세요.");
+        return;
+      }
+    }
+
+    setActiveModal("confirm");
+  };
+
+  // 최종 제출 실행
+  const handleConfirmSubmit = async () => {
+    setActiveModal(null);
+
+    try {
+      setIsSubmitting(true);
+
+      const choices = selectedUniversities.map((u) => ({
+        choice: u.choice,
+        slotId: u.slot.slotId,
+      }));
+
+      await updateApplication(seasonId, { choices });
+
+      // 성공 후 실시간 경쟁률 페이지로 이동
+      router.push(`/strategy-room/${seasonId}`);
+    } catch (error) {
+      console.error("Application update error:", error);
+      alert("지망 대학 수정에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -68,31 +201,50 @@ function ApplicationEditContent() {
     );
   }
 
-  // MyApplicationResponse의 choices를 SelectedUniversity 형식으로 변환
-  const initialSelections: SelectedUniversity[] = myApplication.choices.map((choiceItem) => ({
-    choice: choiceItem.choice,
-    slot: {
-      slotId: choiceItem.slot.slotId,
-      name: choiceItem.slot.name,
-      country: choiceItem.slot.country,
-      choiceCount: choiceItem.slot.choiceCount,
-      slotCount: choiceItem.slot.slotCount,
-      duration: choiceItem.slot.duration,
-      logoUrl: choiceItem.slot.logoUrl,
-      homepageUrl: choiceItem.slot.homepageUrl,
-    },
-  }));
-
   return (
     <div className="flex min-h-screen flex-col">
       <Header title="지망 대학 변경하기" showPrevButton showHomeButton />
 
       <UniversitySelectionStep
-        seasonId={seasonId}
+        selectedUniversities={selectedUniversities}
+        onOpenSearch={handleOpenSearch}
+        onDelete={handleDelete}
+        onReorder={handleReorder}
+        onReset={handleReset}
+        onSubmit={handleSubmit}
         displayLanguage={`${myApplication.language.testType} ${myApplication.language.grade || ""} ${myApplication.language.score || ""}`.trim()}
-        slots={slots}
         mode="edit"
-        initialSelections={initialSelections}
+        isSubmitting={isSubmitting}
+      />
+
+      {/* 대학 검색 모달 */}
+      <UniversitySearchModal
+        isOpen={activeModal === "university-search"}
+        onClose={() => {
+          setActiveModal(null);
+        }}
+        slots={slots}
+        selectedUniversities={selectedUniversities.map((u) => ({
+          choice: u.choice,
+          slotId: u.slot.slotId,
+        }))}
+        onSelectUniversity={handleSelectUniversity}
+        isQuickAdd={true}
+        currentChoice={null}
+        onSave={() => {
+          setActiveModal(null);
+        }}
+      />
+
+      {/* 확인 모달 */}
+      <ConfirmModal
+        isOpen={activeModal === "confirm"}
+        title="지망 대학 수정"
+        message="지망 대학을 수정하시겠습니까?"
+        confirmText="수정하기"
+        cancelText="취소"
+        onConfirm={handleConfirmSubmit}
+        onCancel={() => setActiveModal(null)}
       />
     </div>
   );
