@@ -26,8 +26,11 @@ export default function Footer() {
           </Link>
         </div>
 
-        {/* 저작권 정보 */}
+        {/* 회사 정보 및 저작권 */}
         <div className="caption-2 py-[20px] text-gray-700">
+          <p className="mb-[8px]">
+            바삭크리스피 | 주소: 인천광역시 미추홀구 인하로 100, 인하드림센터동 2층 213A호 인하드림센터 1 관 213A 호 | 사업자등록번호: 671-38-01352
+          </p>
           <p>Copyright &copy; {new Date().getFullYear()} 교환닷컴. All rights reserved.</p>
         </div>
       </div>
