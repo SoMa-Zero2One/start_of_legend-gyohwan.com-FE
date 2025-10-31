@@ -11,7 +11,7 @@ export const getSeasons = async (): Promise<SeasonsResponse> => {
 
   const response = await fetch(`${backendUrl}/v1/seasons`, {
     method: 'GET',
-    credentials: 'include', // 쿠키 포함
+    credentials: typeof window !== 'undefined' ? 'include' : undefined, // 브라우저에서만 쿠키 포함
   });
 
   if (!response.ok) {

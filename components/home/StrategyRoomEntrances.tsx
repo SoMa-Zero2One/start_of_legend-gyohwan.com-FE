@@ -1,92 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getSeasons } from "@/lib/api/season";
+import { useMemo } from "react";
 import { Season } from "@/types/season";
 import { useAuthStore } from "@/stores/authStore";
 import StrategyRoomCard from "./StrategyRoomCard";
-import StrategyRoomCardSkeleton from "./StrategyRoomCardSkeleton";
 
-export default function StrategyRoomEntrances() {
-  const [seasons, setSeasons] = useState<Season[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface StrategyRoomEntrancesProps {
+  initialSeasons: Season[];
+}
+
+export default function StrategyRoomEntrances({ initialSeasons }: StrategyRoomEntrancesProps) {
   const { user } = useAuthStore();
 
-  useEffect(() => {
-    const fetchSeasons = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getSeasons();
+  // 서버에서 받은 시즌을 사용자 기준으로 정렬
+  const sortedSeasons = useMemo(() => {
+    return [...initialSeasons].sort((a, b) => {
+      const userUniversity = user?.domesticUniversity;
 
-        // 사용자의 학교를 우선 정렬 + 마감일이 가까운 순서 (일정 없으면 가장 뒤)
-        const sortedSeasons = [...data.seasons].sort((a, b) => {
-          const userUniversity = user?.domesticUniversity;
+      if (userUniversity) {
+        const aMatch = a.domesticUniversity === userUniversity;
+        const bMatch = b.domesticUniversity === userUniversity;
 
-          if (userUniversity) {
-            const aMatch = a.domesticUniversity === userUniversity;
-            const bMatch = b.domesticUniversity === userUniversity;
-
-            // 사용자 학교가 맞으면 최상위로
-            if (aMatch && !bMatch) return -1;
-            if (!aMatch && bMatch) return 1;
-          }
-
-          // 둘 다 사용자 학교이거나 둘 다 아닐 경우, 마감일 기준으로 정렬
-          const aHasDate = a.endDate !== null;
-          const bHasDate = b.endDate !== null;
-
-          // 일정이 없는 경우 가장 뒤로
-          if (!aHasDate && bHasDate) return 1;
-          if (aHasDate && !bHasDate) return -1;
-          if (!aHasDate && !bHasDate) {
-            // 둘 다 일정이 없으면 가나다순
-            return a.domesticUniversity.localeCompare(b.domesticUniversity, "ko-KR");
-          }
-
-          // 둘 다 일정이 있으면 마감일이 가까운 순서 (오름차순)
-          return new Date(a.endDate!).getTime() - new Date(b.endDate!).getTime();
-        });
-
-        setSeasons(sortedSeasons);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "시즌 목록을 불러오는데 실패했습니다.");
-      } finally {
-        setIsLoading(false);
+        // 사용자 학교가 맞으면 최상위로
+        if (aMatch && !bMatch) return -1;
+        if (!aMatch && bMatch) return 1;
       }
-    };
 
-    fetchSeasons();
-  }, [user?.domesticUniversity]);
+      // 둘 다 사용자 학교이거나 둘 다 아닐 경우, 마감일 기준으로 정렬
+      const aHasDate = a.endDate !== null;
+      const bHasDate = b.endDate !== null;
 
-  if (isLoading) {
-    return (
-      <div className="relative flex flex-col gap-[40px] p-[20px]">
-        {/* 헤더 스켈레톤 */}
-        <div className="flex flex-col items-center gap-[12px]">
-          <div className="h-[24px] w-[240px] animate-pulse rounded bg-gray-200" />
-          <div className="h-[36px] w-[100px] animate-pulse rounded bg-gray-200" />
-        </div>
+      // 일정이 없는 경우 가장 뒤로
+      if (!aHasDate && bHasDate) return 1;
+      if (aHasDate && !bHasDate) return -1;
+      if (!aHasDate && !bHasDate) {
+        // 둘 다 일정이 없으면 가나다순
+        return a.domesticUniversity.localeCompare(b.domesticUniversity, "ko-KR");
+      }
 
-        {/* 카드 스켈레톤 3개 */}
-        <div className="grid grid-cols-1 gap-3">
-          {[1, 2, 3].map((i) => (
-            <StrategyRoomCardSkeleton key={i} />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="relative flex flex-col gap-[40px] p-[20px] text-center">
-        <div>
-          <p className="text-red-500">{error}</p>
-        </div>
-      </div>
-    );
-  }
+      // 둘 다 일정이 있으면 마감일이 가까운 순서 (오름차순)
+      return new Date(a.endDate!).getTime() - new Date(b.endDate!).getTime();
+    });
+  }, [initialSeasons, user?.domesticUniversity]);
 
   return (
     <div
@@ -95,10 +50,10 @@ export default function StrategyRoomEntrances() {
     >
       <div className="flex flex-col items-center gap-[12px]">
         <p className="head-4">교환학생 모집 중인 대학</p>
-        <p className="g-head-2 text-primary-blue">{seasons.length}개 대학</p>
+        <p className="g-head-2 text-primary-blue">{sortedSeasons.length}개 대학</p>
       </div>
       <div className="grid grid-cols-1 gap-[12px]">
-        {seasons.map((season) => (
+        {sortedSeasons.map((season) => (
           <StrategyRoomCard key={season.seasonId} data={season} />
         ))}
       </div>
