@@ -19,7 +19,6 @@ interface HomePageProps {
 export default function HomePage({ initialSeasons }: HomePageProps) {
   const router = useRouter();
   const { user, isLoggedIn } = useAuthStore();
-  const [seasons] = useState<Season[]>(initialSeasons);
   const [floatingButton, setFloatingButton] = useState<{
     label: string;
     action: () => void;
@@ -28,13 +27,26 @@ export default function HomePage({ initialSeasons }: HomePageProps) {
 
   // Set floating button based on user and seasons
   useEffect(() => {
-    if (!isLoggedIn || !user || seasons.length === 0) {
+    if (initialSeasons.length === 0) {
       setFloatingButton(null);
       return;
     }
 
-    // 1. 지원한 시즌이 있는지 확인
-    const appliedSeason = seasons.find((s) => s.hasApplied);
+    // 1. 로그인되어 있지 않은 유저
+    if (!user || !isLoggedIn) {
+      setFloatingButton({
+        label: "교환학생 모집 중인 대학 보기",
+        action: () => {
+          document.getElementById("strategy-room-entrances")?.scrollIntoView({
+            behavior: "smooth",
+          });
+        },
+      });
+      return;
+    }
+
+    // 2. 지원한 시즌이 있는지 확인
+    const appliedSeason = initialSeasons.find((s) => s.hasApplied);
     if (appliedSeason) {
       setFloatingButton({
         label: "우리 학교 실시간 경쟁률 바로가기",
@@ -43,8 +55,8 @@ export default function HomePage({ initialSeasons }: HomePageProps) {
       return;
     }
 
-    // 2. 본인 학교 시즌이 있는지 확인
-    const mySchoolSeason = seasons.find((s) => s.domesticUniversity === user.domesticUniversity);
+    // 3. 본인 학교 시즌이 있는지 확인
+    const mySchoolSeason = initialSeasons.find((s) => s.domesticUniversity === user.domesticUniversity);
     if (mySchoolSeason && user.domesticUniversity) {
       setFloatingButton({
         label: "우리 학교 실시간 경쟁률 바로가기",
@@ -53,7 +65,7 @@ export default function HomePage({ initialSeasons }: HomePageProps) {
       return;
     }
 
-    // 3. 그 외: 탐색 유도
+    // 4. 그 외: 탐색 유도
     setFloatingButton({
       label: "교환학생 모집 중인 대학 보기",
       action: () => {
@@ -62,7 +74,7 @@ export default function HomePage({ initialSeasons }: HomePageProps) {
         });
       },
     });
-  }, [user, isLoggedIn, seasons, router]);
+  }, [user, isLoggedIn, initialSeasons, router]);
 
   // Handle scroll to fade out button when approaching StrategyRoomEntrances
   useEffect(() => {
@@ -90,7 +102,7 @@ export default function HomePage({ initialSeasons }: HomePageProps) {
       </Header>
       <HeroSection />
       <FeatureSection />
-      <StrategyRoomEntrances initialSeasons={seasons} />
+      <StrategyRoomEntrances initialSeasons={initialSeasons} />
       <Footer />
 
       {floatingButton && (
