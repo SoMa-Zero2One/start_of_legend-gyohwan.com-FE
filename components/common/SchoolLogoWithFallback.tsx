@@ -11,6 +11,7 @@ interface SchoolLogoWithFallbackProps {
   className?: string;
   fill?: boolean;
   sizes?: string;
+  isLoading?: boolean;
 }
 
 export default function SchoolLogoWithFallback({
@@ -21,8 +22,19 @@ export default function SchoolLogoWithFallback({
   className = "",
   fill = false,
   sizes,
+  isLoading = false,
 }: SchoolLogoWithFallbackProps) {
   const [imageError, setImageError] = useState(false);
+
+  // 로딩 중일 때 Skeleton 표시
+  if (isLoading) {
+    return (
+      <div
+        className={`animate-pulse rounded-full bg-gray-200 ${className}`}
+        style={{ width: width || "100%", height: height || "100%" }}
+      />
+    );
+  }
 
   // src에 프로토콜이 없으면 https:// 추가
   const imageSrc = src && !src.startsWith('http://') && !src.startsWith('https://') && !src.startsWith('//')

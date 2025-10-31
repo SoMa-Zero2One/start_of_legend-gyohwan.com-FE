@@ -4,6 +4,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useMemo, useRef } from "react";
 import Header from "@/components/layout/Header";
 import ApplicantCard from "@/components/strategy-room/ApplicantCard";
+import SlotDetailPageSkeleton from "@/components/strategy-room/SlotDetailPageSkeleton";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import Tabs from "@/components/common/Tabs";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
@@ -174,14 +175,7 @@ export default function SlotDetailPage() {
   }, [data, selectedTab]);
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen flex-col">
-        <Header title="지원자 목록" showPrevButton showBorder />
-        <div className="flex flex-1 items-center justify-center">
-          <p className="text-gray-500">로딩 중...</p>
-        </div>
-      </div>
-    );
+    return <SlotDetailPageSkeleton />;
   }
 
   if (error || !data) {
