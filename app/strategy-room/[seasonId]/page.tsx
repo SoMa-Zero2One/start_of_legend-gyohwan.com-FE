@@ -5,6 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
+import StrategyRoomPageSkeleton from "@/components/strategy-room/StrategyRoomPageSkeleton";
 import Tabs from "@/components/common/Tabs";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import { getSeasonSlots, getMyApplication } from "@/lib/api/slot";
@@ -119,14 +120,7 @@ export default function StrategyRoomPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen flex-col">
-        <Header title="실시간 경쟁률" showHomeButton showPrevButton showBorder />
-        <div className="flex flex-1 items-center justify-center">
-          <p className="text-gray-500">로딩 중...</p>
-        </div>
-      </div>
-    );
+    return <StrategyRoomPageSkeleton />;
   }
 
   if (error || !data) {
