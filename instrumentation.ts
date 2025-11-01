@@ -6,8 +6,8 @@
 
 export async function register() {
   // 서버 환경에서만 실행 (Edge Runtime에서는 Node.js API를 사용할 수 없음)
-  if (process.env.NEXT_RUNTIME === 'nodejs') {
-    const { enableMocking } = await import('./mocks/server');
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    const { enableMocking } = await import("./mocks/server");
     await enableMocking();
   }
 }

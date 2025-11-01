@@ -8,7 +8,7 @@ export interface User {
   nickname: string;
   domesticUniversity: string | null;
   schoolVerified: boolean;
-  loginType: 'BASIC' | 'SOCIAL';
+  loginType: "BASIC" | "SOCIAL";
   socialType: string | null;
   profileUrl?: string | null;
 }

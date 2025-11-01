@@ -5,7 +5,7 @@
 export const getBackendUrl = (): string => {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   if (!backendUrl) {
-    throw new Error('NEXT_PUBLIC_BACKEND_URL 환경변수가 설정되지 않았습니다.');
+    throw new Error("NEXT_PUBLIC_BACKEND_URL 환경변수가 설정되지 않았습니다.");
   }
   return backendUrl;
 };

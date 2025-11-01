@@ -124,11 +124,17 @@ export default function ChangePasswordPage() {
           <div className="flex flex-col items-center gap-[20px]">
             <div className="flex h-[80px] w-[80px] items-center justify-center rounded-full bg-green-100">
               <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                <path d="M10 24L20 34L38 14" stroke="#16A34A" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                <path
+                  d="M10 24L20 34L38 14"
+                  stroke="#16A34A"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </div>
             <h2 className="head-4 text-center">비밀번호가 변경되었습니다</h2>
-            <p className="body-3 text-gray-600 text-center">잠시 후 마이페이지로 이동합니다...</p>
+            <p className="body-3 text-center text-gray-600">잠시 후 마이페이지로 이동합니다...</p>
           </div>
         </div>
       </div>

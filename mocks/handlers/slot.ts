@@ -1,14 +1,10 @@
-import { http, HttpResponse } from 'msw';
-import { getCurrentUser } from '../data/users';
-import {
-  findSlotById,
-  mockSlotApplicants,
-  mockSlotApplicantsRestricted,
-} from '../data/slots';
-import { findSeasonById } from '../data/seasons';
-import { findApplicationById, mockApplications } from '../data/applications';
+import { http, HttpResponse } from "msw";
+import { getCurrentUser } from "../data/users";
+import { findSlotById, mockSlotApplicants, mockSlotApplicantsRestricted } from "../data/slots";
+import { findSeasonById } from "../data/seasons";
+import { findApplicationById, mockApplications } from "../data/applications";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
 /**
  * ProblemDetail 에러 응답 생성 헬퍼
@@ -16,7 +12,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:808
 function createErrorResponse(status: number, detail: string, title?: string) {
   return HttpResponse.json(
     {
-      type: 'about:blank',
+      type: "about:blank",
       title: title || getStatusText(status),
       status,
       detail,
@@ -27,23 +23,21 @@ function createErrorResponse(status: number, detail: string, title?: string) {
 
 function getStatusText(status: number): string {
   const statusTexts: Record<number, string> = {
-    400: 'Bad Request',
-    401: 'Unauthorized',
-    403: 'Forbidden',
-    404: 'Not Found',
-    409: 'Conflict',
-    500: 'Internal Server Error',
+    400: "Bad Request",
+    401: "Unauthorized",
+    403: "Forbidden",
+    404: "Not Found",
+    409: "Conflict",
+    500: "Internal Server Error",
   };
-  return statusTexts[status] || 'Error';
+  return statusTexts[status] || "Error";
 }
 
 /**
  * 유저가 해당 슬롯에 지원했는지 확인
  */
 function hasUserAppliedToSlot(userId: number, slotId: number): boolean {
-  const userApplications = mockApplications.filter(
-    (app) => app.userId === userId
-  );
+  const userApplications = mockApplications.filter((app) => app.userId === userId);
 
   for (const app of userApplications) {
     const hasSlot = app.choices.some((choice) => choice.slotId === slotId);
@@ -72,7 +66,7 @@ export const slotHandlers = [
     const slot = findSlotById(slotId);
 
     if (!slot) {
-      return createErrorResponse(404, '슬롯을 찾을 수 없습니다.');
+      return createErrorResponse(404, "슬롯을 찾을 수 없습니다.");
     }
 
     const user = getCurrentUser();
@@ -85,18 +79,16 @@ export const slotHandlers = [
 
     // 지원하지 않은 경우 민감 정보 숨김
     if (!hasApplied) {
-      applicants = (mockSlotApplicantsRestricted[slotId] || applicants).map(
-        (applicant) => ({
-          ...applicant,
-          gpaScore: null,
-          gpaCriteria: null,
-          languageTest: null,
-          languageGrade: null,
-          languageScore: null,
-          extraScore: null,
-          score: null,
-        })
-      );
+      applicants = (mockSlotApplicantsRestricted[slotId] || applicants).map((applicant) => ({
+        ...applicant,
+        gpaScore: null,
+        gpaCriteria: null,
+        languageTest: null,
+        languageGrade: null,
+        languageScore: null,
+        extraScore: null,
+        score: null,
+      }));
     }
 
     // 슬롯이 속한 시즌 찾기 (간단하게 첫 번째 시즌으로 가정)
@@ -130,18 +122,16 @@ export const slotHandlers = [
     const application = findApplicationById(applicationId);
 
     if (!application) {
-      return createErrorResponse(404, '지원 정보를 찾을 수 없습니다.');
+      return createErrorResponse(404, "지원 정보를 찾을 수 없습니다.");
     }
 
     // Mock에서 GPA/Language 정보 가져오기
-    const { mockGpas, mockLanguages } = require('../data/users');
+    const { mockGpas, mockLanguages } = require("../data/users");
     const userGpas = mockGpas[application.userId] || [];
     const gpa = userGpas.find((g: any) => g.gpaId === application.gpaId);
 
     const userLanguages = mockLanguages[application.userId] || [];
-    const language = userLanguages.find(
-      (l: any) => l.languageId === application.languageId
-    );
+    const language = userLanguages.find((l: any) => l.languageId === application.languageId);
 
     // Choices 변환
     const choicesWithSlot = application.choices.map((c) => ({
@@ -153,13 +143,11 @@ export const slotHandlers = [
       applicationId: application.applicationId,
       seasonId: application.seasonId,
       nickname: application.nickname,
-      gpa: gpa
-        ? { score: gpa.score, criteria: gpa.criteria }
-        : null,
+      gpa: gpa ? { score: gpa.score, criteria: gpa.criteria } : null,
       language: language
         ? {
             testType: language.testType,
-            score: language.score || '',
+            score: language.score || "",
             grade: language.grade,
           }
         : null,

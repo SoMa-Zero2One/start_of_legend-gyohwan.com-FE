@@ -14,24 +14,9 @@ export default function TrashIcon({ className, size = 20, strokeWidth = 1.5 }: T
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path
-        d="M2.5 5H17.5"
-        stroke="currentColor"
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-      />
-      <path
-        d="M8.33333 8.33333V13.3333"
-        stroke="currentColor"
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-      />
-      <path
-        d="M11.6667 8.33333V13.3333"
-        stroke="currentColor"
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-      />
+      <path d="M2.5 5H17.5" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" />
+      <path d="M8.33333 8.33333V13.3333" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" />
+      <path d="M11.6667 8.33333V13.3333" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" />
       <path
         d="M3.33333 5L4.16667 16.6667C4.16667 17.5871 4.91286 18.3333 5.83333 18.3333H14.1667C15.0871 18.3333 15.8333 17.5871 15.8333 16.6667L16.6667 5"
         stroke="currentColor"

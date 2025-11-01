@@ -52,7 +52,11 @@ export default function TermsStep({
       {error && <p className="caption-2">{error}</p>}
 
       {/* 계속 버튼 */}
-      <button onClick={onSubmit} disabled={!agreeTerms || !agreePrivacy || isLoading} className="btn-secondary w-full rounded-[4px] p-[12px]">
+      <button
+        onClick={onSubmit}
+        disabled={!agreeTerms || !agreePrivacy || isLoading}
+        className="btn-secondary w-full rounded-[4px] p-[12px]"
+      >
         {isLoading ? "처리 중..." : "계속"}
       </button>
     </div>

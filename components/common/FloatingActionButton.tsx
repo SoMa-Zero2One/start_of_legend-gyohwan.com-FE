@@ -24,7 +24,7 @@ export default function FloatingActionButton({ label, onClick, isVisible }: Floa
       {/* 버튼 */}
       <button
         onClick={onClick}
-        className="flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all duration-200 hover:shadow-xl active:scale-95 cursor-pointer"
+        className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full shadow-lg transition-all duration-200 hover:shadow-xl active:scale-95"
         style={{
           background: "linear-gradient(135deg, #00D0FF 0%, #029EFA 50%, #056DFF 100%)",
         }}
