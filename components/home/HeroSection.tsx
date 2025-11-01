@@ -4,7 +4,7 @@ export default function HeroSection() {
   return (
     <div className="px-[20px]">
       <div className="relative aspect-[390/360] w-full overflow-hidden rounded-[10px]">
-        <Image src="/images/mainPage-1.png" alt="교환닷컴" fill priority />
+        <Image src="/images/mainPage-1.png" alt="교환닷컴" fill priority className="object-cover" />
         <div className="absolute inset-0 flex flex-col justify-center gap-[10px] text-center text-white">
           <h1 className="g-head-3">
             준비부터 파견까지,
