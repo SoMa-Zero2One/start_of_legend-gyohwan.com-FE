@@ -45,10 +45,7 @@ function ApplicationEditContent() {
       try {
         setIsLoading(true);
 
-        const [myAppResult, slotsResult] = await Promise.all([
-          getMyApplication(seasonId),
-          getSeasonSlots(seasonId),
-        ]);
+        const [myAppResult, slotsResult] = await Promise.all([getMyApplication(seasonId), getSeasonSlots(seasonId)]);
 
         setMyApplication(myAppResult);
         setSlots(slotsResult.slots);

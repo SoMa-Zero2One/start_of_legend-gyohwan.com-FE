@@ -1,9 +1,5 @@
-import type {
-  LanguagesResponse,
-  CreateLanguageRequest,
-  CreateLanguageResponse,
-} from '@/types/grade';
-import { getBackendUrl } from '@/lib/utils/api';
+import type { LanguagesResponse, CreateLanguageRequest, CreateLanguageResponse } from "@/types/grade";
+import { getBackendUrl } from "@/lib/utils/api";
 
 /**
  * 사용자 어학 성적 정보 조회
@@ -14,11 +10,11 @@ export const getLanguages = async (): Promise<LanguagesResponse> => {
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/users/me/languages`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'include', // 쿠키 포함
+    credentials: "include", // 쿠키 포함
   });
 
   if (!response.ok) {
@@ -38,11 +34,11 @@ export const createLanguage = async (data: CreateLanguageRequest): Promise<Creat
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/users/me/languages`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'include', // 쿠키 포함
+    credentials: "include", // 쿠키 포함
     body: JSON.stringify(data),
   });
 

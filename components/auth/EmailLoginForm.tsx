@@ -111,7 +111,11 @@ export default function EmailLoginForm() {
       {error && <p className="text-error-red text-sm">{error}</p>}
 
       {/* 계속 버튼 */}
-      <button onClick={handleClick} disabled={!email || !isValidEmail(email) || isLoading} className="btn-secondary w-full rounded-[4px] p-[12px]">
+      <button
+        onClick={handleClick}
+        disabled={!email || !isValidEmail(email) || isLoading}
+        className="btn-secondary w-full rounded-[4px] p-[12px]"
+      >
         {isLoading ? "확인 중..." : "계속"}
       </button>
     </div>

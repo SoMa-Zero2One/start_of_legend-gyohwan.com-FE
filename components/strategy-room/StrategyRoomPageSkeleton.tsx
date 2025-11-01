@@ -5,12 +5,7 @@ export default function StrategyRoomPageSkeleton() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* 상단 헤더 - 실제와 동일 */}
-      <Header
-        title="실시간 경쟁률"
-        showSearchButton
-        showPrevButton
-        showHomeButton
-      />
+      <Header title="실시간 경쟁률" showSearchButton showPrevButton showHomeButton />
 
       {/* 제목 섹션 - 실제 구조 기반 */}
       <section className="px-[20px] py-[16px]">
@@ -34,10 +29,7 @@ export default function StrategyRoomPageSkeleton() {
       {/* 탭 메뉴 - 실제 Tabs 컴포넌트 구조 기반 */}
       <div className="relative flex border-b border-gray-200">
         {["지망한 대학", "지원자가 있는 대학", "모든 대학"].map((tab) => (
-          <div
-            key={tab}
-            className="medium-body-3 relative flex flex-1 flex-col items-center py-[12px] text-gray-700"
-          >
+          <div key={tab} className="medium-body-3 relative flex flex-1 flex-col items-center py-[12px] text-gray-700">
             <span>{tab}</span>
             <span className="mt-[2px] text-[12px]">
               <span className="inline-block h-[12px] w-[20px] animate-pulse rounded bg-gray-200" />
@@ -45,10 +37,7 @@ export default function StrategyRoomPageSkeleton() {
           </div>
         ))}
         {/* 탭 인디케이터 */}
-        <span
-          className="absolute bottom-0 h-[2px] w-[33.33%] rounded-full bg-black"
-          style={{ left: "33.33%" }}
-        />
+        <span className="absolute bottom-0 h-[2px] w-[33.33%] rounded-full bg-black" style={{ left: "33.33%" }} />
       </div>
 
       {/* 대학 리스트 - 실제와 동일한 padding */}

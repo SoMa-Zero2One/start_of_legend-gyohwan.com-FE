@@ -10,10 +10,10 @@ export default function FeatureSection() {
 
       {/* 텍스트 */}
       <div className="z-10 flex flex-col gap-[20px]">
-        <p className="head-3">
+        <h2 className="head-3">
           지원 대학과 <span className="text-primary-blue">성적을 공유하며</span>
           <br /> 함께 전략을 세워보세요
-        </p>
+        </h2>
         <p className="body-2 text-gray-900">
           어학 점수와 학점을 입력하면
           <br />

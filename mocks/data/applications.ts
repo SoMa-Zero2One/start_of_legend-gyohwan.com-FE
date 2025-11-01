@@ -27,7 +27,7 @@ export const mockApplications: MockApplication[] = [
     applicationId: 1,
     seasonId: 3,
     userId: 1,
-    nickname: '열정적인펭귄',
+    nickname: "열정적인펭귄",
     gpaId: 1,
     languageId: 1,
     extraScore: 1.5,
@@ -42,7 +42,7 @@ export const mockApplications: MockApplication[] = [
     applicationId: 2,
     seasonId: 1,
     userId: 3,
-    nickname: '카카오유저',
+    nickname: "카카오유저",
     gpaId: 4,
     languageId: 4,
     extraScore: 0,
@@ -57,21 +57,14 @@ export const mockApplications: MockApplication[] = [
 /**
  * 유저 ID와 시즌 ID로 지원서 찾기
  */
-export function findApplicationByUserAndSeason(
-  userId: number,
-  seasonId: number
-): MockApplication | undefined {
-  return mockApplications.find(
-    (app) => app.userId === userId && app.seasonId === seasonId
-  );
+export function findApplicationByUserAndSeason(userId: number, seasonId: number): MockApplication | undefined {
+  return mockApplications.find((app) => app.userId === userId && app.seasonId === seasonId);
 }
 
 /**
  * 지원서 ID로 지원서 찾기
  */
-export function findApplicationById(
-  applicationId: number
-): MockApplication | undefined {
+export function findApplicationById(applicationId: number): MockApplication | undefined {
   return mockApplications.find((app) => app.applicationId === applicationId);
 }
 
@@ -104,10 +97,7 @@ export function addApplication(
 /**
  * 지원서 수정
  */
-export function updateApplication(
-  applicationId: number,
-  choices: MockChoice[]
-): MockApplication | null {
+export function updateApplication(applicationId: number, choices: MockChoice[]): MockApplication | null {
   const app = findApplicationById(applicationId);
   if (!app) return null;
   if (app.modifyCount <= 0) return null; // 수정 횟수 초과
@@ -121,26 +111,8 @@ export function updateApplication(
  * 랜덤 닉네임 생성 (간단한 버전)
  */
 function generateNickname(): string {
-  const adjectives = [
-    '열정적인',
-    '성실한',
-    '똑똑한',
-    '용감한',
-    '부지런한',
-    '친절한',
-    '귀여운',
-    '강인한',
-  ];
-  const animals = [
-    '펭귄',
-    '사자',
-    '여우',
-    '독수리',
-    '토끼',
-    '호랑이',
-    '판다',
-    '코알라',
-  ];
+  const adjectives = ["열정적인", "성실한", "똑똑한", "용감한", "부지런한", "친절한", "귀여운", "강인한"];
+  const animals = ["펭귄", "사자", "여우", "독수리", "토끼", "호랑이", "판다", "코알라"];
   const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
   const animal = animals[Math.floor(Math.random() * animals.length)];
   return adj + animal;

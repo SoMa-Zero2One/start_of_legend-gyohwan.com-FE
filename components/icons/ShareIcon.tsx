@@ -41,21 +41,9 @@ export default function ShareIcon({ className, size = 24 }: ShareIconProps) {
           <feOffset />
           <feGaussianBlur stdDeviation="2.5" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_183_4423"
-          />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="effect1_dropShadow_183_4423"
-            result="shape"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_183_4423" />
+          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_183_4423" result="shape" />
         </filter>
         <clipPath id="clip0_183_4423">
           <rect width="24" height="24" fill="white" />

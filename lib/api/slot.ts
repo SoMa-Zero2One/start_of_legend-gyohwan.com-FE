@@ -1,5 +1,10 @@
-import type { SeasonSlotsResponse, SlotDetailResponse, MyApplicationResponse, ApplicationDetailResponse } from '@/types/slot';
-import { getBackendUrl } from '@/lib/utils/api';
+import type {
+  SeasonSlotsResponse,
+  SlotDetailResponse,
+  MyApplicationResponse,
+  ApplicationDetailResponse,
+} from "@/types/slot";
+import { getBackendUrl } from "@/lib/utils/api";
 
 /**
  * 시즌별 교환학생 지원 슬롯 목록 조회
@@ -11,11 +16,11 @@ export const getSeasonSlots = async (seasonId: number): Promise<SeasonSlotsRespo
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/seasons/${seasonId}/slots`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'include', // 쿠키 포함
+    credentials: "include", // 쿠키 포함
   });
 
   if (!response.ok) {
@@ -35,11 +40,11 @@ export const getMyApplication = async (seasonId: number): Promise<MyApplicationR
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/seasons/${seasonId}/my-application`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'include', // 쿠키 포함
+    credentials: "include", // 쿠키 포함
   });
 
   if (!response.ok) {
@@ -59,11 +64,11 @@ export const getSlotDetail = async (slotId: number): Promise<SlotDetailResponse>
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/slots/${slotId}`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'include', // 쿠키 포함
+    credentials: "include", // 쿠키 포함
   });
 
   if (!response.ok) {
@@ -83,11 +88,11 @@ export const getApplicationDetail = async (applicationId: number): Promise<Appli
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/applications/${applicationId}`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'include', // 쿠키 포함
+    credentials: "include", // 쿠키 포함
   });
 
   if (!response.ok) {
