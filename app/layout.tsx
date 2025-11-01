@@ -16,12 +16,12 @@ function getSiteUrl(): string {
   }
 
   // 3. 로컬 개발 환경 fallback
-  if (process.env.NODE_ENV === 'development') {
-    return 'http://localhost:3000';
+  if (process.env.NODE_ENV === "development") {
+    return "http://localhost:3000";
   }
 
   // 4. 최종 fallback (프로덕션)
-  return 'https://gyohwan.com';
+  return "https://gyohwan.com";
 }
 
 const siteUrl = getSiteUrl();
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
       "교환학생 준비부터 파견까지, 서로 정보를 공유하며 함께 준비하세요. 실시간 지원 현황과 성적 비교로 합격 가능성을 높이세요!",
     images: [
       {
-        url: `${siteUrl}/images/mainPage-1.png`,
+        url: `${siteUrl}/images/og-image.png`,
         width: 1170,
         height: 1080,
         alt: "교환닷컴 - 교환학생 정보 공유 플랫폼",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "교환닷컴 - 함께하는 길잡이",
     description: "교환학생 준비부터 파견까지, 함께하는 길잡이",
-    images: [`${siteUrl}/images/mainPage-1.png`],
+    images: [`${siteUrl}/images/og-image.png`],
   },
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#056DFF" },
