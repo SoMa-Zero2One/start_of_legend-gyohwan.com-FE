@@ -49,7 +49,7 @@ export default function StrategyRoomEntrances({ initialSeasons }: StrategyRoomEn
       className="relative flex flex-col gap-[40px] px-[20px] pb-[100px]"
     >
       <div className="flex flex-col items-center gap-[12px]">
-        <p className="head-4">교환학생 모집 중인 대학</p>
+        <h2 className="head-4">교환학생 모집 중인 대학</h2>
         <p className="g-head-2 text-primary-blue">{sortedSeasons.length}개 대학</p>
       </div>
       <div className="grid grid-cols-1 gap-[12px]">
