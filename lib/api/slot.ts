@@ -5,6 +5,7 @@ import type {
   ApplicationDetailResponse,
 } from "@/types/slot";
 import { getBackendUrl } from "@/lib/utils/api";
+import { formatLanguageTest } from "@/lib/utils/language";
 
 /**
  * 시즌별 교환학생 지원 슬롯 목록 조회
@@ -51,7 +52,14 @@ export const getMyApplication = async (seasonId: number): Promise<MyApplicationR
     throw new Error(`내 지원서 조회 실패 (HTTP ${response.status})`);
   }
 
-  return await response.json();
+  const data: MyApplicationResponse = await response.json();
+
+  // language.testType 포맷 변환 (TOEFL_IBT → TOEFL IBT)
+  if (data.language?.testType) {
+    data.language.testType = formatLanguageTest(data.language.testType);
+  }
+
+  return data;
 };
 
 /**
@@ -75,7 +83,17 @@ export const getSlotDetail = async (slotId: number): Promise<SlotDetailResponse>
     throw new Error(`슬롯 상세 조회 실패 (HTTP ${response.status})`);
   }
 
-  return await response.json();
+  const data: SlotDetailResponse = await response.json();
+
+  // 지원자들의 languageTest 포맷 변환 (TOEFL_IBT → TOEFL IBT)
+  if (data.choices) {
+    data.choices = data.choices.map((choice) => ({
+      ...choice,
+      languageTest: choice.languageTest ? formatLanguageTest(choice.languageTest) : choice.languageTest,
+    }));
+  }
+
+  return data;
 };
 
 /**
@@ -99,5 +117,12 @@ export const getApplicationDetail = async (applicationId: number): Promise<Appli
     throw new Error(`지원자 상세 조회 실패 (HTTP ${response.status})`);
   }
 
-  return await response.json();
+  const data: ApplicationDetailResponse = await response.json();
+
+  // language.testType 포맷 변환 (TOEFL_IBT → TOEFL IBT)
+  if (data.language?.testType) {
+    data.language.testType = formatLanguageTest(data.language.testType);
+  }
+
+  return data;
 };
