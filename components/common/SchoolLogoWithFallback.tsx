@@ -37,9 +37,8 @@ export default function SchoolLogoWithFallback({
   }
 
   // src에 프로토콜이 없으면 https:// 추가
-  const imageSrc = src && !src.startsWith('http://') && !src.startsWith('https://') && !src.startsWith('//')
-    ? `https://${src}`
-    : src;
+  const imageSrc =
+    src && !src.startsWith("http://") && !src.startsWith("https://") && !src.startsWith("//") ? `https://${src}` : src;
 
   // src가 없거나 에러가 발생한 경우 fallback SVG 표시
   if (!imageSrc || imageError) {
@@ -80,14 +79,7 @@ export default function SchoolLogoWithFallback({
   // 정상적인 이미지 표시
   if (fill) {
     return (
-      <Image
-        src={imageSrc}
-        alt={alt}
-        fill
-        sizes={sizes}
-        className={className}
-        onError={() => setImageError(true)}
-      />
+      <Image src={imageSrc} alt={alt} fill sizes={sizes} className={className} onError={() => setImageError(true)} />
     );
   }
 

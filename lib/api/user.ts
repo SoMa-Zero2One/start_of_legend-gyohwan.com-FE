@@ -1,5 +1,5 @@
-import type { User } from '@/types/user';
-import { getBackendUrl } from '@/lib/utils/api';
+import type { User } from "@/types/user";
+import { getBackendUrl } from "@/lib/utils/api";
 
 /**
  * 현재 로그인한 사용자 정보 조회
@@ -10,15 +10,13 @@ export const getUserMe = async (): Promise<User> => {
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/users/me`, {
-    method: 'GET',
-    credentials: 'include', // 쿠키 포함
+    method: "GET",
+    credentials: "include", // 쿠키 포함
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `사용자 정보 조회 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
-    );
+    throw new Error(`사용자 정보 조회 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
   }
 
   return await response.json();
@@ -33,19 +31,17 @@ export const sendSchoolEmailVerification = async (schoolEmail: string): Promise<
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/users/me/school-email`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'include', // 쿠키 포함
+    credentials: "include", // 쿠키 포함
     body: JSON.stringify({ schoolEmail }),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `학교 이메일 인증 코드 발송 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
-    );
+    throw new Error(`학교 이메일 인증 코드 발송 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
   }
 };
 
@@ -59,19 +55,17 @@ export const confirmSchoolEmailVerification = async (schoolEmail: string, code: 
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/users/me/school-email/confirm`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'include', // 쿠키 포함
+    credentials: "include", // 쿠키 포함
     body: JSON.stringify({ schoolEmail, code }),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `학교 이메일 인증 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
-    );
+    throw new Error(`학교 이메일 인증 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
   }
 };
 
@@ -83,15 +77,13 @@ export const withdrawAccount = async (): Promise<void> => {
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/users/me/withdraw`, {
-    method: 'DELETE',
-    credentials: 'include', // 쿠키 포함
+    method: "DELETE",
+    credentials: "include", // 쿠키 포함
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `회원 탈퇴 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
-    );
+    throw new Error(`회원 탈퇴 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
   }
 };
 
@@ -105,11 +97,11 @@ export const changePassword = async (currentPassword: string, newPassword: strin
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/users/me/password`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'include', // 쿠키 포함
+    credentials: "include", // 쿠키 포함
     body: JSON.stringify({
       currentPassword,
       newPassword,
@@ -118,8 +110,6 @@ export const changePassword = async (currentPassword: string, newPassword: strin
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `비밀번호 변경 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ''}`
-    );
+    throw new Error(`비밀번호 변경 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
   }
 };

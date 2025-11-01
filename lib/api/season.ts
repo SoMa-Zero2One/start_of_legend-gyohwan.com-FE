@@ -1,5 +1,5 @@
-import type { SeasonsResponse, EligibilityResponse } from '@/types/season';
-import { getBackendUrl } from '@/lib/utils/api';
+import type { SeasonsResponse, EligibilityResponse } from "@/types/season";
+import { getBackendUrl } from "@/lib/utils/api";
 
 /**
  * 교환학생 모집 시즌 목록 조회
@@ -10,8 +10,8 @@ export const getSeasons = async (): Promise<SeasonsResponse> => {
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/seasons`, {
-    method: 'GET',
-    credentials: typeof window !== 'undefined' ? 'include' : 'omit', // 브라우저에서만 쿠키 포함
+    method: "GET",
+    credentials: typeof window !== "undefined" ? "include" : "omit", // 브라우저에서만 쿠키 포함
   });
 
   if (!response.ok) {
@@ -31,15 +31,15 @@ export const checkEligibility = async (seasonId: number): Promise<EligibilityRes
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/seasons/${seasonId}/eligibility`, {
-    method: 'GET',
-    credentials: 'include', // 쿠키 포함
+    method: "GET",
+    credentials: "include", // 쿠키 포함
   });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw {
       status: response.status,
-      detail: errorData.detail || '지원 가능 여부 확인 실패',
+      detail: errorData.detail || "지원 가능 여부 확인 실패",
       ...errorData,
     };
   }

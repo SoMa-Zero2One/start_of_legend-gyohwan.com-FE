@@ -33,9 +33,7 @@ export default function ProfileField({
           disabled
           className="w-full rounded-[4px] bg-gray-100 px-4 py-3 text-gray-700"
         />
-        {showCheckIcon && (
-          <CheckIcon size={20} className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500" />
-        )}
+        {showCheckIcon && <CheckIcon size={20} className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500" />}
       </div>
     </div>
   );

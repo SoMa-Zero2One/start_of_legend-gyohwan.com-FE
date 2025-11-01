@@ -101,7 +101,7 @@ export default function DeleteAccountPage() {
 
             {/* 에러 메시지 */}
             {error && (
-              <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3">
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
                 <p className="body-3 text-red-600">{error}</p>
               </div>
             )}

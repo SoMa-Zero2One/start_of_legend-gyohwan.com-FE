@@ -1,5 +1,5 @@
-import type { GpasResponse, CreateGpaRequest, CreateGpaResponse } from '@/types/grade';
-import { getBackendUrl } from '@/lib/utils/api';
+import type { GpasResponse, CreateGpaRequest, CreateGpaResponse } from "@/types/grade";
+import { getBackendUrl } from "@/lib/utils/api";
 
 /**
  * 사용자 학점 정보 조회
@@ -10,11 +10,11 @@ export const getGpas = async (): Promise<GpasResponse> => {
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/users/me/gpas`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'include', // 쿠키 포함
+    credentials: "include", // 쿠키 포함
   });
 
   if (!response.ok) {
@@ -34,11 +34,11 @@ export const createGpa = async (data: CreateGpaRequest): Promise<CreateGpaRespon
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/users/me/gpas`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'include', // 쿠키 포함
+    credentials: "include", // 쿠키 포함
     body: JSON.stringify(data),
   });
 

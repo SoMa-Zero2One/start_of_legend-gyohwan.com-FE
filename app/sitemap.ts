@@ -1,24 +1,24 @@
-import { MetadataRoute } from 'next';
-import { getSeasons } from '@/lib/api/season';
+import { MetadataRoute } from "next";
+import { getSeasons } from "@/lib/api/season";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gyohwan.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gyohwan.com";
 
   // 정적 페이지들 (검색엔진에 노출되어야 하는 공개 페이지)
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
-      changeFrequency: 'daily',
+      changeFrequency: "daily",
       priority: 1.0, // 홈페이지 최우선
     },
     {
       url: `${baseUrl}/terms`,
-      changeFrequency: 'yearly',
+      changeFrequency: "yearly",
       priority: 0.3,
     },
     {
       url: `${baseUrl}/privacy`,
-      changeFrequency: 'yearly',
+      changeFrequency: "yearly",
       priority: 0.3,
     },
   ];
@@ -32,11 +32,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 각 시즌별 전략실 페이지 추가
     dynamicPages = seasonsData.seasons.map((season) => ({
       url: `${baseUrl}/strategy-room/${season.seasonId}`,
-      changeFrequency: 'daily' as const,
+      changeFrequency: "daily" as const,
       priority: 0.8, // 핵심 기능 페이지
     }));
   } catch (error) {
-    console.error('Failed to fetch seasons for sitemap:', error);
+    console.error("Failed to fetch seasons for sitemap:", error);
     // API 실패 시 빈 배열로 처리
   }
 

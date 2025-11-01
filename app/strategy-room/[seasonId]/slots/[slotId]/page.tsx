@@ -210,7 +210,7 @@ export default function SlotDetailPage() {
         </div>
 
         {/* 학교 이름 */}
-        <h2 className={`head-4 ${data.homepageUrl ? 'mb-[8px]' : 'mb-[20px]'}`}>{data.name}</h2>
+        <h2 className={`head-4 ${data.homepageUrl ? "mb-[8px]" : "mb-[20px]"}`}>{data.name}</h2>
 
         {/* 홈페이지 바로가기 버튼 */}
         {data.homepageUrl && (

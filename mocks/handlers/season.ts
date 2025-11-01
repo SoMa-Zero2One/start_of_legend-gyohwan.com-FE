@@ -1,20 +1,16 @@
-import { http, HttpResponse } from 'msw';
-import { getCurrentUser, mockGpas, mockLanguages } from '../data/users';
-import {
-  mockSeasons,
-  findSeasonById,
-  mockSeasonApplicantCounts,
-} from '../data/seasons';
-import { mockSeasonSlots, findSlotById } from '../data/slots';
+import { http, HttpResponse } from "msw";
+import { getCurrentUser, mockGpas, mockLanguages } from "../data/users";
+import { mockSeasons, findSeasonById, mockSeasonApplicantCounts } from "../data/seasons";
+import { mockSeasonSlots, findSlotById } from "../data/slots";
 import {
   mockApplications,
   findApplicationByUserAndSeason,
   findApplicationById,
   addApplication,
   updateApplication,
-} from '../data/applications';
+} from "../data/applications";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
 /**
  * ProblemDetail 에러 응답 생성 헬퍼
@@ -22,7 +18,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:808
 function createErrorResponse(status: number, detail: string, title?: string) {
   return HttpResponse.json(
     {
-      type: 'about:blank',
+      type: "about:blank",
       title: title || getStatusText(status),
       status,
       detail,
@@ -33,14 +29,14 @@ function createErrorResponse(status: number, detail: string, title?: string) {
 
 function getStatusText(status: number): string {
   const statusTexts: Record<number, string> = {
-    400: 'Bad Request',
-    401: 'Unauthorized',
-    403: 'Forbidden',
-    404: 'Not Found',
-    409: 'Conflict',
-    500: 'Internal Server Error',
+    400: "Bad Request",
+    401: "Unauthorized",
+    403: "Forbidden",
+    404: "Not Found",
+    409: "Conflict",
+    500: "Internal Server Error",
   };
-  return statusTexts[status] || 'Error';
+  return statusTexts[status] || "Error";
 }
 
 /**
@@ -49,11 +45,7 @@ function getStatusText(status: number): string {
 function checkAuth() {
   const user = getCurrentUser();
   if (!user) {
-    return createErrorResponse(
-      401,
-      'Full authentication is required to access this resource',
-      'Unauthorized'
-    );
+    return createErrorResponse(401, "Full authentication is required to access this resource", "Unauthorized");
   }
   return null;
 }
@@ -71,9 +63,7 @@ export const seasonHandlers = [
 
     // 사용자별 hasApplied 업데이트
     const seasonsWithApplied = mockSeasons.map((season) => {
-      const hasApplied = user
-        ? !!findApplicationByUserAndSeason(user.userId, season.seasonId)
-        : false;
+      const hasApplied = user ? !!findApplicationByUserAndSeason(user.userId, season.seasonId) : false;
 
       return {
         ...season,
@@ -98,13 +88,11 @@ export const seasonHandlers = [
     const season = findSeasonById(seasonId);
 
     if (!season) {
-      return createErrorResponse(404, '시즌을 찾을 수 없습니다.');
+      return createErrorResponse(404, "시즌을 찾을 수 없습니다.");
     }
 
     const user = getCurrentUser();
-    const hasApplied = user
-      ? !!findApplicationByUserAndSeason(user.userId, seasonId)
-      : false;
+    const hasApplied = user ? !!findApplicationByUserAndSeason(user.userId, seasonId) : false;
 
     const applicantCount = mockSeasonApplicantCounts[seasonId] || 0;
 
@@ -132,21 +120,17 @@ export const seasonHandlers = [
     const season = findSeasonById(seasonId);
 
     if (!season) {
-      return createErrorResponse(404, '시즌을 찾을 수 없습니다.');
+      return createErrorResponse(404, "시즌을 찾을 수 없습니다.");
     }
 
     const user = getCurrentUser();
-    const hasApplied = user
-      ? !!findApplicationByUserAndSeason(user.userId, seasonId)
-      : false;
+    const hasApplied = user ? !!findApplicationByUserAndSeason(user.userId, seasonId) : false;
 
     const applicantCount = mockSeasonApplicantCounts[seasonId] || 0;
 
     // 시즌에 속한 슬롯들 가져오기
     const slotIds = mockSeasonSlots[seasonId] || [];
-    const slots = slotIds
-      .map((id) => findSlotById(id))
-      .filter((slot) => slot !== undefined);
+    const slots = slotIds.map((id) => findSlotById(id)).filter((slot) => slot !== undefined);
 
     return HttpResponse.json({
       seasonId,
@@ -176,34 +160,28 @@ export const seasonHandlers = [
     const season = findSeasonById(seasonId);
 
     if (!season) {
-      return createErrorResponse(404, '시즌을 찾을 수 없습니다.');
+      return createErrorResponse(404, "시즌을 찾을 수 없습니다.");
     }
 
     // 학교 인증 체크
     if (!user.schoolVerified || !user.domesticUniversity) {
-      return createErrorResponse(403, '학교 인증이 완료되지 않았습니다.');
+      return createErrorResponse(403, "학교 인증이 완료되지 않았습니다.");
     }
 
     // 학교 매칭 체크
     if (season.domesticUniversity !== user.domesticUniversity) {
-      return createErrorResponse(
-        403,
-        '해당 시즌은 귀하의 학교에서 지원할 수 없습니다.'
-      );
+      return createErrorResponse(403, "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.");
     }
 
     // 이미 지원했는지 체크
-    const existingApplication = findApplicationByUserAndSeason(
-      user.userId,
-      seasonId
-    );
+    const existingApplication = findApplicationByUserAndSeason(user.userId, seasonId);
     if (existingApplication) {
-      return createErrorResponse(409, '이미 해당 시즌에 지원하였습니다.');
+      return createErrorResponse(409, "이미 해당 시즌에 지원하였습니다.");
     }
 
     return HttpResponse.json({
       eligible: true,
-      detail: '지원 가능합니다.',
+      detail: "지원 가능합니다.",
     });
   }),
 
@@ -231,10 +209,10 @@ export const seasonHandlers = [
     const season = findSeasonById(seasonId);
 
     if (!season) {
-      return createErrorResponse(404, '시즌을 찾을 수 없습니다.');
+      return createErrorResponse(404, "시즌을 찾을 수 없습니다.");
     }
 
-    const body = await request.json() as {
+    const body = (await request.json()) as {
       extraScore: number;
       gpaId: number;
       languageId: number;
@@ -243,59 +221,49 @@ export const seasonHandlers = [
 
     // Validation - choices 필수
     if (!body.choices || body.choices.length === 0) {
-      return createErrorResponse(400, '지원 선택 항목은 필수입니다.');
+      return createErrorResponse(400, "지원 선택 항목은 필수입니다.");
     }
 
     // 필수 필드 체크
-    if (
-      body.gpaId === undefined ||
-      body.languageId === undefined ||
-      body.extraScore === undefined
-    ) {
-      return createErrorResponse(400, '필수 필드가 누락되었습니다.');
+    if (body.gpaId === undefined || body.languageId === undefined || body.extraScore === undefined) {
+      return createErrorResponse(400, "필수 필드가 누락되었습니다.");
     }
 
     // 학교 인증 체크
     if (!user.schoolVerified || !user.domesticUniversity) {
-      return createErrorResponse(400, '학교 인증이 완료되지 않았습니다.');
+      return createErrorResponse(400, "학교 인증이 완료되지 않았습니다.");
     }
 
     // 학교 매칭 체크
     if (season.domesticUniversity !== user.domesticUniversity) {
-      return createErrorResponse(
-        403,
-        '해당 시즌은 귀하의 학교에서 지원할 수 없습니다.'
-      );
+      return createErrorResponse(403, "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.");
     }
 
     // 이미 지원했는지 체크
-    const existingApplication = findApplicationByUserAndSeason(
-      user.userId,
-      seasonId
-    );
+    const existingApplication = findApplicationByUserAndSeason(user.userId, seasonId);
     if (existingApplication) {
-      return createErrorResponse(409, '이미 해당 시즌에 지원하였습니다.');
+      return createErrorResponse(409, "이미 해당 시즌에 지원하였습니다.");
     }
 
     // GPA 확인
     const userGpas = mockGpas[user.userId] || [];
     const gpa = userGpas.find((g) => g.gpaId === body.gpaId);
     if (!gpa) {
-      return createErrorResponse(404, '학점 정보를 찾을 수 없습니다.');
+      return createErrorResponse(404, "학점 정보를 찾을 수 없습니다.");
     }
 
     // Language 확인
     const userLanguages = mockLanguages[user.userId] || [];
     const language = userLanguages.find((l) => l.languageId === body.languageId);
     if (!language) {
-      return createErrorResponse(404, '어학 정보를 찾을 수 없습니다.');
+      return createErrorResponse(404, "어학 정보를 찾을 수 없습니다.");
     }
 
     // Slot 확인
     for (const choice of body.choices) {
       const slot = findSlotById(choice.slotId);
       if (!slot) {
-        return createErrorResponse(404, '슬롯을 찾을 수 없습니다.');
+        return createErrorResponse(404, "슬롯을 찾을 수 없습니다.");
       }
     }
 
@@ -343,12 +311,12 @@ export const seasonHandlers = [
     const season = findSeasonById(seasonId);
 
     if (!season) {
-      return createErrorResponse(404, '시즌을 찾을 수 없습니다.');
+      return createErrorResponse(404, "시즌을 찾을 수 없습니다.");
     }
 
     const application = findApplicationByUserAndSeason(user.userId, seasonId);
     if (!application) {
-      return createErrorResponse(404, '지원 정보를 찾을 수 없습니다.');
+      return createErrorResponse(404, "지원 정보를 찾을 수 없습니다.");
     }
 
     // GPA, Language 정보 가져오기
@@ -356,9 +324,7 @@ export const seasonHandlers = [
     const gpa = userGpas.find((g) => g.gpaId === application.gpaId);
 
     const userLanguages = mockLanguages[user.userId] || [];
-    const language = userLanguages.find(
-      (l) => l.languageId === application.languageId
-    );
+    const language = userLanguages.find((l) => l.languageId === application.languageId);
 
     // Choices 변환
     const choicesWithSlot = application.choices.map((c) => ({
@@ -370,13 +336,11 @@ export const seasonHandlers = [
       applicationId: application.applicationId,
       seasonId: application.seasonId,
       nickname: application.nickname,
-      gpa: gpa
-        ? { score: gpa.score, criteria: gpa.criteria }
-        : null,
+      gpa: gpa ? { score: gpa.score, criteria: gpa.criteria } : null,
       language: language
         ? {
             testType: language.testType,
-            score: language.score || '',
+            score: language.score || "",
             grade: language.grade,
           }
         : null,
@@ -404,44 +368,41 @@ export const seasonHandlers = [
     const season = findSeasonById(seasonId);
 
     if (!season) {
-      return createErrorResponse(404, '시즌을 찾을 수 없습니다.');
+      return createErrorResponse(404, "시즌을 찾을 수 없습니다.");
     }
 
-    const body = await request.json() as {
+    const body = (await request.json()) as {
       choices: Array<{ choice: number; slotId: number }>;
     };
 
     // Validation - choices 필수
     if (!body.choices || body.choices.length === 0) {
-      return createErrorResponse(400, '지원 선택 항목은 필수입니다.');
+      return createErrorResponse(400, "지원 선택 항목은 필수입니다.");
     }
 
     const application = findApplicationByUserAndSeason(user.userId, seasonId);
     if (!application) {
-      return createErrorResponse(404, '지원 정보를 찾을 수 없습니다.');
+      return createErrorResponse(404, "지원 정보를 찾을 수 없습니다.");
     }
 
     // 수정 횟수 체크
     if (application.modifyCount <= 0) {
-      return createErrorResponse(400, '지원서 수정 가능 횟수를 초과했습니다.');
+      return createErrorResponse(400, "지원서 수정 가능 횟수를 초과했습니다.");
     }
 
     // Slot 확인
     for (const choice of body.choices) {
       const slot = findSlotById(choice.slotId);
       if (!slot) {
-        return createErrorResponse(404, '슬롯을 찾을 수 없습니다.');
+        return createErrorResponse(404, "슬롯을 찾을 수 없습니다.");
       }
     }
 
     // 지원서 수정
-    const updatedApplication = updateApplication(
-      application.applicationId,
-      body.choices
-    );
+    const updatedApplication = updateApplication(application.applicationId, body.choices);
 
     if (!updatedApplication) {
-      return createErrorResponse(500, '지원서 수정에 실패했습니다.');
+      return createErrorResponse(500, "지원서 수정에 실패했습니다.");
     }
 
     // 응답 생성

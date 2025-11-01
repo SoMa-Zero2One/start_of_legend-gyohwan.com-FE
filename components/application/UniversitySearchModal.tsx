@@ -46,24 +46,19 @@ export default function UniversitySearchModal({
   // 검색어로 필터링
   const filteredSlots = slots.filter((slot) => {
     const query = searchQuery.toLowerCase().trim();
-    return (
-      slot.name.toLowerCase().includes(query) ||
-      slot.country.toLowerCase().includes(query)
-    );
+    return slot.name.toLowerCase().includes(query) || slot.country.toLowerCase().includes(query);
   });
 
   // 선택된 대학과 선택되지 않은 대학 분리
-  const selectedSlots = filteredSlots.filter((slot) =>
-    selectedUniversities.some((u) => u.slotId === slot.slotId)
-  ).sort((a, b) => {
-    const aChoice = selectedUniversities.find((u) => u.slotId === a.slotId)?.choice || 0;
-    const bChoice = selectedUniversities.find((u) => u.slotId === b.slotId)?.choice || 0;
-    return aChoice - bChoice;
-  });
+  const selectedSlots = filteredSlots
+    .filter((slot) => selectedUniversities.some((u) => u.slotId === slot.slotId))
+    .sort((a, b) => {
+      const aChoice = selectedUniversities.find((u) => u.slotId === a.slotId)?.choice || 0;
+      const bChoice = selectedUniversities.find((u) => u.slotId === b.slotId)?.choice || 0;
+      return aChoice - bChoice;
+    });
 
-  const unselectedSlots = filteredSlots.filter((slot) =>
-    !selectedUniversities.some((u) => u.slotId === slot.slotId)
-  );
+  const unselectedSlots = filteredSlots.filter((slot) => !selectedUniversities.some((u) => u.slotId === slot.slotId));
 
   const handleSlotClick = (slot: Slot) => {
     // 빠른 추가 모드: shouldCloseModal = false
@@ -90,11 +85,7 @@ export default function UniversitySearchModal({
         {/* 검색 입력 */}
         <input
           type="text"
-          placeholder={
-            isQuickAdd
-              ? "대학교 이름 또는 국가를 검색하세요."
-              : `${currentChoice}지망 학교를 검색하세요.`
-          }
+          placeholder={isQuickAdd ? "대학교 이름 또는 국가를 검색하세요." : `${currentChoice}지망 학교를 검색하세요.`}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           autoFocus
@@ -103,10 +94,7 @@ export default function UniversitySearchModal({
 
         {/* 검색 아이콘 or 저장 버튼 */}
         {isQuickAdd ? (
-          <button
-            onClick={handleSave}
-            className="body-2 cursor-pointer font-semibold text-primary-blue"
-          >
+          <button onClick={handleSave} className="body-2 text-primary-blue cursor-pointer font-semibold">
             저장
           </button>
         ) : (
@@ -134,9 +122,7 @@ export default function UniversitySearchModal({
                   onClick={() => handleSlotClick(slot)}
                   disabled={isOtherChoice}
                   className={`flex items-center gap-[12px] border-b border-gray-100 px-[20px] py-[16px] text-left transition-colors ${
-                    isOtherChoice
-                      ? "cursor-not-allowed opacity-50"
-                      : "cursor-pointer hover:bg-gray-50"
+                    isOtherChoice ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:bg-gray-50"
                   }`}
                 >
                   {/* 대학 로고 */}
@@ -152,7 +138,9 @@ export default function UniversitySearchModal({
 
                   {/* 대학 정보 */}
                   <div className="flex-1">
-                    <p className={`body-2 font-semibold ${isCurrentChoice ? "text-primary-blue" : isOtherChoice ? "text-gray-400" : "text-primary-blue"}`}>
+                    <p
+                      className={`body-2 font-semibold ${isCurrentChoice ? "text-primary-blue" : isOtherChoice ? "text-gray-400" : "text-primary-blue"}`}
+                    >
                       {slot.name}
                     </p>
                     <p className="caption-2 text-gray-600">{slot.country}</p>
@@ -178,9 +166,7 @@ export default function UniversitySearchModal({
             })}
 
             {/* 구분선 (선택된 대학이 있을 때만) */}
-            {selectedSlots.length > 0 && unselectedSlots.length > 0 && (
-              <div className="border-t-4 border-gray-200" />
-            )}
+            {selectedSlots.length > 0 && unselectedSlots.length > 0 && <div className="border-t-4 border-gray-200" />}
 
             {/* 선택되지 않은 대학들 */}
             {unselectedSlots.map((slot) => {
@@ -193,9 +179,7 @@ export default function UniversitySearchModal({
                   onClick={() => handleSlotClick(slot)}
                   disabled={isFull}
                   className={`flex items-center gap-[12px] border-b border-gray-100 px-[20px] py-[16px] text-left transition-colors ${
-                    isFull
-                      ? "cursor-not-allowed opacity-50"
-                      : "cursor-pointer hover:bg-gray-50"
+                    isFull ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:bg-gray-50"
                   }`}
                 >
                   {/* 대학 로고 */}
@@ -211,16 +195,12 @@ export default function UniversitySearchModal({
 
                   {/* 대학 정보 */}
                   <div className="flex-1">
-                    <p className={`body-2 font-semibold ${isFull ? "text-gray-400" : ""}`}>
-                      {slot.name}
-                    </p>
+                    <p className={`body-2 font-semibold ${isFull ? "text-gray-400" : ""}`}>{slot.name}</p>
                     <p className="caption-2 text-gray-600">{slot.country}</p>
                   </div>
 
                   {/* 5개 초과 메시지 */}
-                  {isFull && (
-                    <span className="caption-2 text-gray-400">최대 5지망</span>
-                  )}
+                  {isFull && <span className="caption-2 text-gray-400">최대 5지망</span>}
                 </button>
               );
             })}

@@ -33,7 +33,7 @@ export default function BaseModal({ isOpen, onClose, children, maxWidth = "320px
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-[20px]"
+      className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black px-[20px]"
       onClick={onClose}
     >
       <div

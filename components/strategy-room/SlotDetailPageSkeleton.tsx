@@ -60,10 +60,7 @@ export default function SlotDetailPageSkeleton() {
       {/* 탭 메뉴 - 실제 Tabs 컴포넌트 구조 기반 */}
       <div className="relative flex border-b border-gray-200">
         {["지망순위", "환산점수", "학점"].map((tab) => (
-          <div
-            key={tab}
-            className="medium-body-3 relative flex flex-1 flex-col items-center py-[12px] text-gray-700"
-          >
+          <div key={tab} className="medium-body-3 relative flex flex-1 flex-col items-center py-[12px] text-gray-700">
             <span>{tab}</span>
           </div>
         ))}

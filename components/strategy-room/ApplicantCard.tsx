@@ -58,7 +58,7 @@ export default function ApplicantCard({ choice, onClick, isBlurred = false, isMe
         {/* 오른쪽 열 */}
         <div className="flex items-center justify-between">
           <span className="text-gray-700">환산점수</span>
-          <span className={isBlurred ? "select-none blur-sm" : ""}>
+          <span className={isBlurred ? "blur-sm select-none" : ""}>
             <span className="font-bold">{scoreDisplay}</span> {(isBlurred || choice.score !== null) && "점"}
           </span>
         </div>
@@ -66,7 +66,7 @@ export default function ApplicantCard({ choice, onClick, isBlurred = false, isMe
         {/* 왼쪽 열 */}
         <div className="flex items-center justify-between">
           <span className="text-gray-700">학점</span>
-          <span className={isBlurred ? "select-none blur-sm" : ""}>
+          <span className={isBlurred ? "blur-sm select-none" : ""}>
             <span className="font-bold">{gpaDisplay}</span>
             {gpaCriteriaDisplay && `/${gpaCriteriaDisplay} 점`}
           </span>
@@ -75,13 +75,13 @@ export default function ApplicantCard({ choice, onClick, isBlurred = false, isMe
         {/* 오른쪽 열 */}
         <div className="flex items-center justify-between">
           <span className="text-gray-700">어학성적</span>
-          <span className={isBlurred ? "select-none blur-sm" : ""}>
+          <span className={isBlurred ? "blur-sm select-none" : ""}>
             <span className="font-bold">{languageDisplay}</span>
           </span>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-gray-700">가산점</span>
-          <span className={isBlurred ? "select-none blur-sm" : ""}>
+          <span className={isBlurred ? "blur-sm select-none" : ""}>
             <span className="font-bold">{extraScoreDisplay}</span> {(isBlurred || choice.extraScore !== null) && "점"}
           </span>
         </div>

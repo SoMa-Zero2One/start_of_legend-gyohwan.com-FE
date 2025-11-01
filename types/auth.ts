@@ -1,4 +1,4 @@
-export type OAuthProvider = 'kakao' | 'google';
+export type OAuthProvider = "kakao" | "google";
 
 export interface OAuthConfig {
   clientId: string;
