@@ -32,10 +32,6 @@ export const metadata: Metadata = {
   description:
     "서로 정보를 공유하며 교환학생 준비를 함께 하세요. 실시간 지원 현황, GPA·어학성적 비교, 파견교 특징, 학생 비자 준비 - 교환닷컴에서 시작하세요.",
   keywords: ["교환학생", "교환학생 정보 공유", "교환 프로그램", "어학 성적", "학생 비자"],
-
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     type: "website",
     locale: "ko_KR",
