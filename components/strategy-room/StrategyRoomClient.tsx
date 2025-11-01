@@ -155,7 +155,7 @@ export default function StrategyRoomClient() {
       <section className="px-[20px] py-[16px]">
         <p className="caption-1">{parsedSemester}</p>
         <div className="mt-[8px] flex items-center justify-between">
-          <h1 className="head-4">{universityName} 교환학생 실시간 경쟁률</h1>
+          <h1 className="head-4">{universityName} 교환학생</h1>
           {hasSharedGrade && (
             <Link
               href={`/strategy-room/${seasonId}/applications/re-select-university`}
