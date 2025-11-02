@@ -956,6 +956,34 @@ var(--color-gray-100) /* through --color-gray-900 */
 - Tailwind classes are **auto-sorted** by `prettier-plugin-tailwindcss`
 - Run Prettier before committing (usually auto-runs in IDE)
 
+### Button Styling (IMPORTANT!)
+
+**ALWAYS add `cursor-pointer` to clickable elements!**
+
+```typescript
+// ✅ GOOD - Includes cursor-pointer
+<button className="cursor-pointer rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+  클릭
+</button>
+
+// ❌ BAD - Missing cursor-pointer (shows default cursor)
+<button className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+  클릭
+</button>
+
+// ✅ GOOD - For non-button clickable elements
+<div onClick={handleClick} className="cursor-pointer">
+  클릭 가능한 영역
+</div>
+```
+
+**Why**: Tailwind CSS resets remove the default cursor:pointer from buttons. Without explicitly adding `cursor-pointer`, buttons will show the default arrow cursor instead of the pointer hand cursor, which confuses users.
+
+**Rule**: Add `cursor-pointer` to:
+- ✅ All `<button>` elements
+- ✅ Elements with `onClick` handlers
+- ✅ Elements that should indicate clickability
+
 ---
 
 ## 📱 Mobile-First Development
