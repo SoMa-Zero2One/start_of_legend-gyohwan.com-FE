@@ -1,6 +1,6 @@
 "use client";
 
-import RoundCheckbox from "../RoundCheckbox";
+import RoundCheckbox from "@/components/common/RoundCheckbox";
 
 interface TermsStepProps {
   agreeTerms: boolean;
