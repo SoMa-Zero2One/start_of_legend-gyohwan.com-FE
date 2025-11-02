@@ -1,10 +1,15 @@
 interface LanguageChartProps {
-  testType: string;
+  testType: string | null;
   score: string;
   grade?: string | null; // languageGrade (예: N1, N2, 4급 등)
 }
 
 export default function LanguageChart({ testType, score, grade }: LanguageChartProps) {
+  // testType이 null인 경우 처리
+  if (!testType) {
+    return null;
+  }
+
   // 각 시험별 최대 점수 (languageTest 기준)
   const maxScores: Record<string, number> = {
     TOEIC: 990,
