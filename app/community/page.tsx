@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { Suspense, useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import HeaderAuthSection from "@/components/layout/HeaderAuthSection";
@@ -10,7 +10,7 @@ import FilterModal from "@/components/community/FilterModal";
 import { mockCountries, mockUniversities } from "@/mocks/data/community";
 import { CountryFilterOptions, UniversityFilterOptions } from "@/types/community";
 
-export default function CommunityPage() {
+function CommunityContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = (searchParams.get("tab") as "나라" | "대학") || "대학";
@@ -93,48 +93,56 @@ export default function CommunityPage() {
   const itemCount = activeTab === "나라" ? filteredCountries.length : filteredUniversities.length;
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header showBorder>
-        <HeaderAuthSection />
-      </Header>
+    <>
+      <div className="flex min-h-screen flex-col">
+        <Header showBorder>
+          <HeaderAuthSection />
+        </Header>
 
-      <div className="mx-auto w-full max-w-[430px]">
-        {/* 탭 */}
-        <Tabs tabs={["나라", "대학"]} selectedTab={activeTab} onTabChange={handleTabChange} />
+        <div className="mx-auto w-full max-w-[430px]">
+          {/* 탭 */}
+          <Tabs tabs={["나라", "대학"]} selectedTab={activeTab} onTabChange={handleTabChange} />
 
-        {/* 전체 개수 + 필터 버튼 */}
-        <div className="flex items-center justify-between px-[20px] py-4">
-          <h2 className="heading-2">
-            전체 ({itemCount})
-          </h2>
-          <button
-            onClick={() => setIsFilterOpen(true)}
-            className="flex items-center gap-1 rounded-md bg-blue-500 px-4 py-2 text-white"
-          >
-            <span className="body-3">필터</span>
-            <span>▼</span>
-          </button>
+          {/* 전체 개수 + 필터 버튼 */}
+          <div className="flex items-center justify-between px-[20px] py-4">
+            <h2 className="heading-2">전체 ({itemCount})</h2>
+            <button
+              onClick={() => setIsFilterOpen(true)}
+              className="flex items-center gap-1 rounded-md bg-blue-500 px-4 py-2 text-white"
+            >
+              <span className="body-3">필터</span>
+              <span>▼</span>
+            </button>
+          </div>
+
+          {/* 테이블 */}
+          <div className="px-[20px]">
+            <CommunityTable
+              type={activeTab === "나라" ? "country" : "university"}
+              countries={activeTab === "나라" ? filteredCountries : undefined}
+              universities={activeTab === "대학" ? filteredUniversities : undefined}
+              visibleColumns={activeTab === "나라" ? visibleCountryColumns : visibleUniversityColumns}
+            />
+          </div>
         </div>
 
-        {/* 테이블 */}
-        <div className="px-[20px]">
-          <CommunityTable
-            type={activeTab === "나라" ? "country" : "university"}
-            countries={activeTab === "나라" ? filteredCountries : undefined}
-            universities={activeTab === "대학" ? filteredUniversities : undefined}
-            visibleColumns={activeTab === "나라" ? visibleCountryColumns : visibleUniversityColumns}
-          />
-        </div>
+        {/* 필터 모달 */}
+        <FilterModal
+          isOpen={isFilterOpen}
+          onClose={() => setIsFilterOpen(false)}
+          type={activeTab === "나라" ? "country" : "university"}
+          currentFilters={activeTab === "나라" ? countryFilters : universityFilters}
+          onApply={handleFilterApply}
+        />
       </div>
+    </>
+  );
+}
 
-      {/* 필터 모달 */}
-      <FilterModal
-        isOpen={isFilterOpen}
-        onClose={() => setIsFilterOpen(false)}
-        type={activeTab === "나라" ? "country" : "university"}
-        currentFilters={activeTab === "나라" ? countryFilters : universityFilters}
-        onApply={handleFilterApply}
-      />
-    </div>
+export default function CommunityPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CommunityContent />
+    </Suspense>
   );
 }
