@@ -71,7 +71,7 @@ export interface MyApplicationResponse {
     criteria: string;
   };
   language: {
-    testType: string;
+    testType: string | null;
     score: string;
     grade: string | null;
   };
