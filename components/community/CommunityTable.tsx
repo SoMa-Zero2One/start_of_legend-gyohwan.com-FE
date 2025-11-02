@@ -1,7 +1,6 @@
 "use client";
 
 import { CommunityCountry, CommunityUniversity } from "@/types/community";
-import CountryFlag from "@/components/common/CountryFlag";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 
 interface CommunityTableProps {
@@ -27,7 +26,6 @@ export default function CommunityTable({ type, countries, universities, visibleC
 function CountryTable({ countries, visibleColumns }: { countries: CommunityCountry[]; visibleColumns: string[] }) {
   // 컬럼 정의 매핑
   const columnLabels: Record<string, string> = {
-    name: "나라명",
     visaDifficulty: "비자 발급 난이도",
     cost: "물가",
     language: "사용 언어",
@@ -36,10 +34,14 @@ function CountryTable({ countries, visibleColumns }: { countries: CommunityCount
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
-        <thead>
-          <tr className="border-b border-gray-200 bg-gray-50">
+        <thead className="caption-1">
+          <tr className="flex border-t border-gray-300 text-gray-700">
+            <th className="flex w-[120px] items-center px-[16px] py-[12px]">나라명</th>
             {visibleColumns.map((col) => (
-              <th key={col} className="caption-1 whitespace-nowrap px-4 py-3 text-left text-gray-700">
+              <th
+                key={col + 1}
+                className="flex flex-1 items-center px-[10px] py-[8px] text-left break-keep text-gray-700"
+              >
                 {columnLabels[col]}
               </th>
             ))}
@@ -47,17 +49,15 @@ function CountryTable({ countries, visibleColumns }: { countries: CommunityCount
         </thead>
         <tbody>
           {countries.map((country, index) => (
-            <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+            <tr key={index} className="flex border-t border-gray-100">
+              <td className="flex w-[120px] items-center px-[16px] py-[20px]">
+                <span className="text-[13px] font-bold">{country.name}</span>
+              </td>
               {visibleColumns.map((col) => (
-                <td key={col} className="body-3 whitespace-nowrap px-4 py-4">
-                  {col === "name" ? (
-                    <div className="flex items-center gap-2">
-                      <CountryFlag country={country.name} size={24} />
-                      <span className="medium-body-3">{country.name}</span>
-                    </div>
-                  ) : (
-                    <span>{country[col as keyof CommunityCountry]}</span>
-                  )}
+                <td key={col} className="flex flex-1 items-center px-[10px] py-[20px] text-left break-keep">
+                  <span className={col === "language" ? "rounded-full bg-gray-300 px-[8px]" : ""}>
+                    {country[col as keyof CommunityCountry]}
+                  </span>
                 </td>
               ))}
             </tr>
@@ -78,7 +78,6 @@ function UniversityTable({
 }) {
   // 컬럼 정의 매핑
   const columnLabels: Record<string, string> = {
-    name: "대학명",
     budget: "예산",
     travel: "여행",
     cost: "물가",
@@ -95,15 +94,11 @@ function UniversityTable({
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
-        <thead>
-          <tr className="border-b border-gray-200 bg-gray-50">
-            {visibleColumns.map((col, index) => (
-              <th
-                key={col}
-                className={`caption-1 whitespace-nowrap px-4 py-3 text-left text-gray-700 ${
-                  index === 0 ? "sticky left-0 z-10 bg-gray-50" : ""
-                }`}
-              >
+        <thead className="caption-1">
+          <tr className="flex border-t border-gray-300 text-gray-700">
+            <th className="sticky left-0 z-10 flex w-[120px] items-center bg-white px-[16px] py-[12px]">대학명</th>
+            {visibleColumns.map((col) => (
+              <th key={col} className="flex w-[80px] items-center px-[10px] py-[8px] text-left break-keep">
                 {columnLabels[col]}
               </th>
             ))}
@@ -111,31 +106,20 @@ function UniversityTable({
         </thead>
         <tbody>
           {universities.map((university) => (
-            <tr key={university.id} className="border-b border-gray-100 hover:bg-gray-50">
-              {visibleColumns.map((col, index) => (
-                <td
-                  key={col}
-                  className={`body-3 whitespace-nowrap px-4 py-4 ${
-                    index === 0 ? "sticky left-0 z-10 bg-white group-hover:bg-gray-50" : ""
-                  }`}
-                >
-                  {col === "name" ? (
-                    <div className="flex items-center gap-2">
-                      <SchoolLogoWithFallback
-                        src={university.logoUrl}
-                        alt={`${university.name} 로고`}
-                        width={24}
-                        height={24}
-                        className="rounded-full"
-                      />
-                      <div className="flex flex-col">
-                        <span className="medium-body-3">{university.name}</span>
-                        <span className="caption-2 text-gray-600">{university.country}</span>
-                      </div>
-                    </div>
-                  ) : (
-                    <span>{university[col as keyof CommunityUniversity]}</span>
-                  )}
+            <tr key={university.id} className="flex border-t border-gray-100">
+              <td className="sticky left-0 z-10 flex w-[120px] items-center gap-2 bg-white px-[16px] py-[20px]">
+                <SchoolLogoWithFallback
+                  src={university.logoUrl}
+                  alt={`${university.name} 로고`}
+                  width={24}
+                  height={24}
+                  className="shrink-0 rounded-full"
+                />
+                <span className="truncate text-[13px] font-bold">{university.name}</span>
+              </td>
+              {visibleColumns.map((col) => (
+                <td key={col} className="flex w-[80px] items-center px-[10px] py-[20px] text-left break-keep">
+                  <span>{university[col as keyof CommunityUniversity]}</span>
                 </td>
               ))}
             </tr>

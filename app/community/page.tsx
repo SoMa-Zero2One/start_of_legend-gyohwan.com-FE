@@ -3,17 +3,18 @@
 import { Suspense, useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
-import HeaderAuthSection from "@/components/layout/HeaderAuthSection";
 import Tabs from "@/components/common/Tabs";
 import CommunityTable from "@/components/community/CommunityTable";
 import FilterModal from "@/components/community/FilterModal";
+import FilterIcon from "@/components/icons/FilterIcon";
 import { mockCountries, mockUniversities } from "@/mocks/data/community";
 import { CountryFilterOptions, UniversityFilterOptions } from "@/types/community";
 
 function CommunityContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const activeTab = (searchParams.get("tab") as "나라" | "대학") || "대학";
+  const tabParam = searchParams.get("tab");
+  const activeTab = tabParam === "대학" ? "대학" : "나라";
 
   // 필터 모달 상태
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -55,7 +56,7 @@ function CommunityContent() {
 
   // 표시할 컬럼 계산
   const visibleCountryColumns = useMemo(() => {
-    const columns = ["name"]; // 나라명은 항상 표시
+    const columns = [];
     if (countryFilters.showVisaDifficulty) columns.push("visaDifficulty");
     if (countryFilters.showCost) columns.push("cost");
     if (countryFilters.showLanguage) columns.push("language");
@@ -63,7 +64,7 @@ function CommunityContent() {
   }, [countryFilters]);
 
   const visibleUniversityColumns = useMemo(() => {
-    const columns = ["name"]; // 대학명은 항상 표시
+    const columns = [];
     if (universityFilters.showBudget) columns.push("budget");
     if (universityFilters.showTravel) columns.push("travel");
     if (universityFilters.showCost) columns.push("cost");
@@ -79,7 +80,7 @@ function CommunityContent() {
   }, [universityFilters]);
 
   const handleTabChange = (tab: "나라" | "대학") => {
-    router.push(`/community?tab=${tab}`);
+    router.replace(`/community?tab=${tab}`);
   };
 
   const handleFilterApply = (filters: CountryFilterOptions | UniversityFilterOptions) => {
@@ -94,47 +95,39 @@ function CommunityContent() {
 
   return (
     <>
-      <div className="flex min-h-screen flex-col">
-        <Header showBorder>
-          <HeaderAuthSection />
-        </Header>
+      <Header title="커뮤니티" showPrevButton showHomeButton />
 
-        <div className="mx-auto w-full max-w-[430px]">
-          {/* 탭 */}
-          <Tabs tabs={["나라", "대학"]} selectedTab={activeTab} onTabChange={handleTabChange} />
+      {/* 탭 */}
+      <Tabs tabs={["나라", "대학"]} selectedTab={activeTab} onTabChange={handleTabChange} />
 
-          {/* 전체 개수 + 필터 버튼 */}
-          <div className="flex items-center justify-between px-[20px] py-4">
-            <h2 className="heading-2">전체 ({itemCount})</h2>
-            <button
-              onClick={() => setIsFilterOpen(true)}
-              className="flex items-center gap-1 rounded-md bg-blue-500 px-4 py-2 text-white"
-            >
-              <span className="body-3">필터</span>
-              <span>▼</span>
-            </button>
-          </div>
-
-          {/* 테이블 */}
-          <div className="px-[20px]">
-            <CommunityTable
-              type={activeTab === "나라" ? "country" : "university"}
-              countries={activeTab === "나라" ? filteredCountries : undefined}
-              universities={activeTab === "대학" ? filteredUniversities : undefined}
-              visibleColumns={activeTab === "나라" ? visibleCountryColumns : visibleUniversityColumns}
-            />
-          </div>
-        </div>
-
-        {/* 필터 모달 */}
-        <FilterModal
-          isOpen={isFilterOpen}
-          onClose={() => setIsFilterOpen(false)}
-          type={activeTab === "나라" ? "country" : "university"}
-          currentFilters={activeTab === "나라" ? countryFilters : universityFilters}
-          onApply={handleFilterApply}
-        />
+      {/* 전체 개수 + 필터 버튼 */}
+      <div className="flex items-center justify-between px-[20px] py-4">
+        <h2 className="subhead-1">전체 ({itemCount})</h2>
+        <button
+          onClick={() => setIsFilterOpen(true)}
+          className="bg-primary-blue flex items-center gap-[4px] rounded-md py-[4px] pr-[6px] pl-[10px] text-white"
+        >
+          <span className="caption-2">필터</span>
+          <FilterIcon size={20} />
+        </button>
       </div>
+
+      {/* 테이블 */}
+      <CommunityTable
+        type={activeTab === "나라" ? "country" : "university"}
+        countries={activeTab === "나라" ? filteredCountries : undefined}
+        universities={activeTab === "대학" ? filteredUniversities : undefined}
+        visibleColumns={activeTab === "나라" ? visibleCountryColumns : visibleUniversityColumns}
+      />
+
+      {/* 필터 모달 */}
+      <FilterModal
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        type={activeTab === "나라" ? "country" : "university"}
+        currentFilters={activeTab === "나라" ? countryFilters : universityFilters}
+        onApply={handleFilterApply}
+      />
     </>
   );
 }
