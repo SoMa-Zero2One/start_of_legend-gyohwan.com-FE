@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
-import RoundCheckbox from "@/components/auth/RoundCheckbox";
+import RoundCheckbox from "@/components/common/RoundCheckbox";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { useAuthStore } from "@/stores/authStore";
 import { withdrawAccount } from "@/lib/api/user";

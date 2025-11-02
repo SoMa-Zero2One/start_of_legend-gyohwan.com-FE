@@ -83,7 +83,7 @@ function UniversityTable({
     cost: "물가",
     program: "교환학생 프로그램",
     cityType: "도시/시골",
-    safety: "지안",
+    safety: "치안",
     transportation: "교통",
     dorm: "기숙사 유무",
     dormCost: "기숙사 가격",
