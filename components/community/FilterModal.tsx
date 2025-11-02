@@ -120,7 +120,7 @@ export default function FilterModal({ isOpen, onClose, type, currentFilters, onA
 
       {/* Bottom Sheet */}
       <div
-        className={`fixed right-0 bottom-0 left-0 z-50 rounded-t-[20px] bg-white transition-transform duration-300 ${
+        className={`fixed bottom-0 left-1/2 z-50 w-full max-w-[430px] -translate-x-1/2 rounded-t-[20px] bg-white transition-transform duration-300 ${
           isAnimating ? "translate-y-0" : "translate-y-full"
         }`}
         style={{ maxHeight: "80vh" }}
@@ -129,7 +129,7 @@ export default function FilterModal({ isOpen, onClose, type, currentFilters, onA
           {/* 헤더 */}
           <div className="flex items-center justify-between border-b border-gray-200 px-[20px] py-[16px]">
             <h2 className="heading-2">필터</h2>
-            <button onClick={handleReset} className="caption-1 text-blue-500">
+            <button onClick={handleReset} className="caption-1 cursor-pointer text-blue-500">
               선택 초기화
             </button>
           </div>
