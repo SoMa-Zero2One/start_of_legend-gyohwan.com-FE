@@ -89,7 +89,7 @@ export const getSlotDetail = async (slotId: number): Promise<SlotDetailResponse>
   if (data.choices) {
     data.choices = data.choices.map((choice) => ({
       ...choice,
-      languageTest: choice.languageTest ? formatLanguageTest(choice.languageTest) : choice.languageTest,
+      languageTest: formatLanguageTest(choice.languageTest),
     }));
   }
 
