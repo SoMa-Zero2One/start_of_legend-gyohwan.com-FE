@@ -13,6 +13,17 @@ interface CountryTableProps {
 }
 
 export default function CountryTable({ countries, visibleFieldKeys, onSort, sortConfig }: CountryTableProps) {
+  // Empty state 처리
+  if (!countries || countries.length === 0) {
+    return (
+      <div className="overflow-x-auto">
+        <div className="flex items-center justify-center py-[60px]">
+          <p className="body-2 text-gray-500">선택한 조건에 해당하는 나라가 없습니다</p>
+        </div>
+      </div>
+    );
+  }
+
   // 첫 번째 나라에서 표시할 필드 정보 가져오기 (displayOrder 순서대로)
   const firstCountry = countries[0];
   const visibleFields = visibleFieldKeys
@@ -32,8 +43,8 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
             {visibleFields.map((field) => (
               <th
                 key={field.key}
-                className={`flex ${fieldWidthClass} items-center justify-between px-[10px] py-[8px] text-left break-keep text-gray-700 ${
-                  field.sortable ? "cursor-pointer hover:bg-gray-50" : ""
+                className={`flex ${fieldWidthClass} items-center justify-between px-[10px] py-[8px] text-left break-keep ${
+                  field.sortable ? "cursor-pointer hover:bg-gray-100" : ""
                 }`}
                 onClick={field.sortable ? () => onSort?.(field.key) : undefined}
               >
@@ -65,7 +76,10 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
               {visibleFields.map((field) => {
                 const countryField = country.fields.get(field.key);
                 return (
-                  <td key={field.key} className={`flex ${fieldWidthClass} items-center px-[10px] py-[20px] text-left break-keep`}>
+                  <td
+                    key={field.key}
+                    className={`flex ${fieldWidthClass} items-center px-[10px] py-[20px] text-left break-keep`}
+                  >
                     {countryField && <FieldRenderer field={countryField} />}
                   </td>
                 );

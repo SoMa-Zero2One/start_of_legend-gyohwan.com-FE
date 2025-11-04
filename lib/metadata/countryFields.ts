@@ -36,7 +36,7 @@ export const COUNTRY_FIELDS: Record<string, FieldMetadata> = {
   englishLevel: {
     fieldId: 4,
     key: "englishLevel",
-    label: "영어 사용 지수",
+    label: "영어 사용지수",
     type: "number",
     sortable: true,
     defaultVisible: true,
