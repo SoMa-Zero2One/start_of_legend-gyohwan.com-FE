@@ -10,8 +10,8 @@ import { enrichUniversityData } from "@/lib/utils/universityTransform";
 export const dynamic = "force-dynamic";
 
 // 서버 컴포넌트
-export default async function CommunityPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
-  // 서버에서 데이터 fetch
+export default async function CommunityPage() {
+  // 서버에서 데이터 fetch (병렬 처리)
   const [countriesData, universitiesData] = await Promise.all([fetchCountries(), fetchUniversities()]);
   const countries = enrichCountryData(countriesData);
   const universities = enrichUniversityData(universitiesData);

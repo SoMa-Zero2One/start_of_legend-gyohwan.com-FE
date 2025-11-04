@@ -26,11 +26,6 @@ export function useUniversityTable(universities: EnrichedUniversity[]) {
 
   const [selectedCountries, setSelectedCountries] = useState<string[]>(allCountries);
 
-  // selectedCountries 초기화 (allCountries 변경 시)
-  useMemo(() => {
-    setSelectedCountries(allCountries);
-  }, [allCountries]);
-
   // 나라로 필터링된 대학 목록
   const filteredUniversities = useMemo(() => {
     return universities.filter((univ) => selectedCountries.includes(univ.countryName));
