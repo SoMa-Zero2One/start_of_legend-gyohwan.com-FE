@@ -4,7 +4,7 @@ import { useState } from "react";
 import UniversityTable from "@/components/community/UniversityTable";
 import UniversityFilterModal from "@/components/community/UniversityFilterModal";
 import FilterIcon from "@/components/icons/FilterIcon";
-import { EnrichedUniversity } from "@/types/community";
+import { EnrichedUniversity, Continent } from "@/types/community";
 import { useUniversityTable } from "@/hooks/useUniversityTable";
 
 interface UniversityContentProps {
@@ -24,12 +24,15 @@ export default function UniversityContent({ universities }: UniversityContentPro
     setVisibleFieldKeys,
     selectedCountries,
     setSelectedCountries,
+    activeContinents,
+    setActiveContinents,
   } = useUniversityTable(universities);
 
   // 필터 적용 핸들러
-  const handleApplyFilter = (countries: string[], fieldKeys: string[]) => {
+  const handleApplyFilter = (countries: string[], fieldKeys: string[], continents: Continent[]) => {
     setSelectedCountries(countries);
     setVisibleFieldKeys(fieldKeys);
+    setActiveContinents(continents);
   };
 
   return (
@@ -60,6 +63,7 @@ export default function UniversityContent({ universities }: UniversityContentPro
         onClose={() => setIsFilterOpen(false)}
         selectedCountries={selectedCountries}
         visibleFieldKeys={visibleFieldKeys}
+        activeContinents={activeContinents}
         onApply={handleApplyFilter}
         universities={universities}
       />

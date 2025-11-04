@@ -13,7 +13,8 @@ interface UniversityFilterModalProps {
   onClose: () => void;
   selectedCountries: string[];
   visibleFieldKeys: string[];
-  onApply: (countries: string[], fieldKeys: string[]) => void;
+  activeContinents: Continent[];
+  onApply: (countries: string[], fieldKeys: string[], continents: Continent[]) => void;
   universities: EnrichedUniversity[];
 }
 
@@ -22,6 +23,7 @@ export default function UniversityFilterModal({
   onClose,
   selectedCountries: initialCountries,
   visibleFieldKeys: initialFieldKeys,
+  activeContinents: initialActiveContinents,
   onApply,
   universities,
 }: UniversityFilterModalProps) {
@@ -29,6 +31,7 @@ export default function UniversityFilterModal({
   const [selectedContinent, setSelectedContinent] = useState<Continent | null>(null);
   const [selectedCountries, setSelectedCountries] = useState<string[]>(initialCountries);
   const [selectedFieldKeys, setSelectedFieldKeys] = useState<string[]>(initialFieldKeys);
+  const [activeContinents, setActiveContinents] = useState<Continent[]>(initialActiveContinents);
   const [isAnimating, setIsAnimating] = useState(false);
 
   // 스크롤 위치 저장용
@@ -53,7 +56,10 @@ export default function UniversityFilterModal({
     // Set을 배열로 변환하고 정렬
     const result = new Map<Continent, string[]>();
     map.forEach((countries, continent) => {
-      result.set(continent, Array.from(countries).sort((a, b) => a.localeCompare(b, "ko")));
+      result.set(
+        continent,
+        Array.from(countries).sort((a, b) => a.localeCompare(b, "ko"))
+      );
     });
 
     return result;
@@ -66,6 +72,7 @@ export default function UniversityFilterModal({
       setSelectedContinent(null);
       setSelectedCountries(initialCountries);
       setSelectedFieldKeys(initialFieldKeys);
+      setActiveContinents(initialActiveContinents);
       // 배경 스크롤 차단
       document.body.style.overflow = "hidden";
     } else {
@@ -77,7 +84,7 @@ export default function UniversityFilterModal({
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, initialCountries, initialFieldKeys]);
+  }, [isOpen, initialCountries, initialFieldKeys, initialActiveContinents]);
 
   const handleClose = () => {
     setIsAnimating(false);
@@ -88,12 +95,13 @@ export default function UniversityFilterModal({
 
   const handleReset = () => {
     if (currentStep === "main") {
-      // 메인 단계: 모든 나라 선택 + 모든 필드 선택
+      // 메인 단계: 모든 나라 선택 + 모든 필드 선택 + 모든 대륙 활성화
       const allCountries = Array.from(new Set(universities.map((u) => u.countryName))).sort((a, b) =>
         a.localeCompare(b, "ko")
       );
       setSelectedCountries(allCountries);
       setSelectedFieldKeys(allFields.map((f) => f.key));
+      setActiveContinents([...CONTINENTS]);
     } else if (currentStep === "country" && selectedContinent) {
       // 나라 단계: 현재 대륙의 모든 나라 선택
       const continentCountries = countriesByContinent.get(selectedContinent) || [];
@@ -105,7 +113,7 @@ export default function UniversityFilterModal({
   };
 
   const handleApply = () => {
-    onApply(selectedCountries, selectedFieldKeys);
+    onApply(selectedCountries, selectedFieldKeys, activeContinents);
     handleClose();
   };
 
@@ -121,8 +129,13 @@ export default function UniversityFilterModal({
 
   // 나라 토글
   const toggleCountry = (country: string) => {
-    setSelectedCountries((prev) =>
-      prev.includes(country) ? prev.filter((c) => c !== country) : [...prev, country]
+    setSelectedCountries((prev) => (prev.includes(country) ? prev.filter((c) => c !== country) : [...prev, country]));
+  };
+
+  // 대륙 활성화/비활성화 토글
+  const toggleContinentActive = (continent: Continent) => {
+    setActiveContinents((prev) =>
+      prev.includes(continent) ? prev.filter((c) => c !== continent) : [...prev, continent]
     );
   };
 
@@ -216,24 +229,37 @@ export default function UniversityFilterModal({
                   <div className="space-y-2">
                     {CONTINENTS.map((continent) => {
                       const countries = countriesByContinent.get(continent) || [];
-                      const count = countries.length;
+                      const isActive = activeContinents.includes(continent);
                       const selectedCount = countries.filter((c) => selectedCountries.includes(c)).length;
+                      const totalCount = countries.length;
 
                       return (
                         <button
                           key={continent}
                           onClick={() => handleContinentClick(continent)}
-                          className="flex h-[52px] w-full cursor-pointer items-center justify-between rounded-lg border border-gray-200 px-4 hover:bg-gray-50"
+                          className="flex h-[52px] w-full cursor-pointer items-center justify-between rounded-lg border border-gray-300 px-[4px] hover:bg-gray-50"
                         >
-                          <div className="flex items-center gap-2">
-                            <span className="body-2">{continent}</span>
-                            {selectedCount > 0 && (
-                              <span className="caption-1 text-blue-500">
-                                ({selectedCount}/{count})
+                          <div className="flex h-full items-center">
+                            <div
+                              className="h-full"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                            >
+                              <RoundCheckbox
+                                wrapperClassName="h-full pl-[10px] pr-[16px]"
+                                checked={isActive}
+                                onChange={() => toggleContinentActive(continent)}
+                              />
+                            </div>
+                            <span className="body-2">
+                              {continent}{" "}
+                              <span className={isActive ? "text-blue-500" : "text-gray-400"}>
+                                ({selectedCount}/{totalCount}개)
                               </span>
-                            )}
+                            </span>
                           </div>
-                          <ChevronRightIcon size={20} className="text-gray-400" />
+                          <ChevronRightIcon size={20} className="text-gray-500" />
                         </button>
                       );
                     })}
