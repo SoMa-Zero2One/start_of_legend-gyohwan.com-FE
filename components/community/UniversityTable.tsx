@@ -4,6 +4,7 @@ import { EnrichedUniversity, UniversityFieldValue } from "@/types/community";
 import SortIcon from "@/components/icons/SortIcon";
 import ChevronUpIcon from "@/components/icons/ChevronUpIcon";
 import ChevronDownIcon from "@/components/icons/ChevronDownIcon";
+import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 
 interface UniversityTableProps {
   universities: EnrichedUniversity[];
@@ -70,8 +71,17 @@ export default function UniversityTable({ universities, visibleFieldKeys, onSort
         <tbody>
           {universities.map((university) => (
             <tr key={university.univId} className="flex border-t border-gray-100">
-              <td className="sticky left-0 z-10 flex w-[120px] items-center bg-white px-[16px] py-[20px]">
-                <span className="text-[13px] font-bold">{university.name}</span>
+              <td className="sticky left-0 z-10 flex w-[120px] items-center gap-[8px] bg-white px-[16px] py-[20px]">
+                <SchoolLogoWithFallback
+                  src={university.logoUrl}
+                  alt={`${university.name} 로고`}
+                  width={20}
+                  height={20}
+                  className="object-contain"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="line-clamp-2 text-[13px] font-bold">{university.name}</p>
+                </div>
               </td>
               {visibleFields.map((field) => {
                 const univField = university.fields.get(field.key);

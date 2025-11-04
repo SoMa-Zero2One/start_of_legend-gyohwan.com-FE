@@ -64,6 +64,7 @@ export interface UniversityApiResponse {
   name: string;
   countryName: string; // 나라 이름 (별도 필드)
   isFavorite: boolean; // 즐겨찾기 여부
+  logoUrl: string; // 대학 로고 URL
   data: Array<{
     fieldId: number;
     fieldName: string;
@@ -79,6 +80,7 @@ export interface EnrichedUniversity {
   countryName: string; // 원본 보존
   continent: string; // 대륙 (필터 전용, fieldName으로 추출)
   isFavorite: boolean;
+  logoUrl: string; // 대학 로고 URL
   fields: Map<string, UniversityFieldValue>; // key → value 매핑 (countryName도 "country" 키로 포함)
   rawData: UniversityApiResponse["data"]; // 원본 보존 (디버깅용)
 }

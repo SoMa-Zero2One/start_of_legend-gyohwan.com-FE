@@ -69,6 +69,7 @@ export function enrichUniversityData(apiData: UniversityApiResponse[]): Enriched
       countryName: university.countryName,
       continent, // fieldName으로 찾은 대륙 값
       isFavorite: university.isFavorite,
+      logoUrl: university.logoUrl,
       fields,
       rawData: university.data,
     };

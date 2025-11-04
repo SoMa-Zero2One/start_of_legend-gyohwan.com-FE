@@ -4,6 +4,7 @@ import { EnrichedCountry, CountryFieldValue } from "@/types/community";
 import SortIcon from "@/components/icons/SortIcon";
 import ChevronUpIcon from "@/components/icons/ChevronUpIcon";
 import ChevronDownIcon from "@/components/icons/ChevronDownIcon";
+import CountryFlag from "@/components/common/CountryFlag";
 
 interface CountryTableProps {
   countries: EnrichedCountry[];
@@ -39,7 +40,7 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
       <table className="w-full border-collapse">
         <thead className="caption-1">
           <tr className="flex border-t border-gray-300 text-gray-700">
-            <th className="flex w-[120px] items-center px-[16px] py-[12px]">나라명</th>
+            <th className="sticky left-0 z-10 flex w-[150px] items-center bg-white px-[16px] py-[12px]">나라명</th>
             {visibleFields.map((field) => (
               <th
                 key={field.key}
@@ -70,7 +71,8 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
         <tbody>
           {countries.map((country) => (
             <tr key={country.countryCode} className="flex border-t border-gray-100">
-              <td className="flex w-[120px] items-center px-[16px] py-[20px]">
+              <td className="sticky left-0 z-10 flex w-[150px] items-center gap-[8px] bg-white px-[16px] py-[20px]">
+                <CountryFlag country={country.name} size={20} />
                 <span className="text-[13px] font-bold">{country.name}</span>
               </td>
               {visibleFields.map((field) => {

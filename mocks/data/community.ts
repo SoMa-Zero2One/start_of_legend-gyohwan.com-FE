@@ -294,6 +294,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "도쿄대학",
     countryName: "일본",
     isFavorite: true,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/Thammasat University.png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "85", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "28", type: "NUMBER" },
@@ -310,6 +311,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "교토대학",
     countryName: "일본",
     isFavorite: false,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/University of Malaya (UM).png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "80", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "36", type: "NUMBER" },
@@ -326,6 +328,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "와세다대학",
     countryName: "일본",
     isFavorite: true,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/KIMEP University.png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "90", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "199", type: "NUMBER" },
@@ -344,6 +347,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "하버드대학교",
     countryName: "미국",
     isFavorite: true,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/KIMEP University.png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "95", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "5", type: "NUMBER" },
@@ -360,6 +364,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "MIT",
     countryName: "미국",
     isFavorite: false,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/University of Malaya (UM).png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "95", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "1", type: "NUMBER" },
@@ -376,6 +381,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "UC 버클리",
     countryName: "미국",
     isFavorite: false,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/University of Malaya (UM).png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "100", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "27", type: "NUMBER" },
@@ -394,6 +400,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "옥스퍼드대학교",
     countryName: "영국",
     isFavorite: true,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/KIMEP University.png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "88", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "3", type: "NUMBER" },
@@ -410,6 +417,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "케임브리지대학교",
     countryName: "영국",
     isFavorite: false,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/University of Malaya (UM).png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "85", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "2", type: "NUMBER" },
@@ -428,6 +436,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "토론토대학교",
     countryName: "캐나다",
     isFavorite: false,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/University of Malaya (UM).png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "82", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "21", type: "NUMBER" },
@@ -444,6 +453,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "UBC",
     countryName: "캐나다",
     isFavorite: true,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/KIMEP University.png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "85", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "34", type: "NUMBER" },
@@ -462,6 +472,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "멜버른대학교",
     countryName: "호주",
     isFavorite: false,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/University of Malaya (UM).png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "92", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "14", type: "NUMBER" },
@@ -478,6 +489,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "시드니대학교",
     countryName: "호주",
     isFavorite: false,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/University of Malaya (UM).png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "95", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "19", type: "NUMBER" },
@@ -496,6 +508,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "뮌헨공대",
     countryName: "독일",
     isFavorite: false,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/University of Malaya (UM).png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "78", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "37", type: "NUMBER" },
@@ -512,6 +525,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "하이델베르크대학교",
     countryName: "독일",
     isFavorite: true,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/KIMEP University.png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "75", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "87", type: "NUMBER" },
@@ -530,6 +544,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
     name: "싱가포르국립대학교",
     countryName: "싱가포르",
     isFavorite: true,
+    logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/KIMEP University.png",
     data: [
       { fieldId: 6, fieldName: "물가지수", value: "98", type: "NUMBER" },
       { fieldId: 7, fieldName: "QS 랭킹", value: "8", type: "NUMBER" },
