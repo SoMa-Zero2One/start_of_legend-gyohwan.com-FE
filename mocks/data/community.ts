@@ -1,58 +1,289 @@
-import { CommunityCountry, CommunityUniversity } from "@/types/community";
+import { CommunityUniversity, CountryApiResponse } from "@/types/community";
 
-// Mock 데이터: 나라 목록 (40개)
-export const mockCountries: CommunityCountry[] = [
-  // 아시아 (15개)
-  { name: "일본", continent: "아시아", visaDifficulty: "하", cost: "중간", language: "일본어" },
-  { name: "중국", continent: "아시아", visaDifficulty: "중", cost: "낮음", language: "중국어" },
-  { name: "대만", continent: "아시아", visaDifficulty: "하", cost: "낮음", language: "중국어" },
-  { name: "홍콩", continent: "아시아", visaDifficulty: "하", cost: "높음", language: "영어" },
-  { name: "싱가포르", continent: "아시아", visaDifficulty: "하", cost: "높음", language: "영어" },
-  { name: "태국", continent: "아시아", visaDifficulty: "하", cost: "낮음", language: "태국어" },
-  { name: "베트남", continent: "아시아", visaDifficulty: "하", cost: "낮음", language: "베트남어" },
-  { name: "말레이시아", continent: "아시아", visaDifficulty: "하", cost: "낮음", language: "영어" },
-  { name: "인도네시아", continent: "아시아", visaDifficulty: "하", cost: "낮음", language: "인도네시아어" },
-  { name: "필리핀", continent: "아시아", visaDifficulty: "하", cost: "낮음", language: "영어" },
-  { name: "인도", continent: "아시아", visaDifficulty: "중", cost: "낮음", language: "영어" },
-  { name: "카자흐스탄", continent: "아시아", visaDifficulty: "중", cost: "낮음", language: "러시아어" },
-  { name: "터키", continent: "아시아", visaDifficulty: "중", cost: "중간", language: "터키어" },
-  { name: "이스라엘", continent: "아시아", visaDifficulty: "상", cost: "높음", language: "히브리어" },
-  { name: "아랍에미리트", continent: "아시아", visaDifficulty: "중", cost: "높음", language: "아랍어" },
+// Mock 데이터: 나라 목록 (API 응답 형식)
+export const mockCountriesApi: CountryApiResponse[] = [
+  // 아시아
+  {
+    countryCode: "JP",
+    name: "일본",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "1", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "일본어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "5", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "50", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "아시아", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "CN",
+    name: "중국",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "3", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "중국어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "4", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "40", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "아시아", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "TW",
+    name: "대만",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "1", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "중국어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "5", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "45", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "아시아", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "HK",
+    name: "홍콩",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "1", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "영어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "5", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "85", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "아시아", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "SG",
+    name: "싱가포르",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "1", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "영어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "5", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "95", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "아시아", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "TH",
+    name: "태국",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "1", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "태국어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "3", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "45", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "아시아", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "VN",
+    name: "베트남",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "1", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "베트남어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "3", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "40", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "아시아", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "MY",
+    name: "말레이시아",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "1", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "영어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "4", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "70", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "아시아", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "ID",
+    name: "인도네시아",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "1", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "인도네시아어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "3", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "50", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "아시아", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "PH",
+    name: "필리핀",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "1", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "영어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "2", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "92", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "아시아", type: "STRING" },
+    ],
+  },
 
-  // 유럽 (15개)
-  { name: "영국", continent: "유럽", visaDifficulty: "상", cost: "높음", language: "영어" },
-  { name: "프랑스", continent: "유럽", visaDifficulty: "중", cost: "높음", language: "프랑스어" },
-  { name: "독일", continent: "유럽", visaDifficulty: "중", cost: "중간", language: "독일어" },
-  { name: "이탈리아", continent: "유럽", visaDifficulty: "중", cost: "중간", language: "이탈리아어" },
-  { name: "스페인", continent: "유럽", visaDifficulty: "중", cost: "중간", language: "스페인어" },
-  { name: "네덜란드", continent: "유럽", visaDifficulty: "중", cost: "높음", language: "네덜란드어" },
-  { name: "스위스", continent: "유럽", visaDifficulty: "상", cost: "높음", language: "독일어" },
-  { name: "벨기에", continent: "유럽", visaDifficulty: "중", cost: "중간", language: "프랑스어" },
-  { name: "오스트리아", continent: "유럽", visaDifficulty: "중", cost: "중간", language: "독일어" },
-  { name: "덴마크", continent: "유럽", visaDifficulty: "중", cost: "높음", language: "덴마크어" },
-  { name: "스웨덴", continent: "유럽", visaDifficulty: "중", cost: "높음", language: "스웨덴어" },
-  { name: "노르웨이", continent: "유럽", visaDifficulty: "중", cost: "높음", language: "노르웨이어" },
-  { name: "핀란드", continent: "유럽", visaDifficulty: "중", cost: "중간", language: "핀란드어" },
-  { name: "폴란드", continent: "유럽", visaDifficulty: "하", cost: "낮음", language: "폴란드어" },
-  { name: "체코", continent: "유럽", visaDifficulty: "하", cost: "낮음", language: "체코어" },
+  // 유럽
+  {
+    countryCode: "GB",
+    name: "영국",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "5", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "영어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "4", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "100", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "유럽", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "FR",
+    name: "프랑스",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "3", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "프랑스어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "3", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "60", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "유럽", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "DE",
+    name: "독일",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "3", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "독일어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "5", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "65", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "유럽", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "IT",
+    name: "이탈리아",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "3", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "이탈리아어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "3", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "55", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "유럽", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "ES",
+    name: "스페인",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "3", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "스페인어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "4", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "50", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "유럽", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "NL",
+    name: "네덜란드",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "3", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "네덜란드어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "5", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "90", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "유럽", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "CH",
+    name: "스위스",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "5", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "독일어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "5", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "65", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "유럽", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "SE",
+    name: "스웨덴",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "3", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "스웨덴어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "5", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "90", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "유럽", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "PL",
+    name: "폴란드",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "1", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "폴란드어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "4", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "60", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "유럽", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "CZ",
+    name: "체코",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "1", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "체코어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "4", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "55", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "유럽", type: "STRING" },
+    ],
+  },
 
-  // 북아메리카 (3개)
-  { name: "미국", continent: "북아메리카", visaDifficulty: "상", cost: "높음", language: "영어" },
-  { name: "캐나다", continent: "북아메리카", visaDifficulty: "중", cost: "중간", language: "영어" },
-  { name: "멕시코", continent: "북아메리카", visaDifficulty: "하", cost: "낮음", language: "스페인어" },
+  // 북아메리카
+  {
+    countryCode: "US",
+    name: "미국",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "5", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "영어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "3", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "100", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "북아메리카", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "CA",
+    name: "캐나다",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "3", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "영어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "5", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "100", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "북아메리카", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "MX",
+    name: "멕시코",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "1", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "스페인어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "2", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "45", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "북아메리카", type: "STRING" },
+    ],
+  },
 
-  // 남아메리카 (3개)
-  { name: "브라질", continent: "남아메리카", visaDifficulty: "중", cost: "낮음", language: "포르투갈어" },
-  { name: "아르헨티나", continent: "남아메리카", visaDifficulty: "하", cost: "낮음", language: "스페인어" },
-  { name: "칠레", continent: "남아메리카", visaDifficulty: "하", cost: "중간", language: "스페인어" },
-
-  // 오세아니아 (2개)
-  { name: "호주", continent: "오세아니아", visaDifficulty: "상", cost: "높음", language: "영어" },
-  { name: "뉴질랜드", continent: "오세아니아", visaDifficulty: "중", cost: "중간", language: "영어" },
-
-  // 아프리카 (2개)
-  { name: "남아프리카공화국", continent: "아프리카", visaDifficulty: "중", cost: "낮음", language: "영어" },
-  { name: "이집트", continent: "아프리카", visaDifficulty: "중", cost: "낮음", language: "아랍어" },
+  // 오세아니아
+  {
+    countryCode: "AU",
+    name: "호주",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "5", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "영어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "5", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "100", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "오세아니아", type: "STRING" },
+    ],
+  },
+  {
+    countryCode: "NZ",
+    name: "뉴질랜드",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "3", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: "영어", type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "5", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: "100", type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "오세아니아", type: "STRING" },
+    ],
+  },
 ];
 
 // Mock 데이터: 대학 목록 (222개 중 일부만 작성, 나머지는 반복 패턴)

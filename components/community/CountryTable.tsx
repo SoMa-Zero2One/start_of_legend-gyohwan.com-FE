@@ -1,0 +1,87 @@
+"use client";
+
+import { EnrichedCountry, CountryFieldValue } from "@/types/community";
+import SortIcon from "@/components/icons/SortIcon";
+import ChevronUpIcon from "@/components/icons/ChevronUpIcon";
+import ChevronDownIcon from "@/components/icons/ChevronDownIcon";
+
+interface CountryTableProps {
+  countries: EnrichedCountry[];
+  visibleFieldKeys: string[];
+  onSort?: (fieldKey: string) => void;
+  sortConfig?: { key: string; direction: "asc" | "desc" } | null;
+}
+
+export default function CountryTable({ countries, visibleFieldKeys, onSort, sortConfig }: CountryTableProps) {
+  // 첫 번째 나라에서 표시할 필드 정보 가져오기 (displayOrder 순서대로)
+  const firstCountry = countries[0];
+  const visibleFields = visibleFieldKeys
+    .map((key) => firstCountry?.fields.get(key))
+    .filter(Boolean)
+    .sort((a, b) => a!.displayOrder - b!.displayOrder) as CountryFieldValue[];
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse">
+        <thead className="caption-1">
+          <tr className="flex border-t border-gray-300 text-gray-700">
+            <th className="flex w-[120px] items-center px-[16px] py-[12px]">나라명</th>
+            {visibleFields.map((field) => (
+              <th
+                key={field.key}
+                className={`flex w-[90px] items-center justify-between px-[10px] py-[8px] text-left break-keep text-gray-700 ${
+                  field.sortable ? "cursor-pointer hover:bg-gray-50" : ""
+                }`}
+                onClick={field.sortable ? () => onSort?.(field.key) : undefined}
+              >
+                <span>{field.label}</span>
+                {/* 정렬 아이콘 (sortable인 경우만) */}
+                {field.sortable && (
+                  <>
+                    {sortConfig?.key === field.key ? (
+                      sortConfig.direction === "asc" ? (
+                        <ChevronUpIcon size={16} />
+                      ) : (
+                        <ChevronDownIcon size={16} />
+                      )
+                    ) : (
+                      <SortIcon size={16} />
+                    )}
+                  </>
+                )}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {countries.map((country) => (
+            <tr key={country.countryCode} className="flex border-t border-gray-100">
+              <td className="flex w-[120px] items-center px-[16px] py-[20px]">
+                <span className="text-[13px] font-bold">{country.name}</span>
+              </td>
+              {visibleFields.map((field) => {
+                const countryField = country.fields.get(field.key);
+                return (
+                  <td key={field.key} className="flex w-[90px] items-center px-[10px] py-[20px] text-left break-keep">
+                    {countryField && <FieldRenderer field={countryField} />}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// 필드 타입별 렌더링
+function FieldRenderer({ field }: { field: CountryFieldValue }) {
+  // 배지 스타일로 렌더링 (사용 언어)
+  if (field.renderConfig?.badge) {
+    return <span className="caption-1 truncate rounded-full bg-gray-300 px-[8px]">{field.displayValue}</span>;
+  }
+
+  // 일반 텍스트 렌더링 (레벨은 이미 "상/중상/중/중하/하"로 변환됨, 숫자는 포맷팅됨)
+  return <span>{field.displayValue}</span>;
+}

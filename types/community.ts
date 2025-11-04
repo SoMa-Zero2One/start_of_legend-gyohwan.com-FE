@@ -89,12 +89,13 @@ export interface TableColumn<T> {
 
 // 필드 메타데이터 인터페이스
 export interface FieldMetadata {
-  fieldId: number;
+  fieldId: number; // 백엔드 API 필드 식별자 (고정값)
   key: string; // 프론트엔드 내부 키 (정렬/필터에 사용)
   label: string; // 화면 표시명
   type: "level" | "string" | "number"; // 백엔드 타입과 매칭
   sortable: boolean;
   defaultVisible: boolean;
+  displayOrder: number; // 화면 표시 순서 (낮을수록 앞에 표시)
   renderConfig?: {
     minWidth?: string;
     badge?: boolean; // STRING 타입을 배지로 렌더링할지 여부
@@ -131,5 +132,7 @@ export interface CountryFieldValue {
   displayValue: string; // "상" (변환된 값)
   numericValue?: number; // 정렬용 숫자값
   type: FieldMetadata["type"];
+  sortable: boolean; // 정렬 가능 여부
+  displayOrder: number; // 화면 표시 순서
   renderConfig?: FieldMetadata["renderConfig"]; // 렌더링 설정
 }

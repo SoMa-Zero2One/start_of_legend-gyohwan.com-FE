@@ -37,6 +37,8 @@ export function enrichCountryData(apiData: CountryApiResponse[]): EnrichedCountr
         displayValue: transformDisplayValue(field.value, metadata),
         numericValue: extractNumericValue(field.value, metadata.type),
         type: metadata.type,
+        sortable: metadata.sortable,
+        displayOrder: metadata.displayOrder,
         renderConfig: metadata.renderConfig,
       };
 
