@@ -1,33 +1,46 @@
 import { useMemo, useState } from "react";
-import { EnrichedCountry } from "@/types/community";
-import { getDefaultVisibleFields } from "@/lib/metadata/countryFields";
-import { CONTINENTS } from "@/types/community";
+import { EnrichedUniversity } from "@/types/community";
+import { getDefaultVisibleUniversityFields } from "@/lib/metadata/universityFields";
 
 interface SortConfig {
   key: string;
   direction: "asc" | "desc";
 }
 
-export function useCountryTable(countries: EnrichedCountry[]) {
+export function useUniversityTable(universities: EnrichedUniversity[]) {
   // 정렬 상태
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
 
   // 표시할 필드 키 목록 (초기값: 메타데이터의 defaultVisible)
-  const [visibleFieldKeys, setVisibleFieldKeys] = useState<string[]>(() => getDefaultVisibleFields());
+  const [visibleFieldKeys, setVisibleFieldKeys] = useState(() => getDefaultVisibleUniversityFields());
 
-  // 대륙 필터 상태 (초기값: 모든 대륙 선택)
-  const [selectedContinents, setSelectedContinents] = useState<string[]>(CONTINENTS);
+  // 나라 필터 상태 (초기값: 모든 나라 선택)
+  // 전체 나라 목록 추출
+  const allCountries = useMemo(() => {
+    const countrySet = new Set<string>();
+    universities.forEach((univ) => {
+      countrySet.add(univ.countryName);
+    });
+    return Array.from(countrySet).sort((a, b) => a.localeCompare(b, "ko"));
+  }, [universities]);
 
-  // 대륙으로 필터링된 나라 목록
-  const filteredCountries = useMemo(() => {
-    return countries.filter((country) => selectedContinents.includes(country.continent));
-  }, [countries, selectedContinents]);
+  const [selectedCountries, setSelectedCountries] = useState<string[]>(allCountries);
 
-  // 정렬된 나라 목록
-  const sortedCountries = useMemo(() => {
-    if (!sortConfig) return filteredCountries;
+  // selectedCountries 초기화 (allCountries 변경 시)
+  useMemo(() => {
+    setSelectedCountries(allCountries);
+  }, [allCountries]);
 
-    return [...filteredCountries].sort((a, b) => {
+  // 나라로 필터링된 대학 목록
+  const filteredUniversities = useMemo(() => {
+    return universities.filter((univ) => selectedCountries.includes(univ.countryName));
+  }, [universities, selectedCountries]);
+
+  // 정렬된 대학 목록
+  const sortedUniversities = useMemo(() => {
+    if (!sortConfig) return filteredUniversities;
+
+    return [...filteredUniversities].sort((a, b) => {
       const aField = a.fields.get(sortConfig.key);
       const bField = b.fields.get(sortConfig.key);
 
@@ -43,7 +56,7 @@ export function useCountryTable(countries: EnrichedCountry[]) {
       const comparison = aField.displayValue.localeCompare(bField.displayValue, "ko");
       return sortConfig.direction === "asc" ? comparison : -comparison;
     });
-  }, [filteredCountries, sortConfig]);
+  }, [filteredUniversities, sortConfig]);
 
   // 정렬 토글 핸들러
   const handleSort = (key: string) => {
@@ -61,12 +74,13 @@ export function useCountryTable(countries: EnrichedCountry[]) {
   };
 
   return {
-    sortedCountries,
+    sortedUniversities,
     sortConfig,
     handleSort,
     visibleFieldKeys,
     setVisibleFieldKeys,
-    selectedContinents,
-    setSelectedContinents,
+    selectedCountries,
+    setSelectedCountries,
+    allCountries,
   };
 }

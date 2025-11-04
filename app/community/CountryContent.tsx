@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import CountryTable from "@/components/community/CountryTable";
-import CountryFilterModal, { Continent } from "@/components/community/CountryFilterModal";
+import CountryFilterModal from "@/components/community/CountryFilterModal";
 import FilterIcon from "@/components/icons/FilterIcon";
 import { EnrichedCountry } from "@/types/community";
 import { useCountryTable } from "@/hooks/useCountryTable";
+import { Continent } from "@/types/community";
 
 interface CountryContentProps {
   countries: EnrichedCountry[];
@@ -39,7 +40,7 @@ export default function CountryContent({ countries }: CountryContentProps) {
         <h2 className="subhead-1">전체 ({sortedCountries.length})</h2>
         <button
           onClick={() => setIsFilterOpen(true)}
-          className="bg-primary-blue flex items-center gap-[4px] rounded-md px-[10px] py-[6px] text-white cursor-pointer"
+          className="bg-primary-blue flex cursor-pointer items-center gap-[4px] rounded-md px-[10px] py-[6px] text-white"
         >
           <span className="caption-2">필터</span>
           <FilterIcon size={20} />
