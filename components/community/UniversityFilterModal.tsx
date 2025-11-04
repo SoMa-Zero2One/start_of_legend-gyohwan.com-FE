@@ -239,20 +239,18 @@ export default function UniversityFilterModal({
                           onClick={() => handleContinentClick(continent)}
                           className="flex h-[52px] w-full cursor-pointer items-center justify-between rounded-lg border border-gray-300 px-[4px] hover:bg-gray-50"
                         >
-                          <div className="flex h-full items-center gap-[4px]">
-                            {/*
-                              NOTE: RoundCheckbox는 내부적으로 <label> 요소를 사용하여
-                              label의 클릭 이벤트가 부모 div로 버블링되지 않습니다.
-                              따라서 이벤트 위임 대신 onChange를 직접 전달해야 합니다.
-                            */}
+                          <div className="flex h-full items-center">
                             <div
-                              className="flex h-full cursor-pointer items-center pr-[16px] pl-[10px]"
+                              className="h-full"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                toggleContinentActive(continent);
                               }}
                             >
-                              <RoundCheckbox checked={isActive} onChange={() => toggleContinentActive(continent)} />
+                              <RoundCheckbox
+                                wrapperClassName="h-full pl-[10px] pr-[16px]"
+                                checked={isActive}
+                                onChange={() => toggleContinentActive(continent)}
+                              />
                             </div>
                             <span className="body-2">
                               {continent}{" "}

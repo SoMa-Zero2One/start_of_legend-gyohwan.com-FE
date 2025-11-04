@@ -4,6 +4,7 @@ interface RoundCheckboxProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   label?: string;
+  wrapperClassName?: string;
 }
 
 /**
@@ -26,9 +27,9 @@ interface RoundCheckboxProps {
  * @param onChange - 체크 상태 변경 시 호출되는 핸들러 (필수)
  * @param label - 체크박스 옆에 표시할 라벨 텍스트 (선택)
  */
-export default function RoundCheckbox({ checked, onChange, label }: RoundCheckboxProps) {
+export default function RoundCheckbox({ checked, onChange, label, wrapperClassName = "" }: RoundCheckboxProps) {
   return (
-    <label className={`flex cursor-pointer items-center ${label ? "gap-[12px]" : ""} select-none`}>
+    <label className={`flex cursor-pointer items-center ${wrapperClassName} ${label ? "gap-[12px]" : ""} select-none`}>
       <div className="relative">
         <input
           type="checkbox"
