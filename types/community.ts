@@ -77,6 +77,7 @@ export interface EnrichedUniversity {
   univId: number;
   name: string;
   countryName: string; // 원본 보존
+  continent: string; // 대륙 (필터 전용, fieldName으로 추출)
   isFavorite: boolean;
   fields: Map<string, UniversityFieldValue>; // key → value 매핑 (countryName도 "country" 키로 포함)
   rawData: UniversityApiResponse["data"]; // 원본 보존 (디버깅용)

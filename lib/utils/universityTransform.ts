@@ -13,6 +13,10 @@ export function enrichUniversityData(apiData: UniversityApiResponse[]): Enriched
   return apiData.map((university) => {
     const fields = new Map<string, UniversityFieldValue>();
 
+    // "대륙" 필드 찾기 (fieldName 기준)
+    const continentField = university.data.find((f) => f.fieldName === "대륙");
+    const continent = continentField?.value || "미분류";
+
     // countryName을 "country" 필드로 추가 (fieldId: 0, 프론트 전용)
     const countryMetadata = getUniversityFieldByKey("country");
     if (countryMetadata) {
@@ -31,36 +35,39 @@ export function enrichUniversityData(apiData: UniversityApiResponse[]): Enriched
       fields.set("country", countryField);
     }
 
-    // API data 필드들 변환
-    university.data.forEach((field) => {
-      const metadata = getUniversityFieldMetadata(field.fieldId);
+    // API data 필드들 변환 ("대륙" 필드는 제외)
+    university.data
+      .filter((f) => f.fieldName !== "대륙") // 대륙은 별도 속성으로
+      .forEach((field) => {
+        const metadata = getUniversityFieldMetadata(field.fieldId);
 
-      if (!metadata) {
-        // 메타데이터 없는 필드는 무시하거나 경고
-        console.warn(`Unknown field: ${field.fieldId} - ${field.fieldName}`);
-        return;
-      }
+        if (!metadata) {
+          // 메타데이터 없는 필드는 무시하거나 경고
+          console.warn(`Unknown field: ${field.fieldId} - ${field.fieldName}`);
+          return;
+        }
 
-      const enrichedField: UniversityFieldValue = {
-        fieldId: field.fieldId,
-        key: metadata.key,
-        label: metadata.label,
-        value: field.value,
-        displayValue: transformDisplayValue(field.value, metadata),
-        numericValue: extractNumericValue(field.value, metadata.type),
-        type: metadata.type,
-        sortable: metadata.sortable,
-        displayOrder: metadata.displayOrder,
-        renderConfig: metadata.renderConfig,
-      };
+        const enrichedField: UniversityFieldValue = {
+          fieldId: field.fieldId,
+          key: metadata.key,
+          label: metadata.label,
+          value: field.value,
+          displayValue: transformDisplayValue(field.value, metadata),
+          numericValue: extractNumericValue(field.value, metadata.type),
+          type: metadata.type,
+          sortable: metadata.sortable,
+          displayOrder: metadata.displayOrder,
+          renderConfig: metadata.renderConfig,
+        };
 
-      fields.set(metadata.key, enrichedField);
-    });
+        fields.set(metadata.key, enrichedField);
+      });
 
     return {
       univId: university.univId,
       name: university.name,
       countryName: university.countryName,
+      continent, // fieldName으로 찾은 대륙 값
       isFavorite: university.isFavorite,
       fields,
       rawData: university.data,

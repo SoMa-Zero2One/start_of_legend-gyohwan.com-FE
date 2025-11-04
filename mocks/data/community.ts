@@ -302,6 +302,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: "기숙사 제공 (월 15만원)", type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "나리타 공항 60분, 지하철역 도보 5분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "사계절 뚜렷, 여름 습함", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "아시아", type: "STRING" },
     ],
   },
   {
@@ -317,6 +318,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: "기숙사 제공 (월 14만원)", type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "오사카 공항 90분, 지하철역 도보 10분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "사계절 뚜렷, 겨울 춥지 않음", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "아시아", type: "STRING" },
     ],
   },
   {
@@ -332,6 +334,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: null, type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "나리타 공항 70분, 지하철역 도보 3분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "도쿄와 유사, 사계절 뚜렷", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "아시아", type: "STRING" },
     ],
   },
 
@@ -349,6 +352,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: "기숙사 제공 (월 40만원)", type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "보스턴 로건 공항 30분, 지하철역 도보 15분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "겨울 매우 춥고 눈 많음, 여름 온화", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "북아메리카", type: "STRING" },
     ],
   },
   {
@@ -364,6 +368,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: "기숙사 제공 (월 45만원)", type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "보스턴 로건 공항 25분, 지하철역 도보 5분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "겨울 매우 춥고 눈 많음", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "북아메리카", type: "STRING" },
     ],
   },
   {
@@ -379,6 +384,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: "기숙사 제공 (월 50만원)", type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "샌프란시스코 공항 60분, BART역 도보 10분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "연중 온화, 여름 건조", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "북아메리카", type: "STRING" },
     ],
   },
 
@@ -396,6 +402,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: "컬리지별 기숙사 제공 (월 35만원)", type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "히드로 공항 90분, 기차역 도보 20분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "연중 비 자주 옴, 겨울 춥지 않음", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "유럽", type: "STRING" },
     ],
   },
   {
@@ -411,6 +418,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: "컬리지별 기숙사 제공 (월 32만원)", type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "히드로 공항 120분, 기차역 도보 15분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "비 자주 옴, 여름 온화", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "유럽", type: "STRING" },
     ],
   },
 
@@ -428,6 +436,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: "기숙사 제공 (월 30만원)", type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "토론토 피어슨 공항 40분, 지하철역 도보 5분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "겨울 매우 춥고 눈 많음, 여름 온화", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "북아메리카", type: "STRING" },
     ],
   },
   {
@@ -443,6 +452,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: "기숙사 제공 (월 28만원)", type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "밴쿠버 공항 40분, 버스 정류장 도보 3분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "겨울 비 많음, 여름 온화하고 쾌적", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "북아메리카", type: "STRING" },
     ],
   },
 
@@ -460,6 +470,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: "기숙사 제공 (월 35만원)", type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "멜버른 공항 30분, 트램역 도보 5분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "사계절이 하루에, 변덕스러움", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "오세아니아", type: "STRING" },
     ],
   },
   {
@@ -475,6 +486,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: null, type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "시드니 공항 25분, 버스 정류장 도보 2분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "연중 온화, 여름 매우 더움", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "오세아니아", type: "STRING" },
     ],
   },
 
@@ -492,6 +504,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: "학생기숙사 신청 가능 (월 20만원)", type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "뮌헨 공항 45분, U-Bahn역 도보 10분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "겨울 춥고 눈 옴, 여름 온화", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "유럽", type: "STRING" },
     ],
   },
   {
@@ -507,6 +520,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: "학생기숙사 신청 가능 (월 18만원)", type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "프랑크푸르트 공항 90분, 기차역 도보 20분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "겨울 춥지 않음, 사계절 뚜렷", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "유럽", type: "STRING" },
     ],
   },
 
@@ -524,6 +538,7 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 10, fieldName: "기숙사", value: "기숙사 제공 (월 25만원)", type: "STRING" },
       { fieldId: 11, fieldName: "주변 접근성", value: "창이 공항 30분, MRT역 도보 5분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "연중 더움, 비 자주 옴", type: "STRING" },
+      { fieldId: 13, fieldName: "대륙", value: "아시아", type: "STRING" },
     ],
   },
 ];
