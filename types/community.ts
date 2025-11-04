@@ -84,3 +84,55 @@ export interface TableColumn<T> {
   label: string;
   render?: (value: any, item: T) => React.ReactNode;
 }
+
+// ==================== Option 3: 하이브리드 방식 타입 ====================
+
+// 필드 메타데이터 인터페이스
+export interface FieldMetadata {
+  fieldId: number; // 백엔드 API 필드 식별자 (고정값)
+  key: string; // 프론트엔드 내부 키 (정렬/필터에 사용)
+  label: string; // 화면 표시명
+  type: "level" | "string" | "number"; // 백엔드 타입과 매칭
+  sortable: boolean;
+  defaultVisible: boolean;
+  displayOrder: number; // 화면 표시 순서 (낮을수록 앞에 표시)
+  renderConfig?: {
+    minWidth?: string;
+    badge?: boolean; // STRING 타입을 배지로 렌더링할지 여부
+    levelMax?: number; // LEVEL 타입의 최대값
+  };
+}
+
+// 백엔드 API 응답 타입
+export interface CountryApiResponse {
+  countryCode: string;
+  name: string;
+  data: Array<{
+    fieldId: number;
+    fieldName: string;
+    value: string;
+    type: "LEVEL" | "STRING" | "NUMBER";
+  }>;
+}
+
+// 프론트엔드 통합 형식
+export interface EnrichedCountry {
+  countryCode: string;
+  name: string;
+  continent: string; // 필터 전용 (테이블에 표시 안 함)
+  fields: Map<string, CountryFieldValue>; // key → value 매핑
+  rawData: CountryApiResponse["data"]; // 원본 보존 (디버깅용)
+}
+
+export interface CountryFieldValue {
+  fieldId: number;
+  key: string; // "visaDifficulty"
+  label: string; // "비자 발급 난이도"
+  value: string; // "1~5"
+  displayValue: string; // "상" (변환된 값)
+  numericValue?: number; // 정렬용 숫자값
+  type: FieldMetadata["type"];
+  sortable: boolean; // 정렬 가능 여부
+  displayOrder: number; // 화면 표시 순서
+  renderConfig?: FieldMetadata["renderConfig"]; // 렌더링 설정
+}
