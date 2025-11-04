@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { EnrichedCountry } from "@/types/community";
 import { getDefaultVisibleFields } from "@/lib/metadata/countryFields";
+import { CONTINENTS } from "@/components/community/CountryFilterModal";
 
 interface SortConfig {
   key: string;
@@ -14,14 +15,11 @@ export function useCountryTable(countries: EnrichedCountry[]) {
   // 표시할 필드 키 목록 (초기값: 메타데이터의 defaultVisible)
   const [visibleFieldKeys, setVisibleFieldKeys] = useState<string[]>(getDefaultVisibleFields());
 
-  // 대륙 필터 상태
-  const [selectedContinents, setSelectedContinents] = useState<string[]>([]);
+  // 대륙 필터 상태 (초기값: 모든 대륙 선택)
+  const [selectedContinents, setSelectedContinents] = useState<string[]>([...CONTINENTS]);
 
   // 대륙으로 필터링된 나라 목록
   const filteredCountries = useMemo(() => {
-    if (selectedContinents.length === 0) {
-      return countries;
-    }
     return countries.filter((country) => selectedContinents.includes(country.continent));
   }, [countries, selectedContinents]);
 

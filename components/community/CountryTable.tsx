@@ -20,6 +20,9 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
     .filter(Boolean)
     .sort((a, b) => a!.displayOrder - b!.displayOrder) as CountryFieldValue[];
 
+  // 3개 이하면 flex-1, 4개 이상이면 w-[90px]
+  const fieldWidthClass = visibleFields.length <= 3 ? "flex-1" : "w-[90px]";
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
@@ -29,7 +32,7 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
             {visibleFields.map((field) => (
               <th
                 key={field.key}
-                className={`flex w-[90px] items-center justify-between px-[10px] py-[8px] text-left break-keep text-gray-700 ${
+                className={`flex ${fieldWidthClass} items-center justify-between px-[10px] py-[8px] text-left break-keep text-gray-700 ${
                   field.sortable ? "cursor-pointer hover:bg-gray-50" : ""
                 }`}
                 onClick={field.sortable ? () => onSort?.(field.key) : undefined}
@@ -62,7 +65,7 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
               {visibleFields.map((field) => {
                 const countryField = country.fields.get(field.key);
                 return (
-                  <td key={field.key} className="flex w-[90px] items-center px-[10px] py-[20px] text-left break-keep">
+                  <td key={field.key} className={`flex ${fieldWidthClass} items-center px-[10px] py-[20px] text-left break-keep`}>
                     {countryField && <FieldRenderer field={countryField} />}
                   </td>
                 );
