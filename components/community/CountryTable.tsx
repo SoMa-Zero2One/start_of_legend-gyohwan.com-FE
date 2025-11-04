@@ -78,7 +78,7 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
                 return (
                   <td
                     key={field.key}
-                    className={`flex ${fieldWidthClass} items-center px-[10px] py-[20px] text-left break-keep`}
+                    className={`flex ${fieldWidthClass} ${countryField?.value ? "pl-[10px]" : "pr-[10px]"} items-center text-left break-keep`}
                   >
                     {countryField && <FieldRenderer field={countryField} />}
                   </td>
@@ -94,6 +94,10 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
 
 // 필드 타입별 렌더링
 function FieldRenderer({ field }: { field: CountryFieldValue }) {
+  // Empty state 처리 (null 또는 빈 값)
+  if (!field?.value) {
+    return <div className="h-full w-full bg-gray-500" />;
+  }
   // 배지 스타일로 렌더링 (사용 언어)
   if (field.renderConfig?.badge) {
     return <span className="caption-1 truncate rounded-full bg-gray-300 px-[8px]">{field.displayValue}</span>;
