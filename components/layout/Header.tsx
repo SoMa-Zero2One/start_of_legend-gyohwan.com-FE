@@ -86,7 +86,7 @@ function SearchHeader({
 
   return (
     <header
-      className={`flex h-[50px] items-center gap-3 px-[20px] ${showBorder ? "border-b-[1px] border-b-gray-500" : ""}`}
+      className={`flex h-[50px] items-center gap-3 px-[20px] ${showBorder ? "border-b-[1px] border-b-gray-300" : ""}`}
     >
       {showPrevButton && (
         <button
@@ -143,7 +143,7 @@ function NormalHeader({
   return (
     <header
       className={`flex h-[50px] items-center justify-between px-[20px] ${
-        showBorder ? "border-b-[1px] border-b-gray-500" : ""
+        showBorder ? "border-b-[1px] border-b-gray-300" : ""
       }`}
     >
       {title ? (
