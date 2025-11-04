@@ -1,91 +1,10 @@
+// ==================== 공통 타입 ====================
+
 // 대륙 타입
 export type Continent = "아시아" | "유럽" | "북아메리카" | "남아메리카" | "아프리카" | "오세아니아";
 
-// 난이도 타입
-export type Difficulty = "하" | "중" | "상";
-
-// 비용 타입
-export type CostLevel = "낮음" | "중간" | "높음";
-
-// 있음/없음 타입
-export type Availability = "있음" | "없음";
-
-// 좋음/보통/나쁨 타입
-export type Quality = "좋음" | "보통" | "나쁨";
-
-// 도시/시골 타입
-export type CityType = "도시" | "시골";
-
-// 국공립 여부
-export type SchoolType = "국립" | "공립" | "사립";
-
-// 커뮤니티 - 나라
-export interface CommunityCountry {
-  name: string;
-  continent: Continent;
-  visaDifficulty: Difficulty;
-  cost: CostLevel;
-  language: string;
-}
-
-// 커뮤니티 - 대학
-export interface CommunityUniversity {
-  id: number;
-  name: string;
-  englishName: string;
-  country: string;
-  continent: Continent;
-  logoUrl?: string | null;
-  // 값 필터 속성들 (컬럼으로 표시)
-  budget: string; // "1,000만원 이상", "500만원 이상" 등
-  travel: Quality;
-  cost: CostLevel;
-  program: Availability;
-  cityType: CityType;
-  safety: Quality;
-  transportation: Quality;
-  dorm: Availability;
-  dormCost: string; // "300만원", "200만원" 등
-  qsRanking: string; // "100위 이내", "500위 이내" 등
-  schoolType: SchoolType;
-}
-
-// 나라 탭 필터 옵션
-export interface CountryFilterOptions {
-  // 분류 필터 (표시 여부 결정)
-  continent?: Continent | null;
-  // 값 필터 (컬럼 표시 여부)
-  showVisaDifficulty: boolean;
-  showCost: boolean;
-  showLanguage: boolean;
-}
-
-// 대학 탭 필터 옵션
-export interface UniversityFilterOptions {
-  // 분류 필터 (표시 여부 결정)
-  continent?: Continent | null;
-  // 값 필터 (컬럼 표시 여부)
-  showBudget: boolean;
-  showTravel: boolean;
-  showCost: boolean;
-  showProgram: boolean;
-  showCityType: boolean;
-  showSafety: boolean;
-  showTransportation: boolean;
-  showDorm: boolean;
-  showDormCost: boolean;
-  showQsRanking: boolean;
-  showSchoolType: boolean;
-}
-
-// 테이블 컬럼 정의
-export interface TableColumn<T> {
-  key: keyof T;
-  label: string;
-  render?: (value: any, item: T) => React.ReactNode;
-}
-
-// ==================== Option 3: 하이브리드 방식 타입 ====================
+export const CONTINENTS: Continent[] = ["아시아", "유럽", "북아메리카", "남아메리카", "아프리카", "오세아니아"];
+// ==================== 하이브리드 방식 타입 ====================
 
 // 필드 메타데이터 인터페이스
 export interface FieldMetadata {
@@ -135,4 +54,47 @@ export interface CountryFieldValue {
   sortable: boolean; // 정렬 가능 여부
   displayOrder: number; // 화면 표시 순서
   renderConfig?: FieldMetadata["renderConfig"]; // 렌더링 설정
+}
+
+// ==================== 대학 탭 타입 ====================
+
+// 백엔드 API 응답 타입 (대학)
+export interface UniversityApiResponse {
+  univId: number;
+  name: string;
+  countryName: string; // 나라 이름 (별도 필드)
+  isFavorite: boolean; // 즐겨찾기 여부
+  logoUrl: string; // 대학 로고 URL
+  data: Array<{
+    fieldId: number;
+    fieldName: string;
+    value: string | null; // NULL 가능
+    type: "LEVEL" | "STRING" | "NUMBER";
+  }>;
+}
+
+// 프론트엔드 통합 형식 (대학)
+export interface EnrichedUniversity {
+  univId: number;
+  name: string;
+  countryName: string; // 원본 보존
+  continent: string; // 대륙 (필터 전용, fieldName으로 추출)
+  isFavorite: boolean;
+  logoUrl: string; // 대학 로고 URL
+  fields: Map<string, UniversityFieldValue>; // key → value 매핑 (countryName도 "country" 키로 포함)
+  rawData: UniversityApiResponse["data"]; // 원본 보존 (디버깅용)
+}
+
+// 대학 필드 값
+export interface UniversityFieldValue {
+  fieldId: number; // 0이면 countryName (프론트 전용)
+  key: string; // "country", "priceIndex", "qsRanking", etc.
+  label: string; // "나라", "물가지수", "QS 랭킹", etc.
+  value: string | null; // "미국", "23", null 등
+  displayValue: string; // 변환된 값 (null이면 빈 문자열)
+  numericValue?: number; // 정렬용 숫자값
+  type: FieldMetadata["type"];
+  sortable: boolean;
+  displayOrder: number;
+  renderConfig?: FieldMetadata["renderConfig"];
 }

@@ -3,12 +3,7 @@
 import { useState, useEffect } from "react";
 import RoundCheckbox from "@/components/common/RoundCheckbox";
 import { COUNTRY_FIELDS } from "@/lib/metadata/countryFields";
-
-// 대륙 타입 (6개 대륙)
-export type Continent = "아시아" | "유럽" | "북아메리카" | "남아메리카" | "아프리카" | "오세아니아";
-
-// 대륙 목록
-export const CONTINENTS: Continent[] = ["아시아", "유럽", "북아메리카", "남아메리카", "아프리카", "오세아니아"];
+import { Continent, CONTINENTS } from "@/types/community";
 
 interface CountryFilterModalProps {
   isOpen: boolean;
