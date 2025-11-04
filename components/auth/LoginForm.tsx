@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { loginWithEmail } from "@/lib/api/auth";
-import { getRedirectUrl, clearRedirectUrl, saveRedirectUrl } from "@/lib/utils/redirect";
+import { getRedirectUrl, clearRedirectUrl } from "@/lib/utils/redirect";
 import { useAuthStore } from "@/stores/authStore";
 import PasswordInput from "./PasswordInput";
 
@@ -120,7 +120,11 @@ export default function LoginForm() {
       {error && <p className="text-error-red">{error}</p>}
 
       {/* 비밀번호 찾기 */}
-      <button type="button" className="body-2 mb-[10px] text-left">
+      <button
+        type="button"
+        onClick={() => router.push(`/find-password?email=${encodeURIComponent(email)}`)}
+        className="body-2 mb-[10px] cursor-pointer text-left hover:underline"
+      >
         비밀번호를 잊으셨나요?
       </button>
 

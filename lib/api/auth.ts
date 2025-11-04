@@ -170,3 +170,49 @@ export const logout = async (): Promise<void> => {
     throw new Error(`로그아웃 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
   }
 };
+
+/**
+ * 비밀번호 재설정 요청 (이메일로 인증번호 발송)
+ * @param email - 이메일 주소
+ * @throws {Error} 요청 실패 시
+ */
+export const requestPasswordReset = async (email: string): Promise<void> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(`${backendUrl}/v1/auth/password-reset/request`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`비밀번호 재설정 요청 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+  }
+};
+
+/**
+ * 비밀번호 재설정 확인 (인증번호 + 새 비밀번호)
+ * @param email - 이메일 주소
+ * @param code - 인증번호 (6자리)
+ * @param newPassword - 새 비밀번호
+ * @throws {Error} 재설정 실패 시
+ */
+export const confirmPasswordReset = async (email: string, code: string, newPassword: string): Promise<void> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(`${backendUrl}/v1/auth/password-reset/confirm`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, code, newPassword }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`비밀번호 재설정 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+  }
+};
