@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { EnrichedUniversity } from "@/types/community";
+import { EnrichedUniversity, Continent, CONTINENTS } from "@/types/community";
 import { getDefaultVisibleUniversityFields } from "@/lib/metadata/universityFields";
 
 interface SortConfig {
@@ -14,6 +14,9 @@ export function useUniversityTable(universities: EnrichedUniversity[]) {
   // 표시할 필드 키 목록 (초기값: 메타데이터의 defaultVisible)
   const [visibleFieldKeys, setVisibleFieldKeys] = useState(() => getDefaultVisibleUniversityFields());
 
+  // 대륙 활성화 상태 (초기값: 모든 대륙 활성화)
+  const [activeContinents, setActiveContinents] = useState<Continent[]>(CONTINENTS);
+
   // 나라 필터 상태 (초기값: 모든 나라 선택)
   // 전체 나라 목록 추출
   const allCountries = useMemo(() => {
@@ -26,10 +29,13 @@ export function useUniversityTable(universities: EnrichedUniversity[]) {
 
   const [selectedCountries, setSelectedCountries] = useState<string[]>(allCountries);
 
-  // 나라로 필터링된 대학 목록
+  // 대륙 활성화 + 나라로 필터링된 대학 목록
   const filteredUniversities = useMemo(() => {
-    return universities.filter((univ) => selectedCountries.includes(univ.countryName));
-  }, [universities, selectedCountries]);
+    return universities.filter(
+      (univ) =>
+        activeContinents.includes(univ.continent as Continent) && selectedCountries.includes(univ.countryName)
+    );
+  }, [universities, activeContinents, selectedCountries]);
 
   // 정렬된 대학 목록
   const sortedUniversities = useMemo(() => {
@@ -77,5 +83,7 @@ export function useUniversityTable(universities: EnrichedUniversity[]) {
     selectedCountries,
     setSelectedCountries,
     allCountries,
+    activeContinents,
+    setActiveContinents,
   };
 }
