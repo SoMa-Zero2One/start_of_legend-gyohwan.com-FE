@@ -13,4 +13,36 @@ export const communityHandlers = [
   http.get(`${BACKEND_URL}/v1/windows/universities`, () => {
     return HttpResponse.json(mockUniversitiesApi);
   }),
+
+  // POST /v1/windows/universities/:univId/favorite - 즐겨찾기 추가
+  http.post(`${BACKEND_URL}/v1/windows/universities/:univId/favorite`, async ({ params }) => {
+    const { univId } = params;
+    const university = mockUniversitiesApi.find((univ) => univ.univId === Number(univId));
+
+    if (!university) {
+      return HttpResponse.json({ message: "대학을 찾을 수 없습니다" }, { status: 404 });
+    }
+
+    // Mock: isFavorite를 true로 변경
+    university.isFavorite = true;
+    console.log(`[MSW] 즐겨찾기 추가: ${university.name} (univId: ${univId})`);
+
+    return HttpResponse.json({ message: "즐겨찾기에 추가되었습니다" }, { status: 200 });
+  }),
+
+  // DELETE /v1/windows/universities/:univId/favorite - 즐겨찾기 삭제
+  http.delete(`${BACKEND_URL}/v1/windows/universities/:univId/favorite`, async ({ params }) => {
+    const { univId } = params;
+    const university = mockUniversitiesApi.find((univ) => univ.univId === Number(univId));
+
+    if (!university) {
+      return HttpResponse.json({ message: "대학을 찾을 수 없습니다" }, { status: 404 });
+    }
+
+    // Mock: isFavorite를 false로 변경
+    university.isFavorite = false;
+    console.log(`[MSW] 즐겨찾기 삭제: ${university.name} (univId: ${univId})`);
+
+    return HttpResponse.json({ message: "즐겨찾기에서 삭제되었습니다" }, { status: 200 });
+  }),
 ];
