@@ -64,7 +64,7 @@ export default function UniversityTable({
       <table className="w-full border-collapse">
         <thead className="caption-1">
           <tr className="flex border-t border-gray-300 text-gray-700">
-            <th className="sticky left-0 z-10 flex w-[120px] items-center bg-white px-[16px] py-[12px]">대학명</th>
+            <th className="sticky left-0 z-10 flex w-[150px] items-center bg-white px-[16px] py-[12px]">대학명</th>
             {visibleFields.map((field) => (
               <th
                 key={field.key}
@@ -145,7 +145,7 @@ export default function UniversityTable({
 function FieldRenderer({ field }: { field: UniversityFieldValue }) {
   // Empty state 처리 (null 또는 빈 값)
   if (!field?.value) {
-    return <div className="h-full w-full bg-gray-500" />;
+    return <div className="h-full w-full bg-gray-100" />;
   }
 
   // 배지 스타일로 렌더링 (필요한 경우)

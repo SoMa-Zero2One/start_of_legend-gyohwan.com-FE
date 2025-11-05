@@ -109,7 +109,7 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
 function FieldRenderer({ field }: { field: CountryFieldValue }) {
   // Empty state 처리 (null 또는 빈 값)
   if (!field?.value) {
-    return <div className="h-full w-full bg-gray-500" />;
+    return <div className="h-full w-full bg-gray-100" />;
   }
   // 배지 스타일로 렌더링 (사용 언어)
   if (field.renderConfig?.badge) {
@@ -117,5 +117,5 @@ function FieldRenderer({ field }: { field: CountryFieldValue }) {
   }
 
   // 일반 텍스트 렌더링 (레벨은 이미 "상/중상/중/중하/하"로 변환됨, 숫자는 포맷팅됨)
-  return <span>{field.displayValue}</span>;
+  return <span className="caption-1">{field.displayValue}</span>;
 }

@@ -44,7 +44,7 @@ export default function FavoriteFilterToggle({ checked, onChange }: FavoriteFilt
   if (opacity === 0) return null;
 
   return (
-    <div className="fixed bottom-0 left-1/2 z-100 flex w-full max-w-[430px] -translate-x-1/2 items-center justify-center bg-transparent px-[20px] pb-[20px]">
+    <div className="fixed bottom-0 left-1/2 z-[100] flex w-full max-w-[430px] -translate-x-1/2 items-center justify-center bg-transparent px-[20px] pb-[20px]">
       <div
         className="z-10 flex items-center gap-[12px] rounded-full bg-white px-[16px] py-[12px] shadow-[0_8px_25px_rgba(0,0,0,0.3)]"
         style={{ opacity }}

@@ -9,13 +9,13 @@ export const communityHandlers = [
     return HttpResponse.json(mockCountriesApi);
   }),
 
-  // GET /v1/windows/universities - 대학 목록 조회
-  http.get(`${BACKEND_URL}/v1/windows/universities`, () => {
+  // GET /v1/windows/outgoing-universities - 대학 목록 조회
+  http.get(`${BACKEND_URL}/v1/windows/outgoing-universities`, () => {
     return HttpResponse.json(mockUniversitiesApi);
   }),
 
-  // POST /v1/windows/universities/:univId/favorite - 즐겨찾기 추가
-  http.post(`${BACKEND_URL}/v1/windows/universities/:univId/favorite`, async ({ params }) => {
+  // POST /v1/windows/outgoing-universities/:univId/favorite - 즐겨찾기 추가
+  http.post(`${BACKEND_URL}/v1/windows/outgoing-universities/:univId/favorite`, async ({ params }) => {
     const { univId } = params;
     const university = mockUniversitiesApi.find((univ) => univ.univId === Number(univId));
 
@@ -30,8 +30,8 @@ export const communityHandlers = [
     return HttpResponse.json({ message: "즐겨찾기에 추가되었습니다" }, { status: 200 });
   }),
 
-  // DELETE /v1/windows/universities/:univId/favorite - 즐겨찾기 삭제
-  http.delete(`${BACKEND_URL}/v1/windows/universities/:univId/favorite`, async ({ params }) => {
+  // DELETE /v1/windows/outgoing-universities/:univId/favorite - 즐겨찾기 삭제
+  http.delete(`${BACKEND_URL}/v1/windows/outgoing-universities/:univId/favorite`, async ({ params }) => {
     const { univId } = params;
     const university = mockUniversitiesApi.find((univ) => univ.univId === Number(univId));
 

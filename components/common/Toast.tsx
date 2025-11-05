@@ -9,10 +9,10 @@ export default function Toast({ message, isExiting = false, onClose }: ToastProp
 
   return (
     <div
-      className={`fixed top-[180px] left-1/2 z-50 -translate-x-1/2 ${isExiting ? "animate-fade-out" : "animate-fade-in"}`}
+      className={`fixed top-[180px] left-1/2 z-50 -translate-x-1/2 cursor-pointer ${isExiting ? "animate-fade-out" : "animate-fade-in"}`}
       onClick={onClose}
     >
-      <div className="caption-2 cursor-pointer rounded-md bg-black px-4 py-2 text-white">{message}</div>
+      <div className="caption-2 rounded-md bg-black px-4 py-2 text-white">{message}</div>
     </div>
   );
 }
