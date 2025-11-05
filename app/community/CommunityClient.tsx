@@ -35,22 +35,44 @@ export default function CommunityClient({ initialCountries, initialUniversities 
   const { isLoggedIn } = useAuthStore();
   const hasFetchedRef = useRef(false);
 
-  // 로그인 상태면 즐겨찾기 정보 포함된 데이터로 hydrate (정확히 1번만 실행)
+  // 로그인 상태 변경 시 즐겨찾기 데이터 동기화 (race condition 방지)
   useEffect(() => {
+    // cleanup 시점에 이 effect가 여전히 유효한지 추적하는 플래그
+    // (로그아웃하거나 컴포넌트가 unmount되면 false로 변경됨)
+    let isMounted = true;
+
     if (isLoggedIn && !hasFetchedRef.current) {
+      // === 로그인 상태: 즐겨찾기 정보 fetch ===
       hasFetchedRef.current = true;
 
       fetchUniversities()
         .then((data) => {
-          setUniversities(enrichUniversityData(data)); // isFavorite 업데이트
+          // ✅ fetch 완료 시점에 여전히 이 effect가 유효한지 확인
+          // (로그아웃했거나 unmount된 경우 업데이트 방지)
+          if (isMounted) {
+            setUniversities(enrichUniversityData(data)); // isFavorite 업데이트
+          }
         })
         .catch((err) => {
           console.error("[CommunityClient] 즐겨찾기 정보 로드 실패:", err);
           // 실패 시 재시도 가능하도록 플래그 리셋
-          hasFetchedRef.current = false;
+          if (isMounted) {
+            hasFetchedRef.current = false;
+          }
         });
+    } else if (!isLoggedIn && hasFetchedRef.current) {
+      // === 로그아웃 상태: 공개 데이터로 복원 ===
+      // 다음 로그인 시 다시 fetch할 수 있도록 플래그 리셋
+      hasFetchedRef.current = false;
+      // 즐겨찾기 정보 제거 (isFavorite=false인 초기 데이터로 복원)
+      setUniversities(enrichUniversityData(initialUniversities));
     }
-  }, [isLoggedIn]);
+
+    // cleanup: isLoggedIn이 변경되거나 컴포넌트가 unmount될 때 실행
+    return () => {
+      isMounted = false; // 진행 중인 fetch의 setState 방지
+    };
+  }, [isLoggedIn, initialUniversities]);
 
   return (
     <>
