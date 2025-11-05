@@ -33,7 +33,7 @@ export const fetchUniversitiesPublic = async (): Promise<UniversityApiResponse[]
 
   const response = await fetch(`${backendUrl}/v1/windows/outgoing-universities`, {
     method: "GET",
-    // credentials 제거 - 서버 사이드에서 쿠키 없이 호출
+    credentials: "omit",
   });
 
   if (!response.ok) {
