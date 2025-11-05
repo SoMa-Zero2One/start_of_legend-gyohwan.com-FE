@@ -21,8 +21,34 @@ export const fetchCountries = async (): Promise<CountryApiResponse[]> => {
 };
 
 /**
- * 대학 목록 조회 (GET /v1/windows/outgoing-universities)
- * @returns 대학 목록 (동적 필드 포함, isFavorite 포함)
+ * 대학 목록 조회 - 공개용 (인증 불필요)
+ * SEO 최적화를 위해 서버 사이드에서 사용
+ * 쿠키 없이 호출하므로 isFavorite은 모두 false로 반환됨
+ *
+ * @returns 대학 목록 (동적 필드 포함, isFavorite은 모두 false)
+ * @throws {Error} API 호출 실패 시
+ */
+export const fetchUniversitiesPublic = async (): Promise<UniversityApiResponse[]> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(`${backendUrl}/v1/windows/outgoing-universities`, {
+    method: "GET",
+    // credentials 제거 - 서버 사이드에서 쿠키 없이 호출
+  });
+
+  if (!response.ok) {
+    throw new Error(`대학 목록 조회 실패 (HTTP ${response.status})`);
+  }
+
+  return await response.json();
+};
+
+/**
+ * 대학 목록 조회 - 인증용 (쿠키 필요)
+ * 클라이언트 사이드에서 사용, 로그인 유저의 즐겨찾기 정보 포함
+ * 브라우저 쿠키를 전송하여 사용자별 isFavorite 값을 가져옴
+ *
+ * @returns 대학 목록 (동적 필드 포함, isFavorite 실제 값)
  * @throws {Error} API 호출 실패 시
  */
 export const fetchUniversities = async (): Promise<UniversityApiResponse[]> => {
