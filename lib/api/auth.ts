@@ -1,5 +1,6 @@
 import type { AuthSuccessResponse, EmailCheckResponse } from "@/types/auth";
 import { getBackendUrl } from "@/lib/utils/api";
+import { parseApiError } from "@/lib/utils/apiError";
 
 /**
  * 이메일 존재 여부 확인 (회원가입 vs 로그인 분기용)
@@ -18,7 +19,8 @@ export const checkEmailExists = async (email: string): Promise<boolean> => {
   });
 
   if (!response.ok) {
-    throw new Error(`이메일 확인 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   const data: EmailCheckResponse = await response.json();
@@ -44,7 +46,8 @@ export const loginWithGoogle = async (code: string): Promise<AuthSuccessResponse
   });
 
   if (!response.ok) {
-    throw new Error(`Google 로그인 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -69,8 +72,8 @@ export const loginWithKakao = async (code: string): Promise<AuthSuccessResponse>
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Kakao 로그인 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -94,8 +97,8 @@ export const signupWithEmail = async (email: string, password: string): Promise<
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`회원가입 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };
 
@@ -118,8 +121,8 @@ export const confirmEmailSignup = async (email: string, code: string): Promise<v
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`이메일 인증 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };
 
@@ -143,8 +146,8 @@ export const loginWithEmail = async (email: string, password: string): Promise<A
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`이메일 로그인 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -166,8 +169,8 @@ export const logout = async (): Promise<void> => {
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`로그아웃 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };
 
@@ -188,8 +191,8 @@ export const requestPasswordReset = async (email: string): Promise<void> => {
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`비밀번호 재설정 요청 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };
 
@@ -212,7 +215,7 @@ export const confirmPasswordReset = async (email: string, code: string, newPassw
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`비밀번호 재설정 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };
