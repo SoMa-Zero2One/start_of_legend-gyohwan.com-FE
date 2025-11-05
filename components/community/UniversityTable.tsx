@@ -5,15 +5,39 @@ import SortIcon from "@/components/icons/SortIcon";
 import ChevronUpIcon from "@/components/icons/ChevronUpIcon";
 import ChevronDownIcon from "@/components/icons/ChevronDownIcon";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
+import StarIcon from "@/components/icons/StarIcon";
+import { useRouter } from "next/navigation";
 
 interface UniversityTableProps {
   universities: EnrichedUniversity[];
   visibleFieldKeys: string[];
+  isLoggedIn: boolean;
   onSort?: (fieldKey: string) => void;
   sortConfig?: { key: string; direction: "asc" | "desc" } | null;
+  onFavoriteToggle?: (univId: number, currentState: boolean) => Promise<void>;
 }
 
-export default function UniversityTable({ universities, visibleFieldKeys, onSort, sortConfig }: UniversityTableProps) {
+export default function UniversityTable({
+  universities,
+  visibleFieldKeys,
+  isLoggedIn,
+  onSort,
+  sortConfig,
+  onFavoriteToggle,
+}: UniversityTableProps) {
+  const router = useRouter();
+
+  const handleUniversityClick = (univId: number) => {
+    router.push(`/community/university/${univId}`);
+  };
+
+  const handleFavoriteClick = async (e: React.MouseEvent, univId: number, isFavorite: boolean) => {
+    e.stopPropagation(); // 행 클릭 이벤트 방지
+    if (onFavoriteToggle) {
+      await onFavoriteToggle(univId, isFavorite);
+    }
+  };
+
   // Empty state 처리
   if (!universities || universities.length === 0) {
     return (
@@ -70,8 +94,21 @@ export default function UniversityTable({ universities, visibleFieldKeys, onSort
         </thead>
         <tbody>
           {universities.map((university) => (
-            <tr key={university.univId} className="flex border-t border-gray-100">
-              <td className="sticky left-0 z-10 flex w-[120px] items-center gap-[8px] bg-white px-[16px] py-[20px]">
+            <tr
+              key={university.univId}
+              className="group interactive-row flex border-t border-gray-100"
+              onClick={() => handleUniversityClick(university.univId)}
+            >
+              <td className="interactive-row-child sticky left-0 z-10 flex h-[120px] w-[120px] items-center gap-[8px] bg-white px-[16px]">
+                {/* 즐겨찾기 버튼 (로그인 유저만 표시) */}
+                {isLoggedIn && (
+                  <div
+                    onClick={(e) => handleFavoriteClick(e, university.univId, university.isFavorite)}
+                    className="relative z-20 flex cursor-pointer items-center justify-center p-[4px]"
+                  >
+                    <StarIcon size={16} filled={university.isFavorite} />
+                  </div>
+                )}
                 <SchoolLogoWithFallback
                   src={university.logoUrl}
                   alt={`${university.name} 로고`}
@@ -88,7 +125,7 @@ export default function UniversityTable({ universities, visibleFieldKeys, onSort
                 return (
                   <td
                     key={field.key}
-                    className={`flex ${fieldWidthClass} ${univField?.value ? "pl-[10px]" : "pr-[10px]"} items-center text-left break-keep`}
+                    className={`flex ${fieldWidthClass} ${univField?.value ? "pl-[10px]" : ""} items-center text-left break-keep`}
                   >
                     {univField && <FieldRenderer field={univField} />}
                   </td>

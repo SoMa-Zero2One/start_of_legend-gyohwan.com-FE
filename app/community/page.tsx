@@ -18,10 +18,12 @@ export default async function CommunityPage() {
 
   return (
     <>
-      <Header title="커뮤니티" showPrevButton showHomeButton />
-      <Suspense fallback={<div className="p-[20px]">Loading...</div>}>
-        <CommunityTabs countries={countries} universities={universities} />
-      </Suspense>
+      <div className="flex min-h-screen flex-col">
+        <Header title="커뮤니티" showPrevButton showHomeButton />
+        <Suspense fallback={<div className="p-[20px]">Loading...</div>}>
+          <CommunityTabs countries={countries} universities={universities} />
+        </Suspense>
+      </div>
       <Footer />
     </>
   );

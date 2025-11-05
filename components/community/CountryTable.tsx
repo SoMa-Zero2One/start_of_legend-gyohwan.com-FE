@@ -5,6 +5,7 @@ import SortIcon from "@/components/icons/SortIcon";
 import ChevronUpIcon from "@/components/icons/ChevronUpIcon";
 import ChevronDownIcon from "@/components/icons/ChevronDownIcon";
 import CountryFlag from "@/components/common/CountryFlag";
+import { useRouter } from "next/navigation";
 
 interface CountryTableProps {
   countries: EnrichedCountry[];
@@ -14,6 +15,12 @@ interface CountryTableProps {
 }
 
 export default function CountryTable({ countries, visibleFieldKeys, onSort, sortConfig }: CountryTableProps) {
+  const router = useRouter();
+
+  const handleCountryClick = (countryCode: string) => {
+    router.push(`/community/country/${countryCode}`);
+  };
+
   // Empty state 처리
   if (!countries || countries.length === 0) {
     return (
@@ -70,8 +77,12 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
         </thead>
         <tbody>
           {countries.map((country) => (
-            <tr key={country.countryCode} className="flex border-t border-gray-100">
-              <td className="sticky left-0 z-10 flex w-[150px] items-center gap-[8px] bg-white px-[16px] py-[20px]">
+            <tr
+              key={country.countryCode}
+              className="group interactive-row flex border-t border-gray-100"
+              onClick={() => handleCountryClick(country.countryCode)}
+            >
+              <td className="interactive-row-child sticky left-0 z-10 flex w-[150px] items-center gap-[8px] bg-white px-[16px] py-[20px]">
                 <CountryFlag country={country.name} size={20} />
                 <span className="text-[13px] font-bold">{country.name}</span>
               </td>
@@ -80,7 +91,7 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
                 return (
                   <td
                     key={field.key}
-                    className={`flex ${fieldWidthClass} ${countryField?.value ? "pl-[10px]" : "pr-[10px]"} items-center text-left break-keep`}
+                    className={`flex ${fieldWidthClass} ${countryField?.value ? "pl-[10px]" : ""} items-center text-left break-keep`}
                   >
                     {countryField && <FieldRenderer field={countryField} />}
                   </td>
