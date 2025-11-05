@@ -33,7 +33,7 @@ export default function ApplicantCard({ choice, onClick, isBlurred = false, isMe
   return (
     <div
       onClick={onClick}
-      className={`flex cursor-pointer flex-col gap-[16px] rounded-[8px] bg-white p-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-150 hover:bg-gray-100 active:scale-[0.98] active:bg-gray-300 ${isMe ? "ring-2 ring-[#056DFF] ring-offset-2" : ""}`}
+      className="interactive-card flex flex-col gap-[16px] rounded-[8px] bg-white p-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
     >
       {/* 닉네임 + ME 배지 + 자세히 보기 */}
       <div className="flex items-start justify-between">
