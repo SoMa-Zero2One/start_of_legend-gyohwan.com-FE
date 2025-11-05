@@ -2,6 +2,17 @@ import type { ApiErrorResponse, AuthErrorType } from "@/types/apiError";
 import { AUTH_ERROR_MESSAGES, DEFAULT_ERROR_MESSAGES } from "@/types/apiError";
 
 /**
+ * AuthErrorType 타입 가드 함수
+ *
+ * USAGE: errorData.type이 AuthErrorType인지 타입 안전하게 확인
+ * WHY: 'in' 연산자는 타입 가드로 작동하지 않아 'as' 캐스팅 필요했음
+ * ALTERNATIVES: as 타입 캐스팅 (rejected: 타입 안전성 우회)
+ */
+function isAuthErrorType(type: string): type is AuthErrorType {
+  return type in AUTH_ERROR_MESSAGES;
+}
+
+/**
  * API 에러 응답을 파싱하여 사용자 친화적인 메시지 반환
  *
  * USAGE: 모든 API fetch 호출의 에러 처리에 사용
@@ -44,8 +55,8 @@ export const parseApiError = async (response: Response): Promise<string> => {
     }
 
     // 3. detail이 없지만 type이 Auth 에러면 우리가 정의한 메시지 사용
-    if (errorData.type && errorData.type in AUTH_ERROR_MESSAGES) {
-      return AUTH_ERROR_MESSAGES[errorData.type as AuthErrorType];
+    if (errorData.type && isAuthErrorType(errorData.type)) {
+      return AUTH_ERROR_MESSAGES[errorData.type];
     }
 
     // 4. type도 모르면 HTTP 상태 코드로 기본 메시지
