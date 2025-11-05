@@ -12,6 +12,7 @@ import { useUniversityTable } from "@/hooks/useUniversityTable";
 import { useAuthStore } from "@/stores/authStore";
 import { useToast } from "@/hooks/useToast";
 import { addFavorite, removeFavorite } from "@/lib/api/community";
+import { saveRedirectUrl } from "@/lib/utils/redirect";
 
 interface UniversityContentProps {
   universities: EnrichedUniversity[];
@@ -81,6 +82,8 @@ export default function UniversityContent({ universities }: UniversityContentPro
   const shouldShowLoginCTA = !isLoggedIn && showFavoritesOnly;
 
   const handleLoginClick = () => {
+    const targetUrl = "community?tab=대학";
+    saveRedirectUrl(targetUrl);
     router.push("/log-in-or-create-account");
   };
 
