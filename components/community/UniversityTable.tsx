@@ -5,6 +5,7 @@ import SortIcon from "@/components/icons/SortIcon";
 import ChevronUpIcon from "@/components/icons/ChevronUpIcon";
 import ChevronDownIcon from "@/components/icons/ChevronDownIcon";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
+import { useRouter } from "next/navigation";
 
 interface UniversityTableProps {
   universities: EnrichedUniversity[];
@@ -14,6 +15,12 @@ interface UniversityTableProps {
 }
 
 export default function UniversityTable({ universities, visibleFieldKeys, onSort, sortConfig }: UniversityTableProps) {
+  const router = useRouter();
+
+  const handleUniversityClick = (univId: number) => {
+    router.push(`/community/university/${univId}`);
+  };
+
   // Empty state 처리
   if (!universities || universities.length === 0) {
     return (
@@ -70,8 +77,12 @@ export default function UniversityTable({ universities, visibleFieldKeys, onSort
         </thead>
         <tbody>
           {universities.map((university) => (
-            <tr key={university.univId} className="flex border-t border-gray-100">
-              <td className="sticky left-0 z-10 flex w-[120px] items-center gap-[8px] bg-white px-[16px] py-[20px]">
+            <tr
+              key={university.univId}
+              className="group interactive-row flex border-t border-gray-100"
+              onClick={() => handleUniversityClick(university.univId)}
+            >
+              <td className="interactive-row-child sticky left-0 z-10 flex h-[120px] w-[120px] items-center gap-[8px] bg-white px-[16px]">
                 <SchoolLogoWithFallback
                   src={university.logoUrl}
                   alt={`${university.name} 로고`}
@@ -88,7 +99,7 @@ export default function UniversityTable({ universities, visibleFieldKeys, onSort
                 return (
                   <td
                     key={field.key}
-                    className={`flex ${fieldWidthClass} ${univField?.value ? "pl-[10px]" : "pr-[10px]"} items-center text-left break-keep`}
+                    className={`flex ${fieldWidthClass} ${univField?.value ? "pl-[10px]" : ""} items-center text-left break-keep`}
                   >
                     {univField && <FieldRenderer field={univField} />}
                   </td>
