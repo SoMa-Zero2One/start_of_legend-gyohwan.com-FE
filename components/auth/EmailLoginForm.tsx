@@ -57,9 +57,10 @@ export default function EmailLoginForm() {
         // 신규 회원 → 회원가입 페이지
         router.push(`/create-account/password?email=${encodeURIComponent(email)}`);
       }
-    } catch (err) {
-      console.error("Email check error:", err);
-      setError("이메일 확인 중 오류가 발생했습니다.");
+    } catch (error) {
+      // 서버에서 받은 에러 메시지 표시
+      const errorMessage = (error as Error).message;
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

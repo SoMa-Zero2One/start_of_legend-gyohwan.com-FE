@@ -71,9 +71,10 @@ function ResetPasswordContent() {
 
       // 성공 시 완료 페이지로 이동
       router.push(`/find-password/complete?email=${encodeURIComponent(email)}`);
-    } catch (err) {
-      console.error("Password reset error:", err);
-      setError("인증번호가 올바르지 않거나 비밀번호 재설정에 실패했습니다.");
+    } catch (error) {
+      // 서버에서 받은 에러 메시지 표시
+      const errorMessage = (error as Error).message;
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -94,9 +95,10 @@ function ResetPasswordContent() {
     try {
       await requestPasswordReset(email);
       alert("인증번호가 재전송되었습니다.");
-    } catch (err) {
-      console.error("Resend error:", err);
-      setError("인증번호 재전송 중 오류가 발생했습니다.");
+    } catch (error) {
+      // 서버에서 받은 에러 메시지 표시
+      const errorMessage = (error as Error).message;
+      setError(errorMessage);
     } finally {
       setIsResending(false);
     }

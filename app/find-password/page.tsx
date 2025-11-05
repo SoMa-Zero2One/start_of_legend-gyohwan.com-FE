@@ -41,9 +41,10 @@ function FindPasswordContent() {
 
       // 성공 시 다음 페이지로 이동
       router.push(`/find-password/reset?email=${encodeURIComponent(email)}`);
-    } catch (err) {
-      console.error("Password reset request error:", err);
-      setError("비밀번호 재설정 요청 중 오류가 발생했습니다.");
+    } catch (error) {
+      // 서버에서 받은 에러 메시지 표시
+      const errorMessage = (error as Error).message;
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

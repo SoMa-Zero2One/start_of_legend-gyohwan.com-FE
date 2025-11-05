@@ -109,9 +109,10 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
       // 성공 시 이메일 인증 화면으로 전환 (URL 업데이트)
       const emailParam = searchParams.get("email") || email;
       router.push(`/create-account/password?email=${encodeURIComponent(emailParam)}&step=verification`);
-    } catch (err) {
-      console.error("Signup error:", err);
-      setError("회원가입 중 오류가 발생했습니다.");
+    } catch (error) {
+      // 서버에서 받은 에러 메시지 표시
+      const errorMessage = (error as Error).message;
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -124,9 +125,10 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
 
     try {
       await signupWithEmail(email, password);
-    } catch (err) {
-      console.error("Resend error:", err);
-      setError("이메일 재전송 중 오류가 발생했습니다.");
+    } catch (error) {
+      // 서버에서 받은 에러 메시지 표시
+      const errorMessage = (error as Error).message;
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -144,9 +146,10 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
       // 성공 시 세션 정리 및 회원가입 완료 페이지로 이동
       sessionStorage.removeItem("pendingEmail");
       router.push("/create-account-complete");
-    } catch (err) {
-      console.error("Verification error:", err);
-      setError("인증코드가 올바르지 않습니다.");
+    } catch (error) {
+      // 서버에서 받은 에러 메시지 표시
+      const errorMessage = (error as Error).message;
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

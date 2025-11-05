@@ -83,9 +83,10 @@ function OAuthCallbackContent({ provider }: OAuthCallbackContentProps) {
           // redirectUrl 없으면 홈으로
           router.push("/");
         }
-      } catch (err) {
-        console.error(`${provider} login error:`, err);
-        setError("로그인 처리 중 오류가 발생했습니다.");
+      } catch (error) {
+        // 서버에서 받은 에러 메시지 표시
+        const errorMessage = (error as Error).message;
+        setError(errorMessage);
         cleanupOAuthSession();
         setTimeout(() => router.push("/log-in-or-create-account"), 2000);
       }

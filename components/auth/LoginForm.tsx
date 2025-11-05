@@ -80,8 +80,10 @@ export default function LoginForm() {
         // redirectUrl 없으면 홈으로
         router.push("/");
       }
-    } catch {
-      setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+    } catch (error) {
+      // 서버에서 받은 에러 메시지 표시
+      const errorMessage = (error as Error).message;
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
