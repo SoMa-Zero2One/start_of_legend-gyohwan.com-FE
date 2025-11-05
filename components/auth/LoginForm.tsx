@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { loginWithEmail } from "@/lib/api/auth";
 import { getRedirectUrl, clearRedirectUrl } from "@/lib/utils/redirect";
 import { useAuthStore } from "@/stores/authStore";
+import { handleApiError } from "@/lib/utils/apiError";
 import PasswordInput from "./PasswordInput";
 
 export default function LoginForm() {
@@ -71,8 +72,10 @@ export default function LoginForm() {
         // redirectUrl 없으면 홈으로
         router.push("/");
       }
-    } catch {
-      setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+    } catch (error) {
+      // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

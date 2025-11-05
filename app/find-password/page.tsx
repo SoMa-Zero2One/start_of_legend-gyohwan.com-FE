@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { requestPasswordReset } from "@/lib/api/auth";
+import { handleApiError } from "@/lib/utils/apiError";
 import Header from "@/components/layout/Header";
 import TermsAgreement from "@/components/auth/TermsAgreement";
 
@@ -41,9 +42,10 @@ function FindPasswordContent() {
 
       // 성공 시 다음 페이지로 이동
       router.push(`/find-password/reset?email=${encodeURIComponent(email)}`);
-    } catch (err) {
-      console.error("Password reset request error:", err);
-      setError("비밀번호 재설정 요청 중 오류가 발생했습니다.");
+    } catch (error) {
+      // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -6,6 +6,7 @@ import { validateState, cleanupOAuthSession } from "@/lib/oauth/config";
 import { loginWithGoogle, loginWithKakao } from "@/lib/api/auth";
 import { useAuthStore } from "@/stores/authStore";
 import { getRedirectUrl, clearRedirectUrl } from "@/lib/utils/redirect";
+import { handleApiError } from "@/lib/utils/apiError";
 
 interface OAuthCallbackContentProps {
   provider: "google" | "kakao";
@@ -83,9 +84,10 @@ function OAuthCallbackContent({ provider }: OAuthCallbackContentProps) {
           // redirectUrl 없으면 홈으로
           router.push("/");
         }
-      } catch (err) {
-        console.error(`${provider} login error:`, err);
-        setError("로그인 처리 중 오류가 발생했습니다.");
+      } catch (error) {
+        // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
+        const errorMessage = handleApiError(error);
+        setError(errorMessage);
         cleanupOAuthSession();
         setTimeout(() => router.push("/log-in-or-create-account"), 2000);
       }
