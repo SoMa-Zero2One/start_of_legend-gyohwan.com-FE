@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { loginWithEmail } from "@/lib/api/auth";
 import { getRedirectUrl, clearRedirectUrl } from "@/lib/utils/redirect";
 import { useAuthStore } from "@/stores/authStore";
+import { handleApiError } from "@/lib/utils/apiError";
 import PasswordInput from "./PasswordInput";
 
 export default function LoginForm() {
@@ -81,8 +82,8 @@ export default function LoginForm() {
         router.push("/");
       }
     } catch (error) {
-      // 서버에서 받은 에러 메시지 표시
-      const errorMessage = (error as Error).message;
+      // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
+      const errorMessage = handleApiError(error);
       setError(errorMessage);
     } finally {
       setIsLoading(false);

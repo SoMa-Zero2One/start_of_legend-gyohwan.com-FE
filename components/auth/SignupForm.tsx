@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signupWithEmail, confirmEmailSignup } from "@/lib/api/auth";
+import { handleApiError } from "@/lib/utils/apiError";
 import PasswordStep from "./signUpSteps/PasswordStep";
 import TermsStep from "./signUpSteps/TermsStep";
 import VerificationStep from "./signUpSteps/VerificationStep";
@@ -110,8 +111,8 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
       const emailParam = searchParams.get("email") || email;
       router.push(`/create-account/password?email=${encodeURIComponent(emailParam)}&step=verification`);
     } catch (error) {
-      // 서버에서 받은 에러 메시지 표시
-      const errorMessage = (error as Error).message;
+      // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
+      const errorMessage = handleApiError(error);
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -126,8 +127,8 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
     try {
       await signupWithEmail(email, password);
     } catch (error) {
-      // 서버에서 받은 에러 메시지 표시
-      const errorMessage = (error as Error).message;
+      // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
+      const errorMessage = handleApiError(error);
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -147,8 +148,8 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
       sessionStorage.removeItem("pendingEmail");
       router.push("/create-account-complete");
     } catch (error) {
-      // 서버에서 받은 에러 메시지 표시
-      const errorMessage = (error as Error).message;
+      // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
+      const errorMessage = handleApiError(error);
       setError(errorMessage);
     } finally {
       setIsLoading(false);

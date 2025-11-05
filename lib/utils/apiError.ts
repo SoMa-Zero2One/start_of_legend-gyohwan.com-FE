@@ -65,3 +65,55 @@ export const parseApiError = async (response: Response): Promise<string> => {
     return `서버 오류가 발생했습니다 (HTTP ${status})`;
   }
 };
+
+/**
+ * API 호출 중 발생한 에러를 처리하여 사용자 친화적인 메시지 반환
+ *
+ * USAGE: try-catch 블록에서 모든 에러 타입 처리
+ * - 네트워크 에러 (TypeError)
+ * - API 에러 (Error with message)
+ * - 기타 에러
+ *
+ * WHY:
+ * - 네트워크 끊김, 타임아웃 등 다양한 에러 상황 대응
+ * - 일관된 에러 메시지 제공
+ * - 컴포넌트에서 단순하게 사용 가능
+ *
+ * ALTERNATIVES:
+ * - 각 컴포넌트에서 개별 처리 (rejected: 코드 중복)
+ * - API 함수에서 처리 (rejected: API 함수 복잡도 증가)
+ *
+ * @param error - catch된 에러 객체 (unknown 타입)
+ * @returns 사용자에게 보여줄 에러 메시지 (한글)
+ *
+ * @example
+ * ```typescript
+ * try {
+ *   await loginWithEmail(email, password);
+ * } catch (error) {
+ *   const errorMessage = handleApiError(error);
+ *   setError(errorMessage);
+ *   // TypeError → "네트워크 연결을 확인해주세요."
+ *   // Error → error.message
+ * }
+ * ```
+ */
+export const handleApiError = (error: unknown): string => {
+  // 1. TypeError = fetch 자체 실패 (네트워크 에러, CORS 에러 등)
+  if (error instanceof TypeError) {
+    return "네트워크 연결을 확인해주세요.";
+  }
+
+  // 2. Error 객체 = API에서 throw한 에러 (parseApiError 처리된 메시지)
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  // 3. 문자열로 throw된 경우
+  if (typeof error === "string") {
+    return error;
+  }
+
+  // 4. 알 수 없는 에러 타입
+  return "알 수 없는 오류가 발생했습니다.";
+};
