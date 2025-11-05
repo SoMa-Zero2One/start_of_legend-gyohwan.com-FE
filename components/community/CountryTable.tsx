@@ -5,6 +5,7 @@ import SortIcon from "@/components/icons/SortIcon";
 import ChevronUpIcon from "@/components/icons/ChevronUpIcon";
 import ChevronDownIcon from "@/components/icons/ChevronDownIcon";
 import CountryFlag from "@/components/common/CountryFlag";
+import { useRouter } from "next/navigation";
 
 interface CountryTableProps {
   countries: EnrichedCountry[];
@@ -14,6 +15,12 @@ interface CountryTableProps {
 }
 
 export default function CountryTable({ countries, visibleFieldKeys, onSort, sortConfig }: CountryTableProps) {
+  const router = useRouter();
+
+  const handleCountryClick = (countryCode: string) => {
+    router.push(`/community/country/${countryCode}`);
+  };
+
   // Empty state 처리
   if (!countries || countries.length === 0) {
     return (
@@ -36,7 +43,7 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
   const fieldWidthClass = visibleFields.length <= 3 ? "flex-1" : "w-[90px]";
 
   return (
-    <div className="overflow-x-auto pb-[60px]">
+    <div className="scrollbar-hide overflow-x-auto pb-[60px]">
       <table className="w-full border-collapse">
         <thead className="caption-1">
           <tr className="flex border-t border-gray-300 text-gray-700">
@@ -70,8 +77,12 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
         </thead>
         <tbody>
           {countries.map((country) => (
-            <tr key={country.countryCode} className="flex border-t border-gray-100">
-              <td className="sticky left-0 z-10 flex w-[150px] items-center gap-[8px] bg-white px-[16px] py-[20px]">
+            <tr
+              key={country.countryCode}
+              className="group interactive-row flex border-t border-gray-100"
+              onClick={() => handleCountryClick(country.countryCode)}
+            >
+              <td className="interactive-row-child sticky left-0 z-10 flex w-[150px] items-center gap-[8px] bg-white px-[16px] py-[20px]">
                 <CountryFlag country={country.name} size={20} />
                 <span className="text-[13px] font-bold">{country.name}</span>
               </td>
@@ -80,7 +91,7 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
                 return (
                   <td
                     key={field.key}
-                    className={`flex ${fieldWidthClass} ${countryField?.value ? "pl-[10px]" : "pr-[10px]"} items-center text-left break-keep`}
+                    className={`flex ${fieldWidthClass} ${countryField?.value ? "pl-[10px]" : ""} items-center text-left break-keep`}
                   >
                     {countryField && <FieldRenderer field={countryField} />}
                   </td>
@@ -98,7 +109,7 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
 function FieldRenderer({ field }: { field: CountryFieldValue }) {
   // Empty state 처리 (null 또는 빈 값)
   if (!field?.value) {
-    return <div className="h-full w-full bg-gray-500" />;
+    return <div className="h-full w-full bg-gray-100" />;
   }
   // 배지 스타일로 렌더링 (사용 언어)
   if (field.renderConfig?.badge) {
@@ -106,5 +117,5 @@ function FieldRenderer({ field }: { field: CountryFieldValue }) {
   }
 
   // 일반 텍스트 렌더링 (레벨은 이미 "상/중상/중/중하/하"로 변환됨, 숫자는 포맷팅됨)
-  return <span>{field.displayValue}</span>;
+  return <span className="caption-1">{field.displayValue}</span>;
 }

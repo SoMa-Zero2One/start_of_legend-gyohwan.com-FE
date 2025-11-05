@@ -27,7 +27,7 @@ export default function CommunityTabs({ countries, universities }: CommunityTabs
   };
 
   return (
-    <div>
+    <div className="flex flex-1 flex-col">
       <Tabs tabs={TABS} selectedTab={currentTab} onTabChange={handleTabChange} />
 
       {currentTab === "나라" ? (
