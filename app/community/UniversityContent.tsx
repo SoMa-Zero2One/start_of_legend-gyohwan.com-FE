@@ -82,7 +82,7 @@ export default function UniversityContent({ universities }: UniversityContentPro
   const shouldShowLoginCTA = !isLoggedIn && showFavoritesOnly;
 
   const handleLoginClick = () => {
-    const targetUrl = "community?tab=대학";
+    const targetUrl = "/community?tab=대학";
     saveRedirectUrl(targetUrl);
     router.push("/log-in-or-create-account");
   };

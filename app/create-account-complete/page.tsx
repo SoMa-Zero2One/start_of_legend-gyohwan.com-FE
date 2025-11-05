@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getRedirectUrl, clearRedirectUrl, saveRedirectUrl } from "@/lib/utils/redirect";
+import { getRedirectUrl, clearRedirectUrl } from "@/lib/utils/redirect";
 import { useAuthStore } from "@/stores/authStore";
 import Header from "@/components/layout/Header";
 
@@ -29,19 +29,11 @@ export default function CreateAccountComplete() {
     }
   }, [authLoading, isLoggedIn, user, router]);
 
-  const handleGoToShare = () => {
+  const handleGoToRedirect = () => {
     if (!redirectUrl || !user) return;
 
-    // 학교 인증 확인
-    if (!user.schoolVerified) {
-      // 학교 인증 필요 - redirectUrl 다시 저장하고 학교 인증 페이지로
-      saveRedirectUrl(redirectUrl);
-      router.push("/school-verification");
-    } else {
-      // 학교 인증 완료 - 바로 목적지로
-      clearRedirectUrl();
-      router.push(redirectUrl);
-    }
+    clearRedirectUrl();
+    router.push(redirectUrl);
   };
 
   const handleGoHome = () => {
@@ -77,8 +69,8 @@ export default function CreateAccountComplete() {
           {/* 버튼 영역 */}
           <div className="flex w-full flex-col gap-[12px]">
             {redirectUrl && (
-              <button onClick={handleGoToShare} className="btn-primary w-full rounded-[4px] p-[12px]">
-                성적 공유하러 가기 🚀
+              <button onClick={handleGoToRedirect} className="btn-primary w-full rounded-[4px] p-[12px]">
+                회원가입 전 페이지로 돌아가기
               </button>
             )}
             <button onClick={handleGoHome} className="btn-secondary w-full rounded-[4px] p-[12px]">

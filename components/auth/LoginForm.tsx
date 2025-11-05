@@ -65,17 +65,8 @@ export default function LoginForm() {
       const redirectUrl = getRedirectUrl();
 
       if (redirectUrl) {
-        const { user } = useAuthStore.getState();
-
-        // 학교 인증 확인
-        if (!user?.schoolVerified) {
-          // 학교 인증 필요 - redirectUrl 유지하고 학교 인증 페이지로
-          router.push("/school-verification");
-        } else {
-          // 학교 인증 완료 - redirectUrl로 이동
-          clearRedirectUrl();
-          router.push(redirectUrl);
-        }
+        clearRedirectUrl();
+        router.push(redirectUrl);
       } else {
         // redirectUrl 없으면 홈으로
         router.push("/");
