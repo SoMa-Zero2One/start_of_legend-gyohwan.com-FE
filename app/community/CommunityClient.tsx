@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Suspense } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -33,12 +33,12 @@ export default function CommunityClient({ initialCountries, initialUniversities 
   const [countries] = useState(() => enrichCountryData(initialCountries));
   const [universities, setUniversities] = useState(() => enrichUniversityData(initialUniversities));
   const { isLoggedIn } = useAuthStore();
-  const [isHydrating, setIsHydrating] = useState(false);
+  const hasFetchedRef = useRef(false);
 
-  // 로그인 상태면 즐겨찾기 정보 포함된 데이터로 hydrate
+  // 로그인 상태면 즐겨찾기 정보 포함된 데이터로 hydrate (정확히 1번만 실행)
   useEffect(() => {
-    if (isLoggedIn && !isHydrating) {
-      setIsHydrating(true);
+    if (isLoggedIn && !hasFetchedRef.current) {
+      hasFetchedRef.current = true;
 
       fetchUniversities()
         .then((data) => {
@@ -46,13 +46,11 @@ export default function CommunityClient({ initialCountries, initialUniversities 
         })
         .catch((err) => {
           console.error("[CommunityClient] 즐겨찾기 정보 로드 실패:", err);
-          // 실패해도 초기 데이터는 그대로 표시 (fallback)
-        })
-        .finally(() => {
-          setIsHydrating(false);
+          // 실패 시 재시도 가능하도록 플래그 리셋
+          hasFetchedRef.current = false;
         });
     }
-  }, [isLoggedIn, isHydrating]);
+  }, [isLoggedIn]);
 
   return (
     <>
