@@ -24,13 +24,13 @@ export interface ApiErrorResponse {
   /** 에러 타입 (예: EMAIL_LOGIN_FAILED, EMAIL_ALREADY_EXISTS) */
   type: string;
   /** HTTP 상태 메시지 (예: Unauthorized, Bad Request) */
-  title: string;
+  title?: string;
   /** HTTP 상태 코드 (예: 401, 400, 409) */
-  status: number;
+  status?: number;
   /** 사용자 친화적인 에러 메시지 (한글) */
-  detail: string;
+  detail?: string;
   /** 에러가 발생한 API 경로 */
-  instance: string;
+  instance?: string;
 }
 
 /**
