@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Choice } from "@/types/slot";
+import ChevronRightIcon from "@/components/icons/ChevronRightIcon";
 
 interface ApplicantCardProps {
   choice: Choice;
@@ -32,14 +33,20 @@ export default function ApplicantCard({ choice, onClick, isBlurred = false, isMe
   return (
     <div
       onClick={onClick}
-      className="flex cursor-pointer flex-col gap-[16px] rounded-[8px] bg-white p-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:bg-gray-50"
+      className={`flex cursor-pointer flex-col gap-[16px] rounded-[8px] bg-white p-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-150 hover:bg-gray-100 active:scale-[0.98] active:bg-gray-300 ${isMe ? "ring-2 ring-[#056DFF] ring-offset-2" : ""}`}
     >
-      {/* 닉네임 + ME 배지 */}
-      <div className="flex items-center gap-[8px]">
-        <h3 className="subhead-3">{choice.nickname}</h3>
-        {isMe && (
-          <span className="rounded-[4px] bg-[#056DFF] px-[6px] py-[2px] text-[11px] font-bold text-white">ME</span>
-        )}
+      {/* 닉네임 + ME 배지 + 자세히 보기 */}
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-[8px]">
+          <h3 className="subhead-3">{choice.nickname}</h3>
+          {isMe && (
+            <span className="bg-primary-blue rounded-[4px] px-[6px] py-[2px] text-[11px] font-bold text-white">ME</span>
+          )}
+        </div>
+        <div className="text-primary-blue flex items-center gap-[4px]">
+          <span className="caption-2">자세히 보기</span>
+          <ChevronRightIcon size={14} />
+        </div>
       </div>
 
       {/* 정보 그리드 */}
