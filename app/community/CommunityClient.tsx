@@ -35,7 +35,6 @@ export default function CommunityClient({ initialCountries, initialUniversities 
   const { isLoggedIn } = useAuthStore();
   const hasFetchedRef = useRef(false);
 
-  // 로그인 상태 변경 시 즐겨찾기 데이터 동기화 (race condition 방지)
   useEffect(() => {
     // cleanup 시점에 이 effect가 여전히 유효한지 추적하는 플래그
     // (로그아웃하거나 컴포넌트가 unmount되면 false로 변경됨)
@@ -43,22 +42,18 @@ export default function CommunityClient({ initialCountries, initialUniversities 
 
     if (isLoggedIn && !hasFetchedRef.current) {
       // === 로그인 상태: 즐겨찾기 정보 fetch ===
-      hasFetchedRef.current = true;
-
       fetchUniversities()
         .then((data) => {
           // ✅ fetch 완료 시점에 여전히 이 effect가 유효한지 확인
           // (로그아웃했거나 unmount된 경우 업데이트 방지)
           if (isMounted) {
             setUniversities(enrichUniversityData(data)); // isFavorite 업데이트
+            hasFetchedRef.current = true; // ✅ 성공 후에만 플래그 설정
           }
         })
         .catch((err) => {
           console.error("[CommunityClient] 즐겨찾기 정보 로드 실패:", err);
-          // 실패 시 재시도 가능하도록 플래그 리셋
-          if (isMounted) {
-            hasFetchedRef.current = false;
-          }
+          // hasFetchedRef.current는 false 그대로 유지 → 새로고침 시 재시도 가능
         });
     } else if (!isLoggedIn && hasFetchedRef.current) {
       // === 로그아웃 상태: 공개 데이터로 복원 ===
@@ -72,7 +67,7 @@ export default function CommunityClient({ initialCountries, initialUniversities 
     return () => {
       isMounted = false; // 진행 중인 fetch의 setState 방지
     };
-  }, [isLoggedIn, initialUniversities]);
+  }, [isLoggedIn]); // ✅ initialUniversities 제거
 
   return (
     <>
