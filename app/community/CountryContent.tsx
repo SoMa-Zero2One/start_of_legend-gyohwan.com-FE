@@ -37,7 +37,10 @@ export default function CountryContent({ countries }: CountryContentProps) {
     <>
       {/* 전체 개수 + 필터 버튼 */}
       <div className="flex items-center justify-between px-[20px] py-4">
-        <h2 className="subhead-1">전체 ({sortedCountries.length})</h2>
+        <div>
+          <h2 className="subhead-1">전체 ({sortedCountries.length})</h2>
+          <p className="caption-2 mt-[4px] text-gray-700">행을 클릭하여 나라 상세 정보를 확인하세요</p>
+        </div>
         <button
           onClick={() => setIsFilterOpen(true)}
           className="bg-primary-blue flex cursor-pointer items-center gap-[4px] rounded-md px-[10px] py-[6px] text-white"

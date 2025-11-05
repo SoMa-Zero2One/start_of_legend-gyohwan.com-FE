@@ -60,7 +60,7 @@ export default function UniversityTable({
   const fieldWidthClass = visibleFields.length <= 3 ? "flex-1" : "w-[90px]";
 
   return (
-    <div className="overflow-x-auto pb-[60px] scrollbar-hide">
+    <div className="scrollbar-hide overflow-x-auto pb-[60px]">
       <table className="w-full border-collapse">
         <thead className="caption-1">
           <tr className="flex border-t border-gray-300 text-gray-700">
@@ -99,12 +99,14 @@ export default function UniversityTable({
               className="group interactive-row flex border-t border-gray-100"
               onClick={() => handleUniversityClick(university.univId)}
             >
-              <td className="interactive-row-child sticky left-0 z-10 flex h-[120px] w-[120px] items-center gap-[8px] bg-white px-[16px]">
+              <td
+                className={`interactive-row-child sticky left-0 z-10 flex h-[120px] w-[150px] items-center gap-[8px] bg-white ${isLoggedIn ? "pr-[16px]" : "px-[16px]"}`}
+              >
                 {/* 즐겨찾기 버튼 (로그인 유저만 표시) */}
                 {isLoggedIn && (
                   <div
                     onClick={(e) => handleFavoriteClick(e, university.univId, university.isFavorite)}
-                    className="relative z-20 flex cursor-pointer items-center justify-center p-[4px]"
+                    className="relative z-20 flex h-full cursor-pointer items-center justify-center pl-[16px]"
                   >
                     <StarIcon size={16} filled={university.isFavorite} />
                   </div>
