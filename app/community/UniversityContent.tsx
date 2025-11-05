@@ -87,6 +87,12 @@ export default function UniversityContent({ universities }: UniversityContentPro
     router.push("/log-in-or-create-account");
   };
 
+  // 즐겨찾기 필터 토글 핸들러 (최상단으로 스크롤)
+  const handleFavoriteFilterToggle = (checked: boolean) => {
+    setShowFavoritesOnly(checked);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  };
+
   return (
     <div className="flex flex-1 flex-col">
       {/* 전체 개수 + 필터 버튼 */}
@@ -129,7 +135,7 @@ export default function UniversityContent({ universities }: UniversityContentPro
       <Toast message={errorMessage} isExiting={isExiting} onClose={hideToast} />
 
       {/* 하단 고정 즐겨찾기 필터 토글 */}
-      <FavoriteFilterToggle checked={showFavoritesOnly} onChange={setShowFavoritesOnly} />
+      <FavoriteFilterToggle checked={showFavoritesOnly} onChange={handleFavoriteFilterToggle} />
 
       {/* 필터 모달 */}
       <UniversityFilterModal
