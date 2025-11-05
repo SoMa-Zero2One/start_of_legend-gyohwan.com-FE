@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { confirmPasswordReset, requestPasswordReset } from "@/lib/api/auth";
+import { handleApiError } from "@/lib/utils/apiError";
 import Header from "@/components/layout/Header";
 import TermsAgreement from "@/components/auth/TermsAgreement";
 import PasswordInput from "@/components/auth/PasswordInput";
@@ -71,9 +72,10 @@ function ResetPasswordContent() {
 
       // 성공 시 완료 페이지로 이동
       router.push(`/find-password/complete?email=${encodeURIComponent(email)}`);
-    } catch (err) {
-      console.error("Password reset error:", err);
-      setError("인증번호가 올바르지 않거나 비밀번호 재설정에 실패했습니다.");
+    } catch (error) {
+      // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -94,9 +96,10 @@ function ResetPasswordContent() {
     try {
       await requestPasswordReset(email);
       alert("인증번호가 재전송되었습니다.");
-    } catch (err) {
-      console.error("Resend error:", err);
-      setError("인증번호 재전송 중 오류가 발생했습니다.");
+    } catch (error) {
+      // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
     } finally {
       setIsResending(false);
     }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { checkEmailExists } from "@/lib/api/auth";
+import { handleApiError } from "@/lib/utils/apiError";
 
 export default function EmailLoginForm() {
   const router = useRouter();
@@ -57,9 +58,10 @@ export default function EmailLoginForm() {
         // 신규 회원 → 회원가입 페이지
         router.push(`/create-account/password?email=${encodeURIComponent(email)}`);
       }
-    } catch (err) {
-      console.error("Email check error:", err);
-      setError("이메일 확인 중 오류가 발생했습니다.");
+    } catch (error) {
+      // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
