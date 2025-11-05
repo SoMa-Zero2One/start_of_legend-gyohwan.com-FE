@@ -29,7 +29,7 @@ export function useToast() {
    * 에러 Toast를 표시하고 일정 시간 후 자동으로 숨깁니다.
    * 이전 타이머가 있으면 취소하고 새로운 타이머를 시작합니다.
    * @param message - 표시할 에러 메시지
-   * @param duration - 메시지 표시 시간 (밀리초, 기본값: 3000ms)
+   * @param duration - 메시지 표시 시간 (밀리초, 기본값: 1500ms)
    */
   const showError = (message: string, duration = 1500) => {
     // 이전 타이머가 있으면 취소
