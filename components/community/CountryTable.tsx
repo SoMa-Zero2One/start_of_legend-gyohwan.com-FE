@@ -43,7 +43,7 @@ export default function CountryTable({ countries, visibleFieldKeys, onSort, sort
   const fieldWidthClass = visibleFields.length <= 3 ? "flex-1" : "w-[90px]";
 
   return (
-    <div className="overflow-x-auto pb-[60px]">
+    <div className="scrollbar-hide overflow-x-auto pb-[60px]">
       <table className="w-full border-collapse">
         <thead className="caption-1">
           <tr className="flex border-t border-gray-300 text-gray-700">

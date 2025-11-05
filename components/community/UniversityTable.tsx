@@ -60,7 +60,7 @@ export default function UniversityTable({
   const fieldWidthClass = visibleFields.length <= 3 ? "flex-1" : "w-[90px]";
 
   return (
-    <div className="overflow-x-auto pb-[60px]">
+    <div className="overflow-x-auto pb-[60px] scrollbar-hide">
       <table className="w-full border-collapse">
         <thead className="caption-1">
           <tr className="flex border-t border-gray-300 text-gray-700">
