@@ -87,11 +87,20 @@ export default function UniversityContent({ universities }: UniversityContentPro
     router.push("/log-in-or-create-account");
   };
 
+  // 즐겨찾기 필터 토글 핸들러 (최상단으로 스크롤)
+  const handleFavoriteFilterToggle = (checked: boolean) => {
+    setShowFavoritesOnly(checked);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  };
+
   return (
     <div className="flex flex-1 flex-col">
       {/* 전체 개수 + 필터 버튼 */}
       <div className="flex items-center justify-between px-[20px] py-4">
-        <h2 className="subhead-1">전체 ({displayedUniversities.length})</h2>
+        <div>
+          <h2 className="subhead-1">전체 ({displayedUniversities.length})</h2>
+          <p className="caption-2 mt-[4px] text-gray-700">행을 클릭하여 대학 상세 정보를 확인하세요</p>
+        </div>
         <button
           onClick={() => setIsFilterOpen(true)}
           className="bg-primary-blue flex cursor-pointer items-center gap-[4px] rounded-md px-[10px] py-[6px] text-white"
@@ -129,7 +138,7 @@ export default function UniversityContent({ universities }: UniversityContentPro
       <Toast message={errorMessage} isExiting={isExiting} onClose={hideToast} />
 
       {/* 하단 고정 즐겨찾기 필터 토글 */}
-      <FavoriteFilterToggle checked={showFavoritesOnly} onChange={setShowFavoritesOnly} />
+      <FavoriteFilterToggle checked={showFavoritesOnly} onChange={handleFavoriteFilterToggle} />
 
       {/* 필터 모달 */}
       <UniversityFilterModal
