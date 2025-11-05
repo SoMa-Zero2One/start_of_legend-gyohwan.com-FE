@@ -41,6 +41,57 @@
 }
 
 /* ========================================
+   Interactive Elements
+   ======================================== */
+
+/* Interactive Card - For card-style clickable elements with scale effect */
+.interactive-card {
+  cursor: pointer;
+  transition-property: all;
+  transition-duration: 150ms;
+}
+
+.interactive-card:hover {
+  background-color: var(--color-gray-100);
+}
+
+.interactive-card:active {
+  background-color: var(--color-gray-300);
+  transform: scale(0.98);
+}
+
+/* Interactive Row - For table rows without scale effect */
+.interactive-row {
+  cursor: pointer;
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.interactive-row:hover {
+  background-color: var(--color-gray-100);
+}
+
+.interactive-row:active {
+  background-color: var(--color-gray-300);
+}
+
+/* Interactive Row Child - For sticky cells that need to follow parent's hover/active state */
+.interactive-row-child {
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.group:hover .interactive-row-child {
+  background-color: var(--color-gray-100);
+}
+
+.group:active .interactive-row-child {
+  background-color: var(--color-gray-300);
+}
+
+/* ========================================
    Animations
    ======================================== */
 
