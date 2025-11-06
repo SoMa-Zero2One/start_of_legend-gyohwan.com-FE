@@ -1,8 +1,3 @@
-interface Tab {
-  label: string;
-  count?: number;
-}
-
 interface TabsProps<T extends string> {
   tabs: readonly T[] | T[];
   selectedTab: T;
