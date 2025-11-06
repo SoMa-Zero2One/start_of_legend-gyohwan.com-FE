@@ -1,5 +1,8 @@
+import { notFound } from "next/navigation";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import CountryDetailContent from "@/components/country/CountryDetailContent";
+import { getCountryDetail } from "@/lib/api/country";
 
 interface CountryDetailPageProps {
   params: Promise<{ countryCode: string }>;
@@ -9,14 +12,31 @@ interface CountryDetailPageProps {
 export default async function CountryDetailPage({ params }: CountryDetailPageProps) {
   const { countryCode } = await params;
 
+  // API 호출 with 에러 핸들링
+  let countryData;
+  try {
+    countryData = await getCountryDetail(countryCode.toUpperCase());
+  } catch (error) {
+    // 404 에러 (존재하지 않는 국가 코드)
+    if (error instanceof Error && error.message.includes("찾을 수 없습니다")) {
+      notFound();
+    }
+    // 그 외 에러 (500, 네트워크 등) → 상위로 전파하여 error.tsx에서 처리
+    throw error;
+  }
+
   return (
-    <>
-      <Header title="나라 상세" showPrevButton showHomeButton />
-      <main className="mx-auto w-full max-w-[430px] px-[20px] py-[24px]">
-        <h1 className="heading-3 mb-[16px]">국가 코드: {countryCode}</h1>
-        <p className="body-2 text-gray-600">국가 상세 페이지 내용이 들어갈 예정입니다.</p>
+    <div className="flex min-h-screen flex-col">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-20 bg-white">
+        <Header showPrevButton />
+      </div>
+
+      <main className="mx-auto w-full max-w-[430px] flex-1">
+        <CountryDetailContent countryData={countryData} />
       </main>
+
       <Footer />
-    </>
+    </div>
   );
 }

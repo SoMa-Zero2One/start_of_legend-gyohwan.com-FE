@@ -45,7 +45,7 @@ export default function CreateAccountComplete() {
   if (authLoading || !user) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header />
+        <Header showLogo />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-gray-500">로딩 중...</p>
         </div>
@@ -55,7 +55,7 @@ export default function CreateAccountComplete() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
+      <Header showLogo />
       <div className="flex flex-1 flex-col items-center px-[20px]">
         <div className="flex w-[330px] flex-col items-center gap-[60px] pt-[60px]">
           {/* 헤더 */}
