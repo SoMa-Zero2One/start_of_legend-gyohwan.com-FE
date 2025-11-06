@@ -122,6 +122,10 @@ function ApplicationNewContent() {
         console.error("Failed to load selections from sessionStorage:", error);
       }
     }
+    // Warning: exhaustive-deps 경고 해결 (방법 C 선택)
+    // STORAGE_KEY는 seasonId로부터 파생되는 문자열이므로 seasonId가 dependency에 있으면 충분
+    // STORAGE_KEY를 dependency에 추가하면 매 렌더링마다 새 문자열이 생성되어 불필요한 재실행 발생
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, seasonId]);
 
   // selectedUniversities 변경 시 sessionStorage에 저장
@@ -133,6 +137,9 @@ function ApplicationNewContent() {
         console.error("Failed to save selections to sessionStorage:", error);
       }
     }
+    // Warning: exhaustive-deps 경고 해결 (방법 C 선택)
+    // STORAGE_KEY는 seasonId로부터 파생되는 문자열이므로 seasonId가 dependency에 있으면 충분
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedUniversities, step, seasonId]);
 
   const handleGradeSubmit = (newGpaId: number, newLanguageId: number) => {
@@ -152,7 +159,10 @@ function ApplicationNewContent() {
   };
 
   // 대학 선택 핸들러 (항상 빠른 추가 모드)
-  const handleSelectUniversity = (slot: Slot, shouldCloseModal: boolean = true) => {
+  // Warning: no-unused-vars 경고 해결 - shouldCloseModal 파라미터 제거
+  // 이유: 이 페이지에서는 항상 빠른 추가 모드로 동작하여 shouldCloseModal을 사용하지 않음
+  // UniversitySearchModal의 onSelectUniversity는 optional 파라미터이므로 제거해도 타입 안전
+  const handleSelectUniversity = (slot: Slot) => {
     // 이미 선택된 대학인지 확인
     const existingIndex = selectedUniversities.findIndex((u) => u.slot.slotId === slot.slotId);
 
@@ -290,7 +300,6 @@ function ApplicationNewContent() {
       {/* Step 1: 성적 등록 */}
       {step === "grade-registration" && (
         <GradeRegistrationStep
-          seasonId={seasonId}
           existingGpa={existingGpa}
           existingLanguage={existingLanguage}
           onSubmit={handleGradeSubmit}
