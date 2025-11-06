@@ -17,7 +17,7 @@ interface UniversitySearchModalProps {
   onClose: () => void;
   slots: Slot[];
   selectedUniversities: SelectedUniversity[];
-  onSelectUniversity: (slot: Slot, shouldCloseModal?: boolean) => void;
+  onSelectUniversity: (slot: Slot) => void;
   isQuickAdd?: boolean; // 돋보기 버튼으로 연 경우
   currentChoice?: number | null; // 수정 중인 지망 번호 (1~5)
   onSave?: () => void; // 저장 버튼 핸들러
@@ -61,9 +61,7 @@ export default function UniversitySearchModal({
   const unselectedSlots = filteredSlots.filter((slot) => !selectedUniversities.some((u) => u.slotId === slot.slotId));
 
   const handleSlotClick = (slot: Slot) => {
-    // 빠른 추가 모드: shouldCloseModal = false
-    // 지망 카드 클릭: shouldCloseModal = true
-    onSelectUniversity(slot, !isQuickAdd);
+    onSelectUniversity(slot);
   };
 
   const handleSave = () => {

@@ -8,7 +8,6 @@ import type { Gpa, Language, CreateLanguageRequest } from "@/types/grade";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 
 interface GradeRegistrationStepProps {
-  seasonId: number;
   existingGpa: Gpa | null;
   existingLanguage: Language | null;
   onSubmit: (gpaId: number, languageId: number) => void;
@@ -44,12 +43,7 @@ const LANGUAGE_SCORE_RANGES: Record<string, { min: number; max: number }> = {
   "HSK 6급": { min: 0, max: 300 },
 };
 
-export default function GradeRegistrationStep({
-  seasonId,
-  existingGpa,
-  existingLanguage,
-  onSubmit,
-}: GradeRegistrationStepProps) {
+export default function GradeRegistrationStep({ existingGpa, existingLanguage, onSubmit }: GradeRegistrationStepProps) {
   const { tooltipMessage, shouldShake, showError, clearError } = useFormErrorHandler();
 
   // GPA 상태

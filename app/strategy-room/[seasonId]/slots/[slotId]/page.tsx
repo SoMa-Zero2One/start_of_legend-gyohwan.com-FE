@@ -135,6 +135,12 @@ export default function SlotDetailPage() {
       params.set("sort", "지망순위");
       router.replace(`/strategy-room/${seasonId}/slots/${slotId}?${params.toString()}`, { scroll: false });
     }
+    // Warning: exhaustive-deps 경고 해결
+    // searchParams를 dependency에 추가하지 않는 이유:
+    // 1. searchParams를 추가하면 router.replace 실행 시 무한 루프 발생
+    // 2. selectedTab === "환산점수" 체크로 이미 중복 실행 방지
+    // 3. router.replace 실행 후 selectedTab이 "지망순위"로 변경되어 재실행 안 됨
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasScoreSystem, selectedTab, router, seasonId, slotId]);
 
   // 정렬 변경 핸들러 (URL 업데이트 포함)

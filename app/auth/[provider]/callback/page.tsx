@@ -24,10 +24,13 @@ function OAuthCallbackContent({ provider }: OAuthCallbackContentProps) {
   const [error, setError] = useState<string | null>(null);
   const fetchUser = useAuthStore((state) => state.fetchUser);
 
-  // Provider별 표시 이름
-  const providerName = provider === "google" ? "구글" : "카카오";
-
   useEffect(() => {
+    // Warning: exhaustive-deps 경고 해결 (방법 C 선택)
+    // providerName을 useEffect 내부로 이동하여 dependency 문제 해결
+    // 이유: providerName은 provider에서 파생되는 값이므로 내부에서 계산하면
+    //       dependency array에 provider만 포함하면 되어 더 명확함
+    const providerName = provider === "google" ? "구글" : "카카오";
+
     const handleCallback = async () => {
       const code = searchParams.get("code");
       const state = searchParams.get("state");
