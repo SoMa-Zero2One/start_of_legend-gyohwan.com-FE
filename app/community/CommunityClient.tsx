@@ -62,6 +62,8 @@ export default function CommunityClient({ initialCountries, initialUniversities 
       // 즐겨찾기 정보 제거 (isFavorite=false인 초기 데이터로 복원)
       setUniversities(enrichUniversityData(initialUniversities));
     }
+    console.log(countries);
+    console.log(universities);
 
     // cleanup: isLoggedIn이 변경되거나 컴포넌트가 unmount될 때 실행
     return () => {
