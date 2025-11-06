@@ -11,6 +11,7 @@ import HomeIcon from "@/components/icons/HomeIcon";
 interface HeaderProps {
   children?: React.ReactNode;
   title?: string;
+  showLogo?: boolean;
   showPrevButton?: boolean;
   showHomeButton?: boolean;
   showSearchButton?: boolean;
@@ -22,6 +23,7 @@ interface HeaderProps {
 export default function Header({
   children,
   title,
+  showLogo = false,
   showPrevButton = false,
   showHomeButton = false,
   showSearchButton = false,
@@ -57,6 +59,7 @@ export default function Header({
   return (
     <NormalHeader
       title={title}
+      showLogo={showLogo}
       showPrevButton={showPrevButton}
       showHomeButton={showHomeButton}
       showSearchButton={showSearchButton}
@@ -124,6 +127,7 @@ function SearchHeader({
 function NormalHeader({
   children,
   title,
+  showLogo,
   showPrevButton,
   showHomeButton,
   showSearchButton,
@@ -132,6 +136,7 @@ function NormalHeader({
 }: {
   children?: React.ReactNode;
   title?: string;
+  showLogo: boolean;
   showPrevButton: boolean;
   showHomeButton: boolean;
   showSearchButton: boolean;
@@ -142,48 +147,49 @@ function NormalHeader({
 
   return (
     <header
-      className={`flex h-[50px] items-center justify-between px-[20px] ${
+      className={`relative flex h-[50px] items-center justify-between px-[20px] ${
         showBorder ? "border-b-[1px] border-b-gray-300" : ""
       }`}
     >
-      {title ? (
-        <div className="relative flex flex-1 items-center justify-center">
-          {/* 왼쪽: 뒤로가기 + 홈 버튼 */}
-          <div className="absolute left-0 flex items-center gap-[12px]">
-            {showPrevButton && (
-              <button onClick={() => router.back()} className="flex h-[20px] w-[20px] cursor-pointer items-center">
-                <PrevIcon size={14} />
-              </button>
-            )}
-            {showHomeButton && (
-              <Link href="/" className="flex h-[20px] w-[20px] cursor-pointer items-center">
-                <HomeIcon size={20} />
-              </Link>
-            )}
-          </div>
-
-          {/* 중앙: 제목 */}
-          <h1 className="body-2 truncate px-4">{title}</h1>
-
-          {/* 오른쪽: 검색 버튼 */}
-          {showSearchButton && (
-            <button
-              onClick={onSearchClick}
-              className="absolute right-0 flex h-[20px] w-[20px] cursor-pointer items-center justify-center"
-              aria-label="검색"
-            >
-              <SearchIcon size={18} />
-            </button>
-          )}
-        </div>
-      ) : (
-        <>
+      {/* 왼쪽: 로고 또는 뒤로가기/홈 버튼 */}
+      <div className="flex items-center gap-[12px]">
+        {showLogo && (
           <Link href="/">
             <Image src="/logos/logo-blue-full.svg" alt="Logo" width={96} height={20} priority />
           </Link>
-          {children}
-        </>
+        )}
+        {showPrevButton && (
+          <button onClick={() => router.back()} className="flex h-[20px] w-[20px] cursor-pointer items-center">
+            <PrevIcon size={14} />
+          </button>
+        )}
+        {showHomeButton && (
+          <Link href="/" className="flex h-[20px] w-[20px] cursor-pointer items-center">
+            <HomeIcon size={20} />
+          </Link>
+        )}
+      </div>
+
+      {/* 중앙: 제목 */}
+      {title && (
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <h1 className="body-2 truncate">{title}</h1>
+        </div>
       )}
+
+      {/* 오른쪽: 검색 버튼 또는 children */}
+      <div className="flex items-center gap-[12px]">
+        {showSearchButton && (
+          <button
+            onClick={onSearchClick}
+            className="flex h-[20px] w-[20px] cursor-pointer items-center justify-center"
+            aria-label="검색"
+          >
+            <SearchIcon size={18} />
+          </button>
+        )}
+        {children}
+      </div>
     </header>
   );
 }
