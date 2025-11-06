@@ -170,6 +170,18 @@ export default function StrategyRoomClient() {
             🔥 총 {data.applicantCount}명 성적 공유 참여 중!
           </span>
         </div>
+
+        {/* 세종대 전용 오픈채팅방 버튼 */}
+        {parseInt(seasonId) === 3 && (
+          <a
+            href="https://open.kakao.com/o/gGFH29Yh"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="body-2 mt-[12px] flex cursor-pointer items-center justify-center gap-[8px] rounded-[8px] bg-[#FEE500] px-[16px] py-[12px] font-semibold text-[#3C1E1E] transition-transform hover:scale-[1.02]"
+          >
+            💬 세종대 교환학생 함께 준비하기
+          </a>
+        )}
       </section>
 
       {/* 탭 메뉴 */}
