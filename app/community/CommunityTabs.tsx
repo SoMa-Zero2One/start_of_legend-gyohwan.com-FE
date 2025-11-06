@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Tabs from "@/components/common/Tabs";
 import CountryContent from "./CountryContent";
 import UniversityContent from "./UniversityContent";
@@ -16,14 +17,22 @@ interface CommunityTabsProps {
 }
 
 export default function CommunityTabs({ countries, universities }: CommunityTabsProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
-  // 현재 URL의 tab query parameter를 읽어서 현재 탭 결정
-  const currentTab: TabType = searchParams.get("tab") === "대학" ? "대학" : "나라";
+  // 초기 탭은 URL에서 읽기
+  const initialTab: TabType = searchParams.get("tab") === "대학" ? "대학" : "나라";
+  const [currentTab, setCurrentTab] = useState<TabType>(initialTab);
+
+  // URL이 변경되면 (브라우저 뒤로가기 등) 탭 상태 동기화
+  useEffect(() => {
+    const urlTab = searchParams.get("tab") === "대학" ? "대학" : "나라";
+    setCurrentTab(urlTab);
+  }, [searchParams]);
 
   const handleTabChange = (tab: TabType) => {
-    router.replace(`/community?tab=${tab}`);
+    setCurrentTab(tab);
+    // URL 업데이트는 history API로 직접 (router.replace 안 씀)
+    window.history.replaceState(null, "", `/community?tab=${tab}`);
   };
 
   return (
