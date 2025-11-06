@@ -45,7 +45,7 @@ export default function CountryDetailContent({ countryData }: CountryDetailConte
 
       {/* 대학 목록 섹션 */}
       <div ref={universityRef} className="flex min-h-[50vh] scroll-mt-[182px] flex-col justify-between">
-        <UniversityList universities={countryData.universities} />
+        <UniversityList universities={countryData.universities.slice(0, 5)} />
         <Link
           href={`/community/country/${countryData.countryCode}/universities`}
           className="medium-body-2 group flex w-full cursor-pointer items-center justify-center gap-[4px] py-[20px] text-gray-700 transition-colors hover:text-black hover:underline"
