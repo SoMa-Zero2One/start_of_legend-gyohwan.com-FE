@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import Tabs from "@/components/common/Tabs";
 import CountryContent from "./CountryContent";
 import UniversityContent from "./UniversityContent";
@@ -18,21 +18,28 @@ interface CommunityTabsProps {
 
 export default function CommunityTabs({ countries, universities }: CommunityTabsProps) {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
 
-  // 초기 탭은 URL에서 읽기
-  const initialTab: TabType = searchParams.get("tab") === "대학" ? "대학" : "나라";
-  const [currentTab, setCurrentTab] = useState<TabType>(initialTab);
+  // useState initializer function으로 hydration mismatch 방지
+  const [currentTab, setCurrentTab] = useState<TabType>(() => {
+    return searchParams.get("tab") === "대학" ? "대학" : "나라";
+  });
 
   // URL이 변경되면 (브라우저 뒤로가기 등) 탭 상태 동기화
   useEffect(() => {
     const urlTab = searchParams.get("tab") === "대학" ? "대학" : "나라";
-    setCurrentTab(urlTab);
-  }, [searchParams]);
+    // 불필요한 리렌더 방지: 탭이 실제로 변경되었을 때만 업데이트
+    if (urlTab !== currentTab) {
+      setCurrentTab(urlTab);
+    }
+  }, [searchParams, currentTab]);
 
   const handleTabChange = (tab: TabType) => {
     setCurrentTab(tab);
-    // URL 업데이트는 history API로 직접 (router.replace 안 씀)
-    window.history.replaceState(null, "", `/community?tab=${tab}`);
+    // pathname 사용으로 locale/basePath 유지
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tab);
+    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
   };
 
   return (
