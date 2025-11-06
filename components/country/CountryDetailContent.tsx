@@ -14,12 +14,18 @@ interface CountryDetailContentProps {
 
 type TabType = "대학 목록" | "커뮤니티";
 
+const PREVIEW_UNIVERSITY_COUNT = 5;
+
 export default function CountryDetailContent({ countryData }: CountryDetailContentProps) {
   const universityRef = useRef<HTMLDivElement>(null);
   const communityRef = useRef<HTMLDivElement>(null);
 
   const tabs: readonly TabType[] = ["대학 목록", "커뮤니티"] as const;
   const [selectedTab, setSelectedTab] = useState<TabType>("대학 목록");
+
+  // 미리보기 대학 목록 및 더보기 버튼 표시 여부
+  const previewUniversities = countryData.universities.slice(0, PREVIEW_UNIVERSITY_COUNT);
+  const hasMoreUniversities = countryData.universities.length > PREVIEW_UNIVERSITY_COUNT;
 
   const handleTabChange = (tab: TabType) => {
     setSelectedTab(tab);
@@ -44,15 +50,20 @@ export default function CountryDetailContent({ countryData }: CountryDetailConte
       </div>
 
       {/* 대학 목록 섹션 */}
-      <div ref={universityRef} className="flex min-h-[50vh] scroll-mt-[182px] flex-col justify-between">
-        <UniversityList universities={countryData.universities.slice(0, 5)} />
-        <Link
-          href={`/community/country/${countryData.countryCode}/universities`}
-          className="medium-body-2 group flex w-full cursor-pointer items-center justify-center gap-[4px] py-[20px] text-gray-700 transition-colors hover:text-black hover:underline"
-        >
-          대학 더 보기
-          <ChevronRightIcon size={16} className="transition-transform group-hover:translate-x-1" />
-        </Link>
+      <div
+        ref={universityRef}
+        className="flex min-h-[60vh] scroll-mt-[182px] flex-col justify-between border-b-[1px] border-gray-300"
+      >
+        <UniversityList universities={previewUniversities} />
+        {hasMoreUniversities && (
+          <Link
+            href={`/community/country/${countryData.countryCode}/universities`}
+            className="medium-body-2 group flex w-full cursor-pointer items-center justify-center gap-[4px] py-[20px] text-gray-700 transition-colors hover:text-black hover:underline"
+          >
+            대학 더 보기
+            <ChevronRightIcon size={16} className="transition-transform group-hover:translate-x-1" />
+          </Link>
+        )}
       </div>
 
       {/* 커뮤니티 섹션 */}

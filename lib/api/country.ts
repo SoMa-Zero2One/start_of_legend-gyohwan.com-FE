@@ -14,6 +14,7 @@ export const getCountryDetail = async (countryCode: string): Promise<CountryDeta
   const response = await fetch(`${backendUrl}/v1/windows/countries/${countryCode}`, {
     method: "GET",
     credentials: "omit", // 인증 불필요
+    next: { revalidate: 3600 }, // 1시간마다 캐시 갱신
   });
 
   if (!response.ok) {
