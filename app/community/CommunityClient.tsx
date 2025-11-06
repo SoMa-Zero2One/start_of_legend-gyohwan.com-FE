@@ -69,7 +69,8 @@ export default function CommunityClient({ initialCountries, initialUniversities 
     return () => {
       isMounted = false; // 진행 중인 fetch의 setState 방지
     };
-  }, [isLoggedIn]); // ✅ initialUniversities 제거
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn]); // initialUniversities는 서버에서 한 번만 전달되므로 의도적으로 제외
 
   return (
     <>
