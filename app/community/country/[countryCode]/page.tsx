@@ -15,12 +15,17 @@ export default async function CountryDetailPage({ params }: CountryDetailPagePro
   const countryData = await getCountryDetail(countryCode.toUpperCase());
 
   return (
-    <>
-      <Header showPrevButton />
-      <main className="mx-auto w-full max-w-[430px]">
+    <div className="flex min-h-screen flex-col">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-20 bg-white">
+        <Header showPrevButton />
+      </div>
+
+      <main className="mx-auto w-full max-w-[430px] flex-1">
         <CountryDetailContent countryData={countryData} />
       </main>
+
       <Footer />
-    </>
+    </div>
   );
 }

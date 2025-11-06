@@ -16,9 +16,9 @@ export default function UniversityListItem({ nameKo, nameEn, logoUrl, onClick }:
   return (
     <button
       onClick={onClick}
-      className="flex w-full cursor-pointer items-center justify-between px-[20px] py-[16px] hover:bg-gray-50"
+      className="interactive-card flex w-full items-center justify-between rounded-[12px] border border-gray-100 bg-white p-[16px] shadow-[0_0_8px_0_rgba(0,0,0,0.06)] hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.12)]"
     >
-      <div className="flex items-center gap-[12px]">
+      <div className="flex items-center gap-[8px]">
         {/* 대학 로고 */}
         <SchoolLogoWithFallback
           src={logoUrl}
@@ -30,13 +30,13 @@ export default function UniversityListItem({ nameKo, nameEn, logoUrl, onClick }:
 
         {/* 대학 이름 */}
         <div className="text-left">
-          <div className="text-[16px] font-semibold text-black">{displayName}</div>
-          {nameKo && nameKo !== nameEn && <div className="text-[14px] text-gray-600">{nameEn}</div>}
+          <div className="subhead-3">{displayName}</div>
+          {nameKo && nameKo !== nameEn && <div className="caption-2 text-gray-700">{nameEn}</div>}
         </div>
       </div>
 
       {/* 오른쪽 화살표 */}
-      <ChevronRightIcon size={20} className="text-gray-400" />
+      <ChevronRightIcon size={20} />
     </button>
   );
 }

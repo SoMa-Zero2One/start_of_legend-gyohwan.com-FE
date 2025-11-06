@@ -19,13 +19,13 @@ export default function UniversityList({ universities }: UniversityListProps) {
   if (!universities || universities.length === 0) {
     return (
       <div className="flex items-center justify-center py-[60px]">
-        <p className="body-2 text-gray-500">대학 정보가 없습니다</p>
+        <p className="text-gray-500">대학 정보가 없습니다</p>
       </div>
     );
   }
 
   return (
-    <div className="divide-y divide-gray-100">
+    <div className="flex flex-col gap-[8px] px-[20px]">
       {universities.map((university) => (
         <UniversityListItem
           key={university.univId}
