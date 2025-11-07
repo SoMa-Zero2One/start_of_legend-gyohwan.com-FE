@@ -9,6 +9,7 @@ import FeatureSection from "@/components/home/FeatureSection";
 import StrategyRoomEntrances from "@/components/home/StrategyRoomEntrances";
 import HeaderAuthSection from "@/components/layout/HeaderAuthSection";
 import FloatingActionButton from "@/components/common/FloatingActionButton";
+import NavigationTab from "@/components/home/NavigationTab";
 import { useAuthStore } from "@/stores/authStore";
 import { Season } from "@/types/season";
 
@@ -97,9 +98,10 @@ export default function HomePage({ initialSeasons }: HomePageProps) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header>
+      <Header showLogo showBorder>
         <HeaderAuthSection />
       </Header>
+      <NavigationTab />
       <HeroSection />
       <FeatureSection />
       <StrategyRoomEntrances initialSeasons={initialSeasons} />

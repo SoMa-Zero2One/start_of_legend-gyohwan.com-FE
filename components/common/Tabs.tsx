@@ -12,8 +12,8 @@ export default function Tabs<T extends string>({ tabs, selectedTab, onTabChange,
         <button
           key={tab}
           onClick={() => onTabChange(tab)}
-          className={`medium-body-3 relative flex flex-1 cursor-pointer flex-col items-center py-[12px] ${
-            selectedTab === tab ? "text-black" : "text-gray-700"
+          className={`relative flex flex-1 cursor-pointer flex-col items-center py-[12px] ${
+            selectedTab === tab ? "medium-body-3 text-black" : "text-gray-700"
           }`}
         >
           <span>{tab}</span>

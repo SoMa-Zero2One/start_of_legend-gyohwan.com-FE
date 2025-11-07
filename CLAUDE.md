@@ -20,6 +20,50 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## ⚡ Essential Rules (READ FIRST!)
 
+### 0. Communication & Decision Making (MOST IMPORTANT!)
+
+**ALWAYS ask questions when uncertain:**
+- ❓ **UI/Design**: Don't assume layouts, colors, or component styles - ask for clarification
+- ❓ **Architecture**: If multiple approaches exist, explain options and ask which to use
+- ❓ **Requirements**: If user intent is unclear, ask before implementing
+- ❓ **Edge cases**: When handling special cases, confirm expected behavior
+
+**ALWAYS explain your changes:**
+- 🎯 **Usage**: Where and how will this code be used? What calls it?
+- 📝 **What**: Clearly state what you're changing
+- 🤔 **Why**: Explain the reasoning behind the change
+- 💡 **Alternatives**: Mention other options considered (if any)
+
+**Examples:**
+```
+❌ BAD: "I'll add a helper function transformData()."
+✅ GOOD: "I'll add transformData() helper function:
+   USAGE: Called by CountryContent when processing API responses
+   WHAT: Function that converts API fieldId to displayOrder
+   WHY:
+   - Centralizes field mapping logic (DRY principle)
+   - Easier to test in isolation
+   - Reusable for UniversityContent later
+   ALTERNATIVES:
+   - Inline transformation (rejected: duplicates code)
+   - Use library like lodash (rejected: unnecessary dependency)"
+
+❌ BAD: "Adding a new type interface."
+✅ GOOD: "I'll add UniversityFieldMetadata interface:
+   USAGE: Used by universityFields.ts metadata and UniversityTable props
+   WHAT: TypeScript interface defining university field structure
+   WHY:
+   - Type safety for field configuration
+   - IntelliSense support in IDE
+   - Matches CountryFieldMetadata pattern for consistency
+   ALTERNATIVES:
+   - Use type alias (rejected: interface allows extension)
+   - Reuse CountryFieldMetadata (rejected: different field sets)"
+```
+
+**Purpose of this rule:**
+Prevents "where is this used?" and "why did we add this?" confusion later. Clear usage context helps maintainability and code review.
+
 ### 1. Package Manager
 ```bash
 # ✅ ALWAYS use pnpm

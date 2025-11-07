@@ -5,6 +5,10 @@
 - `USERS/README.md`: 사용자 정보 및 자기 데이터 관리 API
 - `SEASONS/README.md`: 시즌/지원 관련 API
 - `SLOTS/README.md`: 슬롯 상세 API
+- `APPLICATIONS/README.md`: 단일 지원서 조회 API
+- `COMMUNITY/README.md`: 커뮤니티 게시글/댓글 API
+- `WINDOWS/README.md`: 국가·대학 탐색 및 즐겨찾기 API
+- `ARTICLES/README.md`: 아티클 그룹/본문 API
 
 ---
 
