@@ -106,6 +106,9 @@ function ApplicationNewContent() {
     };
 
     checkApplicationStatus();
+    // eligibility는 useModalHistory 반환 객체로 매 렌더마다 재생성되므로
+    // 의존성에 추가하면 무한 루프 발생. eligibility.openModal()은 조건부로
+    // 한 번만 실행되고 return으로 빠져나가므로 실제로는 안전함.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seasonId, router, step]);
 

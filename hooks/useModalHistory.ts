@@ -39,6 +39,11 @@ interface UseModalHistoryOptions {
  *    - push로 열었던 경우: router.back() (방금 추가한 히스토리 제거)
  *    - URL 직접 진입: router.replace() (현재 URL만 수정)
  * 3. 브라우저 뒤로가기 감지: searchParams 변경으로 자동 동기화
+ *
+ * @note 제약사항
+ * - 여러 모달을 사용할 수 있지만, URL에는 한 번에 하나의 모달만 표시됩니다 (?modal=xxx)
+ * - 동시에 여러 모달이 열리지 않는 경우에만 정상 동작합니다
+ * - 만약 여러 모달이 동시에 열려야 한다면, 각 모달마다 다른 쿼리 키를 사용하도록 hook을 수정해야 합니다
  */
 export function useModalHistory({ modalKey }: UseModalHistoryOptions) {
   const router = useRouter();
