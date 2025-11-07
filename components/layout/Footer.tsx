@@ -11,9 +11,22 @@ export default function Footer() {
         </div>
 
         {/* 문의 */}
-        <div className="caption-1 mb-[24px] flex items-center gap-[8px] text-gray-400">
-          <span className="font-semibold text-white">문의 :</span>
-          <span className="transition-colors hover:text-white">zero2one.soma@gmail.com</span>
+        <div className="caption-1 mb-[24px] text-gray-400">
+          <div className="mb-[8px] flex items-center gap-[8px]">
+            <span className="font-semibold text-white">문의 :</span>
+            <span className="transition-colors hover:text-white">zero2one.soma@gmail.com</span>
+          </div>
+          <div className="flex items-center gap-[8px]">
+            <span className="font-semibold text-white">카카오톡 :</span>
+            <a
+              href="http://pf.kakao.com/_xaxdQLn/chat"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cursor-pointer transition-colors hover:text-white hover:underline"
+            >
+              1:1 문의하기
+            </a>
+          </div>
         </div>
 
         {/* 링크 섹션 */}
