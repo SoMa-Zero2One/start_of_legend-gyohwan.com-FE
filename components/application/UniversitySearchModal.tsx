@@ -45,8 +45,13 @@ export default function UniversitySearchModal({
 
   // 검색어로 필터링
   const filteredSlots = slots.filter((slot) => {
+    if (!searchQuery) return true;
     const query = searchQuery.toLowerCase().trim();
-    return slot.name.toLowerCase().includes(query) || slot.country.toLowerCase().includes(query);
+    if (!query) return true;
+
+    const name = slot.name ? String(slot.name).toLowerCase() : "";
+    const country = slot.country ? String(slot.country).toLowerCase() : "";
+    return name.includes(query) || country.includes(query);
   });
 
   // 선택된 대학과 선택되지 않은 대학 분리
