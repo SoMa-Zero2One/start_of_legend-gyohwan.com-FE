@@ -15,13 +15,12 @@ import { getLanguages } from "@/lib/api/language";
 import { checkEligibility } from "@/lib/api/season";
 import { submitApplication } from "@/lib/api/application";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
+import { useModalHistory } from "@/hooks/useModalHistory";
 import type { Gpa, Language } from "@/types/grade";
 import type { Slot } from "@/types/slot";
 import type { SubmitApplicationRequest } from "@/types/application";
 
 type Step = "grade-registration" | "university-selection";
-
-type ModalType = "university-search" | "submit" | "eligibility" | null;
 
 interface SelectedUniversity {
   choice: number; // 1~5지망
@@ -44,8 +43,10 @@ function ApplicationNewContent() {
   const [existingLanguage, setExistingLanguage] = useState<Language | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
 
-  // 모달 관리
-  const [activeModal, setActiveModal] = useState<ModalType>(null);
+  // 모달 히스토리 관리
+  const universitySearch = useModalHistory({ modalKey: "university-search" });
+  const submit = useModalHistory({ modalKey: "submit" });
+  const eligibility = useModalHistory({ modalKey: "eligibility" });
   const [eligibilityErrorMessage, setEligibilityErrorMessage] = useState("");
 
   // 대학 선택 관리
@@ -69,7 +70,7 @@ function ApplicationNewContent() {
           // 403 에러 시 모달 표시
           const errorMessage = (err as { detail?: string }).detail || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
           setEligibilityErrorMessage(errorMessage);
-          setActiveModal("eligibility");
+          eligibility.openModal();
           return;
         }
 
@@ -105,6 +106,7 @@ function ApplicationNewContent() {
     };
 
     checkApplicationStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seasonId, router, step]);
 
   // sessionStorage 키
@@ -172,7 +174,7 @@ function ApplicationNewContent() {
 
   // 모달 열기 핸들러
   const handleOpenSearch = () => {
-    setActiveModal("university-search");
+    universitySearch.openModal();
   };
 
   // 자동 정렬 함수 - 1번부터 연속되게 정렬
@@ -254,12 +256,12 @@ function ApplicationNewContent() {
       }
     }
 
-    setActiveModal("submit");
+    submit.openModal();
   };
 
   // 최종 제출 실행
   const handleConfirmSubmit = async () => {
-    setActiveModal(null);
+    submit.closeModal();
 
     try {
       setIsSubmitting(true);
@@ -299,7 +301,7 @@ function ApplicationNewContent() {
 
   // 다시 입력하기 (ApplicationSubmitModal에서 호출)
   const handleCancelSubmit = () => {
-    setActiveModal(null);
+    submit.closeModal();
     router.push(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
   };
 
@@ -360,27 +362,20 @@ function ApplicationNewContent() {
 
           {/* 대학 검색 모달 */}
           <UniversitySearchModal
-            isOpen={activeModal === "university-search"}
-            onClose={() => {
-              setActiveModal(null);
-            }}
+            isOpen={universitySearch.isOpen}
+            onClose={universitySearch.closeModal}
             slots={slots}
             selectedUniversities={selectedUniversities.map((u) => ({
               choice: u.choice,
               slotId: u.slot.slotId,
             }))}
             onSelectUniversity={handleSelectUniversity}
-            isQuickAdd={true}
-            currentChoice={null}
-            onSave={() => {
-              setActiveModal(null);
-            }}
           />
 
           {/* 제출 확인 모달 */}
           {existingGpa && existingLanguage && (
             <ApplicationSubmitModal
-              isOpen={activeModal === "submit"}
+              isOpen={submit.isOpen}
               gpa={existingGpa}
               language={existingLanguage}
               onConfirm={handleConfirmSubmit}
@@ -392,16 +387,16 @@ function ApplicationNewContent() {
 
       {/* 지원 불가 모달 */}
       <ConfirmModal
-        isOpen={activeModal === "eligibility"}
+        isOpen={eligibility.isOpen}
         title="지원할 수 없습니다"
         message={eligibilityErrorMessage}
         confirmText="확인"
         onConfirm={() => {
-          setActiveModal(null);
+          eligibility.closeModal();
           router.replace(`/strategy-room/${seasonId}`);
         }}
         onCancel={() => {
-          setActiveModal(null);
+          eligibility.closeModal();
           router.replace(`/strategy-room/${seasonId}`);
         }}
       />

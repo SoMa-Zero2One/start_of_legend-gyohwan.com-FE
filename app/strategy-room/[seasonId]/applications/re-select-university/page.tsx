@@ -10,10 +10,9 @@ import { getMyApplication } from "@/lib/api/slot";
 import { getSeasonSlots } from "@/lib/api/slot";
 import { updateApplication } from "@/lib/api/application";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
+import { useModalHistory } from "@/hooks/useModalHistory";
 import type { Slot } from "@/types/slot";
 import type { MyApplicationResponse } from "@/types/slot";
-
-type ModalType = "university-search" | "confirm" | null;
 
 interface SelectedUniversity {
   choice: number;
@@ -30,8 +29,9 @@ function ApplicationEditContent() {
   const [myApplication, setMyApplication] = useState<MyApplicationResponse | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
 
-  // 모달 관리
-  const [activeModal, setActiveModal] = useState<ModalType>(null);
+  // 모달 히스토리 관리
+  const universitySearch = useModalHistory({ modalKey: "university-search" });
+  const confirm = useModalHistory({ modalKey: "confirm" });
 
   // 대학 선택 관리
   const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>([]);
@@ -79,7 +79,7 @@ function ApplicationEditContent() {
 
   // 모달 열기 핸들러
   const handleOpenSearch = () => {
-    setActiveModal("university-search");
+    universitySearch.openModal();
   };
 
   // 자동 정렬 함수 - 1번부터 연속되게 정렬
@@ -156,12 +156,12 @@ function ApplicationEditContent() {
       }
     }
 
-    setActiveModal("confirm");
+    confirm.openModal();
   };
 
   // 최종 제출 실행
   const handleConfirmSubmit = async () => {
-    setActiveModal(null);
+    confirm.closeModal();
 
     try {
       setIsSubmitting(true);
@@ -225,32 +225,25 @@ function ApplicationEditContent() {
 
       {/* 대학 검색 모달 */}
       <UniversitySearchModal
-        isOpen={activeModal === "university-search"}
-        onClose={() => {
-          setActiveModal(null);
-        }}
+        isOpen={universitySearch.isOpen}
+        onClose={universitySearch.closeModal}
         slots={slots}
         selectedUniversities={selectedUniversities.map((u) => ({
           choice: u.choice,
           slotId: u.slot.slotId,
         }))}
         onSelectUniversity={handleSelectUniversity}
-        isQuickAdd={true}
-        currentChoice={null}
-        onSave={() => {
-          setActiveModal(null);
-        }}
       />
 
       {/* 확인 모달 */}
       <ConfirmModal
-        isOpen={activeModal === "confirm"}
+        isOpen={confirm.isOpen}
         title="지망 대학 수정"
         message="지망 대학을 수정하시겠습니까?"
         confirmText="수정하기"
         cancelText="취소"
         onConfirm={handleConfirmSubmit}
-        onCancel={() => setActiveModal(null)}
+        onCancel={confirm.closeModal}
       />
     </div>
   );

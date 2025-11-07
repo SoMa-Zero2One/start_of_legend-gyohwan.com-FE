@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import RoundCheckbox from "@/components/common/RoundCheckbox";
@@ -8,14 +8,17 @@ import ConfirmModal from "@/components/common/ConfirmModal";
 import { useAuthStore } from "@/stores/authStore";
 import { withdrawAccount } from "@/lib/api/user";
 import { saveRedirectUrl } from "@/lib/utils/redirect";
+import { useModalHistory } from "@/hooks/useModalHistory";
 
-export default function DeleteAccountPage() {
+function DeleteAccountContent() {
   const router = useRouter();
   const { user, isLoading: authLoading, logout } = useAuthStore();
   const [isAgreed, setIsAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [error, setError] = useState("");
+
+  // 모달 히스토리 관리
+  const { isOpen: showConfirmModal, openModal, closeModal } = useModalHistory({ modalKey: "confirm" });
 
   // 로그인 체크 - Hard-gate
   useEffect(() => {
@@ -43,7 +46,7 @@ export default function DeleteAccountPage() {
   const handleDeleteClick = () => {
     if (!isAgreed) return;
     setError(""); // 에러 초기화
-    setShowConfirmModal(true);
+    openModal();
   };
 
   // 최종 확인 후 회원 탈퇴 처리
@@ -60,7 +63,7 @@ export default function DeleteAccountPage() {
       router.push("/");
     } catch (error) {
       setError(error instanceof Error ? error.message : "회원 탈퇴에 실패했습니다.");
-      setShowConfirmModal(false);
+      closeModal();
     } finally {
       setIsLoading(false);
     }
@@ -126,8 +129,16 @@ export default function DeleteAccountPage() {
         confirmText="탈퇴하기"
         cancelText="취소"
         onConfirm={handleConfirmDelete}
-        onCancel={() => setShowConfirmModal(false)}
+        onCancel={closeModal}
       />
     </div>
+  );
+}
+
+export default function DeleteAccountPage() {
+  return (
+    <Suspense fallback={null}>
+      <DeleteAccountContent />
+    </Suspense>
   );
 }
