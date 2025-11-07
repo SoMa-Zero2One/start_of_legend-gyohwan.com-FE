@@ -4,6 +4,7 @@ import { seasonHandlers } from "./season";
 import { slotHandlers } from "./slot";
 import { communityHandlers } from "./community";
 import { countryHandlers } from "./country";
+import { communityPostsHandlers } from "./communityPosts";
 
 // 모든 MSW 핸들러를 하나로 합침
 export const handlers = [
@@ -13,4 +14,5 @@ export const handlers = [
   ...slotHandlers,
   ...communityHandlers,
   ...countryHandlers,
+  ...communityPostsHandlers,
 ];
