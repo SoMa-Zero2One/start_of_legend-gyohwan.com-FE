@@ -1,17 +1,17 @@
+import Link from "next/link";
 import HeartIcon from "@/components/icons/HeartIcon";
 import CommentIcon from "@/components/icons/CommentIcon";
 import type { CommunityPost } from "@/types/communityPost";
 
 interface CommunityPostItemProps {
   post: CommunityPost;
-  onClick: () => void;
 }
 
-export default function CommunityPostItem({ post, onClick }: CommunityPostItemProps) {
+export default function CommunityPostItem({ post }: CommunityPostItemProps) {
   return (
-    <button
-      onClick={onClick}
-      className="flex w-full cursor-pointer flex-col gap-[12px] border-b border-gray-100 py-[20px] text-left"
+    <Link
+      href={`/community/posts/${post.postId}`}
+      className="flex w-full cursor-pointer flex-col gap-[12px] border-b border-gray-100 py-[20px] text-left transition-colors hover:bg-gray-50"
     >
       {/* 제목 */}
       <h3 className="medium-body-3 line-clamp-1 text-black">{post.title}</h3>
@@ -30,6 +30,6 @@ export default function CommunityPostItem({ post, onClick }: CommunityPostItemPr
           <span>{post.commentsCount > 999 ? "999+" : post.commentsCount}</span>
         </div>
       </div>
-    </button>
+    </Link>
   );
 }

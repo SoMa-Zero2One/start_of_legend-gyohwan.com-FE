@@ -1,6 +1,3 @@
-"use client";
-
-import { useRouter } from "next/navigation";
 import CommunityPostItem from "./CommunityPostItem";
 import type { CommunityPost } from "@/types/communityPost";
 
@@ -9,12 +6,6 @@ interface CommunityPostListProps {
 }
 
 export default function CommunityPostList({ posts }: CommunityPostListProps) {
-  const router = useRouter();
-
-  const handlePostClick = (postId: number) => {
-    router.push(`/community/posts/${postId}`);
-  };
-
   // Empty state 처리
   if (!posts || posts.length === 0) {
     return (
@@ -39,7 +30,7 @@ export default function CommunityPostList({ posts }: CommunityPostListProps) {
       {/* 게시글 목록 */}
       <div className="flex flex-col px-[20px] pb-[20px]">
         {posts.map((post) => (
-          <CommunityPostItem key={post.postId} post={post} onClick={() => handlePostClick(post.postId)} />
+          <CommunityPostItem key={post.postId} post={post} />
         ))}
       </div>
     </>

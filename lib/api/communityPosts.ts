@@ -24,7 +24,6 @@ export const getCommunityPosts = async (
 
   const response = await fetch(`${backendUrl}/v1/community/posts?${queryParams}`, {
     method: "GET",
-    credentials: "include", // 로그인 사용자의 isLiked 정보 포함
     cache: "no-store", // 캐싱 안 함 (사용자가 글 작성 후 즉시 반영)
   });
 
