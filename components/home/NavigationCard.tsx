@@ -5,11 +5,25 @@ interface NavigationCardProps {
   label: string;
   children: React.ReactNode;
   showNewBadge?: boolean;
+  openInNewTab?: boolean;
 }
 
-export default function NavigationCard({ href, label, children, showNewBadge = false }: NavigationCardProps) {
+export default function NavigationCard({
+  href,
+  label,
+  children,
+  showNewBadge = false,
+  openInNewTab = false,
+}: NavigationCardProps) {
+  const linkProps = openInNewTab
+    ? {
+        target: "_blank",
+        rel: "noopener noreferrer",
+      }
+    : {};
+
   return (
-    <Link href={href} className="group flex flex-col items-center justify-between gap-[8px]">
+    <Link href={href} className="group flex flex-col items-center justify-between gap-[8px]" {...linkProps}>
       <div className="relative rounded-[10px] bg-white p-[12px] shadow-[0_0_8px_0_rgba(0,0,0,0.06)] group-hover:shadow-md">
         {children}
         {showNewBadge && (
