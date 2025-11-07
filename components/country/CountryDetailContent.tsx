@@ -58,10 +58,7 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
       </div>
 
       {/* 대학 목록 섹션 */}
-      <div
-        ref={universityRef}
-        className="flex min-h-[60vh] scroll-mt-[182px] flex-col justify-between border-b-[1px] border-gray-300"
-      >
+      <div ref={universityRef} className="flex min-h-[60vh] scroll-mt-[182px] flex-col border-b-[1px] border-gray-300">
         <UniversityList universities={previewUniversities} />
         {hasMoreUniversities && (
           <Link
@@ -75,7 +72,7 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
       </div>
 
       {/* 커뮤니티 섹션 */}
-      <div ref={communityRef} className="flex min-h-[60vh] scroll-mt-[182px] flex-col justify-between">
+      <div ref={communityRef} className="flex min-h-[60vh] scroll-mt-[182px] flex-col">
         <CommunityPostList posts={previewPosts} />
         {hasMorePosts && (
           <Link
