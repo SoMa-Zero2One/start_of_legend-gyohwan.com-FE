@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
 import { MSWProvider } from "@/components/providers/MSWProvider";
+import { SentryProvider } from "@/components/providers/SentryProvider";
 
 // 환경에 따른 사이트 URL 결정
 function getSiteUrl(): string {
@@ -111,9 +112,11 @@ export default function RootLayout({
         )}
       </head>
       <body className="body-3 m-auto max-w-[430px] bg-white antialiased">
-        <MSWProvider>
-          <div className="flex flex-col">{children}</div>
-        </MSWProvider>
+        <SentryProvider>
+          <MSWProvider>
+            <div className="flex flex-col">{children}</div>
+          </MSWProvider>
+        </SentryProvider>
       </body>
     </html>
   );
