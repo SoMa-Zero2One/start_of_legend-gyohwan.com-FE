@@ -116,10 +116,32 @@ function ApplicationNewContent() {
       try {
         const stored = sessionStorage.getItem(STORAGE_KEY);
         if (stored) {
-          setSelectedUniversities(JSON.parse(stored));
+          const parsed = JSON.parse(stored);
+
+          // 타입 검증: SelectedUniversity[] 형태인지 확인
+          if (
+            Array.isArray(parsed) &&
+            parsed.every(
+              (item) =>
+                typeof item === "object" &&
+                item !== null &&
+                typeof item.choice === "number" &&
+                typeof item.slot === "object" &&
+                item.slot !== null &&
+                typeof item.slot.slotId === "number"
+            )
+          ) {
+            setSelectedUniversities(parsed);
+          } else {
+            // 잘못된 데이터 형식이면 sessionStorage 클리어
+            console.warn("Invalid data format in sessionStorage, clearing...");
+            sessionStorage.removeItem(STORAGE_KEY);
+          }
         }
       } catch (error) {
         console.error("Failed to load selections from sessionStorage:", error);
+        // JSON 파싱 실패 시에도 sessionStorage 클리어
+        sessionStorage.removeItem(STORAGE_KEY);
       }
     }
     // Warning: exhaustive-deps 경고 해결 (방법 C 선택)
@@ -290,6 +312,13 @@ function ApplicationNewContent() {
         </div>
       </div>
     );
+  }
+
+  // Step 2 접근 시 성적 정보 검증
+  if (step === "university-selection" && (!gpaId || !languageId)) {
+    // 성적 정보가 없으면 Step 1로 리다이렉트
+    router.replace(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
+    return null;
   }
 
   return (
