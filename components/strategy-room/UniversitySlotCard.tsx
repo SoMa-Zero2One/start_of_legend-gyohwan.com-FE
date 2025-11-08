@@ -15,8 +15,12 @@ export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
   // 방어적 기본값 설정
   const name = slot.name ?? "정보 없음";
   const country = slot.country ?? "기타";
-  const choiceCount = slot.choiceCount ?? 0;
-  const slotCount = slot.slotCount ?? "미정";
+
+  // choiceCount: null(정보 없음)과 0(실제 지원자 없음)을 구분
+  const choiceCountDisplay = slot.choiceCount === null ? "정보 없음" : `${slot.choiceCount}명`;
+
+  // slotCount: null이면 "미정", 아니면 값 + "명"
+  const slotCountDisplay = slot.slotCount === null ? "미정" : `${slot.slotCount}명`;
 
   return (
     <Link href={`/strategy-room/${seasonId}/slots/${slot.slotId}`}>
@@ -43,11 +47,11 @@ export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
         <div className="flex w-[286px] justify-between">
           <div className="flex w-[130px] justify-between">
             <span className="caption-1 text-gray-700">지원자 수</span>
-            <span className="medium-body-3">{choiceCount}명</span>
+            <span className="medium-body-3">{choiceCountDisplay}</span>
           </div>
           <div className="flex w-[130px] justify-between">
             <span className="caption-1 text-gray-700">모집인원</span>
-            <span className="medium-body-3">{slotCount}명</span>
+            <span className="medium-body-3">{slotCountDisplay}</span>
           </div>
         </div>
       </div>

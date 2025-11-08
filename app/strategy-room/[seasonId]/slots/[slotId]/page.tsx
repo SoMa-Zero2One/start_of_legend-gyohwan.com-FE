@@ -198,8 +198,12 @@ export default function SlotDetailPage() {
   // 방어적 기본값 설정
   const name = data.name ?? "정보 없음";
   const country = data.country ?? "기타";
-  const choiceCount = data.choiceCount ?? 0;
-  const slotCount = data.slotCount ?? "미정";
+
+  // choiceCount: null(정보 없음)과 0(실제 지원자 없음)을 구분
+  const choiceCountDisplay = data.choiceCount === null ? "정보 없음" : `${data.choiceCount}명`;
+
+  // slotCount: null이면 "미정", 아니면 값 + "명"
+  const slotCountDisplay = data.slotCount === null ? "미정" : `${data.slotCount}명`;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -245,11 +249,11 @@ export default function SlotDetailPage() {
           </div>
           <div className="flex items-center justify-between">
             <span className="text-gray-700">지원자 수</span>
-            <span className="font-bold">{choiceCount}명</span>
+            <span className="font-bold">{choiceCountDisplay}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-gray-700">모집인원</span>
-            <span className="font-bold">{slotCount}명</span>
+            <span className="font-bold">{slotCountDisplay}</span>
           </div>
         </div>
       </section>
