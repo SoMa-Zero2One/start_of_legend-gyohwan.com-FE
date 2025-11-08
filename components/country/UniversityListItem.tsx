@@ -4,12 +4,13 @@ import ChevronRightIcon from "@/components/icons/ChevronRightIcon";
 import type { UniversitySimple } from "@/types/country";
 
 export default function UniversityListItem({ univId, nameKo, nameEn, logoUrl }: UniversitySimple) {
-  // 방어적 기본값: nameKo > nameEn > "대학교"
-  const displayName = nameKo || nameEn || "대학교";
+  // 방어적 기본값: nameKo > nameEn > "대학교 #univId" (univId로 구분 가능하도록)
+  const displayName = nameKo || nameEn || `대학교 #${univId}`;
 
   return (
     <Link
       href={`/community/university/${univId}`}
+      prefetch={false}
       className="interactive-card flex w-full items-center justify-between rounded-[12px] border border-gray-100 bg-white p-[16px] shadow-[0_0_8px_0_rgba(0,0,0,0.06)] hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.12)]"
     >
       <div className="flex items-center gap-[8px]">

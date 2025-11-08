@@ -29,7 +29,8 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
 
   // 방어적 기본값
   const universities = countryData.universities ?? [];
-  const countryName = countryData.name ?? "국가";
+  // name이 null이면 countryCode를 대신 표시 (최소한 어떤 국가인지 식별 가능)
+  const countryName = countryData.name ?? countryData.countryCode.toUpperCase();
 
   // 미리보기 대학 목록 및 더보기 버튼 표시 여부
   const previewUniversities = universities.slice(0, PREVIEW_UNIVERSITY_COUNT);
