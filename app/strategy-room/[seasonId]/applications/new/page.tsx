@@ -277,16 +277,26 @@ function ApplicationNewContent() {
   const handleConfirmSubmit = async () => {
     // 보안: URL 조작으로 모달을 열었을 경우를 대비한 재검증
     if (!gpaId || !languageId) {
-      submit.closeModal();
+      submit.closeModal({ skipNavigation: true });
       showError("성적 정보가 없습니다. 다시 입력해주세요.");
       router.replace(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
       return;
     }
 
     if (selectedUniversities.length === 0) {
-      submit.closeModal();
+      submit.closeModal({ skipNavigation: true });
       showError("최소 1개 이상의 지망 대학을 선택해주세요.");
       return;
+    }
+
+    // 1지망부터 순서대로 채워졌는지 확인
+    const sortedChoices = selectedUniversities.map((u) => u.choice).sort((a, b) => a - b);
+    for (let i = 0; i < sortedChoices.length; i++) {
+      if (sortedChoices[i] !== i + 1) {
+        submit.closeModal({ skipNavigation: true });
+        showError("1지망부터 순서대로 채워주세요.");
+        return;
+      }
     }
 
     submit.closeModal();
