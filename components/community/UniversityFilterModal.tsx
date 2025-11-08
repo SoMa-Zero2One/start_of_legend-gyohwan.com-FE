@@ -38,8 +38,10 @@ export default function UniversityFilterModal({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const savedScrollPosition = useRef<number>(0);
 
-  // 모든 필드 메타데이터 (displayOrder 순서대로)
-  const allFields = Object.values(UNIVERSITY_FIELDS).sort((a, b) => a.displayOrder - b.displayOrder);
+  // 속성 선택에 표시할 필드만 (대륙 제외: 필터 전용)
+  const allFields = Object.values(UNIVERSITY_FIELDS)
+    .filter((field) => field.key !== "continent")
+    .sort((a, b) => a.displayOrder - b.displayOrder);
 
   // 대륙별 나라 목록 추출
   const countriesByContinent = useMemo(() => {

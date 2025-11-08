@@ -3,19 +3,19 @@
  */
 export interface Season {
   seasonId: number;
-  domesticUniversity: string;
-  domesticUniversityLogoUri: string;
-  name: string;
+  domesticUniversity: string | null;
+  domesticUniversityLogoUri: string | null;
+  name: string | null;
   startDate: string | null;
   endDate: string | null;
-  hasApplied: boolean;
+  hasApplied: boolean | null;
 }
 
 /**
  * 시즌 목록 조회 응답
  */
 export interface SeasonsResponse {
-  seasons: Season[];
+  seasons: Season[] | null;
 }
 
 /**

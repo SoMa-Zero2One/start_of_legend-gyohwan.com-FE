@@ -27,9 +27,14 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
   const tabs: readonly TabType[] = ["대학 목록", "커뮤니티"] as const;
   const [selectedTab, setSelectedTab] = useState<TabType>("대학 목록");
 
+  // 방어적 기본값
+  const universities = countryData.universities ?? [];
+  // name이 null이면 countryCode를 대신 표시 (최소한 어떤 국가인지 식별 가능)
+  const countryName = countryData.name ?? countryData.countryCode.toUpperCase();
+
   // 미리보기 대학 목록 및 더보기 버튼 표시 여부
-  const previewUniversities = countryData.universities.slice(0, PREVIEW_UNIVERSITY_COUNT);
-  const hasMoreUniversities = countryData.universities.length > PREVIEW_UNIVERSITY_COUNT;
+  const previewUniversities = universities.slice(0, PREVIEW_UNIVERSITY_COUNT);
+  const hasMoreUniversities = universities.length > PREVIEW_UNIVERSITY_COUNT;
 
   // 미리보기 커뮤니티 게시글 및 더보기 버튼 표시 여부
   const previewPosts = communityPosts.slice(0, PREVIEW_POST_COUNT);
@@ -51,8 +56,8 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
       {/* 국기 + 국가명 */}
       <div className="sticky top-[50px] z-10 flex flex-col gap-[20px] bg-white p-[20px]">
         <div className="flex items-center gap-[12px]">
-          <CountryFlag country={countryData.name} size={40} />
-          <h1 className="head-4">{countryData.name}</h1>
+          <CountryFlag country={countryName} size={40} />
+          <h1 className="head-4">{countryName}</h1>
         </div>
         <Tabs tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
       </div>

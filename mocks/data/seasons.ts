@@ -41,6 +41,16 @@ export const mockSeasons: Season[] = [
     endDate: "2025-01-15T23:59:59",
     hasApplied: false,
   },
+  // 방어적 코딩 테스트용: null 필드를 가진 시즌
+  {
+    seasonId: 5,
+    domesticUniversity: null, // null 케이스
+    domesticUniversityLogoUri: null, // null 케이스
+    name: null, // null 케이스
+    startDate: null,
+    endDate: null,
+    hasApplied: null, // null 케이스
+  },
 ];
 
 /**
@@ -58,4 +68,5 @@ export const mockSeasonApplicantCounts: Record<number, number> = {
   2: 28,
   3: 65,
   4: 15,
+  5: 0, // null 필드 테스트용 시즌
 };
