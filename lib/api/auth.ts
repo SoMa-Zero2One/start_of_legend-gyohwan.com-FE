@@ -30,7 +30,7 @@ export const checkEmailExists = async (email: string): Promise<boolean> => {
 /**
  * Google 소셜 로그인
  * @param code - OAuth 인증 코드
- * @returns 액세스 토큰 및 리프레시 토큰
+ * @returns 액세스 토큰
  * @throws {Error} 로그인 실패 시
  */
 export const loginWithGoogle = async (code: string): Promise<AuthSuccessResponse> => {
@@ -56,7 +56,7 @@ export const loginWithGoogle = async (code: string): Promise<AuthSuccessResponse
 /**
  * Kakao 소셜 로그인
  * @param code - OAuth 인증 코드
- * @returns 액세스 토큰 및 리프레시 토큰
+ * @returns 액세스 토큰
  * @throws {Error} 로그인 실패 시
  */
 export const loginWithKakao = async (code: string): Promise<AuthSuccessResponse> => {
@@ -130,7 +130,7 @@ export const confirmEmailSignup = async (email: string, code: string): Promise<v
  * 이메일 로그인
  * @param email - 이메일 주소
  * @param password - 비밀번호
- * @returns 액세스 토큰 및 리프레시 토큰
+ * @returns 액세스 토큰
  * @throws {Error} 로그인 실패 시
  */
 export const loginWithEmail = async (email: string, password: string): Promise<AuthSuccessResponse> => {
