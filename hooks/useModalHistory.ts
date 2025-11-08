@@ -88,10 +88,18 @@ export function useModalHistory({ modalKey }: UseModalHistoryOptions) {
    * - push로 열었던 경우: router.back() (히스토리 제거)
    * - URL 직접 진입: router.replace() (URL만 수정)
    * - Optimistic UI: 즉시 상태 업데이트로 빠른 피드백
+   *
+   * @param options.skipNavigation - true일 경우 router 조작 없이 상태만 닫음 (다른 navigation과 충돌 방지)
    */
-  const closeModal = () => {
+  const closeModal = (options?: { skipNavigation?: boolean }) => {
     // 즉시 모달 닫기 (Optimistic UI)
     setIsOpen(false);
+
+    // skipNavigation 옵션이 true면 상태만 변경하고 종료
+    if (options?.skipNavigation) {
+      pushedHistoryRef.current = false;
+      return;
+    }
 
     const params = new URLSearchParams(searchParams.toString());
     params.delete("modal");

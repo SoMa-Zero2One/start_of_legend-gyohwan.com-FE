@@ -304,7 +304,7 @@ function ApplicationNewContent() {
 
   // 다시 입력하기 (ApplicationSubmitModal에서 호출)
   const handleCancelSubmit = () => {
-    submit.closeModal();
+    submit.closeModal({ skipNavigation: true });
     router.push(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
   };
 
@@ -395,11 +395,11 @@ function ApplicationNewContent() {
         message={eligibilityErrorMessage}
         confirmText="확인"
         onConfirm={() => {
-          eligibility.closeModal();
+          eligibility.closeModal({ skipNavigation: true });
           router.replace(`/strategy-room/${seasonId}`);
         }}
         onCancel={() => {
-          eligibility.closeModal();
+          eligibility.closeModal({ skipNavigation: true });
           router.replace(`/strategy-room/${seasonId}`);
         }}
       />

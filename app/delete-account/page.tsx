@@ -16,19 +16,20 @@ function DeleteAccountContent() {
   const [isAgreed, setIsAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
 
   // 모달 히스토리 관리
   const { isOpen: showConfirmModal, openModal, closeModal } = useModalHistory({ modalKey: "confirm" });
 
   // 로그인 체크 - Hard-gate
   useEffect(() => {
-    if (authLoading) return;
+    if (authLoading || isWithdrawing) return;
 
     if (!user) {
       saveRedirectUrl("/delete-account");
       router.push("/log-in-or-create-account");
     }
-  }, [authLoading, user, router]);
+  }, [authLoading, user, router, isWithdrawing]);
 
   // 로딩 중이거나 리다이렉트 진행 중
   if (authLoading || !user) {
@@ -51,8 +52,16 @@ function DeleteAccountContent() {
 
   // 최종 확인 후 회원 탈퇴 처리
   const handleConfirmDelete = async () => {
+    // 보안: URL로 모달을 강제로 열어도 동의 체크
+    if (!isAgreed) {
+      closeModal();
+      setError("회원 탈퇴에 동의해주세요.");
+      return;
+    }
+
     setIsLoading(true);
     setError("");
+    setIsWithdrawing(true); // 탈퇴 진행 중 플래그 설정
 
     try {
       await withdrawAccount();
@@ -60,10 +69,12 @@ function DeleteAccountContent() {
       // 탈퇴 성공 - 로그아웃 처리
       logout();
 
+      // isWithdrawing 플래그로 인해 useEffect가 간섭하지 않음
       router.push("/");
     } catch (error) {
       setError(error instanceof Error ? error.message : "회원 탈퇴에 실패했습니다.");
       closeModal();
+      setIsWithdrawing(false); // 실패 시 플래그 해제
     } finally {
       setIsLoading(false);
     }
