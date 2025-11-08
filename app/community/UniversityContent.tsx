@@ -138,7 +138,7 @@ export default function UniversityContent({ universities }: UniversityContentPro
       <Toast message={errorMessage} isExiting={isExiting} onClose={hideToast} />
 
       {/* 하단 고정 즐겨찾기 필터 토글 */}
-      <FavoriteFilterToggle checked={showFavoritesOnly} onChange={handleFavoriteFilterToggle} />
+      {!isFilterOpen && <FavoriteFilterToggle checked={showFavoritesOnly} onChange={handleFavoriteFilterToggle} />}
 
       {/* 필터 모달 */}
       <UniversityFilterModal
