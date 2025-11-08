@@ -41,8 +41,9 @@ export function enrichUniversityData(apiData: UniversityApiResponse[]): Enriched
 
     // API data 필드들 변환 ("대륙" 필드는 제외)
     universityData
-      .filter((f) => f.fieldName && f.fieldName !== "대륙") // 방어: fieldName null 체크 + 대륙은 별도 속성으로
+      .filter((f) => f.fieldName !== "대륙") // 대륙은 별도 속성으로
       .forEach((field) => {
+        // fieldId로 메타데이터 조회
         const metadata = getUniversityFieldMetadata(field.fieldId);
 
         if (!metadata) {
@@ -55,7 +56,7 @@ export function enrichUniversityData(apiData: UniversityApiResponse[]): Enriched
           fieldId: field.fieldId,
           key: metadata.key,
           label: metadata.label,
-          value: field.value,
+          value: field.value ?? "", // null → "" for consistency
           displayValue: transformDisplayValue(field.value, metadata),
           numericValue: extractNumericValue(field.value, metadata.type),
           type: metadata.type,

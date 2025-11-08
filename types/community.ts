@@ -1,7 +1,18 @@
 /**
  * 커뮤니티 관련 타입 정의
- * API 응답 타입(CountryApiResponse, UniversityApiResponse)은 ID 필드를 제외하고 null일 수 있음 (방어적 코딩)
- * Enriched 타입과 FieldMetadata는 변환 레이어에서 방어 처리된 후의 안전한 타입
+ *
+ * API 응답 타입 (CountryApiResponse, UniversityApiResponse):
+ * - ID 필드 외 null 가능 (방어적 코딩)
+ * - null 의미: 데이터 미제공, 누락, 오류 상황
+ * - 처리 방법: Transform 레이어에서 기본값으로 변환
+ *
+ * Enriched 타입 (EnrichedCountry, EnrichedUniversity):
+ * - 변환 후 안전한 상태 (null 없음)
+ * - Transform 레이어에서 방어 처리 완료
+ * - 컴포넌트에서 안전하게 사용 가능
+ *
+ * FieldMetadata:
+ * - 프론트엔드에서 정의하는 메타데이터 (항상 안전한 값)
  */
 
 // ==================== 공통 타입 ====================
@@ -40,13 +51,18 @@ export interface CountryApiResponse {
   }> | null;
 }
 
-// 프론트엔드 통합 형식
+// 프론트엔드 통합 형식 (변환 후 안전한 상태)
 export interface EnrichedCountry {
   countryCode: string;
   name: string;
   continent: string; // 필터 전용 (테이블에 표시 안 함)
   fields: Map<string, CountryFieldValue>; // key → value 매핑
-  rawData: CountryApiResponse["data"]; // 원본 보존 (디버깅용)
+  rawData: Array<{
+    fieldId: number;
+    fieldName: string | null;
+    value: string | null;
+    type: "LEVEL" | "STRING" | "NUMBER" | null;
+  }>; // 변환 레이어에서 항상 배열로 보장
 }
 
 export interface CountryFieldValue {
@@ -79,7 +95,7 @@ export interface UniversityApiResponse {
   }> | null;
 }
 
-// 프론트엔드 통합 형식 (대학)
+// 프론트엔드 통합 형식 (대학) (변환 후 안전한 상태)
 export interface EnrichedUniversity {
   univId: number;
   name: string;
@@ -88,7 +104,12 @@ export interface EnrichedUniversity {
   isFavorite: boolean;
   logoUrl: string; // 대학 로고 URL
   fields: Map<string, UniversityFieldValue>; // key → value 매핑 (countryName도 "country" 키로 포함)
-  rawData: UniversityApiResponse["data"]; // 원본 보존 (디버깅용)
+  rawData: Array<{
+    fieldId: number;
+    fieldName: string | null;
+    value: string | null;
+    type: "LEVEL" | "STRING" | "NUMBER" | null;
+  }>; // 변환 레이어에서 항상 배열로 보장
 }
 
 // 대학 필드 값

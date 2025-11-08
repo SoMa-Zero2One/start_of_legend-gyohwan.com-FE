@@ -18,15 +18,13 @@ export function enrichCountryData(apiData: CountryApiResponse[]): EnrichedCountr
     const countryData = country.data ?? [];
 
     countryData.forEach((field) => {
-      // 방어: fieldName이 null이면 스킵
-      if (!field.fieldName) return;
-
-      // 대륙은 필터 전용으로 별도 처리
+      // 대륙은 필터 전용으로 별도 처리 (fieldName 기준)
       if (field.fieldName === "대륙") {
         continent = field.value ?? "";
         return;
       }
 
+      // fieldId로 메타데이터 조회
       const metadata = getFieldMetadata(field.fieldId);
 
       if (!metadata) {
@@ -35,16 +33,13 @@ export function enrichCountryData(apiData: CountryApiResponse[]): EnrichedCountr
         return;
       }
 
-      // 방어: value가 null이면 빈 문자열로 처리
-      const fieldValue = field.value ?? "";
-
       const enrichedField: CountryFieldValue = {
         fieldId: field.fieldId,
         key: metadata.key,
         label: metadata.label,
-        value: fieldValue,
-        displayValue: transformDisplayValue(fieldValue, metadata),
-        numericValue: extractNumericValue(fieldValue, metadata.type),
+        value: field.value ?? "", // null → "" for consistency
+        displayValue: transformDisplayValue(field.value, metadata),
+        numericValue: extractNumericValue(field.value, metadata.type),
         type: metadata.type,
         sortable: metadata.sortable,
         displayOrder: metadata.displayOrder,
@@ -67,7 +62,10 @@ export function enrichCountryData(apiData: CountryApiResponse[]): EnrichedCountr
 /**
  * 표시용 값 변환
  */
-function transformDisplayValue(value: string, metadata: FieldMetadata): string {
+function transformDisplayValue(value: string | null, metadata: FieldMetadata): string {
+  // null이나 빈 문자열 처리
+  if (!value) return "";
+
   if (metadata.type === "level") {
     // LEVEL 타입: 1→하, 2→중하, 3→중, 4→중상, 5→상
     const num = parseInt(value);
@@ -92,7 +90,7 @@ function transformDisplayValue(value: string, metadata: FieldMetadata): string {
   if (metadata.type === "number") {
     // NUMBER 타입: 숫자 포맷팅
     const num = Number(value);
-    if (isNaN(num)) return value;
+    if (isNaN(num)) return "";
     return num.toLocaleString();
   }
 
@@ -103,7 +101,10 @@ function transformDisplayValue(value: string, metadata: FieldMetadata): string {
 /**
  * 정렬용 숫자 추출
  */
-function extractNumericValue(value: string, type: FieldMetadata["type"]): number | undefined {
+function extractNumericValue(value: string | null, type: FieldMetadata["type"]): number | undefined {
+  // null이나 빈 문자열이면 undefined 반환 (정렬 시 맨 뒤로)
+  if (!value) return undefined;
+
   if (type === "number") {
     const num = Number(value);
     return isNaN(num) ? undefined : num;
