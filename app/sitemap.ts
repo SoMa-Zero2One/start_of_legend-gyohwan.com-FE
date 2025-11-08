@@ -29,8 +29,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const seasonsData = await getSeasons();
 
-    // 각 시즌별 전략실 페이지 추가
-    dynamicPages = seasonsData.seasons.map((season) => ({
+    // 각 시즌별 전략실 페이지 추가 (null 안전 처리)
+    const seasons = seasonsData.seasons ?? [];
+    dynamicPages = seasons.map((season) => ({
       url: `${baseUrl}/strategy-room/${season.seasonId}`,
       changeFrequency: "daily" as const,
       priority: 0.8, // 핵심 기능 페이지

@@ -56,8 +56,10 @@ export default function HomePage({ initialSeasons }: HomePageProps) {
       return;
     }
 
-    // 3. 본인 학교 시즌이 있는지 확인
-    const mySchoolSeason = initialSeasons.find((s) => s.domesticUniversity === user.domesticUniversity);
+    // 3. 본인 학교 시즌이 있는지 확인 (null 안전 처리)
+    const mySchoolSeason = initialSeasons.find(
+      (s) => s.domesticUniversity !== null && s.domesticUniversity === user.domesticUniversity
+    );
     if (mySchoolSeason && user.domesticUniversity) {
       setFloatingButton({
         label: "우리 학교 실시간 경쟁률 바로가기",

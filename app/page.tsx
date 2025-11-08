@@ -35,7 +35,7 @@ export default async function Page() {
 
   // 서버에서 시즌 목록만 가져오기 (인증 불필요)
   const initialSeasons = await getSeasons()
-    .then((data) => data.seasons)
+    .then((data) => data.seasons ?? []) // null 안전 처리
     .catch((error) => {
       console.error("Failed to fetch seasons:", error);
       // API 실패 시 빈 배열로 fallback (빌드/재생성 중 에러 방지)
