@@ -1,6 +1,3 @@
-"use client";
-
-import { useRouter } from "next/navigation";
 import UniversityListItem from "./UniversityListItem";
 import type { UniversitySimple } from "@/types/country";
 
@@ -9,12 +6,6 @@ interface UniversityListProps {
 }
 
 export default function UniversityList({ universities }: UniversityListProps) {
-  const router = useRouter();
-
-  const handleUniversityClick = (univId: number) => {
-    router.push(`/community/university/${univId}`);
-  };
-
   // Empty state 처리
   if (!universities || universities.length === 0) {
     return (
@@ -36,13 +27,7 @@ export default function UniversityList({ universities }: UniversityListProps) {
       </div>
       <div className="flex flex-col gap-[8px] px-[20px]">
         {universities.map((university) => (
-          <UniversityListItem
-            key={university.univId}
-            nameKo={university.nameKo}
-            nameEn={university.nameEn}
-            logoUrl={university.logoUrl}
-            onClick={() => handleUniversityClick(university.univId)}
-          />
+          <UniversityListItem key={university.univId} {...university} />
         ))}
       </div>
     </>
