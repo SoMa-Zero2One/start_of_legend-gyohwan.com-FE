@@ -11,6 +11,7 @@ import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 import ExternalLinkIcon from "@/components/icons/ExternalLinkIcon";
 import { getSlotDetail, getMyApplication } from "@/lib/api/slot";
 import { SlotDetailResponse, MyApplicationResponse } from "@/types/slot";
+import { getSlotSafeDefaults, getChoiceCountDisplay, getSlotCountDisplay } from "@/lib/utils/slot";
 
 type TabType = "지망순위" | "환산점수" | "학점";
 
@@ -195,15 +196,12 @@ export default function SlotDetailPage() {
     );
   }
 
-  // 방어적 기본값 설정
-  const name = data.name ?? "정보 없음";
-  const country = data.country ?? "기타";
+  // 방어적 기본값 적용
+  const { name, country, choiceCount, slotCount, logoUrl } = getSlotSafeDefaults(data);
 
-  // choiceCount: null(정보 없음)과 0(실제 지원자 없음)을 구분
-  const choiceCountDisplay = data.choiceCount === null ? "정보 없음" : `${data.choiceCount}명`;
-
-  // slotCount: null이면 "미정", 아니면 값 + "명"
-  const slotCountDisplay = data.slotCount === null ? "미정" : `${data.slotCount}명`;
+  // 표시용 문자열
+  const choiceCountDisplay = getChoiceCountDisplay(choiceCount);
+  const slotCountDisplay = getSlotCountDisplay(slotCount);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -216,7 +214,7 @@ export default function SlotDetailPage() {
         <div className="mb-[8px]">
           <div className="relative h-[40px] w-[40px] overflow-hidden rounded-full">
             <SchoolLogoWithFallback
-              src={data.logoUrl}
+              src={logoUrl}
               alt={`${name} 로고`}
               width={40}
               height={40}

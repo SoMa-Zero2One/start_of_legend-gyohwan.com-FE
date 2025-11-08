@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { Slot } from "@/types/slot";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 import CountryFlag from "@/components/common/CountryFlag";
+import { getSlotSafeDefaults, getChoiceCountDisplay, getSlotCountDisplay } from "@/lib/utils/slot";
 
 interface UniversitySlotCardProps {
   slot: Slot;
@@ -12,15 +13,12 @@ export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
   const params = useParams();
   const seasonId = params.seasonId as string;
 
-  // 방어적 기본값 설정
-  const name = slot.name ?? "정보 없음";
-  const country = slot.country ?? "기타";
+  // 방어적 기본값 적용
+  const { name, country, choiceCount, slotCount, logoUrl } = getSlotSafeDefaults(slot);
 
-  // choiceCount: null(정보 없음)과 0(실제 지원자 없음)을 구분
-  const choiceCountDisplay = slot.choiceCount === null ? "정보 없음" : `${slot.choiceCount}명`;
-
-  // slotCount: null이면 "미정", 아니면 값 + "명"
-  const slotCountDisplay = slot.slotCount === null ? "미정" : `${slot.slotCount}명`;
+  // 표시용 문자열
+  const choiceCountDisplay = getChoiceCountDisplay(choiceCount);
+  const slotCountDisplay = getSlotCountDisplay(slotCount);
 
   return (
     <Link href={`/strategy-room/${seasonId}/slots/${slot.slotId}`}>
@@ -30,7 +28,7 @@ export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
             {/* 학교 로고 */}
             <div className="relative h-[20px] w-[20px] overflow-hidden">
               <SchoolLogoWithFallback
-                src={slot.logoUrl}
+                src={logoUrl}
                 alt={`${name} 로고`}
                 width={20}
                 height={20}
