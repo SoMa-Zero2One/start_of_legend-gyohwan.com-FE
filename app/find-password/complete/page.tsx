@@ -32,7 +32,7 @@ function CompletePasswordResetContent() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header title="비밀번호 찾기" showPrevButton showBorder />
+      <Header title="비밀번호 찾기" showPrevButton showHomeButton showBorder />
       <div className="flex flex-1 flex-col items-center px-[20px] pt-[60px]">
         <div className="flex w-[330px] flex-col items-center gap-[60px]">
           {/* 헤더 */}

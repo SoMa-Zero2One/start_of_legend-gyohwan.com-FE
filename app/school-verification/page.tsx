@@ -112,7 +112,7 @@ function SchoolVerificationContent() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header title="학교 인증" showPrevButton showBorder />
+      <Header title="학교 인증" showPrevButton showHomeButton showBorder />
       <div className="flex flex-1 flex-col items-center justify-between px-[20px] pt-[60px] pb-[36px]">
         <div className="flex w-[330px] flex-col items-center gap-[60px]">
           {/* 헤더 */}

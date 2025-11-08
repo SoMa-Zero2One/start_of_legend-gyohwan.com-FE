@@ -35,7 +35,7 @@ function DeleteAccountContent() {
   if (authLoading || !user) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="회원탈퇴" showPrevButton showBorder />
+        <Header title="회원탈퇴" showPrevButton showHomeButton showBorder />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-gray-500">로딩 중...</p>
         </div>
@@ -82,7 +82,7 @@ function DeleteAccountContent() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header title="회원탈퇴" showPrevButton showBorder />
+      <Header title="회원탈퇴" showPrevButton showHomeButton showBorder />
 
       <div className="flex flex-1 flex-col items-center pt-[30px] pb-[36px]">
         <div className="flex w-full flex-col items-center px-[20px]">
