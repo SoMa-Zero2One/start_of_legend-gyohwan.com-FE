@@ -34,8 +34,10 @@ export default function StrategyRoomEntrances({ initialSeasons }: StrategyRoomEn
       if (!aHasDate && bHasDate) return 1;
       if (aHasDate && !bHasDate) return -1;
       if (!aHasDate && !bHasDate) {
-        // 둘 다 일정이 없으면 가나다순
-        return a.domesticUniversity.localeCompare(b.domesticUniversity, "ko-KR");
+        // 둘 다 일정이 없으면 가나다순 (null 안전 처리)
+        const aName = a.domesticUniversity ?? "";
+        const bName = b.domesticUniversity ?? "";
+        return aName.localeCompare(bName, "ko-KR");
       }
 
       // 둘 다 일정이 있으면 마감일이 가까운 순서 (오름차순)

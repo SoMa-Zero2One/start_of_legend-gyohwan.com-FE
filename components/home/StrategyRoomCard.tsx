@@ -14,6 +14,9 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
   const { seasonId, domesticUniversity, domesticUniversityLogoUri, startDate, endDate } = data;
   const router = useRouter();
 
+  // null 안전 처리
+  const safeDomesticUniversity = domesticUniversity ?? "대학교";
+
   // 날짜 포맷 (yyyy.mm.dd ~ yyyy.mm.dd)
   const formattedDate = startDate && endDate ? `${formatDate(startDate)} ~ ${formatDate(endDate)}` : "일정 미정";
 
@@ -32,14 +35,14 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
         <div className="relative h-[80px] w-[80px] flex-shrink-0">
           <SchoolLogoWithFallback
             src={domesticUniversityLogoUri}
-            alt={`${domesticUniversity} 로고`}
+            alt={`${safeDomesticUniversity} 로고`}
             fill
             sizes="80px"
             className="object-contain"
           />
         </div>
         <div className="flex flex-1 flex-col">
-          <span className="subhead-2">{domesticUniversity}</span>
+          <span className="subhead-2">{safeDomesticUniversity}</span>
           <span>
             <span className="mr-[5px]">{formattedDate}</span>
             {/* 오른쪽 D-Day */}
