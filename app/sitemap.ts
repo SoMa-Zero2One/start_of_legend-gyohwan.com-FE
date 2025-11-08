@@ -1,6 +1,9 @@
 import { MetadataRoute } from "next";
 import { getSeasons } from "@/lib/api/season";
 
+// 24시간(86400초)마다 재생성 (ISR)
+export const revalidate = 86400;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gyohwan.com";
 
@@ -30,7 +33,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const seasonsData = await getSeasons();
 
     // 각 시즌별 전략실 페이지 추가 (null 안전 처리)
-    const seasons = seasonsData.seasons ?? [];
+    const seasons = seasonsData.seasons;
+
+    if (seasons === null) {
+      // SEO 회귀 방지: seasons가 null이면 에러 throw
+      // → Next.js ISR이 이전 sitemap을 유지함
+      console.warn("[SEO WARNING] Sitemap: seasons is null - keeping previous sitemap");
+      throw new Error("Seasons is null - cannot generate new sitemap");
+    }
+
     dynamicPages = seasons.map((season) => ({
       url: `${baseUrl}/strategy-room/${season.seasonId}`,
       changeFrequency: "daily" as const,
@@ -38,7 +49,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
   } catch (error) {
     console.error("Failed to fetch seasons for sitemap:", error);
-    // API 실패 시 빈 배열로 처리
+    // 에러를 다시 throw → Next.js가 이전 sitemap 유지
+    throw error;
   }
 
   // 제외된 페이지들 (robots.txt와 일관성 유지):
