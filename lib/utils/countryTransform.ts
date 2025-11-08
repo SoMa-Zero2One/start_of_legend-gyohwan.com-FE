@@ -90,7 +90,7 @@ function transformDisplayValue(value: string | null, metadata: FieldMetadata): s
   if (metadata.type === "number") {
     // NUMBER 타입: 숫자 포맷팅
     const num = Number(value);
-    if (isNaN(num)) return "";
+    if (isNaN(num)) return value; // 원본 문자열 유지 (예: "정보 없음")
     return num.toLocaleString();
   }
 
