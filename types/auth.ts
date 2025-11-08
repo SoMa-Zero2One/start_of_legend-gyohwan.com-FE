@@ -16,7 +16,6 @@ export interface OAuthCallbackParams {
 // 백엔드 API 성공 응답
 export interface AuthSuccessResponse {
   accessToken: string;
-  refreshToken?: string;
 }
 
 // 백엔드 API 실패 응답 (RFC 7807 Problem Details)
