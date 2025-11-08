@@ -42,7 +42,7 @@ export default function ChangePasswordPage() {
   if (authLoading || !user || user.loginType === "SOCIAL") {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="비밀번호 변경" showPrevButton />
+        <Header title="비밀번호 변경" showPrevButton showHomeButton />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-gray-500">로딩 중...</p>
         </div>
@@ -119,7 +119,7 @@ export default function ChangePasswordPage() {
   if (isSuccess) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="비밀번호 변경" showPrevButton />
+        <Header title="비밀번호 변경" showPrevButton showHomeButton />
         <div className="flex flex-1 flex-col items-center justify-center px-[20px]">
           <div className="flex flex-col items-center gap-[20px]">
             <div className="flex h-[80px] w-[80px] items-center justify-center rounded-full bg-green-100">
@@ -143,7 +143,7 @@ export default function ChangePasswordPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header title="비밀번호 변경" showPrevButton />
+      <Header title="비밀번호 변경" showPrevButton showHomeButton />
 
       <div className="flex flex-1 flex-col items-center pt-[60px] pb-[36px]">
         <div className="flex w-full flex-col items-center px-[10px]">

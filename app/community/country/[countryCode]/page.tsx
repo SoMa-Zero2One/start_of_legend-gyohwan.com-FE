@@ -34,7 +34,7 @@ export default async function CountryDetailPage({ params }: CountryDetailPagePro
     <div className="flex min-h-screen flex-col">
       {/* Sticky Header */}
       <div className="sticky top-0 z-20 bg-white">
-        <Header showPrevButton />
+        <Header showPrevButton showHomeButton />
       </div>
 
       <main className="mx-auto w-full max-w-[430px] flex-1">

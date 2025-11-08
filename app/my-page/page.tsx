@@ -30,7 +30,7 @@ export default function MyInfoPage() {
   if (authLoading || !user) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="내 정보 관리" showPrevButton showBorder />
+        <Header title="내 정보 관리" showPrevButton showHomeButton showBorder />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-gray-500">로딩 중...</p>
         </div>
@@ -55,7 +55,7 @@ export default function MyInfoPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header title="내 정보 관리" showPrevButton />
+      <Header title="내 정보 관리" showPrevButton showHomeButton />
 
       <div className="flex w-full flex-col gap-[24px] px-[20px] pt-[30px]">
         <p className="subhead-1">내 정보</p>

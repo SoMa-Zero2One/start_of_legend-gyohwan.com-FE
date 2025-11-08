@@ -13,7 +13,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
     <div className="flex min-h-screen flex-col">
       {/* Sticky Header */}
       <div className="sticky top-0 z-20 bg-white">
-        <Header title="게시글" showPrevButton />
+        <Header title="게시글" showPrevButton showHomeButton />
       </div>
 
       <main className="mx-auto w-full max-w-[430px] flex-1 px-[20px] py-[24px]">

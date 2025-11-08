@@ -340,13 +340,13 @@ function ApplicationNewContent() {
   // 다시 입력하기 (ApplicationSubmitModal에서 호출)
   const handleCancelSubmit = () => {
     submit.closeModal({ skipNavigation: true });
-    router.push(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
+    router.replace(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
   };
 
   if (isLoading) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="성적 공유" showPrevButton showBorder />
+        <Header title="성적 공유" showPrevButton showHomeButton showBorder />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-gray-500">로딩 중...</p>
         </div>
@@ -363,7 +363,7 @@ function ApplicationNewContent() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header title="성적 공유" showPrevButton />
+      <Header title="성적 공유" showPrevButton showHomeButton />
       <ProgressBar currentStep={step === "university-selection" ? 2 : 1} totalSteps={2} />
 
       {/* Step 1: 성적 등록 */}
