@@ -226,18 +226,30 @@ export default function SlotDetailPage() {
         {/* 학교 이름 */}
         <h2 className={`head-4 ${data.homepageUrl ? "mb-[8px]" : "mb-[20px]"}`}>{name}</h2>
 
-        {/* 홈페이지 바로가기 버튼 */}
-        {data.homepageUrl && (
-          <a
-            href={data.homepageUrl}
+        <div className="mb-[20px] flex gap-[12px]">
+          {/* 홈페이지 바로가기 버튼 */}
+          {data.homepageUrl && (
+            <a
+              href={data.homepageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-[4px] rounded-full bg-gray-300 px-[12px] py-[6px] text-[12px] transition-colors hover:bg-gray-400"
+            >
+              홈페이지 바로가기
+              <ExternalLinkIcon />
+            </a>
+          )}
+
+          {/* <a
+            href={`https://childlike-scowl-e9b.notion.site/${slotId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="mb-[20px] inline-flex items-center gap-[4px] rounded-full bg-gray-300 px-[12px] py-[6px] text-[12px] transition-colors hover:bg-gray-400"
+            className="btn-primary inline-flex items-center gap-[4px] rounded-full px-[12px] py-[6px] text-[12px] text-white transition-colors"
           >
-            홈페이지 바로가기
+          정리된 대학 정보 보기
             <ExternalLinkIcon />
-          </a>
-        )}
+          </a> */}
+        </div>
 
         {/* 정보 목록 */}
         <div className="flex flex-col gap-[12px]">
