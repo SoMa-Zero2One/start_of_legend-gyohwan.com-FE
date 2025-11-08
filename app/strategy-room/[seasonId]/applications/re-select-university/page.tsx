@@ -161,6 +161,23 @@ function ApplicationEditContent() {
 
   // 최종 제출 실행
   const handleConfirmSubmit = async () => {
+    // 보안: URL 조작으로 모달을 열었을 경우를 대비한 재검증
+    if (selectedUniversities.length === 0) {
+      confirm.closeModal();
+      showError("최소 1개 이상의 지망 대학을 선택해주세요.");
+      return;
+    }
+
+    // 1지망부터 순서대로 채워졌는지 확인
+    const sortedChoices = selectedUniversities.map((u) => u.choice).sort((a, b) => a - b);
+    for (let i = 0; i < sortedChoices.length; i++) {
+      if (sortedChoices[i] !== i + 1) {
+        confirm.closeModal();
+        showError("1지망부터 순서대로 채워주세요.");
+        return;
+      }
+    }
+
     confirm.closeModal();
 
     try {

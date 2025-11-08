@@ -112,6 +112,17 @@ function ApplicationNewContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seasonId, router, step]);
 
+  // Eligibility 모달이 닫히면 전략방으로 리다이렉트
+  // (뒤로 가기로 모달만 닫고 페이지에 남아있는 경우 방지)
+  useEffect(() => {
+    const modal = searchParams.get("modal");
+
+    // eligibilityErrorMessage가 있는데 modal이 없으면 = 모달이 닫힌 상태
+    if (eligibilityErrorMessage && modal !== "eligibility") {
+      router.replace(`/strategy-room/${seasonId}`);
+    }
+  }, [searchParams, eligibilityErrorMessage, seasonId, router]);
+
   // sessionStorage 키
   const STORAGE_KEY = `gyohwan_selected_universities_${seasonId}`;
 
@@ -264,6 +275,20 @@ function ApplicationNewContent() {
 
   // 최종 제출 실행
   const handleConfirmSubmit = async () => {
+    // 보안: URL 조작으로 모달을 열었을 경우를 대비한 재검증
+    if (!gpaId || !languageId) {
+      submit.closeModal();
+      showError("성적 정보가 없습니다. 다시 입력해주세요.");
+      router.replace(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
+      return;
+    }
+
+    if (selectedUniversities.length === 0) {
+      submit.closeModal();
+      showError("최소 1개 이상의 지망 대학을 선택해주세요.");
+      return;
+    }
+
     submit.closeModal();
 
     try {
@@ -276,8 +301,8 @@ function ApplicationNewContent() {
 
       const requestData: SubmitApplicationRequest = {
         extraScore: extraScore ? parseFloat(extraScore) : 0,
-        gpaId: gpaId!,
-        languageId: languageId!,
+        gpaId: gpaId,
+        languageId: languageId,
         choices,
       };
 
