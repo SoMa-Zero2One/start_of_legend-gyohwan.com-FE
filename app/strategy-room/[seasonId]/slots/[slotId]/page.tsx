@@ -11,6 +11,7 @@ import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 import ExternalLinkIcon from "@/components/icons/ExternalLinkIcon";
 import { getSlotDetail, getMyApplication } from "@/lib/api/slot";
 import { SlotDetailResponse, MyApplicationResponse } from "@/types/slot";
+import { getSlotSafeDefaults, getChoiceCountDisplay, getSlotCountDisplay } from "@/lib/utils/slot";
 
 type TabType = "지망순위" | "환산점수" | "학점";
 
@@ -195,6 +196,13 @@ export default function SlotDetailPage() {
     );
   }
 
+  // 방어적 기본값 적용
+  const { name, country, choiceCount, slotCount, logoUrl } = getSlotSafeDefaults(data);
+
+  // 표시용 문자열
+  const choiceCountDisplay = getChoiceCountDisplay(choiceCount);
+  const slotCountDisplay = getSlotCountDisplay(slotCount);
+
   return (
     <div className="flex min-h-screen flex-col">
       {/* 상단 헤더 */}
@@ -206,8 +214,8 @@ export default function SlotDetailPage() {
         <div className="mb-[8px]">
           <div className="relative h-[40px] w-[40px] overflow-hidden rounded-full">
             <SchoolLogoWithFallback
-              src={data.logoUrl}
-              alt={`${data.name} 로고`}
+              src={logoUrl}
+              alt={`${name} 로고`}
               width={40}
               height={40}
               className="object-contain"
@@ -216,7 +224,7 @@ export default function SlotDetailPage() {
         </div>
 
         {/* 학교 이름 */}
-        <h2 className={`head-4 ${data.homepageUrl ? "mb-[8px]" : "mb-[20px]"}`}>{data.name}</h2>
+        <h2 className={`head-4 ${data.homepageUrl ? "mb-[8px]" : "mb-[20px]"}`}>{name}</h2>
 
         {/* 홈페이지 바로가기 버튼 */}
         {data.homepageUrl && (
@@ -235,15 +243,15 @@ export default function SlotDetailPage() {
         <div className="flex flex-col gap-[12px]">
           <div className="flex items-center justify-between">
             <span className="text-gray-700">국가</span>
-            <span className="font-bold">{data.country}</span>
+            <span className="font-bold">{country}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-gray-700">지원자 수</span>
-            <span className="font-bold">{data.choiceCount}명</span>
+            <span className="font-bold">{choiceCountDisplay}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-gray-700">모집인원</span>
-            <span className="font-bold">{data.slotCount}명</span>
+            <span className="font-bold">{slotCountDisplay}</span>
           </div>
         </div>
       </section>
