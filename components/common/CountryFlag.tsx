@@ -72,16 +72,29 @@ const countryToISO: Record<string, string> = {
 };
 
 interface CountryFlagProps {
-  country: string;
+  country: string | null;
   size?: number;
   className?: string;
 }
 
 export default function CountryFlag({ country, size = 20, className = "" }: CountryFlagProps) {
+  // country가 null이거나 매핑되지 않은 경우 기본 아이콘 표시
+  if (!country) {
+    return (
+      <span className={className} style={{ fontSize: `${size}px`, lineHeight: 1 }}>
+        🌍
+      </span>
+    );
+  }
+
   const countryCode = countryToISO[country];
 
   if (!countryCode) {
-    return <span className={className}>🌍</span>;
+    return (
+      <span className={className} style={{ fontSize: `${size}px`, lineHeight: 1 }}>
+        🌍
+      </span>
+    );
   }
 
   return (

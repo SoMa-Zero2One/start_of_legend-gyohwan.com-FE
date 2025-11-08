@@ -88,7 +88,8 @@ export default function StrategyRoomClient() {
     let slots = data.slots;
 
     if (selectedTab === "지원자가 있는 대학") {
-      slots = data.slots.filter((slot) => slot.choiceCount >= 1);
+      // null이 아니고 1 이상인 경우만 필터링 (null은 정보 없음이므로 제외)
+      slots = data.slots.filter((slot) => slot.choiceCount !== null && slot.choiceCount >= 1);
     } else if (selectedTab === "지망한 대학") {
       slots = data.slots.filter((slot) => myChosenUniversities.includes(slot.slotId));
     }
@@ -96,9 +97,11 @@ export default function StrategyRoomClient() {
     // 2단계: 검색어에 따른 필터링
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      slots = slots.filter(
-        (slot) => slot.name.toLowerCase().includes(query) || slot.country.toLowerCase().includes(query)
-      );
+      slots = slots.filter((slot) => {
+        const name = slot.name ?? "";
+        const country = slot.country ?? "";
+        return name.toLowerCase().includes(query) || country.toLowerCase().includes(query);
+      });
     }
 
     return slots;
@@ -110,7 +113,8 @@ export default function StrategyRoomClient() {
   // blur 배경용 슬롯 (지원자가 있는 대학)
   const backgroundSlots = useMemo(() => {
     if (!data) return [];
-    return data.slots.filter((slot) => slot.choiceCount >= 1);
+    // null이 아니고 1 이상인 경우만 필터링
+    return data.slots.filter((slot) => slot.choiceCount !== null && slot.choiceCount >= 1);
   }, [data]);
 
   // CTA 버튼 클릭 핸들러
@@ -191,7 +195,8 @@ export default function StrategyRoomClient() {
         onTabChange={handleTabChange}
         counts={{
           "지망한 대학": !hasSharedGrade ? 0 : myChosenUniversities.length,
-          "지원자가 있는 대학": data.slots.filter((slot) => slot.choiceCount >= 1).length,
+          "지원자가 있는 대학": data.slots.filter((slot) => slot.choiceCount !== null && slot.choiceCount >= 1)
+            .length,
           "모든 대학": data.slots.length,
         }}
       />

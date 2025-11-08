@@ -4,8 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 
 interface SchoolLogoWithFallbackProps {
-  src?: string | null;
-  alt: string;
+  src: string | null;
+  alt: string | null;
   width?: number;
   height?: number;
   className?: string;
@@ -25,6 +25,9 @@ export default function SchoolLogoWithFallback({
   isLoading = false,
 }: SchoolLogoWithFallbackProps) {
   const [imageError, setImageError] = useState(false);
+
+  // alt가 null이면 기본값 사용
+  const altText = alt ?? "학교 로고";
 
   // 로딩 중일 때 Skeleton 표시
   if (isLoading) {
@@ -79,14 +82,21 @@ export default function SchoolLogoWithFallback({
   // 정상적인 이미지 표시
   if (fill) {
     return (
-      <Image src={imageSrc} alt={alt} fill sizes={sizes} className={className} onError={() => setImageError(true)} />
+      <Image
+        src={imageSrc}
+        alt={altText}
+        fill
+        sizes={sizes}
+        className={className}
+        onError={() => setImageError(true)}
+      />
     );
   }
 
   return (
     <Image
       src={imageSrc}
-      alt={alt}
+      alt={altText}
       width={width!}
       height={height!}
       className={className}
