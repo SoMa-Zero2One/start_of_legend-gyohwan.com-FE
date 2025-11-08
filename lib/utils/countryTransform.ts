@@ -12,18 +12,12 @@ import { getFieldMetadata } from "@/lib/metadata/countryFields";
 export function enrichCountryData(apiData: CountryApiResponse[]): EnrichedCountry[] {
   return apiData.map((country) => {
     const fields = new Map<string, CountryFieldValue>();
-    let continent = ""; // 대륙은 별도로 추출 (필터 전용)
+    let continent = "미분류"; // 기본값: 미분류 (필터 일치)
 
     // 방어: data가 null이면 빈 배열로 처리
     const countryData = country.data ?? [];
 
     countryData.forEach((field) => {
-      // 대륙은 필터 전용으로 별도 처리 (fieldName 기준)
-      if (field.fieldName === "대륙") {
-        continent = field.value ?? "";
-        return;
-      }
-
       // fieldId로 메타데이터 조회
       const metadata = getFieldMetadata(field.fieldId);
 
@@ -31,6 +25,12 @@ export function enrichCountryData(apiData: CountryApiResponse[]): EnrichedCountr
         // 메타데이터 없는 필드는 무시하거나 경고
         console.warn(`Unknown field: ${field.fieldId} - ${field.fieldName}`);
         return;
+      }
+
+      // 대륙은 필터 전용으로 별도 처리 (fieldId 기반)
+      if (metadata.key === "continent") {
+        continent = field.value ?? "미분류";
+        return; // 테이블에 표시 안 함
       }
 
       const enrichedField: CountryFieldValue = {

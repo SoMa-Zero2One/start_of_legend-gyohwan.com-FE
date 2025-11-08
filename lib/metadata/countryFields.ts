@@ -1,8 +1,16 @@
 import { FieldMetadata } from "@/types/community";
 
 // 나라 필드 메타데이터 (프론트엔드에서 중앙 관리)
-// continent는 필터 전용이므로 여기 포함 안 함
 export const COUNTRY_FIELDS: Record<string, FieldMetadata> = {
+  continent: {
+    fieldId: 5, // 백엔드 API의 fieldId (대륙)
+    key: "continent",
+    label: "대륙",
+    type: "string",
+    sortable: false,
+    defaultVisible: false, // 필터 전용 (테이블에 표시 안 함)
+    displayOrder: 99, // 맨 뒤
+  },
   visaDifficulty: {
     fieldId: 1, // 백엔드 API의 fieldId (고정값)
     key: "visaDifficulty",

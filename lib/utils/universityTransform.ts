@@ -12,13 +12,10 @@ import { getUniversityFieldMetadata, getUniversityFieldByKey } from "@/lib/metad
 export function enrichUniversityData(apiData: UniversityApiResponse[]): EnrichedUniversity[] {
   return apiData.map((university) => {
     const fields = new Map<string, UniversityFieldValue>();
+    let continent = "미분류"; // 기본값: 미분류 (필터 일치)
 
     // 방어: data가 null이면 빈 배열로 처리
     const universityData = university.data ?? [];
-
-    // "대륙" 필드 찾기 (fieldName 기준)
-    const continentField = universityData.find((f) => f.fieldName === "대륙");
-    const continent = continentField?.value || "미분류";
 
     // countryName을 "country" 필드로 추가 (fieldId: 0, 프론트 전용)
     const countryMetadata = getUniversityFieldByKey("country");
@@ -39,34 +36,38 @@ export function enrichUniversityData(apiData: UniversityApiResponse[]): Enriched
       fields.set("country", countryField);
     }
 
-    // API data 필드들 변환 ("대륙" 필드는 제외)
-    universityData
-      .filter((f) => f.fieldName !== "대륙") // 대륙은 별도 속성으로
-      .forEach((field) => {
-        // fieldId로 메타데이터 조회
-        const metadata = getUniversityFieldMetadata(field.fieldId);
+    // API data 필드들 변환
+    universityData.forEach((field) => {
+      // fieldId로 메타데이터 조회
+      const metadata = getUniversityFieldMetadata(field.fieldId);
 
-        if (!metadata) {
-          // 메타데이터 없는 필드는 무시하거나 경고
-          console.warn(`Unknown field: ${field.fieldId} - ${field.fieldName}`);
-          return;
-        }
+      if (!metadata) {
+        // 메타데이터 없는 필드는 무시하거나 경고
+        console.warn(`Unknown field: ${field.fieldId} - ${field.fieldName}`);
+        return;
+      }
 
-        const enrichedField: UniversityFieldValue = {
-          fieldId: field.fieldId,
-          key: metadata.key,
-          label: metadata.label,
-          value: field.value ?? "", // null → "" for consistency
-          displayValue: transformDisplayValue(field.value, metadata),
-          numericValue: extractNumericValue(field.value, metadata.type),
-          type: metadata.type,
-          sortable: metadata.sortable,
-          displayOrder: metadata.displayOrder,
-          renderConfig: metadata.renderConfig,
-        };
+      // 대륙은 필터 전용으로 별도 처리 (fieldId 기반)
+      if (metadata.key === "continent") {
+        continent = field.value ?? "미분류";
+        return; // 테이블에 표시 안 함
+      }
 
-        fields.set(metadata.key, enrichedField);
-      });
+      const enrichedField: UniversityFieldValue = {
+        fieldId: field.fieldId,
+        key: metadata.key,
+        label: metadata.label,
+        value: field.value ?? "", // null → "" for consistency
+        displayValue: transformDisplayValue(field.value, metadata),
+        numericValue: extractNumericValue(field.value, metadata.type),
+        type: metadata.type,
+        sortable: metadata.sortable,
+        displayOrder: metadata.displayOrder,
+        renderConfig: metadata.renderConfig,
+      };
+
+      fields.set(metadata.key, enrichedField);
+    });
 
     return {
       univId: university.univId,
