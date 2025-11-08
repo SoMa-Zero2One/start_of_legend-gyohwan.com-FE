@@ -195,6 +195,12 @@ export default function SlotDetailPage() {
     );
   }
 
+  // 방어적 기본값 설정
+  const name = data.name ?? "정보 없음";
+  const country = data.country ?? "기타";
+  const choiceCount = data.choiceCount ?? 0;
+  const slotCount = data.slotCount ?? "미정";
+
   return (
     <div className="flex min-h-screen flex-col">
       {/* 상단 헤더 */}
@@ -207,7 +213,7 @@ export default function SlotDetailPage() {
           <div className="relative h-[40px] w-[40px] overflow-hidden rounded-full">
             <SchoolLogoWithFallback
               src={data.logoUrl}
-              alt={`${data.name} 로고`}
+              alt={`${name} 로고`}
               width={40}
               height={40}
               className="object-contain"
@@ -216,7 +222,7 @@ export default function SlotDetailPage() {
         </div>
 
         {/* 학교 이름 */}
-        <h2 className={`head-4 ${data.homepageUrl ? "mb-[8px]" : "mb-[20px]"}`}>{data.name}</h2>
+        <h2 className={`head-4 ${data.homepageUrl ? "mb-[8px]" : "mb-[20px]"}`}>{name}</h2>
 
         {/* 홈페이지 바로가기 버튼 */}
         {data.homepageUrl && (
@@ -235,15 +241,15 @@ export default function SlotDetailPage() {
         <div className="flex flex-col gap-[12px]">
           <div className="flex items-center justify-between">
             <span className="text-gray-700">국가</span>
-            <span className="font-bold">{data.country}</span>
+            <span className="font-bold">{country}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-gray-700">지원자 수</span>
-            <span className="font-bold">{data.choiceCount}명</span>
+            <span className="font-bold">{choiceCount}명</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-gray-700">모집인원</span>
-            <span className="font-bold">{data.slotCount}명</span>
+            <span className="font-bold">{slotCount}명</span>
           </div>
         </div>
       </section>

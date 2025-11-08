@@ -1,13 +1,14 @@
 /**
  * 교환학생 지원 슬롯 정보
+ * ID를 제외한 모든 필드는 null일 수 있음 (방어적 코딩)
  */
 export interface Slot {
   slotId: number;
-  name: string;
-  country: string;
-  choiceCount: number;
-  slotCount: string;
-  duration: string;
+  name: string | null;
+  country: string | null;
+  choiceCount: number | null;
+  slotCount: string | null;
+  duration: string | null;
   logoUrl: string | null;
   homepageUrl: string | null; // 대학교 홈페이지 URL
 }

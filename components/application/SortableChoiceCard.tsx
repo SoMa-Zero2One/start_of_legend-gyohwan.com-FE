@@ -37,6 +37,9 @@ export default function SortableChoiceCard({
     opacity: isDragging ? 0.5 : 1,
   };
 
+  // 방어적 기본값
+  const name = selected?.slot?.name ?? "정보 없음";
+
   return (
     <div ref={setNodeRef} style={style} className="flex items-center gap-[12px]">
       <span className="medium-body-3">{choice}지망</span>
@@ -47,13 +50,13 @@ export default function SortableChoiceCard({
           <div className="relative h-[32px] w-[32px] flex-shrink-0 overflow-hidden rounded-full">
             <SchoolLogoWithFallback
               src={selected.slot.logoUrl}
-              alt={selected.slot.name}
+              alt={name}
               width={32}
               height={32}
               className="object-cover"
             />
           </div>
-          <span className="medium-body-3 w-0 flex-1 truncate text-left">{selected.slot.name}</span>
+          <span className="medium-body-3 w-0 flex-1 truncate text-left">{name}</span>
           {/* 어학 시험 태그 */}
           {displayLanguage && (
             <span className="caption-2 bg-primary-blue rounded-[4px] px-[8px] py-[4px] text-white">

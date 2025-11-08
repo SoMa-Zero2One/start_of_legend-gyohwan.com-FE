@@ -205,6 +205,7 @@ export default function UniversitySelectionStep({
                   if (!draggedUniversity) return null;
 
                   const draggedChoice = draggedUniversity.choice;
+                  const draggedName = draggedUniversity.slot.name ?? "정보 없음";
 
                   return (
                     <div className="flex items-center gap-[12px] opacity-90">
@@ -213,14 +214,14 @@ export default function UniversitySelectionStep({
                         <div className="relative h-[32px] w-[32px] flex-shrink-0 overflow-hidden rounded-full">
                           <SchoolLogoWithFallback
                             src={draggedUniversity.slot.logoUrl}
-                            alt={draggedUniversity.slot.name}
+                            alt={draggedName}
                             width={32}
                             height={32}
                             className="object-cover"
                           />
                         </div>
                         <span className="medium-body-3 w-0 flex-1 truncate text-left">
-                          {draggedUniversity.slot.name}
+                          {draggedName}
                         </span>
                         {displayLanguage && (
                           <span className="caption-2 bg-primary-blue rounded-[4px] px-[8px] py-[4px] text-white">

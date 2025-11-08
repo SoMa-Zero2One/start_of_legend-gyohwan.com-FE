@@ -99,6 +99,9 @@ export default function UniversitySearchModal({
             {selectedSlots.map((slot) => {
               const selected = selectedUniversities.find((u) => u.slotId === slot.slotId);
 
+              const name = slot.name ?? "정보 없음";
+              const country = slot.country ?? "기타";
+
               return (
                 <button
                   key={slot.slotId}
@@ -109,7 +112,7 @@ export default function UniversitySearchModal({
                   <div className="relative h-[40px] w-[40px] flex-shrink-0 overflow-hidden rounded-full">
                     <SchoolLogoWithFallback
                       src={slot.logoUrl}
-                      alt={slot.name}
+                      alt={name}
                       width={40}
                       height={40}
                       className="object-cover"
@@ -118,8 +121,8 @@ export default function UniversitySearchModal({
 
                   {/* 대학 정보 */}
                   <div className="flex-1">
-                    <p className="body-2 font-semibold text-primary-blue">{slot.name}</p>
-                    <p className="caption-2 text-gray-600">{slot.country}</p>
+                    <p className="body-2 font-semibold text-primary-blue">{name}</p>
+                    <p className="caption-2 text-gray-600">{country}</p>
                   </div>
 
                   {/* 선택 표시 */}
@@ -140,6 +143,8 @@ export default function UniversitySearchModal({
             {unselectedSlots.map((slot) => {
               // 5개 이상 선택 시 미선택 대학 비활성화
               const isFull = selectedUniversities.length >= 5;
+              const name = slot.name ?? "정보 없음";
+              const country = slot.country ?? "기타";
 
               return (
                 <button
@@ -154,7 +159,7 @@ export default function UniversitySearchModal({
                   <div className="relative h-[40px] w-[40px] flex-shrink-0 overflow-hidden rounded-full">
                     <SchoolLogoWithFallback
                       src={slot.logoUrl}
-                      alt={slot.name}
+                      alt={name}
                       width={40}
                       height={40}
                       className="object-cover"
@@ -163,8 +168,8 @@ export default function UniversitySearchModal({
 
                   {/* 대학 정보 */}
                   <div className="flex-1">
-                    <p className={`body-2 font-semibold ${isFull ? "text-gray-400" : ""}`}>{slot.name}</p>
-                    <p className="caption-2 text-gray-600">{slot.country}</p>
+                    <p className={`body-2 font-semibold ${isFull ? "text-gray-400" : ""}`}>{name}</p>
+                    <p className="caption-2 text-gray-600">{country}</p>
                   </div>
 
                   {/* 5개 초과 메시지 */}

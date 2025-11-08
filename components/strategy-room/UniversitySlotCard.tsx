@@ -12,6 +12,12 @@ export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
   const params = useParams();
   const seasonId = params.seasonId as string;
 
+  // 방어적 기본값 설정
+  const name = slot.name ?? "정보 없음";
+  const country = slot.country ?? "기타";
+  const choiceCount = slot.choiceCount ?? 0;
+  const slotCount = slot.slotCount ?? "미정";
+
   return (
     <Link href={`/strategy-room/${seasonId}/slots/${slot.slotId}`}>
       <div className="flex cursor-pointer flex-col items-end gap-[16px] rounded-[10px] border border-gray-100 p-[16px] shadow-[0_0_8px_rgba(0,0,0,0.06)] hover:bg-gray-100">
@@ -21,27 +27,27 @@ export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
             <div className="relative h-[20px] w-[20px] overflow-hidden">
               <SchoolLogoWithFallback
                 src={slot.logoUrl}
-                alt={`${slot.name} 로고`}
+                alt={`${name} 로고`}
                 width={20}
                 height={20}
                 className="object-contain"
               />
             </div>
-            <div className="subhead-3 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{slot.name}</div>
+            <div className="subhead-3 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{name}</div>
           </div>
           <div className="flex items-center gap-[4px]">
-            <CountryFlag country={slot.country} size={20} />
-            <div className="caption-1">{slot.country}</div>
+            <CountryFlag country={country} size={20} />
+            <div className="caption-1">{country}</div>
           </div>
         </div>
         <div className="flex w-[286px] justify-between">
           <div className="flex w-[130px] justify-between">
             <span className="caption-1 text-gray-700">지원자 수</span>
-            <span className="medium-body-3">{slot.choiceCount}명</span>
+            <span className="medium-body-3">{choiceCount}명</span>
           </div>
           <div className="flex w-[130px] justify-between">
             <span className="caption-1 text-gray-700">모집인원</span>
-            <span className="medium-body-3">{slot.slotCount}명</span>
+            <span className="medium-body-3">{slotCount}명</span>
           </div>
         </div>
       </div>
