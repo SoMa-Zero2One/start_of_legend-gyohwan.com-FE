@@ -7,25 +7,29 @@ import {
 import { getUniversityFieldMetadata, getUniversityFieldByKey } from "@/lib/metadata/universityFields";
 
 /**
- * API 응답을 EnrichedUniversity로 변환
+ * API 응답을 EnrichedUniversity로 변환 (방어적 코딩)
  */
 export function enrichUniversityData(apiData: UniversityApiResponse[]): EnrichedUniversity[] {
   return apiData.map((university) => {
     const fields = new Map<string, UniversityFieldValue>();
 
+    // 방어: data가 null이면 빈 배열로 처리
+    const universityData = university.data ?? [];
+
     // "대륙" 필드 찾기 (fieldName 기준)
-    const continentField = university.data.find((f) => f.fieldName === "대륙");
+    const continentField = universityData.find((f) => f.fieldName === "대륙");
     const continent = continentField?.value || "미분류";
 
     // countryName을 "country" 필드로 추가 (fieldId: 0, 프론트 전용)
     const countryMetadata = getUniversityFieldByKey("country");
     if (countryMetadata) {
+      const countryName = university.countryName ?? "기타";
       const countryField: UniversityFieldValue = {
         fieldId: 0,
         key: "country",
         label: "나라",
-        value: university.countryName,
-        displayValue: university.countryName,
+        value: countryName,
+        displayValue: countryName,
         numericValue: undefined,
         type: "string",
         sortable: true,
@@ -36,8 +40,8 @@ export function enrichUniversityData(apiData: UniversityApiResponse[]): Enriched
     }
 
     // API data 필드들 변환 ("대륙" 필드는 제외)
-    university.data
-      .filter((f) => f.fieldName !== "대륙") // 대륙은 별도 속성으로
+    universityData
+      .filter((f) => f.fieldName && f.fieldName !== "대륙") // 방어: fieldName null 체크 + 대륙은 별도 속성으로
       .forEach((field) => {
         const metadata = getUniversityFieldMetadata(field.fieldId);
 
@@ -65,13 +69,13 @@ export function enrichUniversityData(apiData: UniversityApiResponse[]): Enriched
 
     return {
       univId: university.univId,
-      name: university.name,
-      countryName: university.countryName,
-      continent, // fieldName으로 찾은 대륙 값
-      isFavorite: university.isFavorite,
-      logoUrl: university.logoUrl,
+      name: university.name ?? `대학교 #${university.univId}`,
+      countryName: university.countryName ?? "기타",
+      continent,
+      isFavorite: university.isFavorite ?? false,
+      logoUrl: university.logoUrl ?? "",
       fields,
-      rawData: university.data,
+      rawData: universityData,
     };
   });
 }

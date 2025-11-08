@@ -1,3 +1,9 @@
+/**
+ * 커뮤니티 관련 타입 정의
+ * API 응답 타입(CountryApiResponse, UniversityApiResponse)은 ID 필드를 제외하고 null일 수 있음 (방어적 코딩)
+ * Enriched 타입과 FieldMetadata는 변환 레이어에서 방어 처리된 후의 안전한 타입
+ */
+
 // ==================== 공통 타입 ====================
 
 // 대륙 타입
@@ -22,16 +28,16 @@ export interface FieldMetadata {
   };
 }
 
-// 백엔드 API 응답 타입
+// 백엔드 API 응답 타입 (방어적 코딩: ID 외 nullable)
 export interface CountryApiResponse {
-  countryCode: string;
-  name: string;
+  countryCode: string; // ✅ ID 역할
+  name: string | null;
   data: Array<{
-    fieldId: number;
-    fieldName: string;
-    value: string;
-    type: "LEVEL" | "STRING" | "NUMBER";
-  }>;
+    fieldId: number; // ✅ ID는 필수
+    fieldName: string | null;
+    value: string | null;
+    type: "LEVEL" | "STRING" | "NUMBER" | null;
+  }> | null;
 }
 
 // 프론트엔드 통합 형식
@@ -58,19 +64,19 @@ export interface CountryFieldValue {
 
 // ==================== 대학 탭 타입 ====================
 
-// 백엔드 API 응답 타입 (대학)
+// 백엔드 API 응답 타입 (대학) (방어적 코딩: ID 외 nullable)
 export interface UniversityApiResponse {
-  univId: number;
-  name: string;
-  countryName: string; // 나라 이름 (별도 필드)
-  isFavorite: boolean; // 즐겨찾기 여부
-  logoUrl: string; // 대학 로고 URL
+  univId: number; // ✅ ID는 필수
+  name: string | null;
+  countryName: string | null;
+  isFavorite: boolean | null;
+  logoUrl: string | null;
   data: Array<{
-    fieldId: number;
-    fieldName: string;
-    value: string | null; // NULL 가능
-    type: "LEVEL" | "STRING" | "NUMBER";
-  }>;
+    fieldId: number; // ✅ ID는 필수
+    fieldName: string | null;
+    value: string | null;
+    type: "LEVEL" | "STRING" | "NUMBER" | null;
+  }> | null;
 }
 
 // 프론트엔드 통합 형식 (대학)

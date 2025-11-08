@@ -7,17 +7,23 @@ import {
 import { getFieldMetadata } from "@/lib/metadata/countryFields";
 
 /**
- * API 응답을 EnrichedCountry로 변환
+ * API 응답을 EnrichedCountry로 변환 (방어적 코딩)
  */
 export function enrichCountryData(apiData: CountryApiResponse[]): EnrichedCountry[] {
   return apiData.map((country) => {
     const fields = new Map<string, CountryFieldValue>();
     let continent = ""; // 대륙은 별도로 추출 (필터 전용)
 
-    country.data.forEach((field) => {
+    // 방어: data가 null이면 빈 배열로 처리
+    const countryData = country.data ?? [];
+
+    countryData.forEach((field) => {
+      // 방어: fieldName이 null이면 스킵
+      if (!field.fieldName) return;
+
       // 대륙은 필터 전용으로 별도 처리
       if (field.fieldName === "대륙") {
-        continent = field.value;
+        continent = field.value ?? "";
         return;
       }
 
@@ -29,13 +35,16 @@ export function enrichCountryData(apiData: CountryApiResponse[]): EnrichedCountr
         return;
       }
 
+      // 방어: value가 null이면 빈 문자열로 처리
+      const fieldValue = field.value ?? "";
+
       const enrichedField: CountryFieldValue = {
         fieldId: field.fieldId,
         key: metadata.key,
         label: metadata.label,
-        value: field.value,
-        displayValue: transformDisplayValue(field.value, metadata),
-        numericValue: extractNumericValue(field.value, metadata.type),
+        value: fieldValue,
+        displayValue: transformDisplayValue(fieldValue, metadata),
+        numericValue: extractNumericValue(fieldValue, metadata.type),
         type: metadata.type,
         sortable: metadata.sortable,
         displayOrder: metadata.displayOrder,
@@ -47,10 +56,10 @@ export function enrichCountryData(apiData: CountryApiResponse[]): EnrichedCountr
 
     return {
       countryCode: country.countryCode,
-      name: country.name,
+      name: country.name ?? country.countryCode.toUpperCase(),
       continent,
       fields,
-      rawData: country.data,
+      rawData: countryData,
     };
   });
 }
