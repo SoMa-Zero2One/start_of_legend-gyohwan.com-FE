@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import PrevIcon from "@/components/icons/PrevIcon";
-import SearchIcon from "@/components/icons/SearchIcon";
 import CheckIcon from "@/components/icons/CheckIcon";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 import type { Slot } from "@/types/slot";
@@ -18,9 +17,6 @@ interface UniversitySearchModalProps {
   slots: Slot[];
   selectedUniversities: SelectedUniversity[];
   onSelectUniversity: (slot: Slot) => void;
-  isQuickAdd?: boolean; // 돋보기 버튼으로 연 경우
-  currentChoice?: number | null; // 수정 중인 지망 번호 (1~5)
-  onSave?: () => void; // 저장 버튼 핸들러
 }
 
 export default function UniversitySearchModal({
@@ -29,9 +25,6 @@ export default function UniversitySearchModal({
   slots,
   selectedUniversities,
   onSelectUniversity,
-  isQuickAdd = false,
-  currentChoice = null,
-  onSave,
 }: UniversitySearchModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMounted, setIsMounted] = useState(false);
@@ -69,13 +62,6 @@ export default function UniversitySearchModal({
     onSelectUniversity(slot);
   };
 
-  const handleSave = () => {
-    if (onSave) {
-      onSave();
-    }
-    onClose();
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-white">
       {/* 상단 헤더 */}
@@ -88,21 +74,17 @@ export default function UniversitySearchModal({
         {/* 검색 입력 */}
         <input
           type="text"
-          placeholder={isQuickAdd ? "대학교 이름 또는 국가를 검색하세요." : `${currentChoice}지망 학교를 검색하세요.`}
+          placeholder="대학교 이름 또는 국가를 검색하세요."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           autoFocus
           className="body-2 flex-1 py-[8px] focus:outline-none"
         />
 
-        {/* 검색 아이콘 or 저장 버튼 */}
-        {isQuickAdd ? (
-          <button onClick={handleSave} className="body-2 text-primary-blue cursor-pointer font-semibold">
-            저장
-          </button>
-        ) : (
-          <SearchIcon size={24} />
-        )}
+        {/* 닫기 버튼 */}
+        <button onClick={onClose} className="body-2 text-primary-blue cursor-pointer font-semibold">
+          닫기
+        </button>
       </div>
 
       {/* 대학 리스트 */}
@@ -116,17 +98,12 @@ export default function UniversitySearchModal({
             {/* 선택된 대학 먼저 표시 */}
             {selectedSlots.map((slot) => {
               const selected = selectedUniversities.find((u) => u.slotId === slot.slotId);
-              const isCurrentChoice = selected?.choice === currentChoice;
-              const isOtherChoice = selected && !isCurrentChoice && !isQuickAdd;
 
               return (
                 <button
                   key={slot.slotId}
                   onClick={() => handleSlotClick(slot)}
-                  disabled={isOtherChoice}
-                  className={`flex items-center gap-[12px] border-b border-gray-100 px-[20px] py-[16px] text-left transition-colors ${
-                    isOtherChoice ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:bg-gray-50"
-                  }`}
+                  className="flex items-center gap-[12px] border-b border-gray-100 px-[20px] py-[16px] text-left transition-colors cursor-pointer hover:bg-gray-50"
                 >
                   {/* 대학 로고 */}
                   <div className="relative h-[40px] w-[40px] flex-shrink-0 overflow-hidden rounded-full">
@@ -141,27 +118,15 @@ export default function UniversitySearchModal({
 
                   {/* 대학 정보 */}
                   <div className="flex-1">
-                    <p
-                      className={`body-2 font-semibold ${isCurrentChoice ? "text-primary-blue" : isOtherChoice ? "text-gray-400" : "text-primary-blue"}`}
-                    >
-                      {slot.name}
-                    </p>
+                    <p className="body-2 font-semibold text-primary-blue">{slot.name}</p>
                     <p className="caption-2 text-gray-600">{slot.country}</p>
                   </div>
 
                   {/* 선택 표시 */}
                   {selected && (
                     <div className="flex items-center gap-[8px]">
-                      {isCurrentChoice && !isQuickAdd ? (
-                        <span className="caption-1 font-semibold text-red-500">선택 취소</span>
-                      ) : isOtherChoice ? (
-                        <span className="caption-1 font-semibold text-gray-400">{selected.choice}지망 (수정 불가)</span>
-                      ) : (
-                        <>
-                          <span className="caption-1 text-primary-blue font-semibold">{selected.choice}지망</span>
-                          <CheckIcon size={24} className="text-primary-blue" />
-                        </>
-                      )}
+                      <span className="caption-1 text-primary-blue font-semibold">{selected.choice}지망</span>
+                      <CheckIcon size={24} className="text-primary-blue" />
                     </div>
                   )}
                 </button>
@@ -173,8 +138,8 @@ export default function UniversitySearchModal({
 
             {/* 선택되지 않은 대학들 */}
             {unselectedSlots.map((slot) => {
-              // 빠른 추가 모드에서 5개 이상 선택 시 미선택 대학 비활성화
-              const isFull = isQuickAdd && selectedUniversities.length >= 5;
+              // 5개 이상 선택 시 미선택 대학 비활성화
+              const isFull = selectedUniversities.length >= 5;
 
               return (
                 <button

@@ -15,13 +15,12 @@ import { getLanguages } from "@/lib/api/language";
 import { checkEligibility } from "@/lib/api/season";
 import { submitApplication } from "@/lib/api/application";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
+import { useModalHistory } from "@/hooks/useModalHistory";
 import type { Gpa, Language } from "@/types/grade";
 import type { Slot } from "@/types/slot";
 import type { SubmitApplicationRequest } from "@/types/application";
 
 type Step = "grade-registration" | "university-selection";
-
-type ModalType = "university-search" | "submit" | "eligibility" | null;
 
 interface SelectedUniversity {
   choice: number; // 1~5지망
@@ -44,8 +43,10 @@ function ApplicationNewContent() {
   const [existingLanguage, setExistingLanguage] = useState<Language | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
 
-  // 모달 관리
-  const [activeModal, setActiveModal] = useState<ModalType>(null);
+  // 모달 히스토리 관리
+  const universitySearch = useModalHistory({ modalKey: "university-search" });
+  const submit = useModalHistory({ modalKey: "submit" });
+  const eligibility = useModalHistory({ modalKey: "eligibility" });
   const [eligibilityErrorMessage, setEligibilityErrorMessage] = useState("");
 
   // 대학 선택 관리
@@ -69,7 +70,7 @@ function ApplicationNewContent() {
           // 403 에러 시 모달 표시
           const errorMessage = (err as { detail?: string }).detail || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
           setEligibilityErrorMessage(errorMessage);
-          setActiveModal("eligibility");
+          eligibility.openModal();
           return;
         }
 
@@ -105,7 +106,22 @@ function ApplicationNewContent() {
     };
 
     checkApplicationStatus();
+    // eligibility는 useModalHistory 반환 객체로 매 렌더마다 재생성되므로
+    // 의존성에 추가하면 무한 루프 발생. eligibility.openModal()은 조건부로
+    // 한 번만 실행되고 return으로 빠져나가므로 실제로는 안전함.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seasonId, router, step]);
+
+  // Eligibility 모달이 닫히면 전략방으로 리다이렉트
+  // (뒤로 가기로 모달만 닫고 페이지에 남아있는 경우 방지)
+  useEffect(() => {
+    const modal = searchParams.get("modal");
+
+    // eligibilityErrorMessage가 있는데 modal이 없으면 = 모달이 닫힌 상태
+    if (eligibilityErrorMessage && modal !== "eligibility") {
+      router.replace(`/strategy-room/${seasonId}`);
+    }
+  }, [searchParams, eligibilityErrorMessage, seasonId, router]);
 
   // sessionStorage 키
   const STORAGE_KEY = `gyohwan_selected_universities_${seasonId}`;
@@ -172,7 +188,7 @@ function ApplicationNewContent() {
 
   // 모달 열기 핸들러
   const handleOpenSearch = () => {
-    setActiveModal("university-search");
+    universitySearch.openModal();
   };
 
   // 자동 정렬 함수 - 1번부터 연속되게 정렬
@@ -254,12 +270,36 @@ function ApplicationNewContent() {
       }
     }
 
-    setActiveModal("submit");
+    submit.openModal();
   };
 
   // 최종 제출 실행
   const handleConfirmSubmit = async () => {
-    setActiveModal(null);
+    // 보안: URL 조작으로 모달을 열었을 경우를 대비한 재검증
+    if (!gpaId || !languageId) {
+      submit.closeModal({ skipNavigation: true });
+      showError("성적 정보가 없습니다. 다시 입력해주세요.");
+      router.replace(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
+      return;
+    }
+
+    if (selectedUniversities.length === 0) {
+      submit.closeModal({ skipNavigation: true });
+      showError("최소 1개 이상의 지망 대학을 선택해주세요.");
+      return;
+    }
+
+    // 1지망부터 순서대로 채워졌는지 확인
+    const sortedChoices = selectedUniversities.map((u) => u.choice).sort((a, b) => a - b);
+    for (let i = 0; i < sortedChoices.length; i++) {
+      if (sortedChoices[i] !== i + 1) {
+        submit.closeModal({ skipNavigation: true });
+        showError("1지망부터 순서대로 채워주세요.");
+        return;
+      }
+    }
+
+    submit.closeModal();
 
     try {
       setIsSubmitting(true);
@@ -271,8 +311,8 @@ function ApplicationNewContent() {
 
       const requestData: SubmitApplicationRequest = {
         extraScore: extraScore ? parseFloat(extraScore) : 0,
-        gpaId: gpaId!,
-        languageId: languageId!,
+        gpaId: gpaId,
+        languageId: languageId,
         choices,
       };
 
@@ -299,7 +339,7 @@ function ApplicationNewContent() {
 
   // 다시 입력하기 (ApplicationSubmitModal에서 호출)
   const handleCancelSubmit = () => {
-    setActiveModal(null);
+    submit.closeModal({ skipNavigation: true });
     router.push(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
   };
 
@@ -360,27 +400,20 @@ function ApplicationNewContent() {
 
           {/* 대학 검색 모달 */}
           <UniversitySearchModal
-            isOpen={activeModal === "university-search"}
-            onClose={() => {
-              setActiveModal(null);
-            }}
+            isOpen={universitySearch.isOpen}
+            onClose={universitySearch.closeModal}
             slots={slots}
             selectedUniversities={selectedUniversities.map((u) => ({
               choice: u.choice,
               slotId: u.slot.slotId,
             }))}
             onSelectUniversity={handleSelectUniversity}
-            isQuickAdd={true}
-            currentChoice={null}
-            onSave={() => {
-              setActiveModal(null);
-            }}
           />
 
           {/* 제출 확인 모달 */}
           {existingGpa && existingLanguage && (
             <ApplicationSubmitModal
-              isOpen={activeModal === "submit"}
+              isOpen={submit.isOpen}
               gpa={existingGpa}
               language={existingLanguage}
               onConfirm={handleConfirmSubmit}
@@ -392,16 +425,16 @@ function ApplicationNewContent() {
 
       {/* 지원 불가 모달 */}
       <ConfirmModal
-        isOpen={activeModal === "eligibility"}
+        isOpen={eligibility.isOpen}
         title="지원할 수 없습니다"
         message={eligibilityErrorMessage}
         confirmText="확인"
         onConfirm={() => {
-          setActiveModal(null);
+          eligibility.closeModal({ skipNavigation: true });
           router.replace(`/strategy-room/${seasonId}`);
         }}
         onCancel={() => {
-          setActiveModal(null);
+          eligibility.closeModal({ skipNavigation: true });
           router.replace(`/strategy-room/${seasonId}`);
         }}
       />

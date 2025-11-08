@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import RoundCheckbox from "@/components/common/RoundCheckbox";
@@ -8,24 +8,28 @@ import ConfirmModal from "@/components/common/ConfirmModal";
 import { useAuthStore } from "@/stores/authStore";
 import { withdrawAccount } from "@/lib/api/user";
 import { saveRedirectUrl } from "@/lib/utils/redirect";
+import { useModalHistory } from "@/hooks/useModalHistory";
 
-export default function DeleteAccountPage() {
+function DeleteAccountContent() {
   const router = useRouter();
   const { user, isLoading: authLoading, logout } = useAuthStore();
   const [isAgreed, setIsAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [error, setError] = useState("");
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+
+  // 모달 히스토리 관리
+  const { isOpen: showConfirmModal, openModal, closeModal } = useModalHistory({ modalKey: "confirm" });
 
   // 로그인 체크 - Hard-gate
   useEffect(() => {
-    if (authLoading) return;
+    if (authLoading || isWithdrawing) return;
 
     if (!user) {
       saveRedirectUrl("/delete-account");
       router.push("/log-in-or-create-account");
     }
-  }, [authLoading, user, router]);
+  }, [authLoading, user, router, isWithdrawing]);
 
   // 로딩 중이거나 리다이렉트 진행 중
   if (authLoading || !user) {
@@ -43,13 +47,21 @@ export default function DeleteAccountPage() {
   const handleDeleteClick = () => {
     if (!isAgreed) return;
     setError(""); // 에러 초기화
-    setShowConfirmModal(true);
+    openModal();
   };
 
   // 최종 확인 후 회원 탈퇴 처리
   const handleConfirmDelete = async () => {
+    // 보안: URL로 모달을 강제로 열어도 동의 체크
+    if (!isAgreed) {
+      closeModal();
+      setError("회원 탈퇴에 동의해주세요.");
+      return;
+    }
+
     setIsLoading(true);
     setError("");
+    setIsWithdrawing(true); // 탈퇴 진행 중 플래그 설정
 
     try {
       await withdrawAccount();
@@ -57,10 +69,12 @@ export default function DeleteAccountPage() {
       // 탈퇴 성공 - 로그아웃 처리
       logout();
 
+      // isWithdrawing 플래그로 인해 useEffect가 간섭하지 않음
       router.push("/");
     } catch (error) {
       setError(error instanceof Error ? error.message : "회원 탈퇴에 실패했습니다.");
-      setShowConfirmModal(false);
+      closeModal();
+      setIsWithdrawing(false); // 실패 시 플래그 해제
     } finally {
       setIsLoading(false);
     }
@@ -126,8 +140,16 @@ export default function DeleteAccountPage() {
         confirmText="탈퇴하기"
         cancelText="취소"
         onConfirm={handleConfirmDelete}
-        onCancel={() => setShowConfirmModal(false)}
+        onCancel={closeModal}
       />
     </div>
+  );
+}
+
+export default function DeleteAccountPage() {
+  return (
+    <Suspense fallback={null}>
+      <DeleteAccountContent />
+    </Suspense>
   );
 }
