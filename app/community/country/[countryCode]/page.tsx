@@ -3,7 +3,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CountryDetailContent from "@/components/country/CountryDetailContent";
 import { getCountryDetail } from "@/lib/api/country";
-import { getCommunityPosts } from "@/lib/api/communityPosts";
+import { getCountryCommunityPosts } from "@/lib/api/communityPosts";
 
 interface CountryDetailPageProps {
   params: Promise<{ countryCode: string }>;
@@ -25,7 +25,7 @@ export default async function CountryDetailPage({ params }: CountryDetailPagePro
   });
 
   // 커뮤니티 게시글 조회 (에러 시 빈 배열)
-  const communityPostsData = await getCommunityPosts(upperCountryCode, { limit: 10 }).catch((error) => {
+  const communityPostsData = await getCountryCommunityPosts(upperCountryCode, { limit: 10 }).catch((error) => {
     console.error("[CountryDetailPage] 커뮤니티 게시글 조회 실패:", error);
     return { pagination: { totalItems: 0, totalPages: 0, currentPage: 0, limit: 10 }, posts: [] };
   });

@@ -3,6 +3,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import UniversityDetailContent from "@/components/university/UniversityDetailContent";
 import { getUniversityDetail } from "@/lib/api/university";
+import { getUniversityCommunityPosts } from "@/lib/api/communityPosts";
 
 interface UniversityDetailPageProps {
   params: Promise<{ univId: string }>;
@@ -40,10 +41,16 @@ export default async function UniversityDetailPage({ params }: UniversityDetailP
     throw error;
   });
 
-  // 커뮤니티 게시글 조회
-  // TODO: 백엔드에서 대학별 커뮤니티 API 지원 필요
-  // 임시로 빈 배열 반환
-  const communityPosts: never[] = [];
+  // 커뮤니티 게시글 조회 (첫 5개만 미리보기)
+  const communityPostsResponse = await getUniversityCommunityPosts(univIdNum, {
+    page: 0,
+    limit: 5,
+  }).catch(() => {
+    // 커뮤니티 글 조회 실패 시 빈 배열 반환 (페이지는 계속 표시)
+    return { posts: [], pagination: { totalItems: 0, totalPages: 0, currentPage: 0, limit: 5 } };
+  });
+
+  const communityPosts = communityPostsResponse.posts;
 
   return (
     <div className="flex min-h-screen flex-col">
