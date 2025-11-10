@@ -31,24 +31,24 @@ export default async function UniversityDetailPage({ params }: UniversityDetailP
     notFound();
   }
 
-  // 대학 정보 조회 with 에러 핸들링
-  const universityData = await getUniversityDetail(univIdNum).catch((error) => {
-    // 404 에러 (존재하지 않는 대학 ID)
-    if (error instanceof Error && error.message.includes("찾을 수 없습니다")) {
-      notFound();
-    }
-    // 그 외 에러 (500, 네트워크 등) → 상위로 전파하여 error.tsx에서 처리
-    throw error;
-  });
-
-  // 커뮤니티 게시글 조회 (첫 5개만 미리보기)
-  const communityPostsResponse = await getUniversityCommunityPosts(univIdNum, {
-    page: 0,
-    limit: 5,
-  }).catch(() => {
-    // 커뮤니티 글 조회 실패 시 빈 배열 반환 (페이지는 계속 표시)
-    return { posts: [], pagination: { totalItems: 0, totalPages: 0, currentPage: 0, limit: 5 } };
-  });
+  // 대학 정보 및 커뮤니티 게시글 병렬 조회 (TTFB 최적화)
+  const [universityData, communityPostsResponse] = await Promise.all([
+    getUniversityDetail(univIdNum).catch((error) => {
+      // 404 에러 (존재하지 않는 대학 ID)
+      if (error instanceof Error && error.message.includes("찾을 수 없습니다")) {
+        notFound();
+      }
+      // 그 외 에러 (500, 네트워크 등) → 상위로 전파하여 error.tsx에서 처리
+      throw error;
+    }),
+    getUniversityCommunityPosts(univIdNum, {
+      page: 0,
+      limit: 5,
+    }).catch(() => {
+      // 커뮤니티 글 조회 실패 시 빈 배열 반환 (페이지는 계속 표시)
+      return { posts: [], pagination: { totalItems: 0, totalPages: 0, currentPage: 0, limit: 5 } };
+    }),
+  ]);
 
   const communityPosts = communityPostsResponse.posts;
 

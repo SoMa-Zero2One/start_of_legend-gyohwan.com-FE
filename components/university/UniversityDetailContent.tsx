@@ -115,7 +115,7 @@ export default function UniversityDetailContent({ universityData, communityPosts
         {/* 항상 커뮤니티 더 보기 표시 (글쓰기 등 전체 커뮤니티 기능 접근) */}
         <Link
           href={`/community/university/${universityData.univId}/talks`}
-          className="medium-body-2 flex w-full cursor-pointer items-center justify-center gap-[4px] border-t border-gray-200 py-[20px] text-gray-700 transition-colors hover:text-black hover:underline"
+          className="medium-body-2 flex w-full cursor-pointer items-center justify-center gap-[4px] border-t border-gray-300 py-[20px] text-gray-700 transition-colors hover:text-black hover:underline"
         >
           커뮤니티 더 보기
           <ChevronRightIcon size={16} />

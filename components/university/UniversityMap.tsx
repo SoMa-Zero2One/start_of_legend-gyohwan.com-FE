@@ -78,13 +78,22 @@ export default function UniversityMap({ universityName, countryName }: Universit
   );
 
   useEffect(() => {
+    // 상태 초기화 (대학 변경 시 이전 상태 제거)
+    setLocation(null);
+    setLoading(true);
+    setError(null);
+
+    let isMounted = true; // cleanup 플래그
+
     // Google Maps 스크립트 로드 (지도 표시용 API 키)
     const loadGoogleMaps = () => {
       const mapsJsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_JS_API_KEY;
 
       if (!mapsJsApiKey) {
-        setError("Google Maps API 키가 설정되지 않았습니다.");
-        setLoading(false);
+        if (isMounted) {
+          setError("Google Maps API 키가 설정되지 않았습니다.");
+          setLoading(false);
+        }
         return;
       }
 
@@ -98,8 +107,12 @@ export default function UniversityMap({ universityName, countryName }: Universit
       const existingScript = document.querySelector('script[src^="https://maps.googleapis.com/maps/api/js"]');
       if (existingScript) {
         // 스크립트는 있지만 아직 로드 안됨 → 로드 완료 대기
-        existingScript.addEventListener("load", () => searchLocation());
-        return;
+        const handleLoad = () => {
+          if (isMounted) searchLocation();
+        };
+        existingScript.addEventListener("load", handleLoad);
+        // cleanup에서 제거할 수 있도록 반환
+        return () => existingScript.removeEventListener("load", handleLoad);
       }
 
       // 새로운 스크립트 태그 생성 (지도 표시용 API 키, Geocoding은 백엔드에서)
@@ -107,21 +120,29 @@ export default function UniversityMap({ universityName, countryName }: Universit
       script.src = `https://maps.googleapis.com/maps/api/js?key=${mapsJsApiKey}&v=weekly`;
       script.async = true;
       script.defer = true;
-      script.onload = () => searchLocation();
+      script.onload = () => {
+        if (isMounted) searchLocation();
+      };
       script.onerror = () => {
-        setError("Google Maps를 로드하지 못했습니다.");
-        setLoading(false);
+        if (isMounted) {
+          setError("Google Maps를 로드하지 못했습니다.");
+          setLoading(false);
+        }
       };
       document.head.appendChild(script);
     };
 
     // 대학 위치 검색 (백엔드 프록시 사용)
     const searchLocation = async () => {
+      if (!isMounted) return;
+
       try {
         const searchQuery = countryName ? `${universityName}, ${countryName}` : universityName;
 
         // 백엔드 API로 Geocoding 요청
         const data = await geocodeAddress(searchQuery);
+
+        if (!isMounted) return; // API 응답 후 unmount 체크
 
         if (data.status === "OK" && data.results && data.results[0]) {
           const result = data.results[0];
@@ -138,13 +159,20 @@ export default function UniversityMap({ universityName, countryName }: Universit
           setLoading(false);
         }
       } catch (err) {
+        if (!isMounted) return;
         console.error("[UniversityMap] Geocoding error:", err);
         setError(err instanceof Error ? err.message : "위치 검색 중 오류가 발생했습니다.");
         setLoading(false);
       }
     };
 
-    loadGoogleMaps();
+    const cleanup = loadGoogleMaps();
+
+    // Cleanup: unmount 시 isMounted 플래그 설정 및 이벤트 리스너 제거
+    return () => {
+      isMounted = false;
+      if (cleanup) cleanup();
+    };
   }, [universityName, countryName]);
 
   // location이 설정되면 지도 렌더링
