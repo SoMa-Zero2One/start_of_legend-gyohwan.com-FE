@@ -8,14 +8,14 @@ export const communityPostsHandlers = [
   http.get(`${BACKEND_URL}/v1/community/posts`, ({ request }) => {
     const url = new URL(request.url);
     const countryCode = url.searchParams.get("countryCode");
-    const outgoingUnivId = url.searchParams.get("outgoing_univ_id");
+    const outgoingUnivId = url.searchParams.get("outgoingUnivId"); // ← camelCase
+    const page = parseInt(url.searchParams.get("page") || "0"); // ← page 파라미터
     const limit = parseInt(url.searchParams.get("limit") || "10");
-    const offset = parseInt(url.searchParams.get("offset") || "0");
 
     // countryCode와 outgoingUnivId 둘 다 없으면 400 에러
     if (!countryCode && !outgoingUnivId) {
       return HttpResponse.json(
-        { detail: "countryCode 또는 outgoing_univ_id를 입력해주세요." },
+        { detail: "countryCode 또는 outgoingUnivId를 입력해주세요." },
         { status: 400 }
       );
     }
@@ -41,18 +41,15 @@ export const communityPostsHandlers = [
       }
     }
 
-    // 페이지네이션 처리 (offset 기반)
-    const startIndex = offset;
+    // 페이지네이션 처리 (page 기반)
+    const startIndex = page * limit;
     const endIndex = startIndex + limit;
     const paginatedPosts = mockData!.posts.slice(startIndex, endIndex);
-
-    // currentPage 계산 (offset / limit)
-    const currentPage = Math.floor(offset / limit);
 
     return HttpResponse.json({
       pagination: {
         ...mockData!.pagination,
-        currentPage,
+        currentPage: page,
         limit,
       },
       posts: paginatedPosts,
