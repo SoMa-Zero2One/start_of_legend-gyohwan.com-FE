@@ -25,8 +25,8 @@ export default async function UniversitiesPage({ params }: UniversitiesPageProps
   const { countryCode } = await params;
   const upperCountryCode = countryCode.toUpperCase();
 
-  // 국가 정보 조회 with 에러 핸들링
-  const data = await getCountryDetail(upperCountryCode).catch((error) => {
+  // 국가 정보 조회 with 에러 핸들링 (1시간 캐시)
+  const data = await getCountryDetail(upperCountryCode, { next: { revalidate: 3600 } }).catch((error) => {
     // 404 에러 (존재하지 않는 국가 코드)
     if (error instanceof Error && error.message.includes("찾을 수 없습니다")) {
       notFound();

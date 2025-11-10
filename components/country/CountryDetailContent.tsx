@@ -96,12 +96,11 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
       {/* 커뮤니티 섹션 */}
       <div ref={communityRef} className="flex min-h-[60vh] flex-col">
         <CommunityPostList posts={previewPosts} />
-        {/* 항상 커뮤니티 더 보기 표시 (글쓰기 등 전체 커뮤니티 기능 접근) */}
         <Link
           href={`/community/country/${countryData.countryCode}/talks`}
           className="medium-body-2 flex w-full cursor-pointer items-center justify-center gap-[4px] border-t border-gray-300 py-[20px] text-gray-700 transition-colors hover:text-black hover:underline"
         >
-          커뮤니티 더 보기
+          커뮤니티 바로가기
           <ChevronRightIcon size={16} />
         </Link>
       </div>
