@@ -155,8 +155,163 @@ export const mockJPCommunityPosts: CommunityPostListResponse = {
   ],
 };
 
+// 대학별 커뮤니티 게시글 - University ID 1 (UTC)
+export const mockUTCCommunityPosts: CommunityPostListResponse = {
+  pagination: {
+    totalItems: 24,
+    totalPages: 3,
+    currentPage: 1,
+    limit: 10,
+  },
+  posts: [
+    {
+      postId: 201,
+      title: "UTC 기숙사 질문있어요!",
+      content: "기숙사 신청은 언제부터 가능한가요? 그리고 싱글룸이 있나요??",
+      createdAt: "2025-01-06T10:15:30.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: false,
+        isMember: true,
+      },
+      likeCount: 5,
+      commentsCount: 3,
+      isLiked: false,
+    },
+    {
+      postId: 202,
+      title: "UTC 날씨 어떤가요?",
+      content: "겨울에 많이 추운지 궁금해요. 어떤 옷 준비해야 할까요?",
+      createdAt: "2025-01-05T14:22:10.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: true,
+        isMember: true,
+      },
+      likeCount: 12,
+      commentsCount: 8,
+      isLiked: false,
+    },
+    {
+      postId: 203,
+      title: "UTC 수강신청 팁 공유합니다!",
+      content: "작년에 다녀온 선배입니다. 수강신청할 때 이것만은 꼭 참고하세요!",
+      createdAt: "2025-01-04T09:30:45.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: false,
+        isMember: true,
+      },
+      likeCount: 45,
+      commentsCount: 18,
+      isLiked: true,
+    },
+    {
+      postId: 204,
+      title: "UTC 근처 맛집 추천해주세요",
+      content: "학교 주변에 괜찮은 식당 있을까요?",
+      createdAt: "2025-01-03T16:45:20.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: false,
+        isMember: true,
+      },
+      likeCount: 8,
+      commentsCount: 12,
+      isLiked: false,
+    },
+    {
+      postId: 205,
+      title: "UTC 교환 준비 체크리스트",
+      content: "출국 전 준비물 정리해봤어요. 도움이 되길 바랍니다!",
+      createdAt: "2025-01-02T11:20:15.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: true,
+        isMember: true,
+      },
+      likeCount: 67,
+      commentsCount: 24,
+      isLiked: true,
+    },
+  ],
+};
+
+// 대학별 커뮤니티 게시글 - University ID 2 (도쿄대)
+export const mockTokyoUnivCommunityPosts: CommunityPostListResponse = {
+  pagination: {
+    totalItems: 18,
+    totalPages: 2,
+    currentPage: 1,
+    limit: 10,
+  },
+  posts: [
+    {
+      postId: 301,
+      title: "도쿄대 봄학기 지원했어요!",
+      content: "같이 지원하신 분들 계시나요? 정보 공유해요 🌸",
+      createdAt: "2025-01-06T12:30:20.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: false,
+        isMember: true,
+      },
+      likeCount: 22,
+      commentsCount: 14,
+      isLiked: false,
+    },
+    {
+      postId: 302,
+      title: "도쿄대 일본어 수업 난이도",
+      content: "JLPT N2 정도면 수업 따라갈 수 있을까요?",
+      createdAt: "2025-01-05T15:45:10.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: true,
+        isMember: true,
+      },
+      likeCount: 18,
+      commentsCount: 9,
+      isLiked: false,
+    },
+    {
+      postId: 303,
+      title: "도쿄대 교환 후기 (생활비, 교통, 문화)",
+      content: "작년 가을학기 다녀온 후기입니다. 궁금한 거 있으면 댓글 남겨주세요!",
+      createdAt: "2025-01-04T10:20:30.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: false,
+        isMember: true,
+      },
+      likeCount: 89,
+      commentsCount: 35,
+      isLiked: true,
+    },
+    {
+      postId: 304,
+      title: "도쿄대 근처 저렴한 숙소 추천",
+      content: "기숙사 떨어져서 자취방 알아보는 중인데 추천 부탁드려요",
+      createdAt: "2025-01-03T14:15:45.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: false,
+        isMember: true,
+      },
+      likeCount: 15,
+      commentsCount: 11,
+      isLiked: false,
+    },
+  ],
+};
+
 // Mock data 매핑
 export const mockCommunityPostsByCountry: Record<string, CommunityPostListResponse> = {
   US: mockUSCommunityPosts,
   JP: mockJPCommunityPosts,
+};
+
+export const mockCommunityPostsByUniversity: Record<number, CommunityPostListResponse> = {
+  1: mockUTCCommunityPosts, // UTC
+  2: mockTokyoUnivCommunityPosts, // 도쿄대
 };

@@ -3,7 +3,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CountryDetailContent from "@/components/country/CountryDetailContent";
 import { getCountryDetail } from "@/lib/api/country";
-import { getCommunityPosts } from "@/lib/api/communityPosts";
+import { getCountryCommunityPosts } from "@/lib/api/communityPosts";
 
 interface CountryDetailPageProps {
   params: Promise<{ countryCode: string }>;
@@ -14,21 +14,21 @@ export default async function CountryDetailPage({ params }: CountryDetailPagePro
   const { countryCode } = await params;
   const upperCountryCode = countryCode.toUpperCase();
 
-  // 국가 정보 조회 with 에러 핸들링
-  const countryData = await getCountryDetail(upperCountryCode).catch((error) => {
-    // 404 에러 (존재하지 않는 국가 코드)
-    if (error instanceof Error && error.message.includes("찾을 수 없습니다")) {
-      notFound();
-    }
-    // 그 외 에러 (500, 네트워크 등) → 상위로 전파하여 error.tsx에서 처리
-    throw error;
-  });
-
-  // 커뮤니티 게시글 조회 (에러 시 빈 배열)
-  const communityPostsData = await getCommunityPosts(upperCountryCode, { limit: 10 }).catch((error) => {
-    console.error("[CountryDetailPage] 커뮤니티 게시글 조회 실패:", error);
-    return { pagination: { totalItems: 0, totalPages: 0, currentPage: 0, limit: 10 }, posts: [] };
-  });
+  // 국가 정보 및 커뮤니티 게시글 병렬 조회 (TTFB 최적화)
+  const [countryData, communityPostsData] = await Promise.all([
+    getCountryDetail(upperCountryCode).catch((error) => {
+      // 404 에러 (존재하지 않는 국가 코드)
+      if (error instanceof Error && error.message.includes("찾을 수 없습니다")) {
+        notFound();
+      }
+      // 그 외 에러 (500, 네트워크 등) → 상위로 전파하여 error.tsx에서 처리
+      throw error;
+    }),
+    getCountryCommunityPosts(upperCountryCode, { limit: 10 }).catch((error) => {
+      console.error("[CountryDetailPage] 커뮤니티 게시글 조회 실패:", error);
+      return { pagination: { totalItems: 0, totalPages: 0, currentPage: 0, limit: 10 }, posts: [] };
+    }),
+  ]);
 
   return (
     <div className="flex min-h-screen flex-col">
