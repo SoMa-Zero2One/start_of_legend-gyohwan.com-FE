@@ -25,6 +25,12 @@ export const communityPostsHandlers = [
     // 대학별 조회
     if (outgoingUnivId) {
       const univId = parseInt(outgoingUnivId);
+
+      // NaN 체크: 숫자 변환 실패 시 400 Bad Request
+      if (isNaN(univId)) {
+        return HttpResponse.json({ detail: "outgoingUnivId는 숫자여야 합니다." }, { status: 400 });
+      }
+
       mockData = mockCommunityPostsByUniversity[univId];
 
       if (!mockData) {

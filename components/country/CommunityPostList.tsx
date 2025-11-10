@@ -29,8 +29,8 @@ export default function CommunityPostList({ posts }: CommunityPostListProps) {
 
       {/* 게시글 목록 */}
       <div className="flex flex-col px-[20px] pb-[20px]">
-        {posts.map((post) => (
-          <CommunityPostItem key={post.postId} post={post} />
+        {posts.map((post, index) => (
+          <CommunityPostItem key={post.postId} post={post} isLast={index === posts.length - 1} />
         ))}
       </div>
     </>

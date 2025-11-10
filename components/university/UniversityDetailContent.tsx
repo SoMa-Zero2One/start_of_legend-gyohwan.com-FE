@@ -43,9 +43,8 @@ export default function UniversityDetailContent({ universityData, communityPosts
   // 방어적 기본값
   const universityName = universityData.name ?? `University #${universityData.univId}`;
 
-  // 미리보기 커뮤니티 게시글 및 더보기 버튼 표시 여부
+  // 미리보기 커뮤니티 게시글 (최대 5개)
   const previewPosts = communityPosts.slice(0, PREVIEW_POST_COUNT);
-  const hasMorePosts = communityPosts.length > PREVIEW_POST_COUNT;
 
   const handleTabChange = (tab: TabType) => {
     setSelectedTab(tab);
@@ -113,15 +112,14 @@ export default function UniversityDetailContent({ universityData, communityPosts
       {/* 커뮤니티 섹션 */}
       <div ref={communityRef} className="flex min-h-[60vh] flex-col">
         <CommunityPostList posts={previewPosts} />
-        {hasMorePosts && (
-          <Link
-            href={`/community/university/${universityData.univId}/talks`}
-            className="medium-body-2 flex w-full cursor-pointer items-center justify-center gap-[4px] py-[20px] text-gray-700 transition-colors hover:text-black hover:underline"
-          >
-            커뮤니티 더 보기
-            <ChevronRightIcon size={16} />
-          </Link>
-        )}
+        {/* 항상 커뮤니티 더 보기 표시 (글쓰기 등 전체 커뮤니티 기능 접근) */}
+        <Link
+          href={`/community/university/${universityData.univId}/talks`}
+          className="medium-body-2 flex w-full cursor-pointer items-center justify-center gap-[4px] border-t border-gray-200 py-[20px] text-gray-700 transition-colors hover:text-black hover:underline"
+        >
+          커뮤니티 더 보기
+          <ChevronRightIcon size={16} />
+        </Link>
       </div>
     </div>
   );

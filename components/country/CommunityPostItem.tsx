@@ -5,13 +5,16 @@ import type { CommunityPost } from "@/types/communityPost";
 
 interface CommunityPostItemProps {
   post: CommunityPost;
+  isLast?: boolean;
 }
 
-export default function CommunityPostItem({ post }: CommunityPostItemProps) {
+export default function CommunityPostItem({ post, isLast = false }: CommunityPostItemProps) {
   return (
     <Link
       href={`/community/posts/${post.postId}`}
-      className="flex w-full cursor-pointer flex-col gap-[12px] border-b border-gray-100 py-[20px] text-left transition-colors hover:bg-gray-50"
+      className={`flex w-full cursor-pointer flex-col gap-[12px] py-[20px] text-left transition-colors hover:bg-gray-50 ${
+        isLast ? "" : "border-b border-gray-100"
+      }`}
     >
       {/* 제목 */}
       <h3 className="medium-body-3 line-clamp-1 text-black">{post.title}</h3>
