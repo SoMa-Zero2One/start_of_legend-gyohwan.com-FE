@@ -9,7 +9,10 @@ import PaginationLastIcon from "@/components/icons/PaginationLastIcon";
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  baseUrl: string; // 예: "/community/country/US"
+  baseUrl: string; // 예: "/community/country/US/talks"
+  // TODO: searchParams 보존 기능 추가
+  // 검색/필터 기능 추가 시, 기존 쿼리 파라미터를 유지하도록 개선 필요
+  // searchParams?: Record<string, string>;
 }
 
 export default function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps) {
@@ -33,8 +36,17 @@ export default function Pagination({ currentPage, totalPages, baseUrl }: Paginat
   const showPrev = currentPage > 10; // 10개 이전 버튼 (<)
   const showNext = currentPage + 10 <= totalPages; // 10개 다음 버튼 (>)
 
+  // TODO: 현재 searchParams를 복사하여 page만 변경하도록 개선
+  // 예: const params = new URLSearchParams(searchParams);
+  //     params.set('page', page.toString());
+  //     href={`${baseUrl}?${params.toString()}`}
+
   return (
-    <div className="flex items-center justify-center gap-[8px] py-[20px]">
+    <nav
+      className="flex items-center justify-center gap-[8px] py-[20px]"
+      role="navigation"
+      aria-label="페이지 네비게이션"
+    >
       {/* 맨 처음 (<<) - 총 페이지 10개 초과 시만 표시 */}
       {showFirstLast && (
         <Link
@@ -99,6 +111,6 @@ export default function Pagination({ currentPage, totalPages, baseUrl }: Paginat
           <PaginationLastIcon size={24} />
         </Link>
       )}
-    </div>
+    </nav>
   );
 }

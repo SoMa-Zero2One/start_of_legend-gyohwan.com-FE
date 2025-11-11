@@ -32,6 +32,12 @@ export default async function TalksPage({ params, searchParams }: TalksPageProps
     // countryName fallback 처리 (방어적 코딩)
     const displayName = countryName || upperCountryCode;
 
+    // TODO: 페이지 범위 초과 시 처리
+    // 현재는 빈 페이지를 보여주지만, 향후 마지막 페이지로 redirect 고려
+    // if (currentPage > pagination.totalPages) {
+    //   redirect(`/community/country/${upperCountryCode}/talks?page=${pagination.totalPages}`);
+    // }
+
     return (
       <div className="flex min-h-screen flex-col">
         {/* Sticky Header */}
@@ -56,7 +62,13 @@ export default async function TalksPage({ params, searchParams }: TalksPageProps
       </div>
     );
   } catch (error) {
+    // 404 에러 (존재하지 않는 국가/리소스)만 notFound()로 처리
+    if (error instanceof Error && error.message.includes("찾을 수 없습니다")) {
+      notFound();
+    }
+
+    // 그 외 에러 (500, 네트워크 오류 등)는 상위로 전파하여 error.tsx에서 처리
     console.error("Failed to fetch community posts:", error);
-    notFound();
+    throw error;
   }
 }
