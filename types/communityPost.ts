@@ -30,4 +30,6 @@ export interface Pagination {
 export interface CommunityPostListResponse {
   pagination: Pagination;
   posts: CommunityPost[];
+  countryName?: string | null; // 국가 커뮤니티일 때 (방어적 타입)
+  outgoingUnivName?: string | null; // 대학 커뮤니티일 때 (방어적 타입)
 }
