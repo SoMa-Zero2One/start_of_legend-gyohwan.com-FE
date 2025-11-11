@@ -27,14 +27,16 @@ export const calculateDDay = (dateString: string): number => {
 };
 
 /**
- * ISO 8601 날짜를 yyyy.mm.dd 형식으로 포맷
- * @param dateString - ISO 8601 형식의 날짜 문자열
+ * ISO 8601 날짜를 yyyy.mm.dd 형식으로 포맷 - 한국 시간(KST) 기준
+ * @param dateString - ISO 8601 형식의 날짜 문자열 (백엔드에서 KST로 전송)
  * @returns yyyy.mm.dd 형식의 문자열
  */
 export const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  // 백엔드에서 KST 기준으로 보낸 날짜 문자열을 KST로 해석
+  // "2025-11-14T15:00:00" → KST 2025-11-14로 처리
+  const kstDate = new Date(dateString + "+09:00");
+  const year = kstDate.getFullYear();
+  const month = String(kstDate.getMonth() + 1).padStart(2, "0");
+  const day = String(kstDate.getDate()).padStart(2, "0");
   return `${year}.${month}.${day}`;
 };
