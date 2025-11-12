@@ -46,7 +46,7 @@ export default async function TalksPage({ params, searchParams }: TalksPageProps
         </div>
 
         <main className="mx-auto w-full max-w-[430px] flex-1">
-          <CommunityPostList posts={posts} />
+          <CommunityPostList posts={posts} countryCode={upperCountryCode} />
 
           {/* 페이지네이션 - 페이지가 2개 이상일 때만 표시 */}
           {pagination.totalPages > 1 && (

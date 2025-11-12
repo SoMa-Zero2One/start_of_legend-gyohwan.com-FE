@@ -1,4 +1,5 @@
-import type { CountryApiResponse, UniversityApiResponse } from "@/types/community";
+import type { CountryApiResponse, UniversityApiResponse, PostCreateRequest } from "@/types/community";
+import type { CommunityPost } from "@/types/communityPost";
 import { getBackendUrl } from "@/lib/utils/api";
 
 /**
@@ -100,4 +101,41 @@ export const removeFavorite = async (univId: number): Promise<void> => {
   if (!response.ok) {
     throw new Error(`즐겨찾기 삭제 실패 (HTTP ${response.status})`);
   }
+};
+
+/**
+ * 커뮤니티 게시글 작성 (POST /v1/community/posts)
+ *
+ * USAGE: PostCreateModal에서 호출됨
+ *
+ * WHAT: 커뮤니티 게시글을 작성하는 API 호출
+ *
+ * WHY:
+ * - 회원과 비회원 모두 게시글 작성 가능
+ * - 회원은 익명 여부를 선택할 수 있음
+ * - 비회원은 비밀번호를 통해 추후 수정/삭제 가능
+ *
+ * @param request 게시글 작성 요청 데이터
+ * @returns 작성된 게시글 정보 (PostDetailResponse)
+ * @throws {Error} API 호출 실패 시 (400: 유효성 검증 실패, 401: 인증 실패, 404: 리소스 없음)
+ */
+export const createPost = async (request: PostCreateRequest): Promise<CommunityPost> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(`${backendUrl}/v1/community/posts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include", // 회원 인증을 위한 쿠키 전송
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    // 백엔드에서 ProblemDetail 형식으로 에러 반환
+    const errorData = await response.json().catch(() => ({ detail: "게시글 작성에 실패했습니다." }));
+    throw new Error(errorData.detail || "게시글 작성에 실패했습니다.");
+  }
+
+  return await response.json();
 };
