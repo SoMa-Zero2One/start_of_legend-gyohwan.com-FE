@@ -1,8 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { useModalHistory } from "@/hooks/useModalHistory";
 import PostCreateModal from "./PostCreateModal";
+
+const MODAL_KEY = "write";
 
 interface WritePostButtonProps {
   countryCode?: string; // 국가 커뮤니티
@@ -21,20 +24,33 @@ interface WritePostButtonProps {
  * WHY:
  * - useModalHistory로 브라우저 뒤로가기와 동기화
  * - URL에 ?modal=write 파라미터로 모달 상태 관리
+ * - useEffect + useRef 패턴으로 모달이 닫힌 후 정확한 타이밍에 새로고침
  *
  * @param countryCode 국가 코드 (국가 커뮤니티)
  * @param outgoingUnivId 대학 ID (대학 커뮤니티)
  */
 export default function WritePostButton({ countryCode, outgoingUnivId }: WritePostButtonProps) {
-  const router = useRouter();
-  const { isOpen, openModal, closeModal } = useModalHistory({ modalKey: "write" });
+  const searchParams = useSearchParams();
+  const { isOpen, openModal, closeModal } = useModalHistory({ modalKey: MODAL_KEY });
+  const shouldRefreshRef = useRef(false);
+  const modalParam = searchParams.get("modal");
+
+  // 모달이 닫힌 후 (URL에서 ?modal=write 제거됨) 새로고침 실행
+  useEffect(() => {
+    if (modalParam !== MODAL_KEY && shouldRefreshRef.current) {
+      shouldRefreshRef.current = false;
+
+      // 페이지 전체 새로고침으로 서버 컴포넌트 데이터 확실하게 갱신
+      // router.refresh()는 캐싱 문제로 신뢰할 수 없음
+      window.location.reload();
+    }
+  }, [modalParam]);
 
   const handleSuccess = () => {
-    // 모달 닫기
+    // 새로고침 플래그 설정
+    // closeModal()이 실행되면 modalParam이 변경되고, useEffect가 트리거됨
+    shouldRefreshRef.current = true;
     closeModal();
-
-    // 서버 컴포넌트 데이터 새로고침 (부드러운 UX)
-    router.refresh();
   };
 
   return (
