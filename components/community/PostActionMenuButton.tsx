@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/common/Toast";
+import MoreIcon from "@/components/icons/MoreIcon";
 import PostActionMenu from "./PostActionMenu";
 import type { PostDetailResponse } from "@/types/communityPost";
 
@@ -35,14 +36,10 @@ export default function PostActionMenuButton({ post }: PostActionMenuButtonProps
         {/* 더보기 버튼 */}
         <button
           onClick={() => setShowMenu(!showMenu)}
-          className="flex h-[20px] cursor-pointer items-center justify-center"
+          className="flex h-[20px] cursor-pointer items-center justify-center text-gray-900"
           aria-label="메뉴"
         >
-          <div className="flex gap-[2px]">
-            <div className="h-[3px] w-[3px] rounded-full bg-gray-900" />
-            <div className="h-[3px] w-[3px] rounded-full bg-gray-900" />
-            <div className="h-[3px] w-[3px] rounded-full bg-gray-900" />
-          </div>
+          <MoreIcon size={20} />
         </button>
 
         {/* 드롭다운 메뉴 */}
