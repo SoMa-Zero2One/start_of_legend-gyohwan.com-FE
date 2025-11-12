@@ -68,6 +68,14 @@ export default function PasswordConfirmModal({
     onClose();
   };
 
+  // Enter 키로 확인
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !isSubmitting) {
+      e.preventDefault();
+      handleConfirm();
+    }
+  };
+
   return (
     <BaseModal isOpen={isOpen} onClose={handleClose}>
       {/* 제목 */}
@@ -84,6 +92,7 @@ export default function PasswordConfirmModal({
           setPassword(e.target.value);
           setError(""); // 입력 시 에러 초기화
         }}
+        onKeyDown={handleKeyDown}
         placeholder="비밀번호 입력"
         className="body-2 mb-[8px] w-full rounded-[8px] border border-gray-300 px-[16px] py-[12px] focus:border-primary-blue focus:outline-none"
         disabled={isSubmitting}

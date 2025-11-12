@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { deleteComment } from "@/lib/api/community";
 import { useModalHistory } from "@/hooks/useModalHistory";
 import { useToast } from "@/hooks/useToast";
@@ -31,8 +30,7 @@ interface CommentItemProps {
  * @param comment 댓글 정보
  * @param postId 게시글 ID (새로고침용)
  */
-export default function CommentItem({ comment, postId }: CommentItemProps) {
-  const router = useRouter();
+export default function CommentItem({ comment }: CommentItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const passwordModal = useModalHistory({ modalKey: "comment-password" });
   const { errorMessage, isExiting, showError, hideToast } = useToast();
@@ -70,7 +68,7 @@ export default function CommentItem({ comment, postId }: CommentItemProps) {
       await deleteComment(comment.commentId);
       showError("댓글이 삭제되었습니다.");
       setTimeout(() => {
-        router.refresh(); // 페이지 새로고침으로 댓글 목록 업데이트
+        window.location.reload(); // 페이지 새로고침으로 댓글 목록 업데이트
       }, 300);
     } catch (error) {
       showError(error instanceof Error ? error.message : "삭제에 실패했습니다.");
@@ -89,14 +87,14 @@ export default function CommentItem({ comment, postId }: CommentItemProps) {
     setIsDeleting(true);
     try {
       await deleteComment(comment.commentId, password);
-      showError("댓글이 삭제되었습니다.");
       passwordModal.closeModal();
+      showError("댓글이 삭제되었습니다.");
       setTimeout(() => {
-        router.refresh(); // 페이지 새로고침
+        window.location.reload(); // 페이지 새로고침
       }, 300);
     } catch (error) {
-      showError(error instanceof Error ? error.message : "삭제에 실패했습니다.");
-      throw error; // PasswordConfirmModal에서 에러 처리
+      // 에러는 PasswordConfirmModal에서 표시하도록 throw
+      throw error;
     } finally {
       setIsDeleting(false);
     }

@@ -86,14 +86,14 @@ export default function PostActionMenu({ post, onClose, onDelete, showToast }: P
     setIsDeleting(true);
     try {
       await deletePost(post.postId, password);
-      showToast("게시글이 삭제되었습니다.");
       passwordModal.closeModal();
+      showToast("게시글이 삭제되었습니다.");
       setTimeout(() => {
         onDelete();
       }, 300);
     } catch (error) {
-      showToast(error instanceof Error ? error.message : "삭제에 실패했습니다.");
-      throw error; // PasswordConfirmModal에서 에러 처리
+      // 에러는 PasswordConfirmModal에서 표시하도록 throw
+      throw error;
     } finally {
       setIsDeleting(false);
     }
