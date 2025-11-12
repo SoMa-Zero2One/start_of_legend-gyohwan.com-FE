@@ -42,6 +42,7 @@
   - `gpa.criteria`는 `Gpa.Criteria` 열거형 문자열(`_4_5`, `_4_3`, `_4_0`) 그대로 내려간다. 필요 시 프런트에서 숫자로 매핑한다.
   - `language.testType`는 `Language.TestType` 열거형(`TOEFL_IBT`, `TOEFL_ITP`, `IELTS`, `TOEIC`, `HSK`, `JLPT`) 중 하나다. 점수/등급은 문자열이며 값이 없으면 `null`.
   - 슬롯 정보의 `choiceCount`는 해당 슬롯을 선택한 전체 지원서 수다. `slotCount`는 문자열이므로 `"2"`, `"2명"`, `"15-20"` 등 다양한 형식을 그대로 유지한다. `duration`은 `Slot.Duration`에 따라 `"1학기"`, `"1년"`, 값이 없으면 `"미정"`.
+  - `choices[].slot.country`는 파트너 대학의 국가 한글명이며, 슬롯이 국가와 연결되지 않은 경우 `null`.
   - 지원서가 아직 지망을 담고 있지 않으면 `choices`는 빈 배열이다. 이때 `gpa`와 `language`는 `{ "score": null, "criteria": null }`, `{ "testType": null, "score": null, "grade": null }`처럼 모든 필드가 `null`로 내려간다.
 - **오류 응답**
 

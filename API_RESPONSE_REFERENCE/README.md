@@ -16,6 +16,14 @@
 
 | 날짜 | 커밋 | 요약 | 비고 |
 |------|------|------|------|
+| 2025-11-12 | 73fb46a | 시즌 목록 DTO에 `applicationCount` 필드 추가 | Seasons 문서 `GET /v1/seasons` 응답/설명 갱신 완료 |
+| 2025-11-10 | bcbdf1d | `UnivDetailResponse`에 `logoUrl` 노출 | Windows 상세 응답에 필드 추가 |
+| 2025-11-05 | 8efd7db | Window API가 `DataField` 전체 목록을 항상 반환하도록 수정 | Windows 문서 `data` 동작 설명 추가 |
+| 2025-11-04 | a140871 | Slot/Season/Application DTO의 국가명이 null 허용 | Slots/Seasons/Applications 문서에 `country=null` 케이스 명시 |
+| 2025-11-04 | 175c29c | `/v1/windows` 국가·대학/즐겨찾기 엔드포인트 추가 | Windows 문서 구조 검토 완료 |
+| 2025-11-04 | 853da5e | 커뮤니티 Controller/Service 구현 | Community 문서 엔드포인트 정리 완료 |
+| 2025-11-03 | 714738c | 커뮤니티 DTO, 좋아요 카운트/익명 로직 추가 | Community 응답 필드 확인 완료 |
+| 2025-11-03 | caa1057 | 이메일 비밀번호 재설정 API 추가 (`/password-reset/*`) | Auth 문서에 엔드포인트 추가 |
 | 2025-10-28 | 4c81563 | Slot 상세 `homepageUrl` 오타 수정 | 문서 반영 완료 |
 | 2025-10-28 | 4b97410 | Slot 상세에 `homepageUrl` 필드 추가 | Slots 문서에 필드 추가 |
 | 2025-10-28 | 4b20957 | 학교 이메일 인증 Redis DTO화 | Users 문서 오류 코드 검토(변경 없음) |

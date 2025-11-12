@@ -4,6 +4,7 @@
 - 국가/대학 조회 API는 인증 없이 호출할 수 있다. 로그인한 사용자가 호출하면 즐겨찾기 여부(`isFavorite`) 판단에 사용자 ID가 사용된다.
 - 즐겨찾기 등록/해제는 JWT 인증이 필수이며, 인증이 없으면 Spring Security가 401 ProblemDetail을 반환한다.
 - 응답 필드는 `window/dto` 패키지에 정의되어 있다. `DataFieldDto.type`은 `STRING` 또는 `NUMBER` 중 하나이며, 값이 존재하지 않으면 `value`가 `null`이다.
+- 국가/대학의 `data` 배열은 `DataField` 설정 순서대로 항상 동일한 필드 목록을 반환한다. 아직 값이 입력되지 않은 필드도 `value: null`로 포함된다.
 - 비즈니스 오류는 `GlobalExceptionHandler`를 통해 [`ProblemDetail`](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-ann-rest-exceptions.html) 형식으로 내려간다. `detail`에는 `ErrorCode` 메시지가 그대로 담긴다.
 
 ---
@@ -111,6 +112,7 @@
   {
     "univId": 10,
     "name": "UC Berkeley",
+    "logoUrl": "https://cdn.example.com/univ/ucb.png",
     "countryCode": "US",
     "countryName": "미국",
     "data": [
