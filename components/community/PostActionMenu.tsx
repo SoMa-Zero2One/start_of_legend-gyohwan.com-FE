@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { deletePost } from "@/lib/api/community";
 import { useModalHistory } from "@/hooks/useModalHistory";
+import ConfirmModal from "@/components/common/ConfirmModal";
 import PasswordConfirmModal from "./PasswordConfirmModal";
 import type { PostDetailResponse } from "@/types/communityPost";
 
@@ -34,6 +35,7 @@ interface PostActionMenuProps {
  */
 export default function PostActionMenu({ post, onClose, onDelete, showToast }: PostActionMenuProps) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const deleteConfirmModal = useModalHistory({ modalKey: "post-delete" });
   const passwordModal = useModalHistory({ modalKey: "password" });
 
   const isAuthor = post.author?.isAuthor === true;
@@ -56,13 +58,16 @@ export default function PostActionMenu({ post, onClose, onDelete, showToast }: P
     }
   };
 
-  // 삭제 (회원 본인 글)
-  const handleDelete = async () => {
+  // 삭제 버튼 클릭 (회원 본인 글)
+  const handleDeleteClick = () => {
     if (!isAuthor) return;
+    deleteConfirmModal.openModal();
+  };
 
-    if (!confirm("게시글을 삭제하시겠습니까?")) return;
-
+  // 삭제 확인 (회원 본인 글)
+  const handleDeleteConfirm = async () => {
     setIsDeleting(true);
+    deleteConfirmModal.closeModal();
     try {
       await deletePost(post.postId);
       showToast("게시글이 삭제되었습니다.");
@@ -127,7 +132,7 @@ export default function PostActionMenu({ post, onClose, onDelete, showToast }: P
 
         {/* 삭제 버튼 */}
         <button
-          onClick={isAuthor ? handleDelete : handleDeleteGuest}
+          onClick={isAuthor ? handleDeleteClick : handleDeleteGuest}
           disabled={!canDelete || isDeleting}
           className={`body-2 w-full cursor-pointer border-b border-gray-300 px-[16px] py-[12px] text-left hover:bg-gray-100 ${
             !canDelete || isDeleting ? "cursor-not-allowed text-gray-500 blur-[0.5px]" : "text-error-red"
@@ -144,6 +149,17 @@ export default function PostActionMenu({ post, onClose, onDelete, showToast }: P
           공유하기
         </button>
       </div>
+
+      {/* 삭제 확인 모달 (회원 본인 글) */}
+      <ConfirmModal
+        isOpen={deleteConfirmModal.isOpen}
+        title="게시글 삭제"
+        message="게시글을 삭제하시겠습니까?"
+        confirmText="삭제"
+        cancelText="취소"
+        onConfirm={handleDeleteConfirm}
+        onCancel={deleteConfirmModal.closeModal}
+      />
 
       {/* 비밀번호 확인 모달 (비회원 삭제 시) */}
       <PasswordConfirmModal

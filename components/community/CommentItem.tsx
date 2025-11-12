@@ -5,6 +5,7 @@ import { deleteComment } from "@/lib/api/community";
 import { useModalHistory } from "@/hooks/useModalHistory";
 import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/common/Toast";
+import ConfirmModal from "@/components/common/ConfirmModal";
 import PasswordConfirmModal from "./PasswordConfirmModal";
 import type { Comment } from "@/types/communityPost";
 
@@ -32,6 +33,7 @@ interface CommentItemProps {
  */
 export default function CommentItem({ comment }: CommentItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const deleteConfirmModal = useModalHistory({ modalKey: `comment-delete-${comment.commentId}` });
   const passwordModal = useModalHistory({ modalKey: `comment-password-${comment.commentId}` });
   const { errorMessage, isExiting, showError, hideToast } = useToast();
 
@@ -57,13 +59,16 @@ export default function CommentItem({ comment }: CommentItemProps) {
     }
   };
 
-  // 삭제 (회원 본인 댓글)
-  const handleDelete = async () => {
+  // 삭제 버튼 클릭 (회원 본인 댓글)
+  const handleDeleteClick = () => {
     if (!isAuthor) return;
+    deleteConfirmModal.openModal();
+  };
 
-    if (!confirm("댓글을 삭제하시겠습니까?")) return;
-
+  // 삭제 확인 (회원 본인 댓글)
+  const handleDeleteConfirm = async () => {
     setIsDeleting(true);
+    deleteConfirmModal.closeModal();
     try {
       await deleteComment(comment.commentId);
       showError("댓글이 삭제되었습니다.");
@@ -118,9 +123,9 @@ export default function CommentItem({ comment }: CommentItemProps) {
         {/* 삭제 버튼 (본인 댓글 or 비회원 댓글) */}
         {canDelete && (
           <button
-            onClick={isAuthor ? handleDelete : handleDeleteGuest}
+            onClick={isAuthor ? handleDeleteClick : handleDeleteGuest}
             disabled={isDeleting}
-            className="caption-2 hover:text-error-red cursor-pointer text-gray-500 disabled:cursor-not-allowed disabled:opacity-50"
+            className="caption-2 cursor-pointer text-gray-500 hover:text-error-red disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isDeleting ? "삭제 중..." : "삭제"}
           </button>
@@ -129,6 +134,17 @@ export default function CommentItem({ comment }: CommentItemProps) {
 
       {/* Toast 메시지 */}
       <Toast message={errorMessage} isExiting={isExiting} onClose={hideToast} />
+
+      {/* 삭제 확인 모달 (회원 본인 댓글) */}
+      <ConfirmModal
+        isOpen={deleteConfirmModal.isOpen}
+        title="댓글 삭제"
+        message="댓글을 삭제하시겠습니까?"
+        confirmText="삭제"
+        cancelText="취소"
+        onConfirm={handleDeleteConfirm}
+        onCancel={deleteConfirmModal.closeModal}
+      />
 
       {/* 비밀번호 확인 모달 (비회원 댓글 삭제 시) */}
       <PasswordConfirmModal
