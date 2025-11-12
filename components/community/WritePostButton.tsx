@@ -40,9 +40,10 @@ export default function WritePostButton({ countryCode, outgoingUnivId }: WritePo
     if (modalParam !== MODAL_KEY && shouldRefreshRef.current) {
       shouldRefreshRef.current = false;
 
-      // 페이지 전체 새로고침으로 서버 컴포넌트 데이터 확실하게 갱신
-      // router.refresh()는 캐싱 문제로 신뢰할 수 없음
-      window.location.reload();
+      // 새 글은 항상 1페이지 최상단에 추가되므로
+      // 현재 페이지와 관계없이 1페이지로 이동 (page 파라미터 제거)
+      const currentPath = window.location.pathname;
+      window.location.href = currentPath; // query params 제거하고 리로드
     }
   }, [modalParam]);
 

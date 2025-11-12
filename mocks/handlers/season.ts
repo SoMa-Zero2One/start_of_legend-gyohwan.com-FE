@@ -3,9 +3,7 @@ import { getCurrentUser, mockGpas, mockLanguages } from "../data/users";
 import { mockSeasons, findSeasonById, mockSeasonApplicantCounts } from "../data/seasons";
 import { mockSeasonSlots, findSlotById } from "../data/slots";
 import {
-  mockApplications,
   findApplicationByUserAndSeason,
-  findApplicationById,
   addApplication,
   updateApplication,
 } from "../data/applications";

@@ -25,10 +25,11 @@ export const communityPostsHandlers = [
     }
 
     // 비회원 검증: guestPassword가 있으면 비회원, 없으면 회원으로 간주
-    const isMember = !guestPassword;
-    if (!isMember && (!guestPassword || guestPassword.trim() === "")) {
+    // guestPassword가 빈 문자열("")이나 공백만 있는 경우 먼저 검증
+    if (guestPassword !== null && guestPassword !== undefined && guestPassword.trim() === "") {
       return HttpResponse.json({ detail: "비회원은 비밀번호를 입력해야 합니다." }, { status: 400 });
     }
+    const isMember = !guestPassword;
 
     // Mock 게시글 생성
     const newPost = createMockPost({

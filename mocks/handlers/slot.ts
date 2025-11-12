@@ -1,8 +1,8 @@
 import { http, HttpResponse } from "msw";
-import { getCurrentUser } from "../data/users";
+import { getCurrentUser, mockGpas, mockLanguages } from "../data/users";
 import { findSlotById, mockSlotApplicants, mockSlotApplicantsRestricted } from "../data/slots";
-import { findSeasonById } from "../data/seasons";
 import { findApplicationById, mockApplications } from "../data/applications";
+import type { Gpa, Language } from "@/types/grade";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
@@ -126,12 +126,11 @@ export const slotHandlers = [
     }
 
     // Mock에서 GPA/Language 정보 가져오기
-    const { mockGpas, mockLanguages } = require("../data/users");
     const userGpas = mockGpas[application.userId] || [];
-    const gpa = userGpas.find((g: any) => g.gpaId === application.gpaId);
+    const gpa = userGpas.find((g: Gpa) => g.gpaId === application.gpaId);
 
     const userLanguages = mockLanguages[application.userId] || [];
-    const language = userLanguages.find((l: any) => l.languageId === application.languageId);
+    const language = userLanguages.find((l: Language) => l.languageId === application.languageId);
 
     // Choices 변환
     const choicesWithSlot = application.choices.map((c) => ({
