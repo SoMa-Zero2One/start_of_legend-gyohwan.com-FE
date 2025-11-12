@@ -37,7 +37,7 @@ export default function CommunityPostList({ posts, countryCode, outgoingUnivId }
       </div>
 
       {/* 게시글 목록 */}
-      <div className="flex flex-col px-[20px] pb-[20px]">
+      <div className="flex flex-col pb-[20px]">
         {posts.map((post, index) => (
           <CommunityPostItem key={post.postId} post={post} isLast={index === posts.length - 1} />
         ))}

@@ -12,7 +12,7 @@ export default function CommunityPostItem({ post, isLast = false }: CommunityPos
   return (
     <Link
       href={`/community/posts/${post.postId}`}
-      className={`flex w-full cursor-pointer flex-col gap-[12px] py-[20px] text-left transition-colors hover:bg-gray-50 ${
+      className={`flex w-full cursor-pointer flex-col gap-[12px] px-[20px] py-[20px] text-left transition-colors hover:bg-gray-50 ${
         isLast ? "" : "border-b border-gray-100"
       }`}
     >
