@@ -5,6 +5,9 @@ import PostActionMenuButton from "@/components/community/PostActionMenuButton";
 import CommentList from "@/components/community/CommentList";
 import CommentInputButton from "@/components/community/CommentInputButton";
 
+// 항상 최신 데이터를 fetch (캐시 사용 안 함)
+export const dynamic = "force-dynamic";
+
 interface PostDetailPageProps {
   params: Promise<{ postId: string }>;
 }

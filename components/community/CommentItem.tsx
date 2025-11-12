@@ -32,7 +32,7 @@ interface CommentItemProps {
  */
 export default function CommentItem({ comment }: CommentItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
-  const passwordModal = useModalHistory({ modalKey: "comment-password" });
+  const passwordModal = useModalHistory({ modalKey: `comment-password-${comment.commentId}` });
   const { errorMessage, isExiting, showError, hideToast } = useToast();
 
   const isAuthor = comment.author?.isAuthor === true;
@@ -120,7 +120,7 @@ export default function CommentItem({ comment }: CommentItemProps) {
           <button
             onClick={isAuthor ? handleDelete : handleDeleteGuest}
             disabled={isDeleting}
-            className="caption-2 cursor-pointer text-gray-500 hover:text-error-red disabled:cursor-not-allowed disabled:opacity-50"
+            className="caption-2 hover:text-error-red cursor-pointer text-gray-500 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isDeleting ? "삭제 중..." : "삭제"}
           </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type KeyboardEvent } from "react";
 import BaseModal from "@/components/common/BaseModal";
 
 interface PasswordConfirmModalProps {
@@ -69,7 +69,7 @@ export default function PasswordConfirmModal({
   };
 
   // Enter 키로 확인
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !isSubmitting) {
       e.preventDefault();
       handleConfirm();

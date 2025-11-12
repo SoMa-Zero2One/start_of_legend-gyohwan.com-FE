@@ -8,10 +8,72 @@ import type { CommunityPostListResponse, CommunityPost, Comment, PostDetailRespo
 let nextPostId = 1000;
 
 // 다음 댓글 ID
-let nextCommentId = 5000;
+let nextCommentId = 5006;
 
 // 게시글 ID별 댓글 저장 (메모리)
-const commentsByPostId: Record<number, Comment[]> = {};
+const commentsByPostId: Record<number, Comment[]> = {
+  // 게시글 1번 (인기 게시글)의 초기 댓글
+  1: [
+    {
+      commentId: 5001,
+      content: "정보 감사합니다! 도움이 많이 되었어요 👍",
+      createdAt: "2025-01-05T13:10:20.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: true,
+        isMember: true,
+        isAuthor: false,
+      },
+    },
+    {
+      commentId: 5002,
+      content: "저도 준비 중인데 같이 정보 공유해요!",
+      createdAt: "2025-01-05T14:25:30.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: false,
+        isMember: true,
+        isAuthor: false,
+      },
+    },
+    {
+      commentId: 5003,
+      content: "마감일 정리 정말 유용하네요 감사합니다",
+      createdAt: "2025-01-05T15:40:15.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: false,
+        isMember: false, // 비회원 댓글
+        isAuthor: false,
+      },
+    },
+  ],
+  // 게시글 2번의 초기 댓글
+  2: [
+    {
+      commentId: 5004,
+      content: "일부 학교는 조건부 입학이 가능하다고 들었어요",
+      createdAt: "2025-01-04T11:30:45.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: false,
+        isMember: true,
+        isAuthor: false,
+      },
+    },
+    {
+      commentId: 5005,
+      content: "학교 홈페이지에서 English proficiency requirements 확인해보세요!",
+      createdAt: "2025-01-04T12:15:20.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: true,
+        isMember: true,
+        isAuthor: false,
+      },
+    },
+  ],
+};
 
 /**
  * Mock 게시글 생성 헬퍼 함수
