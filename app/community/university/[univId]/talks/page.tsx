@@ -51,7 +51,7 @@ export default async function UniversityTalksPage({ params, searchParams }: Talk
         </div>
 
         <main className="mx-auto w-full max-w-[430px] flex-1">
-          <CommunityPostList posts={posts} />
+          <CommunityPostList posts={posts} outgoingUnivId={univIdNum} />
 
           {/* 페이지네이션 - 페이지가 2개 이상일 때만 표시 */}
           {pagination.totalPages > 1 && (

@@ -125,3 +125,23 @@ export interface UniversityFieldValue {
   displayOrder: number;
   renderConfig?: FieldMetadata["renderConfig"];
 }
+
+// ==================== 커뮤니티 게시글 작성 타입 ====================
+
+/**
+ * 게시글 작성 요청 (POST /v1/community/posts)
+ *
+ * USAGE: PostCreateModal 컴포넌트에서 API 호출 시 사용
+ *
+ * 회원/비회원 분기:
+ * - 회원: isAnonymous로 익명 여부 선택, guestPassword는 null
+ * - 비회원: guestPassword 필수, isAnonymous는 무시됨
+ */
+export interface PostCreateRequest {
+  title: string; // 게시글 제목
+  content: string; // 게시글 본문
+  isAnonymous: boolean; // 회원 전용: 익명 작성 여부
+  guestPassword: string | null; // 비회원 전용: 수정/삭제용 비밀번호
+  countryCode?: string; // 국가 코드 (선택)
+  outgoingUnivId?: number; // 대학 ID (선택)
+}

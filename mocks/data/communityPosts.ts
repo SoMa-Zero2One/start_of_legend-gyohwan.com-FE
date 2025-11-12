@@ -1,8 +1,52 @@
-import type { CommunityPostListResponse } from "@/types/communityPost";
+import type { CommunityPostListResponse, CommunityPost } from "@/types/communityPost";
 
 /**
  * 커뮤니티 게시글 Mock 데이터
  */
+
+// 다음 게시글 ID (메모리에만 존재)
+let nextPostId = 1000;
+
+/**
+ * Mock 게시글 생성 헬퍼 함수
+ *
+ * USAGE: MSW 핸들러에서 POST 요청 시 새 게시글을 생성할 때 사용
+ *
+ * WHAT: 입력된 정보를 바탕으로 CommunityPost 객체를 생성
+ *
+ * WHY:
+ * - 일관된 형식의 Mock 데이터 생성
+ * - 회원/비회원, 익명/실명 처리 로직 중앙화
+ * - 자동으로 고유한 postId 할당
+ */
+export const createMockPost = ({
+  title,
+  content,
+  isAnonymous,
+  isMember,
+}: {
+  title: string;
+  content: string;
+  isAnonymous: boolean;
+  isMember: boolean;
+}): CommunityPost => {
+  const now = new Date().toISOString().replace("Z", ""); // "2025-01-05T12:34:56.000" 형식
+
+  return {
+    postId: nextPostId++,
+    title,
+    content,
+    createdAt: now,
+    author: {
+      nickname: "익명", // 회원 익명 또는 비회원은 모두 "익명"
+      isAnonymous: isMember ? isAnonymous : false, // 비회원은 항상 false
+      isMember,
+    },
+    likeCount: 0,
+    commentsCount: 0,
+    isLiked: false,
+  };
+};
 
 // 미국 커뮤니티 게시글
 export const mockUSCommunityPosts: CommunityPostListResponse = {
