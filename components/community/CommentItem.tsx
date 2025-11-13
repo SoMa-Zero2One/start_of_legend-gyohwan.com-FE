@@ -98,7 +98,7 @@ export default function CommentItem({ comment }: CommentItemProps) {
           {/* 작성자 & 시간 */}
           <div className="mb-[4px] flex items-center gap-[8px]">
             <span className="caption-1 text-gray-900">{comment.author?.nickname || "익명"}</span>
-            <span className="caption-2 text-gray-500">{formatDateTime(comment.createdAt || "")}</span>
+            <span className="caption-2 text-gray-500">{formatDateTime(comment.createdAt)}</span>
           </div>
 
           {/* 댓글 본문 */}

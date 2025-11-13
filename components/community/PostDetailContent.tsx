@@ -47,7 +47,7 @@ export default function PostDetailContent({ post }: PostDetailContentProps) {
       {/* 작성자 정보 */}
       <div className="mb-[16px] flex items-center gap-[8px]">
         <span className="body-2 text-gray-900">{post.author?.nickname || "익명"}</span>
-        <span className="caption-2 text-gray-500">{formatDateTime(post.createdAt || "")}</span>
+        <span className="caption-2 text-gray-500">{formatDateTime(post.createdAt)}</span>
       </div>
 
       {/* 제목 */}

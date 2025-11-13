@@ -80,11 +80,17 @@ export const formatDate = (dateString: string): string => {
  * WHY: KST 기준 시간 표시, 환경 독립적 (Vercel UTC 환경에서도 동일)
  *
  * @param dateString - ISO 8601 형식의 날짜 문자열
- * @returns yyyy-mm-dd hh:mm 형식의 문자열
+ * @returns yyyy-mm-dd hh:mm 형식의 문자열 (빈 값이면 빈 문자열)
  */
-export const formatDateTime = (dateString: string): string => {
+export const formatDateTime = (dateString: string | null | undefined): string => {
+  // falsy 값 체크 (빈 문자열, null, undefined)
+  if (!dateString) return "";
+
   try {
     const kstDate = parseKstDate(dateString);
+
+    // Invalid Date 체크
+    if (isNaN(kstDate.getTime())) return "";
 
     // KST 시간 추출 (UTC+9)
     const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
