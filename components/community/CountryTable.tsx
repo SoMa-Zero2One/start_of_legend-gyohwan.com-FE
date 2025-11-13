@@ -87,7 +87,7 @@ export default function CountryTable({
               className="group interactive-row flex border-t border-gray-100"
               onClick={() => handleCountryClick(country.countryCode)}
             >
-              <td className="interactive-row-child sticky left-0 z-10 flex w-[150px] items-center gap-[8px] bg-white px-[16px] py-[20px]">
+              <td className="interactive-row-child sticky left-0 z-20 flex h-full w-[150px] items-center gap-[8px] bg-white px-[16px] py-[20px]">
                 <CountryFlag country={country.name} size={20} />
                 <span className="text-[13px] font-bold">{country.name}</span>
               </td>
@@ -114,13 +114,29 @@ export default function CountryTable({
 function FieldRenderer({ field }: { field: CountryFieldValue }) {
   // Empty state 처리 (null 또는 빈 값)
   if (!field?.value) {
-    return <div className="h-full w-full bg-gray-100" />;
+    return <span className="caption-1 text-gray-400">-</span>;
   }
   // 배지 스타일로 렌더링 (사용 언어)
   if (field.renderConfig?.badge) {
     return <span className="caption-1 truncate rounded-full bg-gray-300 px-[8px]">{field.displayValue}</span>;
   }
 
+  // 줄바꿈 문자 처리: \n을 <br />로 변환
+  const displayText = field.displayValue;
+  if (displayText.includes("\n")) {
+    const lines = displayText.split("\n");
+    return (
+      <span className="caption-1">
+        {lines.map((line, index) => (
+          <span key={index}>
+            {line}
+            {index < lines.length - 1 && <br />}
+          </span>
+        ))}
+      </span>
+    );
+  }
+
   // 일반 텍스트 렌더링 (레벨은 이미 "상/중상/중/중하/하"로 변환됨, 숫자는 포맷팅됨)
-  return <span className="caption-1">{field.displayValue}</span>;
+  return <span className="caption-1">{displayText}</span>;
 }
