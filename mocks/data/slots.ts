@@ -14,7 +14,7 @@ export const mockSlots: Slot[] = [
     slotCount: "2",
     duration: "1학기",
     homepageUrl: "https://www.berkeley.edu/",
-    univId: 1, // 커뮤니티 대학 ID
+    universityId: 1, // 커뮤니티 대학 ID
   },
   {
     slotId: 2,
@@ -25,7 +25,7 @@ export const mockSlots: Slot[] = [
     slotCount: "3",
     duration: "1학기",
     homepageUrl: "https://www.ucla.edu/",
-    univId: 2, // 커뮤니티 대학 ID
+    universityId: 2, // 커뮤니티 대학 ID
   },
   {
     slotId: 3,
@@ -36,7 +36,7 @@ export const mockSlots: Slot[] = [
     slotCount: "2",
     duration: "1학기",
     homepageUrl: "https://www.u-tokyo.ac.jp/en/",
-    univId: 3, // 커뮤니티 대학 ID
+    universityId: 3, // 커뮤니티 대학 ID
   },
   {
     slotId: 4,
@@ -47,7 +47,7 @@ export const mockSlots: Slot[] = [
     slotCount: "1",
     duration: "1년",
     homepageUrl: "https://www.ox.ac.uk/",
-    univId: 4, // 커뮤니티 대학 ID
+    universityId: 4, // 커뮤니티 대학 ID
   },
   {
     slotId: 5,
@@ -58,7 +58,7 @@ export const mockSlots: Slot[] = [
     slotCount: "4",
     duration: "1학기",
     homepageUrl: "https://www.nus.edu.sg/",
-    univId: 5, // 커뮤니티 대학 ID
+    universityId: 5, // 커뮤니티 대학 ID
   },
   {
     slotId: 6,
@@ -69,7 +69,7 @@ export const mockSlots: Slot[] = [
     slotCount: "2",
     duration: "미정",
     homepageUrl: null, // 일부 대학은 홈페이지 URL이 없을 수 있음
-    univId: null, // 커뮤니티에 없는 대학
+    universityId: null, // 커뮤니티에 없는 대학
   },
 ];
 

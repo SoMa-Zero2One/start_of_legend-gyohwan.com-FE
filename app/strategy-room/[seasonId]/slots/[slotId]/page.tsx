@@ -244,7 +244,7 @@ export default function SlotDetailPage() {
 
           {/* 커뮤니티 버튼 */}
           <Link
-            href={data.univId ? `/community/university/${data.univId}` : "/community?tabs=대학"}
+            href={data.universityId ? `/community/university/${data.universityId}` : "/community?tabs=대학"}
             className="btn-primary inline-flex cursor-pointer items-center gap-[4px] rounded-full px-[12px] py-[6px] text-[12px] text-white transition-colors"
           >
             파견 생활 알아보기
