@@ -71,3 +71,40 @@ export const formatDate = (dateString: string): string => {
   const day = String(midnightKst.getUTCDate()).padStart(2, "0");
   return `${year}.${month}.${day}`;
 };
+
+/**
+ * ISO 8601 날짜를 yyyy-mm-dd hh:mm 형식으로 포맷 - 한국 시간(KST) 기준
+ *
+ * USAGE: 댓글/게시글 작성 시간 표시
+ * WHAT: ISO 8601 날짜를 "2025-01-05 12:34" 형식으로 변환
+ * WHY: KST 기준 시간 표시, 환경 독립적 (Vercel UTC 환경에서도 동일)
+ *
+ * @param dateString - ISO 8601 형식의 날짜 문자열
+ * @returns yyyy-mm-dd hh:mm 형식의 문자열 (빈 값이면 빈 문자열)
+ */
+export const formatDateTime = (dateString: string | null | undefined): string => {
+  // falsy 값 체크 (빈 문자열, null, undefined)
+  if (!dateString) return "";
+
+  try {
+    const kstDate = parseKstDate(dateString);
+
+    // Invalid Date 체크
+    if (isNaN(kstDate.getTime())) return "";
+
+    // KST 시간 추출 (UTC+9)
+    const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+    const kstTime = kstDate.getTime() + KST_OFFSET_MS;
+    const date = new Date(kstTime);
+
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const hours = String(date.getUTCHours()).padStart(2, "0");
+    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  } catch {
+    return "";
+  }
+};

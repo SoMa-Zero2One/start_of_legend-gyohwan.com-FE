@@ -1,5 +1,13 @@
 import { http, HttpResponse } from "msw";
-import { mockCommunityPostsByCountry, mockCommunityPostsByUniversity, createMockPost } from "../data/communityPosts";
+import {
+  mockCommunityPostsByCountry,
+  mockCommunityPostsByUniversity,
+  createMockPost,
+  getPostDetailById,
+  deletePostById,
+  createMockComment,
+  deleteCommentById,
+} from "../data/communityPosts";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
@@ -115,5 +123,115 @@ export const communityPostsHandlers = [
       },
       posts: paginatedPosts,
     });
+  }),
+
+  // GET /v1/community/posts/:postId - 게시글 상세 조회
+  http.get(`${BACKEND_URL}/v1/community/posts/:postId`, ({ params }) => {
+    const postId = parseInt(params.postId as string);
+
+    if (isNaN(postId)) {
+      return HttpResponse.json({ detail: "잘못된 게시글 ID입니다." }, { status: 400 });
+    }
+
+    const postDetail = getPostDetailById(postId);
+
+    if (!postDetail) {
+      return HttpResponse.json({ detail: "게시글을 찾을 수 없습니다." }, { status: 404 });
+    }
+
+    return HttpResponse.json(postDetail);
+  }),
+
+  // DELETE /v1/community/posts/:postId - 게시글 삭제
+  http.delete(`${BACKEND_URL}/v1/community/posts/:postId`, async ({ params, request }) => {
+    const postId = parseInt(params.postId as string);
+
+    if (isNaN(postId)) {
+      return HttpResponse.json({ detail: "잘못된 게시글 ID입니다." }, { status: 400 });
+    }
+
+    // 비회원 삭제 시 비밀번호 확인 (Mock에서는 비밀번호 체크 생략, 항상 성공)
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      // body 없으면 회원 삭제로 간주
+    }
+
+    const deleted = deletePostById(postId);
+
+    if (!deleted) {
+      return HttpResponse.json({ detail: "게시글을 찾을 수 없습니다." }, { status: 404 });
+    }
+
+    return new HttpResponse(null, { status: 204 });
+  }),
+
+  // POST /v1/community/posts/:postId/comments - 댓글 작성
+  http.post(`${BACKEND_URL}/v1/community/posts/:postId/comments`, async ({ params, request }) => {
+    const postId = parseInt(params.postId as string);
+
+    if (isNaN(postId)) {
+      return HttpResponse.json({ detail: "잘못된 게시글 ID입니다." }, { status: 400 });
+    }
+
+    // 게시글 존재 확인
+    const postDetail = getPostDetailById(postId);
+    if (!postDetail) {
+      return HttpResponse.json({ detail: "게시글을 찾을 수 없습니다." }, { status: 404 });
+    }
+
+    const body = await request.json();
+    const { content, isAnonymous, guestPassword } = body as {
+      content: string;
+      isAnonymous?: boolean;
+      guestPassword?: string;
+    };
+
+    // 유효성 검증
+    if (!content || content.trim() === "") {
+      return HttpResponse.json({ detail: "댓글 내용은 비어 있을 수 없습니다." }, { status: 400 });
+    }
+
+    // 비회원 검증
+    const isMember = !guestPassword;
+    if (!isMember && (!guestPassword || guestPassword.trim() === "")) {
+      return HttpResponse.json({ detail: "비회원은 비밀번호를 입력해야 합니다." }, { status: 400 });
+    }
+
+    // Mock 댓글 생성
+    const newComment = createMockComment({
+      postId,
+      content: content.trim(),
+      isAnonymous: isMember && isAnonymous ? true : false,
+      isMember,
+    });
+
+    return HttpResponse.json(newComment, { status: 201 });
+  }),
+
+  // DELETE /v1/community/comments/:commentId - 댓글 삭제
+  http.delete(`${BACKEND_URL}/v1/community/comments/:commentId`, async ({ params, request }) => {
+    const commentId = parseInt(params.commentId as string);
+
+    if (isNaN(commentId)) {
+      return HttpResponse.json({ detail: "잘못된 댓글 ID입니다." }, { status: 400 });
+    }
+
+    // 비회원 삭제 시 비밀번호 확인 (Mock에서는 비밀번호 체크 생략, 항상 성공)
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      // body 없으면 회원 삭제로 간주
+    }
+
+    const deleted = deleteCommentById(commentId);
+
+    if (!deleted) {
+      return HttpResponse.json({ detail: "댓글을 찾을 수 없습니다." }, { status: 404 });
+    }
+
+    return new HttpResponse(null, { status: 204 });
   }),
 ];

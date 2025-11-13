@@ -1,4 +1,4 @@
-import type { CommunityPostListResponse, CommunityPost } from "@/types/communityPost";
+import type { CommunityPostListResponse, CommunityPost, Comment, PostDetailResponse } from "@/types/communityPost";
 
 /**
  * 커뮤니티 게시글 Mock 데이터
@@ -6,6 +6,74 @@ import type { CommunityPostListResponse, CommunityPost } from "@/types/community
 
 // 다음 게시글 ID (메모리에만 존재)
 let nextPostId = 1000;
+
+// 다음 댓글 ID
+let nextCommentId = 5006;
+
+// 게시글 ID별 댓글 저장 (메모리)
+const commentsByPostId: Record<number, Comment[]> = {
+  // 게시글 1번 (인기 게시글)의 초기 댓글
+  1: [
+    {
+      commentId: 5001,
+      content: "정보 감사합니다! 도움이 많이 되었어요 👍",
+      createdAt: "2025-01-05T13:10:20.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: true,
+        isMember: true,
+        isAuthor: false,
+      },
+    },
+    {
+      commentId: 5002,
+      content: "저도 준비 중인데 같이 정보 공유해요!",
+      createdAt: "2025-01-05T14:25:30.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: false,
+        isMember: true,
+        isAuthor: false,
+      },
+    },
+    {
+      commentId: 5003,
+      content: "마감일 정리 정말 유용하네요 감사합니다",
+      createdAt: "2025-01-05T15:40:15.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: false,
+        isMember: false, // 비회원 댓글
+        isAuthor: false,
+      },
+    },
+  ],
+  // 게시글 2번의 초기 댓글
+  2: [
+    {
+      commentId: 5004,
+      content: "일부 학교는 조건부 입학이 가능하다고 들었어요",
+      createdAt: "2025-01-04T11:30:45.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: false,
+        isMember: true,
+        isAuthor: false,
+      },
+    },
+    {
+      commentId: 5005,
+      content: "학교 홈페이지에서 English proficiency requirements 확인해보세요!",
+      createdAt: "2025-01-04T12:15:20.000000",
+      author: {
+        nickname: "익명",
+        isAnonymous: true,
+        isMember: true,
+        isAuthor: false,
+      },
+    },
+  ],
+};
 
 /**
  * Mock 게시글 생성 헬퍼 함수
@@ -946,4 +1014,129 @@ export const mockCommunityPostsByCountry: Record<string, CommunityPostListRespon
 export const mockCommunityPostsByUniversity: Record<number, CommunityPostListResponse> = {
   1: mockUTCCommunityPosts, // UTC
   2: mockTokyoUnivCommunityPosts, // 도쿄대
+};
+
+/**
+ * 게시글 ID로 게시글 찾기 (모든 커뮤니티 검색)
+ */
+export const findPostById = (postId: number): CommunityPost | null => {
+  // 국가별 커뮤니티 검색
+  for (const countryData of Object.values(mockCommunityPostsByCountry)) {
+    const post = countryData.posts.find((p) => p.postId === postId);
+    if (post) return post;
+  }
+
+  // 대학별 커뮤니티 검색
+  for (const univData of Object.values(mockCommunityPostsByUniversity)) {
+    const post = univData.posts.find((p) => p.postId === postId);
+    if (post) return post;
+  }
+
+  return null;
+};
+
+/**
+ * 게시글 ID로 PostDetailResponse 생성 (댓글 포함)
+ */
+export const getPostDetailById = (postId: number): PostDetailResponse | null => {
+  const post = findPostById(postId);
+  if (!post) return null;
+
+  // 게시글에 해당하는 댓글 가져오기 (없으면 빈 배열)
+  const comments = commentsByPostId[postId] || [];
+
+  return {
+    postId: post.postId,
+    title: post.title,
+    content: post.content,
+    createdAt: post.createdAt,
+    author: {
+      ...post.author,
+      isAuthor: true, // Mock에서는 항상 본인 글로 처리 (테스트용)
+    },
+    likeCount: post.likeCount,
+    isLiked: post.isLiked,
+    comments,
+  };
+};
+
+/**
+ * 게시글 삭제 (모든 커뮤니티에서 검색 후 삭제)
+ */
+export const deletePostById = (postId: number): boolean => {
+  // 국가별 커뮤니티 검색
+  for (const countryData of Object.values(mockCommunityPostsByCountry)) {
+    const index = countryData.posts.findIndex((p) => p.postId === postId);
+    if (index !== -1) {
+      countryData.posts.splice(index, 1);
+      countryData.pagination.totalItems -= 1;
+      delete commentsByPostId[postId]; // 댓글도 함께 삭제
+      return true;
+    }
+  }
+
+  // 대학별 커뮤니티 검색
+  for (const univData of Object.values(mockCommunityPostsByUniversity)) {
+    const index = univData.posts.findIndex((p) => p.postId === postId);
+    if (index !== -1) {
+      univData.posts.splice(index, 1);
+      univData.pagination.totalItems -= 1;
+      delete commentsByPostId[postId]; // 댓글도 함께 삭제
+      return true;
+    }
+  }
+
+  return false;
+};
+
+/**
+ * Mock 댓글 생성 헬퍼 함수
+ */
+export const createMockComment = ({
+  postId,
+  content,
+  isAnonymous,
+  isMember,
+}: {
+  postId: number;
+  content: string;
+  isAnonymous: boolean;
+  isMember: boolean;
+}): Comment => {
+  const now = new Date().toISOString().replace("Z", "");
+
+  const newComment: Comment = {
+    commentId: nextCommentId++,
+    content,
+    createdAt: now,
+    author: {
+      nickname: "익명",
+      isAnonymous: isMember ? isAnonymous : false,
+      isMember,
+      isAuthor: true, // Mock에서는 항상 본인 댓글로 처리 (삭제 가능)
+    },
+  };
+
+  // 게시글에 댓글 추가
+  if (!commentsByPostId[postId]) {
+    commentsByPostId[postId] = [];
+  }
+  commentsByPostId[postId].push(newComment);
+
+  return newComment;
+};
+
+/**
+ * 댓글 삭제
+ */
+export const deleteCommentById = (commentId: number): boolean => {
+  for (const postId in commentsByPostId) {
+    const comments = commentsByPostId[postId];
+    const index = comments.findIndex((c) => c.commentId === commentId);
+    if (index !== -1) {
+      comments.splice(index, 1);
+      return true;
+    }
+  }
+  return false;
 };

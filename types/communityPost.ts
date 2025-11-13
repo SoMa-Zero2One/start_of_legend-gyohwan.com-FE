@@ -7,6 +7,7 @@ export interface Author {
   nickname: string;
   isAnonymous?: boolean;
   isMember?: boolean;
+  isAuthor?: boolean; // 현재 로그인한 사용자가 작성자인지 (본인 글이면 true)
 }
 
 export interface CommunityPost {
@@ -32,4 +33,44 @@ export interface CommunityPostListResponse {
   posts: CommunityPost[];
   countryName?: string | null; // 국가 커뮤니티일 때 (방어적 타입)
   outgoingUnivName?: string | null; // 대학 커뮤니티일 때 (방어적 타입)
+}
+
+/**
+ * 댓글 정보 (방어적 타입 - ID 제외 모두 nullable)
+ */
+export interface Comment {
+  commentId: number;
+  content?: string | null;
+  createdAt?: string | null; // ISO 8601 format
+  author?: Author | null;
+}
+
+/**
+ * 게시글 상세 정보 (댓글 포함, 방어적 타입)
+ */
+export interface PostDetailResponse {
+  postId: number;
+  title?: string | null;
+  content?: string | null;
+  createdAt?: string | null;
+  author?: Author | null;
+  likeCount?: number | null;
+  isLiked?: boolean | null;
+  comments?: Comment[] | null;
+}
+
+/**
+ * 댓글 작성 요청
+ */
+export interface CommentCreateRequest {
+  content: string;
+  isAnonymous?: boolean; // 회원만 사용 가능
+  guestPassword?: string; // 비회원 필수
+}
+
+/**
+ * 비회원 삭제 요청 (비밀번호 확인용)
+ */
+export interface DeleteRequest {
+  password: string;
 }

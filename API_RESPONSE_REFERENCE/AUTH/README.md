@@ -95,6 +95,55 @@
   `exists`는 불리언이며, 해당 이메일이 이미 존재하면 `true`.
 - **오류 응답**: 별도 비즈니스 오류는 없지만, `email` 파라미터를 누락하면 Spring MVC가 400 Bad Request를 반환한다.
 
+### `POST /v1/auth/password-reset/request`
+- **요청 본문**: `PasswordResetRequestDto`(`auth/dto/PasswordResetRequestDto.java:6`)
+  ```json
+  { "email": "user@example.com" }
+  ```
+  - `email`은 필수이며 이메일 형식이어야 한다.
+  - 서비스는 BASIC 로그인 사용자만 대상으로 하며, 소셜 로그인 계정은 여기서 차단된다.
+- **성공 (200 OK)**: `PasswordResetResponse`(`auth/dto/PasswordResetResponse.java:3`)
+  ```json
+  {
+    "email": "user@example.com",
+    "message": "비밀번호 재설정 인증 코드가 이메일로 발송되었습니다."
+  }
+  ```
+  - Redis 키 `password_reset:{email}`에 인증 코드가 10분(600초) 동안 저장되고, 이메일 발송이 트리거된다.
+- **오류 응답**
+
+| HTTP 상태 | ErrorCode/유형 | `detail` 메시지 | 발생 조건 |
+|-----------|----------------|-----------------|-----------|
+| 404 Not Found | `USER_NOT_FOUND` | `유저를 찾을 수 없습니다.` | 가입되지 않은 이메일 |
+| 400 Bad Request | `SOCIAL_LOGIN_PASSWORD_RESET_NOT_ALLOWED` | `소셜 로그인 계정은 비밀번호 재설정이 불가능합니다.` | `loginType`이 BASIC이 아닌 사용자 |
+| 400 Bad Request | Bean Validation | `이메일은 필수입니다.`, `올바른 이메일 형식이 아닙니다.` | 본문 누락/형식 오류 |
+
+### `POST /v1/auth/password-reset/confirm`
+- **요청 본문**: `PasswordResetConfirmRequest`(`auth/dto/PasswordResetConfirmRequest.java:7`)
+  ```json
+  {
+    "email": "user@example.com",
+    "code": "123456",
+    "newPassword": "최소12자새비밀번호"
+  }
+  ```
+  - `code`는 6자리 숫자 문자열이어야 하며, 요청 시 발급받은 값과 일치해야 한다.
+  - `newPassword`는 최소 12자 이상이어야 한다.
+- **성공 (200 OK)**: `PasswordResetConfirmResponse`(`auth/dto/PasswordResetConfirmResponse.java:3`)
+  ```json
+  { "message": "비밀번호가 성공적으로 변경되었습니다." }
+  ```
+  - 인증에 성공하면 Redis에서 해당 키가 제거되고, `User#setEmailPassword`로 비밀번호가 갱신된다.
+- **오류 응답**
+
+| HTTP 상태 | ErrorCode/유형 | `detail` 메시지 | 발생 조건 |
+|-----------|----------------|-----------------|-----------|
+| 400 Bad Request | `PASSWORD_RESET_CODE_EXPIRED` | `비밀번호 재설정 인증 코드가 만료되었거나 존재하지 않습니다.` | Redis TTL 만료/요청 이력 없음 |
+| 400 Bad Request | `PASSWORD_RESET_CODE_INVALID` | `비밀번호 재설정 인증 코드가 일치하지 않습니다.` | 코드 불일치 |
+| 404 Not Found | `USER_NOT_FOUND` | `유저를 찾을 수 없습니다.` | 사용자 삭제 등으로 이메일이 사라진 경우 |
+| 400 Bad Request | `PASSWORD_TOO_SHORT` | `비밀번호는 최소 12자 이상이어야 합니다.` | `newPassword` 길이 부족 |
+| 400 Bad Request | Bean Validation | 필드별 메시지(`이메일은 필수입니다.` 등) | 이메일/코드/비밀번호 누락 또는 형식 오류 |
+
 ### `POST /v1/auth/logout`
 - **성공 (200 OK)**: `LogoutResponse`(`auth/dto/LogoutResponse.java:3`)
   ```json

@@ -18,6 +18,7 @@
         "domesticUniversity": "교환대학교",
         "domesticUniversityLogoUri": "https://...",
         "name": "2025년 1학기",
+        "applicationCount": 42,
         "startDate": "2024-12-01T00:00:00",
         "endDate": "2025-01-15T23:59:59",
         "isApplied": false
@@ -28,6 +29,7 @@
   - `startDate`, `endDate`는 ISO-8601 문자열로 직렬화된 `LocalDateTime`이며, 아직 일정이 정해지지 않은 경우 `null`.
   - `domesticUniversityLogoUri`는 CDN 경로 문자열이나 `null`이 올 수 있다.
   - 현재 서비스 구현(`SeasonService#findSeasons`)은 `isApplied`를 항상 `false`로 반환한다.
+  - `applicationCount`는 해당 시즌에 연결된 `Application` 엔티티 수다. 시즌 최초 조회에서도 항상 포함된다.
 - **오류 응답**: 추가 예외 없음.
 
 ---
@@ -69,7 +71,7 @@
       {
         "slotId": 12,
         "name": "UC Berkeley",
-        "country": "US",
+        "country": "미국",
         "logoUrl": "https://...",
         "choiceCount": 15,
         "slotCount": "2명",
@@ -81,6 +83,7 @@
   - `choiceCount`는 `long` (참여한 지원서 수).
   - `slotCount`는 문자열이므로 `"2"`, `"2명"`, `"15-20"` 등 다양한 형식이 그대로 온다.
   - `duration`은 `"1학기"`(SEMESTER), `"1년"`(YEAR), 값이 없으면 `"미정"`.
+  - `slots[].country`는 파트너 대학의 국가 한글명이며, 슬롯에 국가가 연결되어 있지 않으면 `null`.
 - **오류 응답**
 
 | HTTP 상태 | ErrorCode | `detail` 메시지 | 발생 조건 |
@@ -115,21 +118,22 @@
     "choices": [
       {
         "choice": 1,
-        "slot": {
-          "slotId": 12,
-          "name": "UC Berkeley",
-          "country": "US",
-          "logoUrl": "https://...",
-          "choiceCount": 15,
-          "slotCount": "2명",
-          "duration": "1학기"
-        }
+          "slot": {
+            "slotId": 12,
+            "name": "UC Berkeley",
+            "country": "미국",
+            "logoUrl": "https://...",
+            "choiceCount": 15,
+            "slotCount": "2명",
+            "duration": "1학기"
+          }
       }
     ]
   }
   ```
   - `nickname`은 `NicknameGenerator`에서 생성된 20자 미만 문자열.
   - `choices[].slot.choiceCount`는 현재까지 접수된 지원 수, `slotCount`는 문자열, `duration`은 위와 동일한 규칙.
+  - `choices[].slot.country`는 한글 국가명이며, 슬롯에 국가 정보가 없으면 `null`.
 - **오류 응답**
 
 | HTTP 상태 | ErrorCode/유형 | `detail` 메시지 | 발생 조건 |
@@ -195,7 +199,7 @@
         "slot": {
           "slotId": 12,
           "name": "UC Berkeley",
-          "country": "US",
+          "country": "미국",
           "logoUrl": "https://...",
           "choiceCount": 15,
           "slotCount": "2명",
@@ -208,6 +212,7 @@
   - `gpa.criteria`는 문자열 `"4.5"`, `"4.3"`, `"4.0"` 중 하나.
   - `language.testType`는 `Language.TestType` 열거형 이름(대문자).
   - 지원서에 GPA/어학 정보가 비어 있으면 각 필드는 `null`.
+  - `choices[].slot.country`는 한글 국가명이며, 미연결 시 `null`.
 - **오류 응답**
 
 | HTTP 상태 | ErrorCode | `detail` 메시지 | 발생 조건 |
