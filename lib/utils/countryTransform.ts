@@ -49,11 +49,20 @@ export function enrichCountryData(apiData: CountryApiResponse[]): EnrichedCountr
       fields.set(metadata.key, enrichedField);
     });
 
+    // isFilled 계산: 하나라도 값이 있는 필드가 있는지 체크 (continent 제외)
+    // 원본 API 데이터(countryData)에서 체크해야 함!
+    const isFilled = countryData.some((field) => {
+      const metadata = getFieldMetadata(field.fieldId);
+      // continent 제외하고 값이 있는 필드가 있으면 true
+      return metadata && metadata.key !== "continent" && field.value !== null && field.value !== "";
+    });
+
     return {
       countryCode: country.countryCode,
       name: country.name ?? country.countryCode.toUpperCase(),
       continent,
       fields,
+      isFilled,
       rawData: countryData,
     };
   });
