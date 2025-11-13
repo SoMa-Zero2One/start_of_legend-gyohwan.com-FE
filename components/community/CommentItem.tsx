@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { deleteComment } from "@/lib/api/community";
+import { formatDateTime } from "@/lib/utils/date";
 import { useModalHistory } from "@/hooks/useModalHistory";
 import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/common/Toast";
@@ -42,22 +43,6 @@ export default function CommentItem({ comment }: CommentItemProps) {
 
   // 삭제 가능 여부: 본인 댓글이거나 비회원 댓글
   const canDelete = isAuthor || !isMemberComment;
-
-  // 날짜 포맷: "2025-01-05T12:34:56.000000" → "2025-01-05 12:34"
-  const formatDate = (dateString?: string | null): string => {
-    if (!dateString) return "";
-    try {
-      const date = new Date(dateString);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      const hours = String(date.getHours()).padStart(2, "0");
-      const minutes = String(date.getMinutes()).padStart(2, "0");
-      return `${year}-${month}-${day} ${hours}:${minutes}`;
-    } catch {
-      return "";
-    }
-  };
 
   // 삭제 버튼 클릭 (회원 본인 댓글)
   const handleDeleteClick = () => {
@@ -113,7 +98,7 @@ export default function CommentItem({ comment }: CommentItemProps) {
           {/* 작성자 & 시간 */}
           <div className="mb-[4px] flex items-center gap-[8px]">
             <span className="caption-1 text-gray-900">{comment.author?.nickname || "익명"}</span>
-            <span className="caption-2 text-gray-500">{formatDate(comment.createdAt)}</span>
+            <span className="caption-2 text-gray-500">{formatDateTime(comment.createdAt || "")}</span>
           </div>
 
           {/* 댓글 본문 */}
