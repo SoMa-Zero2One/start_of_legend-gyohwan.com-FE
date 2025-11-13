@@ -284,6 +284,32 @@ export const mockCountriesApi: CountryApiResponse[] = [
       { fieldId: 5, fieldName: "대륙", value: "오세아니아", type: "STRING" },
     ],
   },
+
+  // 테스트 케이스 1: 모든 필드가 null인 나라 (대륙만 있음)
+  {
+    countryCode: "XX",
+    name: "테스트나라(전체NULL)",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: null, type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: null, type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: null, type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: null, type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "아시아", type: "STRING" },
+    ],
+  },
+
+  // 테스트 케이스 2: 일부 필드만 null인 나라
+  {
+    countryCode: "YY",
+    name: "테스트나라(일부NULL)",
+    data: [
+      { fieldId: 1, fieldName: "비자 발급 난이도", value: "2", type: "LEVEL" },
+      { fieldId: 2, fieldName: "사용 언어", value: null, type: "STRING" },
+      { fieldId: 3, fieldName: "치안", value: "4", type: "LEVEL" },
+      { fieldId: 4, fieldName: "영어 사용지수", value: null, type: "NUMBER" },
+      { fieldId: 5, fieldName: "대륙", value: "유럽", type: "STRING" },
+    ],
+  },
 ];
 
 // Mock 데이터: 대학 목록 (API 응답 형식)
@@ -554,6 +580,44 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
       { fieldId: 11, fieldName: "주변 접근성", value: "창이 공항 30분, MRT역 도보 5분", type: "STRING" },
       { fieldId: 12, fieldName: "날씨", value: "연중 더움, 비 자주 옴", type: "STRING" },
       { fieldId: 5, fieldName: "대륙", value: "아시아", type: "STRING" },
+    ],
+  },
+
+  // 테스트 케이스 1: 나라를 제외한 모든 필드가 null인 대학
+  {
+    univId: 9999,
+    name: "테스트대학(전체NULL)",
+    countryName: "일본",
+    isFavorite: false,
+    logoUrl: null,
+    data: [
+      { fieldId: 6, fieldName: "물가지수", value: null, type: "NUMBER" },
+      { fieldId: 7, fieldName: "QS 랭킹", value: null, type: "NUMBER" },
+      { fieldId: 8, fieldName: "영어 사용지수", value: null, type: "NUMBER" },
+      { fieldId: 9, fieldName: "국제처 프로그램", value: null, type: "STRING" },
+      { fieldId: 10, fieldName: "기숙사", value: null, type: "STRING" },
+      { fieldId: 11, fieldName: "주변 접근성", value: null, type: "STRING" },
+      { fieldId: 12, fieldName: "날씨", value: null, type: "STRING" },
+      { fieldId: 5, fieldName: "대륙", value: "아시아", type: "STRING" },
+    ],
+  },
+
+  // 테스트 케이스 2: 일부 필드만 null인 대학
+  {
+    univId: 9998,
+    name: "테스트대학(일부NULL)",
+    countryName: "프랑스",
+    isFavorite: false,
+    logoUrl: null,
+    data: [
+      { fieldId: 6, fieldName: "물가지수", value: "80", type: "NUMBER" },
+      { fieldId: 7, fieldName: "QS 랭킹", value: null, type: "NUMBER" },
+      { fieldId: 8, fieldName: "영어 사용지수", value: "60", type: "NUMBER" },
+      { fieldId: 9, fieldName: "국제처 프로그램", value: null, type: "STRING" },
+      { fieldId: 10, fieldName: "기숙사", value: "기숙사 없음", type: "STRING" },
+      { fieldId: 11, fieldName: "주변 접근성", value: null, type: "STRING" },
+      { fieldId: 12, fieldName: "날씨", value: "사계절 뚜렷", type: "STRING" },
+      { fieldId: 5, fieldName: "대륙", value: "유럽", type: "STRING" },
     ],
   },
 ];

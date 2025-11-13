@@ -57,6 +57,7 @@ export interface EnrichedCountry {
   name: string;
   continent: string; // 필터 전용 (테이블에 표시 안 함)
   fields: Map<string, CountryFieldValue>; // key → value 매핑
+  isFilled: boolean; // 하나라도 값이 있는 필드가 있는지 여부 (continent 제외)
   rawData: Array<{
     fieldId: number;
     fieldName: string | null;
@@ -104,6 +105,7 @@ export interface EnrichedUniversity {
   isFavorite: boolean;
   logoUrl: string; // 대학 로고 URL
   fields: Map<string, UniversityFieldValue>; // key → value 매핑 (countryName도 "country" 키로 포함)
+  isFilled: boolean; // 나라를 제외한 필드 중 하나라도 값이 있는지 여부 (continent, country 제외)
   rawData: Array<{
     fieldId: number;
     fieldName: string | null;

@@ -69,6 +69,14 @@ export function enrichUniversityData(apiData: UniversityApiResponse[]): Enriched
       fields.set(metadata.key, enrichedField);
     });
 
+    // isFilled 계산: 나라와 대륙을 제외한 필드 중 하나라도 값이 있는지 체크
+    // 원본 API 데이터(universityData)에서 체크해야 함!
+    const isFilled = universityData.some((field) => {
+      const metadata = getUniversityFieldMetadata(field.fieldId);
+      // continent 제외하고 값이 있는 필드가 있으면 true (country는 프론트 전용이라 여기서 체크 안함)
+      return metadata && metadata.key !== "continent" && field.value !== null && field.value !== "";
+    });
+
     return {
       univId: university.univId,
       name: university.name ?? `대학교 #${university.univId}`,
@@ -77,6 +85,7 @@ export function enrichUniversityData(apiData: UniversityApiResponse[]): Enriched
       isFavorite: university.isFavorite ?? false,
       logoUrl: university.logoUrl ?? "",
       fields,
+      isFilled,
       rawData: universityData,
     };
   });

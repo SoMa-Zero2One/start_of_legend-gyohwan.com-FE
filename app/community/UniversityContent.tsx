@@ -24,6 +24,7 @@ export default function UniversityContent({ universities }: UniversityContentPro
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [localUniversities, setLocalUniversities] = useState(universities);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [showFilledOnly, setShowFilledOnly] = useState(true);
   const { isLoggedIn } = useAuthStore();
   const { errorMessage, isExiting, showError, hideToast } = useToast();
 
@@ -73,10 +74,16 @@ export default function UniversityContent({ universities }: UniversityContentPro
   };
 
   // 즐겨찾기 필터링된 대학 목록
-  const displayedUniversities = useMemo(() => {
+  const favoritedUniversities = useMemo(() => {
     if (!showFavoritesOnly) return sortedUniversities;
     return sortedUniversities.filter((univ) => univ.isFavorite);
   }, [sortedUniversities, showFavoritesOnly]);
+
+  // showFilledOnly가 true면 나라를 제외한 모든 필드가 null인 대학 제외
+  const displayedUniversities = useMemo(() => {
+    if (!showFilledOnly) return favoritedUniversities;
+    return favoritedUniversities.filter((university) => university.isFilled);
+  }, [favoritedUniversities, showFilledOnly]);
 
   // 비로그인 + 즐겨찾기 토글 ON → CTA 표시
   const shouldShowLoginCTA = !isLoggedIn && showFavoritesOnly;
@@ -108,6 +115,23 @@ export default function UniversityContent({ universities }: UniversityContentPro
           <span className="caption-2">필터</span>
           <FilterIcon size={20} />
         </button>
+      </div>
+
+      {/* 정보 입력된 항목만 보기 토글 */}
+      <div className="flex items-center gap-[12px] px-[20px] pb-4">
+        <button
+          onClick={() => setShowFilledOnly(!showFilledOnly)}
+          className={`relative h-[18px] w-[32px] shrink-0 cursor-pointer rounded-full transition-colors duration-200 ${
+            showFilledOnly ? "bg-primary-blue" : "bg-gray-300"
+          }`}
+        >
+          <div
+            className={`absolute top-[2px] h-[14px] w-[14px] rounded-full bg-white shadow-[0_3px_8px_rgba(0,0,0,0.15)] transition-transform duration-200 ${
+              showFilledOnly ? "translate-x-[16px]" : "translate-x-[2px]"
+            }`}
+          />
+        </button>
+        <span className="medium-body-3">정보 입력된 항목만 보기</span>
       </div>
 
       {/* 대학 테이블 또는 로그인 CTA */}
