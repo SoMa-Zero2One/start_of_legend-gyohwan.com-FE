@@ -108,6 +108,25 @@ export default function UniversityContent({ universities }: UniversityContentPro
           <h2 className="subhead-1">전체 ({displayedUniversities.length})</h2>
           <p className="caption-2 mt-[4px] text-gray-700">행을 클릭하여 대학 상세 정보를 확인하세요</p>
         </div>
+      </div>
+
+      {/* 정보 입력된 항목만 보기 토글 */}
+      <div className="flex items-center justify-between px-[20px] pb-4">
+        <div className="flex items-center gap-[12px]">
+          <button
+            onClick={() => setShowFilledOnly(!showFilledOnly)}
+            className={`relative h-[18px] w-[32px] shrink-0 cursor-pointer rounded-full transition-colors duration-200 ${
+              showFilledOnly ? "bg-primary-blue" : "bg-gray-300"
+            }`}
+          >
+            <div
+              className={`absolute top-[2px] h-[14px] w-[14px] rounded-full bg-white shadow-[0_3px_8px_rgba(0,0,0,0.15)] transition-transform duration-200 ${
+                showFilledOnly ? "translate-x-[16px]" : "translate-x-[2px]"
+              }`}
+            />
+          </button>
+          <span className="medium-body-3">정보 입력된 항목만 보기</span>
+        </div>
         <button
           onClick={() => setIsFilterOpen(true)}
           className="bg-primary-blue flex cursor-pointer items-center gap-[4px] rounded-md px-[10px] py-[6px] text-white"
@@ -115,23 +134,6 @@ export default function UniversityContent({ universities }: UniversityContentPro
           <span className="caption-2">필터</span>
           <FilterIcon size={20} />
         </button>
-      </div>
-
-      {/* 정보 입력된 항목만 보기 토글 */}
-      <div className="flex items-center gap-[12px] px-[20px] pb-4">
-        <button
-          onClick={() => setShowFilledOnly(!showFilledOnly)}
-          className={`relative h-[18px] w-[32px] shrink-0 cursor-pointer rounded-full transition-colors duration-200 ${
-            showFilledOnly ? "bg-primary-blue" : "bg-gray-300"
-          }`}
-        >
-          <div
-            className={`absolute top-[2px] h-[14px] w-[14px] rounded-full bg-white shadow-[0_3px_8px_rgba(0,0,0,0.15)] transition-transform duration-200 ${
-              showFilledOnly ? "translate-x-[16px]" : "translate-x-[2px]"
-            }`}
-          />
-        </button>
-        <span className="medium-body-3">정보 입력된 항목만 보기</span>
       </div>
 
       {/* 대학 테이블 또는 로그인 CTA */}
