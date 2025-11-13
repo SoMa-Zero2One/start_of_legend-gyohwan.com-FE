@@ -6,12 +6,26 @@ import type { CommunityPost } from "@/types/communityPost";
 interface CommunityPostItemProps {
   post: CommunityPost;
   isLast?: boolean;
+  countryCode?: string; // 국가 커뮤니티일 때
+  outgoingUnivId?: number; // 대학 커뮤니티일 때
 }
 
-export default function CommunityPostItem({ post, isLast = false }: CommunityPostItemProps) {
+export default function CommunityPostItem({
+  post,
+  isLast = false,
+  countryCode,
+  outgoingUnivId,
+}: CommunityPostItemProps) {
+  // URL 경로 결정
+  const href = countryCode
+    ? `/community/country/${countryCode}/posts/${post.postId}`
+    : outgoingUnivId
+      ? `/community/university/${outgoingUnivId}/posts/${post.postId}`
+      : "#"; // fallback: 클릭 불가능
+
   return (
     <Link
-      href={`/community/posts/${post.postId}`}
+      href={href}
       className={`flex w-full cursor-pointer flex-col gap-[12px] px-[20px] py-[20px] text-left transition-colors hover:bg-gray-50 ${
         isLast ? "" : "border-b border-gray-100"
       }`}
