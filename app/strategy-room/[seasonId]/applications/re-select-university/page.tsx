@@ -62,6 +62,7 @@ function ApplicationEditContent() {
             duration: choiceItem.slot.duration,
             logoUrl: choiceItem.slot.logoUrl,
             homepageUrl: choiceItem.slot.homepageUrl,
+            univId: choiceItem.slot.univId,
           },
         }));
 

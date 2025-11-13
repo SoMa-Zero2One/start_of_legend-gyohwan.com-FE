@@ -11,6 +11,7 @@ export interface Slot {
   duration: string | null;
   logoUrl: string | null;
   homepageUrl: string | null; // 대학교 홈페이지 URL
+  univId: number | null; // 커뮤니티 대학 ID (null이면 커뮤니티 대학 탭으로 이동)
 }
 
 /**

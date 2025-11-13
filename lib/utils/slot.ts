@@ -30,6 +30,7 @@ export function getSlotSafeDefaults(slot: Slot | null | undefined): Slot {
       duration: null,
       logoUrl: null,
       homepageUrl: null,
+      univId: null,
     };
   }
 
@@ -42,6 +43,7 @@ export function getSlotSafeDefaults(slot: Slot | null | undefined): Slot {
     duration: slot.duration,
     logoUrl: slot.logoUrl,
     homepageUrl: slot.homepageUrl,
+    univId: slot.univId,
   };
 }
 

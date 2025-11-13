@@ -9,6 +9,8 @@ import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import Tabs from "@/components/common/Tabs";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 import ExternalLinkIcon from "@/components/icons/ExternalLinkIcon";
+import CommunityIcon from "@/components/icons/CommunityIcon";
+import Link from "next/link";
 import { getSlotDetail, getMyApplication } from "@/lib/api/slot";
 import { SlotDetailResponse, MyApplicationResponse } from "@/types/slot";
 import { getSlotSafeDefaults, getChoiceCountDisplay, getSlotCountDisplay } from "@/lib/utils/slot";
@@ -240,15 +242,14 @@ export default function SlotDetailPage() {
             </a>
           )}
 
-          {/* <a
-            href={`https://childlike-scowl-e9b.notion.site/${slotId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary inline-flex items-center gap-[4px] rounded-full px-[12px] py-[6px] text-[12px] text-white transition-colors"
+          {/* 커뮤니티 버튼 */}
+          <Link
+            href={data.univId ? `/community/university/${data.univId}` : "/community?tabs=대학"}
+            className="btn-primary inline-flex cursor-pointer items-center gap-[4px] rounded-full px-[12px] py-[6px] text-[12px] text-white transition-colors"
           >
-          정리된 대학 정보 보기
-            <ExternalLinkIcon />
-          </a> */}
+            파견 생활 알아보기
+            <CommunityIcon size={16} className="text-white" />
+          </Link>
         </div>
 
         {/* 정보 목록 */}
