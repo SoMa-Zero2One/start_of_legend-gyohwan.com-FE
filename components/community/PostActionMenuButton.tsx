@@ -49,7 +49,22 @@ export default function PostActionMenuButton({ post }: PostActionMenuButtonProps
             onClose={() => setShowMenu(false)}
             onDelete={() => {
               setShowMenu(false);
-              router.back(); // 삭제 후 목록으로 복귀
+
+              // 현재 경로에서 적절한 목록 페이지로 이동
+              const pathname = window.location.pathname;
+
+              if (pathname.includes("/country/")) {
+                // 국가별 커뮤니티 목록으로
+                const countryCode = pathname.split("/country/")[1]?.split("/")[0];
+                router.replace(`/community/country/${countryCode}`);
+              } else if (pathname.includes("/university/")) {
+                // 대학별 커뮤니티 목록으로
+                const univId = pathname.split("/university/")[1]?.split("/")[0];
+                router.replace(`/community/university/${univId}`);
+              } else {
+                // 커뮤니티 홈으로
+                router.replace("/community");
+              }
             }}
             showToast={showError}
           />
