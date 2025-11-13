@@ -14,7 +14,12 @@ interface CountryTableProps {
   sortConfig?: { key: string; direction: "asc" | "desc" } | null;
 }
 
-export default function CountryTable({ countries, visibleFieldKeys, onSort, sortConfig }: CountryTableProps) {
+export default function CountryTable({
+  countries,
+  visibleFieldKeys,
+  onSort,
+  sortConfig,
+}: CountryTableProps) {
   const router = useRouter();
 
   const handleCountryClick = (countryCode: string) => {
