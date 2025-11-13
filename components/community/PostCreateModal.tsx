@@ -163,69 +163,69 @@ export default function PostCreateModal({
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || !isFormValid}
-            className="body-2 cursor-pointer text-primary-blue disabled:cursor-not-allowed disabled:text-gray-400"
+            className="body-2 text-primary-blue cursor-pointer disabled:cursor-not-allowed disabled:text-gray-400"
           >
             {isSubmitting ? "작성 중..." : "작성하기"}
           </button>
         </div>
 
-      {/* 본문 */}
-      <div className="flex flex-1 flex-col overflow-y-auto">
-        <div className="flex-1 px-[20px] py-[20px]">
-          {/* 에러 메시지 */}
-          {error && (
-            <div className="mb-[16px] rounded-[4px] bg-red-50 px-[16px] py-[12px]">
-              <p className="body-2 text-red-600">{error}</p>
-            </div>
-          )}
+        {/* 본문 */}
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <div className="flex flex-1 flex-col overflow-y-auto px-[20px] py-[20px]">
+            {/* 에러 메시지 */}
+            {error && (
+              <div className="mb-[16px] rounded-[4px] bg-red-50 px-[16px] py-[12px]">
+                <p className="body-2 text-red-600">{error}</p>
+              </div>
+            )}
 
-          {/* 제목 입력 */}
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="제목을 입력하세요"
-            className="body-1 mb-[16px] w-full border-b border-gray-200 pb-[12px] outline-none placeholder:text-gray-400"
-            maxLength={100}
-          />
+            {/* 제목 입력 */}
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="제목을 입력하세요"
+              className="body-1 mb-[16px] w-full border-b border-gray-200 pb-[12px] outline-none placeholder:text-gray-400"
+              maxLength={100}
+            />
 
-          {/* 본문 입력 */}
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="내용을 입력하세요"
-            className="body-2 min-h-[300px] w-full resize-none outline-none placeholder:text-gray-400"
-            maxLength={5000}
-          />
+            {/* 본문 입력 */}
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="내용을 입력하세요"
+              className="body-2 w-full flex-1 resize-none outline-none placeholder:text-gray-400"
+              maxLength={5000}
+            />
+          </div>
+
+          {/* 하단 고정 영역: 익명 체크박스 / 비밀번호 */}
+          <div className="flex-shrink-0 border-t border-gray-200 px-[20px] py-[16px]">
+            {/* 회원: 익명 체크박스 */}
+            {isLoggedIn && <RoundCheckbox checked={isAnonymous} onChange={setIsAnonymous} label="익명으로 올리기" />}
+
+            {/* 비회원: 비밀번호 입력 */}
+            {!isLoggedIn && (
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={guestPassword}
+                  onChange={(e) => setGuestPassword(e.target.value)}
+                  placeholder="비밀번호"
+                  className="body-2 w-full border-b border-gray-300 pr-[40px] pb-[8px] outline-none placeholder:text-gray-400 focus:border-gray-600"
+                  maxLength={50}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-0 right-0 cursor-pointer text-gray-400"
+                >
+                  {showPassword ? <EyeOpenIcon size={20} /> : <EyeClosedIcon size={20} />}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-
-        {/* 하단 고정 영역: 익명 체크박스 / 비밀번호 */}
-        <div className="border-t border-gray-200 px-[20px] py-[16px]">
-          {/* 회원: 익명 체크박스 */}
-          {isLoggedIn && <RoundCheckbox checked={isAnonymous} onChange={setIsAnonymous} label="익명으로 올리기" />}
-
-          {/* 비회원: 비밀번호 입력 */}
-          {!isLoggedIn && (
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                value={guestPassword}
-                onChange={(e) => setGuestPassword(e.target.value)}
-                placeholder="비밀번호"
-                className="body-2 w-full border-b border-gray-300 pb-[8px] pr-[40px] outline-none placeholder:text-gray-400 focus:border-gray-600"
-                maxLength={50}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-0 top-0 cursor-pointer text-gray-400"
-              >
-                {showPassword ? <EyeOpenIcon size={20} /> : <EyeClosedIcon size={20} />}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
       </div>
     </>
   );
