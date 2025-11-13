@@ -195,7 +195,7 @@ export default function PostCreateModal({
               onChange={(e) => setContent(e.target.value)}
               placeholder="내용을 입력하세요"
               className="body-2 w-full flex-1 resize-none outline-none placeholder:text-gray-400"
-              maxLength={5000}
+              maxLength={65535}
             />
           </div>
 
