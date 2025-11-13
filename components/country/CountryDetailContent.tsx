@@ -95,7 +95,7 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
 
       {/* 커뮤니티 섹션 */}
       <div ref={communityRef} className="flex min-h-[60vh] flex-col">
-        <CommunityPostList posts={previewPosts} />
+        <CommunityPostList posts={previewPosts} countryCode={countryData.countryCode} />
         <Link
           href={`/community/country/${countryData.countryCode}/talks`}
           className="medium-body-2 flex w-full cursor-pointer items-center justify-center gap-[4px] border-t border-gray-300 py-[20px] text-gray-700 transition-colors hover:text-black hover:underline"

@@ -111,7 +111,7 @@ export default function UniversityDetailContent({ universityData, communityPosts
 
       {/* 커뮤니티 섹션 */}
       <div ref={communityRef} className="flex min-h-[60vh] flex-col">
-        <CommunityPostList posts={previewPosts} />
+        <CommunityPostList posts={previewPosts} outgoingUnivId={universityData.univId} />
         <Link
           href={`/community/university/${universityData.univId}/talks`}
           className="medium-body-2 flex w-full cursor-pointer items-center justify-center gap-[4px] border-t border-gray-300 py-[20px] text-gray-700 transition-colors hover:text-black hover:underline"
