@@ -3,7 +3,7 @@ import { FieldMetadata } from "@/types/community";
 // 대학 필드 메타데이터 (프론트엔드에서 중앙 관리)
 export const UNIVERSITY_FIELDS: Record<string, FieldMetadata> = {
   continent: {
-    fieldId: 5, // 백엔드 API의 fieldId (대륙, Country와 동일)
+    fieldId: 1, // 백엔드 API의 fieldId (대륙)
     key: "continent",
     label: "대륙",
     type: "string",
@@ -20,68 +20,77 @@ export const UNIVERSITY_FIELDS: Record<string, FieldMetadata> = {
     defaultVisible: true,
     displayOrder: 1, // 맨 앞
   },
-  priceIndex: {
-    fieldId: 6,
-    key: "priceIndex",
-    label: "물가지수",
-    type: "number",
-    sortable: true,
+  totalCost: {
+    fieldId: 5, // 총액
+    key: "totalCost",
+    label: "총액",
+    type: "string",
+    sortable: false,
     defaultVisible: true,
     displayOrder: 2,
   },
   qsRanking: {
-    fieldId: 7,
+    fieldId: 6, // QS 랭킹
     key: "qsRanking",
     label: "QS 랭킹",
-    type: "number",
-    sortable: true,
+    type: "string",
+    sortable: false,
     defaultVisible: true,
     displayOrder: 3,
   },
-  englishLevel: {
-    fieldId: 8,
-    key: "englishLevel",
-    label: "영어 사용지수",
-    type: "number",
-    sortable: true,
+  englishRatio: {
+    fieldId: 7, // 모국어:영어 비율 → 영어 사용 비율
+    key: "englishRatio",
+    label: "영어 사용 비율",
+    type: "string",
+    sortable: false,
     defaultVisible: true,
     displayOrder: 4,
   },
   internationalProgram: {
-    fieldId: 9,
+    fieldId: 8, // 국제처 프로그램
     key: "internationalProgram",
     label: "국제처 프로그램",
     type: "string",
-    sortable: false, // STRING은 정렬 불가
+    sortable: false,
     defaultVisible: true,
     displayOrder: 5,
   },
   dormitory: {
-    fieldId: 10,
+    fieldId: 9, // 기숙사 유무, 기숙사비, 거리
     key: "dormitory",
     label: "기숙사",
     type: "string",
-    sortable: false, // STRING은 정렬 불가
+    sortable: false,
     defaultVisible: true,
     displayOrder: 6,
   },
   accessibility: {
-    fieldId: 11,
+    fieldId: 10, // 주변 교통 접근성
     key: "accessibility",
     label: "주변 접근성",
     type: "string",
-    sortable: false, // STRING은 정렬 불가
+    sortable: false,
     defaultVisible: true,
     displayOrder: 7,
   },
   weather: {
-    fieldId: 12,
+    fieldId: 11, // 날씨
     key: "weather",
     label: "날씨",
     type: "string",
-    sortable: false, // STRING은 정렬 불가
+    sortable: false,
     defaultVisible: true,
     displayOrder: 8,
+  },
+  safety: {
+    fieldId: 12, // 치안
+    key: "safety",
+    label: "치안",
+    type: "string",
+    sortable: false,
+    defaultVisible: true,
+    displayOrder: 9,
   },
 };
 

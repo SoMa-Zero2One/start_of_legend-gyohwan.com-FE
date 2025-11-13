@@ -3,7 +3,7 @@ import { FieldMetadata } from "@/types/community";
 // 나라 필드 메타데이터 (프론트엔드에서 중앙 관리)
 export const COUNTRY_FIELDS: Record<string, FieldMetadata> = {
   continent: {
-    fieldId: 5, // 백엔드 API의 fieldId (대륙)
+    fieldId: 1, // 백엔드 API의 fieldId (대륙)
     key: "continent",
     label: "대륙",
     type: "string",
@@ -11,42 +11,31 @@ export const COUNTRY_FIELDS: Record<string, FieldMetadata> = {
     defaultVisible: false, // 필터 전용 (테이블에 표시 안 함)
     displayOrder: 99, // 맨 뒤
   },
-  visaDifficulty: {
-    fieldId: 1, // 백엔드 API의 fieldId (고정값)
-    key: "visaDifficulty",
-    label: "비자 발급 난이도",
-    type: "level",
-    sortable: true,
+  visaNote: {
+    fieldId: 2, // 비자 발급 특이사항
+    key: "visaNote",
+    label: "비자 발급 특이사항",
+    type: "string",
+    sortable: false,
     defaultVisible: true,
-    displayOrder: 1, // 화면 표시 순서 (변경 가능)
-    renderConfig: { levelMax: 5 },
+    displayOrder: 1,
   },
   language: {
-    fieldId: 2,
+    fieldId: 3, // 사용 언어 (모국어)
     key: "language",
     label: "사용 언어",
     type: "string",
     sortable: false,
     defaultVisible: true,
-    displayOrder: 4,
+    displayOrder: 2,
     renderConfig: { badge: true }, // 배지 스타일로 렌더링
   },
-  safety: {
-    fieldId: 3,
-    key: "safety",
-    label: "치안",
-    type: "level",
-    sortable: true,
-    defaultVisible: true,
-    displayOrder: 2,
-    renderConfig: { levelMax: 5 },
-  },
-  englishLevel: {
-    fieldId: 4,
-    key: "englishLevel",
-    label: "영어 사용지수",
-    type: "number",
-    sortable: true,
+  englishRatio: {
+    fieldId: 4, // 모국어:영어 비율 → 영어 사용 비율
+    key: "englishRatio",
+    label: "영어 사용 비율",
+    type: "string",
+    sortable: false,
     defaultVisible: true,
     displayOrder: 3,
   },

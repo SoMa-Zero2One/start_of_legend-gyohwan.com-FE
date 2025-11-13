@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { mockCountriesApi, mockUniversitiesApi } from "../data/community";
+import { mockCountriesApi, mockUniversitiesApi } from "../data/community-new";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
