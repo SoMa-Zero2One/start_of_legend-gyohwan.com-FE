@@ -6,6 +6,7 @@ export interface Season {
   domesticUniversity: string | null;
   domesticUniversityLogoUri: string | null;
   name: string | null;
+  applicationCount: number | null;
   startDate: string | null;
   endDate: string | null;
   hasApplied: boolean | null;

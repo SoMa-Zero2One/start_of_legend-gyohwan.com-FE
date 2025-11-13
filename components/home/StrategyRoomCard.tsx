@@ -11,7 +11,7 @@ interface StrategyRoomCardProps {
 }
 
 export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
-  const { seasonId, domesticUniversity, domesticUniversityLogoUri, startDate, endDate } = data;
+  const { seasonId, domesticUniversity, domesticUniversityLogoUri, applicationCount, startDate, endDate } = data;
   const router = useRouter();
 
   // null 안전 처리
@@ -42,10 +42,16 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
           />
         </div>
         <div className="flex flex-1 flex-col">
-          <span className="subhead-2">{safeDomesticUniversity}</span>
+          <div className="flex items-center gap-[6px]">
+            <span className="subhead-2">{safeDomesticUniversity}</span>
+            {/* 참여 인원 배지 */}
+            {applicationCount !== null && applicationCount > 0 && (
+              <span className="caption-2 text-primary-blue">🔥 {applicationCount}명 참여 중!</span>
+            )}
+          </div>
           <span>
             <span className="mr-[5px]">{formattedDate}</span>
-            {/* 오른쪽 D-Day */}
+            {/* D-Day */}
             {dDay !== null && (
               <span className="rounded-[4px] bg-[#FC507B] px-[8px] py-[4px] text-[12px] font-bold text-white">
                 {dDay > 0 ? `D-${dDay}` : dDay === 0 ? "D-Day" : `D+${Math.abs(dDay)}`}

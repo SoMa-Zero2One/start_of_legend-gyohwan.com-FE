@@ -10,6 +10,7 @@ export const mockSeasons: Season[] = [
     domesticUniversity: "교환대학교",
     domesticUniversityLogoUri: "https://example.com/logo1.png",
     name: "2025년 1학기",
+    applicationCount: 42,
     startDate: "2024-12-01T00:00:00",
     endDate: "2025-01-15T23:59:59",
     hasApplied: false,
@@ -19,6 +20,7 @@ export const mockSeasons: Season[] = [
     domesticUniversity: "교환대학교",
     domesticUniversityLogoUri: "https://example.com/logo1.png",
     name: "2025년 2학기",
+    applicationCount: 28,
     startDate: "2025-06-01T00:00:00",
     endDate: "2025-07-15T23:59:59",
     hasApplied: false,
@@ -28,6 +30,7 @@ export const mockSeasons: Season[] = [
     domesticUniversity: "교환대학교",
     domesticUniversityLogoUri: "https://example.com/logo1.png",
     name: "2026년 1학기",
+    applicationCount: 65,
     startDate: "2025-12-01T00:00:00",
     endDate: "2026-01-15T23:59:59",
     hasApplied: true, // 이미 지원한 시즌
@@ -37,6 +40,7 @@ export const mockSeasons: Season[] = [
     domesticUniversity: "다른대학교",
     domesticUniversityLogoUri: "https://example.com/logo2.png",
     name: "2025년 1학기",
+    applicationCount: 15,
     startDate: "2024-12-01T00:00:00",
     endDate: "2025-01-15T23:59:59",
     hasApplied: false,
@@ -47,6 +51,7 @@ export const mockSeasons: Season[] = [
     domesticUniversity: null, // null 케이스
     domesticUniversityLogoUri: null, // null 케이스
     name: null, // null 케이스
+    applicationCount: null, // null 케이스
     startDate: null,
     endDate: null,
     hasApplied: null, // null 케이스
