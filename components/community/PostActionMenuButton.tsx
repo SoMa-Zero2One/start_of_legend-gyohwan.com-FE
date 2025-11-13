@@ -51,18 +51,20 @@ export default function PostActionMenuButton({ post }: PostActionMenuButtonProps
               setShowMenu(false);
 
               // 현재 경로에서 적절한 목록 페이지로 이동
+              // 쿼리스트링 보존 (?page=3 등)
               const pathname = window.location.pathname;
+              const search = window.location.search;
 
               if (pathname.includes("/university/")) {
                 // 대학 커뮤니티는 항상 /talks로
-                // /community/university/1/posts/12 → /community/university/1/talks
+                // /community/university/1/posts/12?page=3 → /community/university/1/talks?page=3
                 const univId = pathname.split("/university/")[1]?.split("/")[0];
-                router.replace(`/community/university/${univId}/talks`);
+                router.replace(`/community/university/${univId}/talks${search}`);
               } else if (pathname.includes("/country/")) {
                 // 국가 커뮤니티도 항상 /talks로
-                // /community/country/AE/posts/13 → /community/country/AE/talks
+                // /community/country/AE/posts/13?page=3 → /community/country/AE/talks?page=3
                 const countryCode = pathname.split("/country/")[1]?.split("/")[0];
-                router.replace(`/community/country/${countryCode}/talks`);
+                router.replace(`/community/country/${countryCode}/talks${search}`);
               } else {
                 // 커뮤니티 홈으로 (fallback)
                 router.replace("/community");
