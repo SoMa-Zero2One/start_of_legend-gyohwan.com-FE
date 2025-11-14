@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 
 interface ShareGradeCTAProps {
   seasonId: string;
@@ -18,14 +18,51 @@ export default function ShareGradeCTA({
 }: ShareGradeCTAProps) {
   const router = useRouter();
   const ctaButtonRef = useRef<HTMLButtonElement>(null);
+  const [opacity, setOpacity] = useState(1);
+  const footerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    // Footer 요소 찾기
+    const footer = document.querySelector("footer");
+    footerRef.current = footer;
+
+    if (!footer) return;
+
+    // Intersection Observer 설정
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // Footer가 보이는 비율에 따라 opacity 조절
+          // intersectionRatio: 0 (안 보임) ~ 1 (완전히 보임)
+          // opacity: 1 (완전 표시) ~ 0 (완전 숨김)
+          const newOpacity = Math.max(0, 1 - entry.intersectionRatio * 2);
+          setOpacity(newOpacity);
+        });
+      },
+      {
+        threshold: Array.from({ length: 51 }, (_, i) => i * 0.02), // 0, 0.02, 0.04, ..., 1.0
+      }
+    );
+
+    observer.observe(footer);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
   const handleClick = () => {
     router.push(`/strategy-room/${seasonId}/applications/new`);
   };
 
+  if (opacity === 0) return null;
+
   return (
-    <div className="fixed bottom-0 left-1/2 w-full max-w-[420px] -translate-x-1/2 bg-white px-[20px] pb-[20px]">
+    <div
+      className="fixed bottom-0 left-1/2 w-full max-w-[420px] -translate-x-1/2 bg-white px-[20px] pb-[20px]"
+      style={{ opacity }}
+    >
       {/* 그라데이션 */}
       <div className="pointer-events-none absolute -top-[60px] left-0 h-[60px] w-full bg-gradient-to-t from-white to-transparent" />
 
@@ -40,7 +77,7 @@ export default function ShareGradeCTA({
       <button
         ref={ctaButtonRef}
         onClick={handleClick}
-        className={`btn-primary w-full rounded-[4px] p-[12px] shadow-[0_0_8px_rgba(0,0,0,0.06)] ${
+        className={`btn-primary w-full cursor-pointer rounded-[4px] p-[12px] shadow-[0_0_8px_rgba(0,0,0,0.06)] ${
           shouldShake ? "animate-shake" : ""
         }`}
       >
