@@ -15,7 +15,7 @@ interface CountryContentProps {
 // 클라이언트 컴포넌트 (인터랙션 처리)
 export default function CountryContent({ countries }: CountryContentProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [showFilledOnly, setShowFilledOnly] = useState(true);
+  const [showFilledOnly, setShowFilledOnly] = useState(false);
 
   // 커스텀 훅으로 정렬/필터 관리
   const {
