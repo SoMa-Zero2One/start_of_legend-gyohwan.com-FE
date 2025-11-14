@@ -35,11 +35,16 @@ export default async function UniversityPostDetailPage({ params }: UniversityPos
   } catch (error) {
     // 게시글이 없거나 오류 발생 시 에러 페이지 표시
     return (
-      <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col items-center justify-center px-[20px]">
-        <p className="body-1 text-gray-900">게시글을 불러올 수 없습니다.</p>
-        <p className="caption-2 mt-[8px] text-gray-700">
-          {error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다."}
-        </p>
+      <div className="flex min-h-screen flex-col">
+        <div className="sticky top-0 z-20 bg-white">
+          <Header showPrevButton showHomeButton showBorder />
+        </div>
+        <main className="mx-auto flex w-full max-w-[430px] flex-1 flex-col items-center justify-center px-[20px] text-center">
+          <p className="body-1 text-gray-900">게시글을 불러올 수 없습니다.</p>
+          <p className="caption-2 mt-[8px] text-gray-700">
+            {error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다."}
+          </p>
+        </main>
       </div>
     );
   }
@@ -48,7 +53,7 @@ export default async function UniversityPostDetailPage({ params }: UniversityPos
     <div className="flex min-h-screen flex-col">
       {/* Header: 뒤로가기 + 더보기 메뉴 */}
       <div className="sticky top-0 z-20 bg-white">
-        <Header showPrevButton showBorder>
+        <Header showPrevButton showHomeButton showBorder>
           <PostActionMenuButton post={post} />
         </Header>
       </div>
