@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   },
 };
 
+// 캐싱 완전 비활성화 - 항상 최신 데이터 조회
+export const dynamic = 'force-dynamic';
+
 export default async function Page() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gyohwan.com";
 
