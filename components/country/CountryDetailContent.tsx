@@ -26,7 +26,7 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
   const stickyTitleRef = useRef<HTMLDivElement>(null);
 
   const tabs: readonly TabType[] = ["대학 목록", "커뮤니티"] as const;
-  const [selectedTab, setSelectedTab] = useState<TabType>("커뮤니티");
+  const [selectedTab, setSelectedTab] = useState<TabType>("대학 목록");
 
   // 방어적 기본값
   const universities = countryData.universities ?? [];
@@ -39,6 +39,24 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
 
   // 미리보기 커뮤니티 게시글 (최대 5개)
   const previewPosts = communityPosts.slice(0, PREVIEW_POST_COUNT);
+
+  useEffect(() => {
+    if (!communityRef.current) {
+      return;
+    }
+
+    const pageHeaderHeight = 50;
+    const stickyTitleHeight = stickyTitleRef.current?.offsetHeight ?? 0;
+    const totalOffset = pageHeaderHeight + stickyTitleHeight;
+
+    const elementPosition = communityRef.current.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.scrollY - totalOffset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  }, []);
 
   useEffect(() => {
     const handleScrollSpy = () => {
@@ -54,7 +72,8 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
 
       const getAbsoluteTop = (element: HTMLDivElement) => element.getBoundingClientRect().top + window.scrollY;
 
-      const communityTop = getAbsoluteTop(communityRef.current);
+      const COMMUNITY_ACTIVATE_OFFSET = 120;
+      const communityTop = getAbsoluteTop(communityRef.current) - COMMUNITY_ACTIVATE_OFFSET;
 
       const activeTab: TabType = scrollPosition >= communityTop ? "커뮤니티" : "대학 목록";
 
