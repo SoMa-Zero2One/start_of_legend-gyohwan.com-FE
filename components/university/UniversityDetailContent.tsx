@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 import Tabs from "@/components/common/Tabs";
@@ -45,6 +45,35 @@ export default function UniversityDetailContent({ universityData, communityPosts
 
   // 미리보기 커뮤니티 게시글 (최대 5개)
   const previewPosts = communityPosts.slice(0, PREVIEW_POST_COUNT);
+
+  useEffect(() => {
+    const handleScrollSpy = () => {
+      if (!locationRef.current || !communityRef.current) {
+        return;
+      }
+
+      const pageHeaderHeight = 50;
+      const stickyTitleHeight = stickyTitleRef.current?.offsetHeight ?? 0;
+      const totalOffset = pageHeaderHeight + stickyTitleHeight;
+
+      const scrollPosition = window.scrollY + totalOffset + 1;
+
+      const getAbsoluteTop = (element: HTMLDivElement) => element.getBoundingClientRect().top + window.scrollY;
+
+      const communityTop = getAbsoluteTop(communityRef.current);
+
+      const activeTab: TabType = scrollPosition >= communityTop ? "커뮤니티" : "위치";
+
+      setSelectedTab((prev) => (prev === activeTab ? prev : activeTab));
+    };
+
+    window.addEventListener("scroll", handleScrollSpy, { passive: true });
+    handleScrollSpy();
+
+    return () => {
+      window.removeEventListener("scroll", handleScrollSpy);
+    };
+  }, []);
 
   const handleTabChange = (tab: TabType) => {
     setSelectedTab(tab);
