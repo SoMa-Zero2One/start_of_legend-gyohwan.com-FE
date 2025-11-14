@@ -25,8 +25,8 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
   const communityRef = useRef<HTMLDivElement>(null);
   const stickyTitleRef = useRef<HTMLDivElement>(null);
 
-  const tabs: readonly TabType[] = ["대학 목록", "커뮤니티"] as const;
-  const [selectedTab, setSelectedTab] = useState<TabType>("대학 목록");
+  const tabs: readonly TabType[] = ["커뮤니티", "대학 목록"] as const;
+  const [selectedTab, setSelectedTab] = useState<TabType>("커뮤니티");
 
   // 방어적 기본값
   const universities = countryData.universities ?? [];
@@ -79,6 +79,18 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
         <Tabs tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
       </div>
 
+      {/* 커뮤니티 섹션 */}
+      <div ref={communityRef} className="flex min-h-[60vh] flex-col">
+        <CommunityPostList posts={previewPosts} countryCode={countryData.countryCode} />
+        <Link
+          href={`/community/country/${countryData.countryCode}/talks`}
+          className="medium-body-2 flex w-full cursor-pointer items-center justify-center gap-[4px] border-t border-gray-300 py-[20px] text-gray-700 transition-colors hover:text-black hover:underline"
+        >
+          커뮤니티 바로가기
+          <ChevronRightIcon size={16} />
+        </Link>
+      </div>
+
       {/* 대학 목록 섹션 */}
       <div ref={universityRef} className="flex min-h-[60vh] flex-col border-b-[1px] border-gray-300">
         <UniversityList universities={previewUniversities} />
@@ -91,18 +103,6 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
             <ChevronRightIcon size={16} />
           </Link>
         )}
-      </div>
-
-      {/* 커뮤니티 섹션 */}
-      <div ref={communityRef} className="flex min-h-[60vh] flex-col">
-        <CommunityPostList posts={previewPosts} countryCode={countryData.countryCode} />
-        <Link
-          href={`/community/country/${countryData.countryCode}/talks`}
-          className="medium-body-2 flex w-full cursor-pointer items-center justify-center gap-[4px] border-t border-gray-300 py-[20px] text-gray-700 transition-colors hover:text-black hover:underline"
-        >
-          커뮤니티 바로가기
-          <ChevronRightIcon size={16} />
-        </Link>
       </div>
     </div>
   );
