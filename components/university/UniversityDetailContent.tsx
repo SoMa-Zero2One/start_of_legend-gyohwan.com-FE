@@ -150,7 +150,7 @@ export default function UniversityDetailContent({ universityData, communityPosts
                 ul: ({ children }) => <ul className="mb-[12px] ml-[20px] list-disc space-y-[4px]">{children}</ul>,
                 ol: ({ children }) => <ol className="mb-[12px] ml-[20px] list-decimal space-y-[4px]">{children}</ol>,
                 li: ({ children }) => <li className="body-2 whitespace-pre-line text-gray-900">{children}</li>,
-                strong: ({ children }) => <strong className="medium-body-2 text-gray-900">{children}</strong>,
+                strong: ({ children }) => <strong className="text-bold text-gray-900">{children}</strong>,
                 em: ({ children }) => <em className="text-gray-800 italic">{children}</em>,
                 a: ({ children, href }) => (
                   <a href={href} className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">
