@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useSearchParams } from "next/navigation";
 import { useModalHistory } from "@/hooks/useModalHistory";
 import CommentCreateModal from "./CommentCreateModal";
 
@@ -9,6 +7,7 @@ const MODAL_KEY = "comment";
 
 interface CommentInputButtonProps {
   postId: number;
+  onRefetch: () => Promise<void>;
 }
 
 /**
@@ -22,29 +21,17 @@ interface CommentInputButtonProps {
  * - ShareGradeCTA 패턴 차용 (그라데이션 + 하단 고정)
  * - useModalHistory로 브라우저 뒤로가기와 동기화
  * - URL 파라미터 (?modal=comment)로 모달 상태 관리
- * - window.location.reload() 사용 (댓글 목록 새로고침)
+ * - onRefetch로 클라이언트 상태 업데이트 (깜빡임 없음)
  *
  * @param postId 게시글 ID (댓글 작성 API 호출용)
+ * @param onRefetch 댓글 목록 새로고침 콜백
  */
-export default function CommentInputButton({ postId }: CommentInputButtonProps) {
-  const searchParams = useSearchParams();
+export default function CommentInputButton({ postId, onRefetch }: CommentInputButtonProps) {
   const { isOpen, openModal, closeModal } = useModalHistory({ modalKey: MODAL_KEY });
-  const shouldRefreshRef = useRef(false);
-  const modalParam = searchParams.get("modal");
-
-  // 모달이 닫힌 후 (URL에서 ?modal=comment 제거됨) 새로고침 실행
-  useEffect(() => {
-    if (modalParam !== MODAL_KEY && shouldRefreshRef.current) {
-      shouldRefreshRef.current = false;
-      window.location.reload(); // 페이지 전체 새로고침
-    }
-  }, [modalParam]);
 
   const handleSuccess = () => {
-    // 새로고침 플래그 설정
-    // closeModal()이 실행되면 modalParam이 변경되고, useEffect가 트리거됨
-    shouldRefreshRef.current = true;
-    closeModal();
+    closeModal(); // 모달 닫기 (URL에서 ?modal=comment 제거)
+    onRefetch(); // 댓글 목록 새로고침
   };
 
   return (

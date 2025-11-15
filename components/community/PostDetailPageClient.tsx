@@ -21,33 +21,34 @@ export default function PostDetailPageClient({ postId }: PostDetailPageClientPro
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // 게시글 데이터 fetch 함수 (재사용 가능)
+  const fetchPost = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const data = await getPostDetail(postId);
+      setPost(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "게시글을 불러올 수 없습니다.");
+      setPost(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 낙관적 업데이트: 댓글 삭제 (즉시 UI에서 제거)
+  const handleOptimisticDelete = (commentId: number) => {
+    if (!post) return;
+    setPost({
+      ...post,
+      comments: post.comments?.filter((comment) => comment.commentId !== commentId) || [],
+    });
+  };
+
   useEffect(() => {
-    let isMounted = true;
-
-    const fetchPost = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const data = await getPostDetail(postId);
-        if (!isMounted) return;
-        setPost(data);
-      } catch (err) {
-        if (!isMounted) return;
-        setError(err instanceof Error ? err.message : "게시글을 불러올 수 없습니다.");
-        setPost(null);
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
     fetchPost();
-
-    return () => {
-      isMounted = false;
-    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]);
 
   const renderBody = () => {
@@ -73,7 +74,12 @@ export default function PostDetailPageClient({ postId }: PostDetailPageClientPro
       <>
         <PostDetailContent post={post} />
         <div className="mt-[32px]">
-          <CommentList comments={post.comments || []} postId={postId} />
+          <CommentList
+            comments={post.comments || []}
+            postId={postId}
+            onRefetch={fetchPost}
+            onOptimisticDelete={handleOptimisticDelete}
+          />
         </div>
       </>
     );
@@ -92,7 +98,7 @@ export default function PostDetailPageClient({ postId }: PostDetailPageClientPro
         <div className="h-[80px]" />
       </main>
 
-      <CommentInputButton postId={postId} />
+      <CommentInputButton postId={postId} onRefetch={fetchPost} />
     </div>
   );
 }

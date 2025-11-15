@@ -13,6 +13,8 @@ import type { Comment } from "@/types/communityPost";
 interface CommentItemProps {
   comment: Comment;
   postId: number;
+  onRefetch: () => Promise<void>;
+  onOptimisticDelete: (commentId: number) => void;
 }
 
 /**
@@ -26,13 +28,16 @@ interface CommentItemProps {
  * - 회원 본인 댓글(isAuthor=true): 삭제 버튼 표시
  * - 비회원 댓글(isMember=false): 삭제 버튼 표시 (비밀번호 확인)
  * - 다른 사람 댓글: 삭제 버튼 숨김
- * - 삭제 후 페이지 새로고침으로 댓글 목록 업데이트
+ * - 낙관적 업데이트로 즉시 UI에서 제거 (빠른 피드백)
+ * - 삭제 후 onRefetch로 서버 데이터와 동기화 (정확성 보장)
  * - useToast로 피드백 메시지 표시 (alert 대신)
  *
  * @param comment 댓글 정보
  * @param postId 게시글 ID (새로고침용)
+ * @param onRefetch 댓글 목록 새로고침 콜백
+ * @param onOptimisticDelete 낙관적 삭제 콜백 (즉시 UI에서 제거)
  */
-export default function CommentItem({ comment }: CommentItemProps) {
+export default function CommentItem({ comment, onRefetch, onOptimisticDelete }: CommentItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const deleteConfirmModal = useModalHistory({ modalKey: `comment-delete-${comment.commentId}` });
   const passwordModal = useModalHistory({ modalKey: `comment-password-${comment.commentId}` });
@@ -54,13 +59,19 @@ export default function CommentItem({ comment }: CommentItemProps) {
   const handleDeleteConfirm = async () => {
     setIsDeleting(true);
     deleteConfirmModal.closeModal();
+
+    // 1. 낙관적 업데이트: 즉시 UI에서 제거
+    onOptimisticDelete(comment.commentId);
+
     try {
+      // 2. API 호출
       await deleteComment(comment.commentId);
       showError("댓글이 삭제되었습니다.");
-      setTimeout(() => {
-        window.location.reload(); // 페이지 새로고침으로 댓글 목록 업데이트
-      }, 300);
+      // 3. 서버 데이터와 동기화
+      await onRefetch();
     } catch (error) {
+      // 4. 실패 시 refetch로 원복
+      await onRefetch();
       showError(error instanceof Error ? error.message : "삭제에 실패했습니다.");
     } finally {
       setIsDeleting(false);
@@ -75,14 +86,20 @@ export default function CommentItem({ comment }: CommentItemProps) {
   // 비밀번호 확인 후 삭제
   const handlePasswordConfirm = async (password: string) => {
     setIsDeleting(true);
+
+    // 1. 낙관적 업데이트: 즉시 UI에서 제거
+    onOptimisticDelete(comment.commentId);
+
     try {
+      // 2. API 호출
       await deleteComment(comment.commentId, password);
       passwordModal.closeModal();
       showError("댓글이 삭제되었습니다.");
-      setTimeout(() => {
-        window.location.reload(); // 페이지 새로고침
-      }, 300);
+      // 3. 서버 데이터와 동기화
+      await onRefetch();
     } catch (error) {
+      // 4. 실패 시 refetch로 원복
+      await onRefetch();
       // 에러는 PasswordConfirmModal에서 표시하도록 throw
       throw error;
     } finally {
