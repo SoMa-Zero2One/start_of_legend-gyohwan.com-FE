@@ -99,3 +99,63 @@ export const getUniversityCommunityPosts = async (
 
   return await response.json();
 };
+
+/**
+ * USAGE: 게시글 좋아요 등록
+ *
+ * WHAT: POST /v1/community/posts/{postId}/like
+ *
+ * WHY:
+ * - 사용자가 게시글에 좋아요를 누를 때 사용
+ * - credentials: "include" 필수 (세션 쿠키로 사용자 인증)
+ * - 서버에서 좋아요 상태 저장
+ *
+ * ALTERNATIVES:
+ * - 낙관적 업데이트 (rejected: 우선 기본 구현)
+ *
+ * @param postId - 게시글 ID
+ * @throws {Error} API 호출 실패 시
+ */
+export const likePost = async (postId: number): Promise<void> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(`${backendUrl}/v1/community/posts/${postId}/like`, {
+    method: "POST",
+    credentials: "include", // 세션 쿠키 포함
+  });
+
+  if (!response.ok) {
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
+  }
+};
+
+/**
+ * USAGE: 게시글 좋아요 취소
+ *
+ * WHAT: DELETE /v1/community/posts/{postId}/like
+ *
+ * WHY:
+ * - 사용자가 좋아요를 취소할 때 사용
+ * - credentials: "include" 필수 (세션 쿠키로 사용자 인증)
+ * - 서버에서 좋아요 상태 제거
+ *
+ * ALTERNATIVES:
+ * - 낙관적 업데이트 (rejected: 우선 기본 구현)
+ *
+ * @param postId - 게시글 ID
+ * @throws {Error} API 호출 실패 시
+ */
+export const unlikePost = async (postId: number): Promise<void> => {
+  const backendUrl = getBackendUrl();
+
+  const response = await fetch(`${backendUrl}/v1/community/posts/${postId}/like`, {
+    method: "DELETE",
+    credentials: "include", // 세션 쿠키 포함
+  });
+
+  if (!response.ok) {
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
+  }
+};
