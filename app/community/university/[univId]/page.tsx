@@ -43,7 +43,7 @@ export default async function UniversityDetailPage({ params }: UniversityDetailP
     }),
     getUniversityCommunityPosts(univIdNum, {
       page: 0,
-      limit: 5,
+      limit: 20,
     }).catch(() => {
       // 커뮤니티 글 조회 실패 시 빈 배열 반환 (페이지는 계속 표시)
       return { posts: [], pagination: { totalItems: 0, totalPages: 0, currentPage: 0, limit: 5 } };

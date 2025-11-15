@@ -75,7 +75,8 @@ export default function CommunityClient({ initialCountries, initialUniversities 
       <div className="flex min-h-screen flex-col">
         <Header title="커뮤니티" showPrevButton showHomeButton />
         <Suspense fallback={<div className="p-[20px]">Loading...</div>}>
-          <CommunityTabs countries={countries} universities={universities} />
+          {/* 나라 빈배열 */}
+          <CommunityTabs countries={[]} universities={universities} />
         </Suspense>
       </div>
       <Footer />
