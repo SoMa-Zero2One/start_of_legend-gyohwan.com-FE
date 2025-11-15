@@ -28,4 +28,5 @@ export interface UniversityDetailResponse {
   countryName: string | null;
   logoUrl: string | null;
   data: UniversityField[] | null;
+  information: string | null; // Markdown 형식의 대학 정보
 }

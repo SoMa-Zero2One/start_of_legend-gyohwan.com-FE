@@ -37,9 +37,6 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
   const previewUniversities = universities.slice(0, PREVIEW_UNIVERSITY_COUNT);
   const hasMoreUniversities = universities.length > PREVIEW_UNIVERSITY_COUNT;
 
-  // 미리보기 커뮤니티 게시글 (최대 5개)
-  const previewPosts = communityPosts.slice(0, PREVIEW_POST_COUNT);
-
   useEffect(() => {
     if (!communityRef.current) {
       return;
@@ -143,14 +140,14 @@ export default function CountryDetailContent({ countryData, communityPosts }: Co
 
       {/* 커뮤니티 섹션 */}
       <div ref={communityRef} className="flex min-h-[60vh] flex-col">
-        <CommunityPostList posts={previewPosts} countryCode={countryData.countryCode} />
-        <Link
+        <CommunityPostList posts={communityPosts} countryCode={countryData.countryCode} />
+        {/* <Link
           href={`/community/country/${countryData.countryCode}/talks`}
           className="medium-body-2 flex w-full cursor-pointer items-center justify-center gap-[4px] border-t border-gray-300 py-[20px] text-gray-700 transition-colors hover:text-black hover:underline"
         >
           커뮤니티 바로가기
           <ChevronRightIcon size={16} />
-        </Link>
+        </Link> */}
       </div>
     </div>
   );
