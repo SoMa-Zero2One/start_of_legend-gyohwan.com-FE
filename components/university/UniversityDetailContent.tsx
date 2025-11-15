@@ -134,7 +134,9 @@ export default function UniversityDetailContent({ universityData, communityPosts
 
       {/* 대학 정보 섹션 */}
       <div style={{ display: selectedTab === "대학 정보" ? "block" : "none" }} className="px-[20px]">
-        <div className="text-gray-700">해당 글은 커뮤니티 글 기반으로 만들어졌습니다.</div>
+        <div className="subhead-3 rounded-[8px] border-1 border-gray-700 bg-gray-100 px-[20px] py-[8px] text-center">
+          해당 글은 커뮤니티 글 기반으로 만들어졌습니다. ⬆️
+        </div>
         <div className="flex flex-col border-b-[1px] border-gray-300 pt-[20px] pb-[20px]">
           {universityData.information ? (
             <Markdown
