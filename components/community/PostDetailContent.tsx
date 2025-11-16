@@ -38,13 +38,13 @@ export default function PostDetailContent({ post }: PostDetailContentProps) {
   const [isLiked, setIsLiked] = useState(post.isLiked ?? false);
   const [likeCount, setLikeCount] = useState(post.likeCount ?? 0);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
-  const { errorMessage, isExiting, showError, hideToast } = useToast();
+  const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
   // 좋아요 토글 (API 연동)
   const handleLikeToggle = async () => {
     // 로그인 여부 체크
     if (!isLoggedIn) {
-      showError("로그인 후 사용 가능합니다.");
+      showMessage("로그인 후 사용 가능합니다.", "error");
       return;
     }
 
@@ -70,7 +70,7 @@ export default function PostDetailContent({ post }: PostDetailContentProps) {
       // 에러 발생 시 이전 상태로 롤백
       setIsLiked(previousIsLiked);
       setLikeCount(previousLikeCount);
-      showError("좋아요 처리에 실패했습니다.");
+      showMessage("좋아요 처리에 실패했습니다.", "error");
     } finally {
       setIsLikeLoading(false);
     }
@@ -113,7 +113,7 @@ export default function PostDetailContent({ post }: PostDetailContentProps) {
       </article>
 
       {/* Toast 메시지 */}
-      <Toast message={errorMessage} isExiting={isExiting} onClose={hideToast} />
+      <Toast message={message} type={messageType} isExiting={isExiting} onClose={hideToast} />
     </>
   );
 }

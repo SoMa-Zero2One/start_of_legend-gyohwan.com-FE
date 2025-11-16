@@ -38,7 +38,7 @@ function ApplicationEditContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 폼 에러 핸들러
-  const { tooltipMessage, shouldShake, showError } = useFormErrorHandler();
+  const { tooltipMessage, shouldShake, showMessage } = useFormErrorHandler();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -144,7 +144,7 @@ function ApplicationEditContent() {
   const handleSubmit = () => {
     // Validation
     if (selectedUniversities.length === 0) {
-      showError("최소 1개 이상의 지망 대학을 선택해주세요.");
+      showMessage("최소 1개 이상의 지망 대학을 선택해주세요.");
       return;
     }
 
@@ -152,7 +152,7 @@ function ApplicationEditContent() {
     const sortedChoices = selectedUniversities.map((u) => u.choice).sort((a, b) => a - b);
     for (let i = 0; i < sortedChoices.length; i++) {
       if (sortedChoices[i] !== i + 1) {
-        showError("1지망부터 순서대로 채워주세요.");
+        showMessage("1지망부터 순서대로 채워주세요.");
         return;
       }
     }
@@ -165,7 +165,7 @@ function ApplicationEditContent() {
     // 보안: URL 조작으로 모달을 열었을 경우를 대비한 재검증
     if (selectedUniversities.length === 0) {
       confirm.closeModal();
-      showError("최소 1개 이상의 지망 대학을 선택해주세요.");
+      showMessage("최소 1개 이상의 지망 대학을 선택해주세요.");
       return;
     }
 
@@ -174,7 +174,7 @@ function ApplicationEditContent() {
     for (let i = 0; i < sortedChoices.length; i++) {
       if (sortedChoices[i] !== i + 1) {
         confirm.closeModal();
-        showError("1지망부터 순서대로 채워주세요.");
+        showMessage("1지망부터 순서대로 채워주세요.");
         return;
       }
     }
@@ -195,7 +195,7 @@ function ApplicationEditContent() {
       router.push(`/strategy-room/${seasonId}`);
     } catch (error) {
       console.error("Application update error:", error);
-      showError("지망 대학 수정에 실패했습니다. 다시 시도해주세요.");
+      showMessage("지망 대학 수정에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsSubmitting(false);
     }

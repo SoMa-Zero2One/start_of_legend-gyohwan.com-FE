@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 
 /**
- * 폼 에러 처리 커스텀 훅
- * 에러 메시지 표시와 shake 애니메이션을 관리합니다.
+ * 폼 메시지 처리 커스텀 훅
+ * 메시지 표시와 shake 애니메이션을 관리합니다.
  * 메모리 누수 방지를 위해 타이머를 자동으로 cleanup 합니다.
  */
 export function useFormErrorHandler() {
@@ -22,12 +22,12 @@ export function useFormErrorHandler() {
   }, []);
 
   /**
-   * 에러 메시지를 표시하고 일정 시간 후 자동으로 숨깁니다.
+   * 메시지를 표시하고 일정 시간 후 자동으로 숨깁니다.
    * 이전 타이머가 있으면 취소하고 새로운 타이머를 시작합니다.
-   * @param message - 표시할 에러 메시지
+   * @param message - 표시할 메시지
    * @param duration - 메시지 표시 시간 (밀리초, 기본값: 2000ms)
    */
-  const showError = (message: string, duration = 2000) => {
+  const showMessage = (message: string, duration = 2000) => {
     // 이전 타이머가 있으면 취소
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -45,10 +45,10 @@ export function useFormErrorHandler() {
   };
 
   /**
-   * 에러 메시지와 shake 상태를 즉시 초기화합니다.
+   * 메시지와 shake 상태를 즉시 초기화합니다.
    * 진행 중인 타이머도 취소합니다.
    */
-  const clearError = () => {
+  const clearMessage = () => {
     // 진행 중인 타이머 취소
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -62,7 +62,7 @@ export function useFormErrorHandler() {
   return {
     tooltipMessage,
     shouldShake,
-    showError,
-    clearError,
+    showMessage,
+    clearMessage,
   };
 }

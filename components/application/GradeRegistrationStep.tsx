@@ -44,7 +44,7 @@ const LANGUAGE_SCORE_RANGES: Record<string, { min: number; max: number }> = {
 };
 
 export default function GradeRegistrationStep({ existingGpa, existingLanguage, onSubmit }: GradeRegistrationStepProps) {
-  const { tooltipMessage, shouldShake, showError, clearError } = useFormErrorHandler();
+  const { tooltipMessage, shouldShake, showMessage, clearMessage } = useFormErrorHandler();
 
   // GPA 상태
   const [gpaScore, setGpaScore] = useState("");
@@ -84,35 +84,35 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
 
   const handleSubmit = async () => {
     // 이전 에러 메시지 초기화
-    clearError();
+    clearMessage();
 
     // 학점 유효성 검사
     const gpaValue = parseFloat(gpaScore);
     if (!gpaScore || isNaN(gpaValue)) {
-      showError("학점을 입력해주세요.");
+      showMessage("학점을 입력해주세요.");
       return;
     }
 
     if (gpaValue < 0 || gpaValue > gpaCriteria) {
-      showError(`학점은 0 ~ ${gpaCriteria} 사이의 값이어야 합니다.`);
+      showMessage(`학점은 0 ~ ${gpaCriteria} 사이의 값이어야 합니다.`);
       return;
     }
 
     // 어학 시험 종류 검사
     if (!testType) {
-      showError("어학 시험 종류를 선택해주세요.");
+      showMessage("어학 시험 종류를 선택해주세요.");
       return;
     }
 
     // 어학 점수 검사
     if (testType === "기타") {
       if (!score) {
-        showError("어학 시험과 점수를 입력해주세요.");
+        showMessage("어학 시험과 점수를 입력해주세요.");
         return;
       }
     } else {
       if (!score) {
-        showError("점수를 입력해주세요.");
+        showMessage("점수를 입력해주세요.");
         return;
       }
 
@@ -122,12 +122,12 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
 
       if (scoreRange) {
         if (isNaN(scoreValue)) {
-          showError("올바른 점수를 입력해주세요.");
+          showMessage("올바른 점수를 입력해주세요.");
           return;
         }
 
         if (scoreValue < scoreRange.min || scoreValue > scoreRange.max) {
-          showError(`${testType} 점수는 ${scoreRange.min} ~ ${scoreRange.max} 사이의 값이어야 합니다.`);
+          showMessage(`${testType} 점수는 ${scoreRange.min} ~ ${scoreRange.max} 사이의 값이어야 합니다.`);
           return;
         }
       }
@@ -177,7 +177,7 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
       onSubmit(gpaResponse.gpaId, languageResponse.languageId);
     } catch (error) {
       console.error("Submit error:", error);
-      showError("성적 등록 중 오류가 발생했습니다.");
+      showMessage("성적 등록 중 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }
