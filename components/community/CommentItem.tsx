@@ -41,7 +41,7 @@ export default function CommentItem({ comment, onRefetch, onOptimisticDelete }: 
   const [isDeleting, setIsDeleting] = useState(false);
   const deleteConfirmModal = useModalHistory({ modalKey: `comment-delete-${comment.commentId}` });
   const passwordModal = useModalHistory({ modalKey: `comment-password-${comment.commentId}` });
-  const { errorMessage, isExiting, showError, hideToast } = useToast();
+  const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
   const isAuthor = comment.author?.isAuthor === true;
   const isMemberComment = comment.author?.isMember === true;
@@ -66,13 +66,13 @@ export default function CommentItem({ comment, onRefetch, onOptimisticDelete }: 
     try {
       // 2. API 호출
       await deleteComment(comment.commentId);
-      showError("댓글이 삭제되었습니다.");
+      showMessage("댓글이 삭제되었습니다.", "info");
       // 3. 서버 데이터와 동기화
       await onRefetch();
     } catch (error) {
       // 4. 실패 시 refetch로 원복
       await onRefetch();
-      showError(error instanceof Error ? error.message : "삭제에 실패했습니다.");
+      showMessage(error instanceof Error ? error.message : "삭제에 실패했습니다.", "error");
     } finally {
       setIsDeleting(false);
     }
@@ -94,7 +94,7 @@ export default function CommentItem({ comment, onRefetch, onOptimisticDelete }: 
       // 2. API 호출
       await deleteComment(comment.commentId, password);
       passwordModal.closeModal();
-      showError("댓글이 삭제되었습니다.");
+      showMessage("댓글이 삭제되었습니다.", "info");
       // 3. 서버 데이터와 동기화
       await onRefetch();
     } catch (error) {
@@ -135,7 +135,7 @@ export default function CommentItem({ comment, onRefetch, onOptimisticDelete }: 
       </div>
 
       {/* Toast 메시지 */}
-      <Toast message={errorMessage} isExiting={isExiting} onClose={hideToast} />
+      <Toast message={message} type={messageType} isExiting={isExiting} onClose={hideToast} />
 
       {/* 삭제 확인 모달 (회원 본인 댓글) */}
       <ConfirmModal

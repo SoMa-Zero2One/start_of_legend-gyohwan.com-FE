@@ -28,7 +28,7 @@ interface PostActionMenuButtonProps {
 export default function PostActionMenuButton({ post }: PostActionMenuButtonProps) {
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
-  const { errorMessage, isExiting, showError, hideToast } = useToast();
+  const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
   return (
     <>
@@ -68,13 +68,13 @@ export default function PostActionMenuButton({ post }: PostActionMenuButtonProps
                 router.replace("/community");
               }
             }}
-            showToast={showError}
+            showToast={showMessage}
           />
         )}
       </div>
 
       {/* Toast 메시지 (메뉴와 독립적으로 표시) */}
-      <Toast message={errorMessage} isExiting={isExiting} onClose={hideToast} />
+      <Toast message={message} type={messageType} isExiting={isExiting} onClose={hideToast} />
     </>
   );
 }

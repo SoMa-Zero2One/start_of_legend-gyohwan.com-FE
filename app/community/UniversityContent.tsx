@@ -26,7 +26,7 @@ export default function UniversityContent({ universities }: UniversityContentPro
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [showFilledOnly, setShowFilledOnly] = useState(true);
   const { isLoggedIn } = useAuthStore();
-  const { errorMessage, isExiting, showError, hideToast } = useToast();
+  const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
   // 커스텀 훅으로 정렬/필터 관리
   const {
@@ -69,7 +69,7 @@ export default function UniversityContent({ universities }: UniversityContentPro
       setLocalUniversities((prev) =>
         prev.map((univ) => (univ.univId === univId ? { ...univ, isFavorite: prevState } : univ))
       );
-      showError("즐겨찾기 처리에 실패했습니다");
+      showMessage("즐겨찾기 처리에 실패했습니다", "error");
     }
   };
 
@@ -161,7 +161,7 @@ export default function UniversityContent({ universities }: UniversityContentPro
       )}
 
       {/* Toast */}
-      <Toast message={errorMessage} isExiting={isExiting} onClose={hideToast} />
+      <Toast message={message} type={messageType} isExiting={isExiting} onClose={hideToast} />
 
       {/* 하단 고정 즐겨찾기 필터 토글 */}
       {!isFilterOpen && <FavoriteFilterToggle checked={showFavoritesOnly} onChange={handleFavoriteFilterToggle} />}

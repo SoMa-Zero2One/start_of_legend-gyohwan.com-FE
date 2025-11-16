@@ -55,7 +55,7 @@ function ApplicationNewContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 폼 에러 핸들러
-  const { tooltipMessage, shouldShake, showError } = useFormErrorHandler();
+  const { tooltipMessage, shouldShake, showMessage } = useFormErrorHandler();
 
   // 초기 데이터 로드 및 hasApplied 확인
   useEffect(() => {
@@ -252,12 +252,12 @@ function ApplicationNewContent() {
   const handleSubmit = () => {
     // Validation
     if (!gpaId || !languageId) {
-      showError("성적 정보가 없습니다. Step 1부터 다시 진행해주세요.");
+      showMessage("성적 정보가 없습니다. Step 1부터 다시 진행해주세요.");
       return;
     }
 
     if (selectedUniversities.length === 0) {
-      showError("최소 1개 이상의 지망 대학을 선택해주세요.");
+      showMessage("최소 1개 이상의 지망 대학을 선택해주세요.");
       return;
     }
 
@@ -265,7 +265,7 @@ function ApplicationNewContent() {
     const sortedChoices = selectedUniversities.map((u) => u.choice).sort((a, b) => a - b);
     for (let i = 0; i < sortedChoices.length; i++) {
       if (sortedChoices[i] !== i + 1) {
-        showError("1지망부터 순서대로 채워주세요.");
+        showMessage("1지망부터 순서대로 채워주세요.");
         return;
       }
     }
@@ -278,14 +278,14 @@ function ApplicationNewContent() {
     // 보안: URL 조작으로 모달을 열었을 경우를 대비한 재검증
     if (!gpaId || !languageId) {
       submit.closeModal({ skipNavigation: true });
-      showError("성적 정보가 없습니다. 다시 입력해주세요.");
+      showMessage("성적 정보가 없습니다. 다시 입력해주세요.");
       router.replace(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
       return;
     }
 
     if (selectedUniversities.length === 0) {
       submit.closeModal({ skipNavigation: true });
-      showError("최소 1개 이상의 지망 대학을 선택해주세요.");
+      showMessage("최소 1개 이상의 지망 대학을 선택해주세요.");
       return;
     }
 
@@ -294,7 +294,7 @@ function ApplicationNewContent() {
     for (let i = 0; i < sortedChoices.length; i++) {
       if (sortedChoices[i] !== i + 1) {
         submit.closeModal({ skipNavigation: true });
-        showError("1지망부터 순서대로 채워주세요.");
+        showMessage("1지망부터 순서대로 채워주세요.");
         return;
       }
     }
@@ -331,7 +331,7 @@ function ApplicationNewContent() {
       router.push(`/strategy-room/${seasonId}`);
     } catch (error) {
       console.error("Application submission error:", error);
-      showError("지원서 제출에 실패했습니다. 다시 시도해주세요.");
+      showMessage("지원서 제출에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsSubmitting(false);
     }

@@ -11,7 +11,7 @@ interface PostActionMenuProps {
   post: PostDetailResponse;
   onClose: () => void;
   onDelete: () => void;
-  showToast: (message: string, duration?: number) => void;
+  showToast: (message: string, type?: "error" | "info", duration?: number) => void;
 }
 
 /**
@@ -51,10 +51,10 @@ export default function PostActionMenu({ post, onClose, onDelete, showToast }: P
   const handleShare = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      showToast("링크가 복사되었습니다!");
+      showToast("링크가 복사되었습니다!", "info");
       onClose();
     } catch (error) {
-      showToast("링크 복사에 실패했습니다.");
+      showToast("링크 복사에 실패했습니다.", "error");
     }
   };
 
@@ -70,12 +70,12 @@ export default function PostActionMenu({ post, onClose, onDelete, showToast }: P
     deleteConfirmModal.closeModal();
     try {
       await deletePost(post.postId);
-      showToast("게시글이 삭제되었습니다.");
+      showToast("게시글이 삭제되었습니다.", "info");
       setTimeout(() => {
         onDelete();
       }, 300);
     } catch (error) {
-      showToast(error instanceof Error ? error.message : "삭제에 실패했습니다.");
+      showToast(error instanceof Error ? error.message : "삭제에 실패했습니다.", "error");
     } finally {
       setIsDeleting(false);
     }
@@ -92,7 +92,7 @@ export default function PostActionMenu({ post, onClose, onDelete, showToast }: P
     try {
       await deletePost(post.postId, password);
       passwordModal.closeModal();
-      showToast("게시글이 삭제되었습니다.");
+      showToast("게시글이 삭제되었습니다.", "info");
       setTimeout(() => {
         onDelete();
       }, 300);
@@ -108,7 +108,7 @@ export default function PostActionMenu({ post, onClose, onDelete, showToast }: P
   const handleEdit = () => {
     if (!canEdit) return;
     // TODO: 게시글 수정 모달 열기
-    showToast("수정 기능은 추후 구현 예정입니다.");
+    showToast("수정 기능은 추후 구현 예정입니다.", "info");
     onClose();
   };
 
