@@ -63,24 +63,24 @@ export default function MyInfoPage() {
         <div className="flex flex-col items-center gap-[8px]">
           <div className="relative">
             <ProfileIcon profileUrl={user.profileUrl} size={120} />
-            <button
+            {/* <button
               onClick={handleComingSoon}
               className="absolute right-0 bottom-0 flex h-[36px] w-[36px] cursor-pointer items-center justify-center rounded-full bg-white shadow transition-colors hover:bg-gray-50 active:bg-gray-100"
             >
               <PencilIcon size={20} strokeWidth={1.2} />
-            </button>
+            </button> */}
           </div>
         </div>
 
         {/* 닉네임 */}
         <div className="flex flex-col gap-[8px]">
-          <ProfileField label="닉네임" value={user.nickname} buttonText="변경하기" onButtonClick={handleComingSoon} />
-          <p className="text-gray-700">
+          <ProfileField label="닉네임" value={user.nickname} buttonText="" onButtonClick={handleComingSoon} />
+          {/* <p className="text-gray-700">
             * 한글/영문 포함 최대 10자 이내로 가능합니다.
             <br />* 닉네임은 변경 후 30일이 지나야 바꿀 수 있어요.
             <br />
             (최근 변경 일시: ####-##-## ##:##:##)
-          </p>
+          </p> */}
         </div>
 
         {/* 간편 로그인 */}
