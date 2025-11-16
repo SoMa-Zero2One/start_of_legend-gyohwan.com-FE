@@ -57,7 +57,7 @@ export default function UniversityTable({
     .sort((a, b) => a!.displayOrder - b!.displayOrder) as UniversityFieldValue[];
 
   // 3개 이하면 flex-1, 4개 이상이면 w-[90px]
-  const fieldWidthClass = visibleFields.length <= 3 ? "flex-1" : "w-[90px]";
+  const fieldWidthClass = visibleFields.length <= 3 ? "flex-1" : "w-[80px]";
 
   return (
     <div className="scrollbar-hide overflow-x-auto pb-[60px]">
