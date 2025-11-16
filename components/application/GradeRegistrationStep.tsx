@@ -146,8 +146,10 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
       let finalTestType = testType;
       let finalGrade: string | undefined = undefined;
 
-      // "TOEFL IBT" -> "TOEFL_IBT" 변환
-      if (testType === "TOEFL IBT") {
+      // "기타" -> "OTHER" 변환
+      if (testType === "기타") {
+        finalTestType = "OTHER";
+      } else if (testType === "TOEFL IBT") {
         finalTestType = "TOEFL_IBT";
       } else if (testType === "TOEFL ITP") {
         finalTestType = "TOEFL_ITP";
