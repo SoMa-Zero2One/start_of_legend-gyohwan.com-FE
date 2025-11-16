@@ -188,6 +188,14 @@ export default function StrategyRoomClient() {
               💬 세종대 교환학생 함께 준비하기
             </a>
           )}
+
+          {/* 커뮤니티 버튼 */}
+          <Link
+            href="/community"
+            className="btn-primary body-2 mt-[12px] flex items-center justify-center gap-[8px] rounded-[8px] px-[16px] py-[12px] font-semibold"
+          >
+            💬 실생활 보러 가기
+          </Link>
         </section>
 
         {/* 탭 메뉴 */}
