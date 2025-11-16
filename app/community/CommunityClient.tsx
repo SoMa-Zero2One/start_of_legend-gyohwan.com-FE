@@ -6,6 +6,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CommunityTabs from "./CommunityTabs";
 import { fetchUniversities } from "@/lib/api/community";
+import { handleApiError } from "@/lib/utils/apiError";
 import { enrichUniversityData } from "@/lib/utils/universityTransform";
 import type { EnrichedUniversity } from "@/types/community";
 
@@ -28,27 +29,20 @@ export default function CommunityClient() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
-
-    // 대학 목록 fetch (쿠키 포함)
-    fetchUniversities()
-      .then((data) => {
-        if (isMounted) {
-          setUniversities(enrichUniversityData(data));
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.error("[CommunityClient] 대학 목록 로드 실패:", err);
-        if (isMounted) {
-          setError("데이터를 불러오는데 실패했습니다.");
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
+    const loadUniversities = async () => {
+      try {
+        const data = await fetchUniversities();
+        setUniversities(enrichUniversityData(data));
+      } catch (error) {
+        console.error("[CommunityClient] 대학 목록 로드 실패:", error);
+        const errorMessage = handleApiError(error);
+        setError(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
     };
+
+    loadUniversities();
   }, []);
 
   // 로딩 중

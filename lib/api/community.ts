@@ -7,6 +7,7 @@ import type {
   DeleteRequest,
 } from "@/types/communityPost";
 import { getBackendUrl } from "@/lib/utils/api";
+import { parseApiError } from "@/lib/utils/apiError";
 
 /**
  * 나라 목록 조회 (GET /v1/windows/countries)
@@ -21,7 +22,8 @@ export const fetchCountries = async (): Promise<CountryApiResponse[]> => {
   });
 
   if (!response.ok) {
-    throw new Error(`나라 목록 조회 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -44,7 +46,8 @@ export const fetchUniversitiesPublic = async (): Promise<UniversityApiResponse[]
   });
 
   if (!response.ok) {
-    throw new Error(`대학 목록 조회 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -67,7 +70,8 @@ export const fetchUniversities = async (): Promise<UniversityApiResponse[]> => {
   });
 
   if (!response.ok) {
-    throw new Error(`대학 목록 조회 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -87,7 +91,8 @@ export const addFavorite = async (univId: number): Promise<void> => {
   });
 
   if (!response.ok) {
-    throw new Error(`즐겨찾기 추가 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };
 
@@ -105,7 +110,8 @@ export const removeFavorite = async (univId: number): Promise<void> => {
   });
 
   if (!response.ok) {
-    throw new Error(`즐겨찾기 삭제 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };
 
@@ -138,9 +144,8 @@ export const createPost = async (request: PostCreateRequest): Promise<CommunityP
   });
 
   if (!response.ok) {
-    // 백엔드에서 ProblemDetail 형식으로 에러 반환
-    const errorData = await response.json().catch(() => ({ detail: "게시글 작성에 실패했습니다." }));
-    throw new Error(errorData.detail || "게시글 작성에 실패했습니다.");
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -171,8 +176,8 @@ export const getPostDetail = async (postId: number): Promise<PostDetailResponse>
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ detail: "게시글을 불러올 수 없습니다." }));
-    throw new Error(errorData.detail || "게시글을 불러올 수 없습니다.");
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -208,8 +213,8 @@ export const createComment = async (postId: number, request: CommentCreateReques
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ detail: "댓글 작성에 실패했습니다." }));
-    throw new Error(errorData.detail || "댓글 작성에 실패했습니다.");
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -243,8 +248,8 @@ export const deleteComment = async (commentId: number, password?: string): Promi
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ detail: "댓글 삭제에 실패했습니다." }));
-    throw new Error(errorData.detail || "댓글 삭제에 실패했습니다.");
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };
 
@@ -276,7 +281,7 @@ export const deletePost = async (postId: number, password?: string): Promise<voi
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ detail: "게시글 삭제에 실패했습니다." }));
-    throw new Error(errorData.detail || "게시글 삭제에 실패했습니다.");
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };

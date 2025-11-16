@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import { createPost } from "@/lib/api/community";
 import type { PostCreateRequest } from "@/types/community";
+import { handleApiError } from "@/lib/utils/apiError";
 import RoundCheckbox from "@/components/common/RoundCheckbox";
 import EyeOpenIcon from "@/components/icons/EyeOpenIcon";
 import EyeClosedIcon from "@/components/icons/EyeClosedIcon";
@@ -103,8 +104,9 @@ export default function PostCreateModal({
       // 성공 시
       handleClose();
       onSuccess?.();
-    } catch (err) {
-      setError((err as Error).message);
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

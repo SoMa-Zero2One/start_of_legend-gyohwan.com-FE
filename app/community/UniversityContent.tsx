@@ -12,6 +12,7 @@ import { useUniversityTable } from "@/hooks/useUniversityTable";
 import { useAuthStore } from "@/stores/authStore";
 import { useToast } from "@/hooks/useToast";
 import { addFavorite, removeFavorite } from "@/lib/api/community";
+import { handleApiError } from "@/lib/utils/apiError";
 import { saveRedirectUrl } from "@/lib/utils/redirect";
 
 interface UniversityContentProps {
@@ -64,12 +65,13 @@ export default function UniversityContent({ universities }: UniversityContentPro
       } else {
         await addFavorite(univId);
       }
-    } catch {
+    } catch (error) {
       // 실패 시 롤백
       setLocalUniversities((prev) =>
         prev.map((univ) => (univ.univId === univId ? { ...univ, isFavorite: prevState } : univ))
       );
-      showMessage("즐겨찾기 처리에 실패했습니다", "error");
+      const errorMessage = handleApiError(error);
+      showMessage(errorMessage, "error");
     }
   };
 
