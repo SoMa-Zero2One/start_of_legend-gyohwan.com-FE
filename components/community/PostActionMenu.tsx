@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { deletePost } from "@/lib/api/community";
+import { handleApiError } from "@/lib/utils/apiError";
 import { useModalHistory } from "@/hooks/useModalHistory";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import PasswordConfirmModal from "./PasswordConfirmModal";
@@ -75,7 +76,8 @@ export default function PostActionMenu({ post, onClose, onDelete, showToast }: P
         onDelete();
       }, 300);
     } catch (error) {
-      showToast(error instanceof Error ? error.message : "삭제에 실패했습니다.", "error");
+      const errorMessage = handleApiError(error);
+      showToast(errorMessage, "error");
     } finally {
       setIsDeleting(false);
     }
@@ -97,7 +99,7 @@ export default function PostActionMenu({ post, onClose, onDelete, showToast }: P
         onDelete();
       }, 300);
     } catch (error) {
-      // 에러는 PasswordConfirmModal에서 표시하도록 throw
+      // 에러는 PasswordConfirmModal에서 handleApiError 처리하므로 그냥 throw
       throw error;
     } finally {
       setIsDeleting(false);

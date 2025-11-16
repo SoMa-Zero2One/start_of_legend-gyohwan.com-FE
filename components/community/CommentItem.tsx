@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { deleteComment } from "@/lib/api/community";
 import { formatDateTime } from "@/lib/utils/date";
+import { handleApiError } from "@/lib/utils/apiError";
 import { useModalHistory } from "@/hooks/useModalHistory";
 import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/common/Toast";
@@ -73,7 +74,8 @@ export default function CommentItem({ comment, onRefetch, onOptimisticDelete }: 
     } catch (error) {
       // 5. 실패 시 refetch로 원복
       await onRefetch();
-      showMessage(error instanceof Error ? error.message : "삭제에 실패했습니다.", "error");
+      const errorMessage = handleApiError(error);
+      showMessage(errorMessage, "error");
     } finally {
       setIsDeleting(false);
     }
@@ -102,7 +104,7 @@ export default function CommentItem({ comment, onRefetch, onOptimisticDelete }: 
     } catch (error) {
       // 5. 실패 시 refetch로 원복
       await onRefetch();
-      // 에러는 PasswordConfirmModal에서 표시하도록 throw
+      // 에러는 PasswordConfirmModal에서 handleApiError 처리하므로 그냥 throw
       throw error;
     } finally {
       setIsDeleting(false);

@@ -2,6 +2,7 @@
 
 import { useState, type KeyboardEvent } from "react";
 import BaseModal from "@/components/common/BaseModal";
+import { handleApiError } from "@/lib/utils/apiError";
 
 interface PasswordConfirmModalProps {
   isOpen: boolean;
@@ -53,9 +54,10 @@ export default function PasswordConfirmModal({
       await onConfirm(password);
       // 성공 시 모달 닫힘 (부모에서 처리)
       setPassword("");
-    } catch (err) {
+    } catch (error) {
       // 실패 시 에러 표시
-      setError(err instanceof Error ? err.message : "비밀번호가 일치하지 않습니다.");
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

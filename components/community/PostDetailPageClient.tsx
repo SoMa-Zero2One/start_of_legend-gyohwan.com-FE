@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getPostDetail } from "@/lib/api/community";
+import { handleApiError } from "@/lib/utils/apiError";
 import Header from "@/components/layout/Header";
 import PostActionMenuButton from "@/components/community/PostActionMenuButton";
 import PostDetailContent from "@/components/community/PostDetailContent";
@@ -29,8 +30,9 @@ export default function PostDetailPageClient({ postId }: PostDetailPageClientPro
     try {
       const data = await getPostDetail(postId);
       setPost(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "게시글을 불러올 수 없습니다.");
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
       setPost(null);
     } finally {
       setIsLoading(false);

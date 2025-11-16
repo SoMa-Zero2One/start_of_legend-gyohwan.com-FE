@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import { createComment } from "@/lib/api/community";
 import type { CommentCreateRequest } from "@/types/communityPost";
+import { handleApiError } from "@/lib/utils/apiError";
 import RoundCheckbox from "@/components/common/RoundCheckbox";
 import EyeOpenIcon from "@/components/icons/EyeOpenIcon";
 import EyeClosedIcon from "@/components/icons/EyeClosedIcon";
@@ -84,8 +85,9 @@ export default function CommentCreateModal({ isOpen, onClose, onSuccess, postId 
       // 성공 시
       handleClose();
       onSuccess?.();
-    } catch (err) {
-      setError((err as Error).message);
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
