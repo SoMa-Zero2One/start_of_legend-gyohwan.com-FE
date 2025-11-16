@@ -1,81 +1,95 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Suspense } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CommunityTabs from "./CommunityTabs";
-import { useAuthStore } from "@/stores/authStore";
 import { fetchUniversities } from "@/lib/api/community";
-import { enrichCountryData } from "@/lib/utils/countryTransform";
 import { enrichUniversityData } from "@/lib/utils/universityTransform";
-import type { CountryApiResponse, UniversityApiResponse } from "@/types/community";
-
-interface CommunityClientProps {
-  initialCountries: CountryApiResponse[];
-  initialUniversities: UniversityApiResponse[];
-}
+import type { EnrichedUniversity } from "@/types/community";
 
 /**
  * Community 페이지 클라이언트 컴포넌트
  *
- * SEO 최적화를 위한 Client Hydration 패턴:
- * 1. 서버: fetchUniversitiesPublic으로 초기 데이터 렌더링 (SEO용, isFavorite=false)
- * 2. 클라이언트: 로그인 유저만 fetchUniversities로 즐겨찾기 정보 hydrate
+ * Client-side Fetching 패턴:
+ * - 컴포넌트 마운트 시 fetchUniversities() 호출
+ * - credentials: "include"로 쿠키 포함 → 정확한 isFavorite 값 수신
+ * - 즐겨찾기 추가/제거 후 refetch로 즉시 UI 반영
  *
  * 장점:
- * - 검색 엔진이 전체 대학 목록을 인덱싱 가능
- * - 로그인 유저는 즐겨찾기 정보 표시
- * - 초기 렌더링 빠름 (hydration은 백그라운드)
+ * - 로그인 유저의 즐겨찾기 정보 정확히 표시
+ * - 즐겨찾기 토글 후 즉시 반영
+ * - 코드 단순화 (서버/클라이언트 분리 불필요)
  */
-export default function CommunityClient({ initialCountries, initialUniversities }: CommunityClientProps) {
-  // 서버 데이터로 초기화
-  const [countries] = useState(() => enrichCountryData(initialCountries));
-  const [universities, setUniversities] = useState(() => enrichUniversityData(initialUniversities));
-  const { isLoggedIn } = useAuthStore();
-  const hasFetchedRef = useRef(false);
+export default function CommunityClient() {
+  const [universities, setUniversities] = useState<EnrichedUniversity[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // cleanup 시점에 이 effect가 여전히 유효한지 추적하는 플래그
-    // (로그아웃하거나 컴포넌트가 unmount되면 false로 변경됨)
     let isMounted = true;
 
-    if (isLoggedIn && !hasFetchedRef.current) {
-      // === 로그인 상태: 즐겨찾기 정보 fetch ===
-      fetchUniversities()
-        .then((data) => {
-          // ✅ fetch 완료 시점에 여전히 이 effect가 유효한지 확인
-          // (로그아웃했거나 unmount된 경우 업데이트 방지)
-          if (isMounted) {
-            setUniversities(enrichUniversityData(data)); // isFavorite 업데이트
-            hasFetchedRef.current = true; // ✅ 성공 후에만 플래그 설정
-          }
-        })
-        .catch((err) => {
-          console.error("[CommunityClient] 즐겨찾기 정보 로드 실패:", err);
-          // hasFetchedRef.current는 false 그대로 유지 → 새로고침 시 재시도 가능
-        });
-    } else if (!isLoggedIn && hasFetchedRef.current) {
-      // === 로그아웃 상태: 공개 데이터로 복원 ===
-      // 다음 로그인 시 다시 fetch할 수 있도록 플래그 리셋
-      hasFetchedRef.current = false;
-      // 즐겨찾기 정보 제거 (isFavorite=false인 초기 데이터로 복원)
-      setUniversities(enrichUniversityData(initialUniversities));
-    }
+    // 대학 목록 fetch (쿠키 포함)
+    fetchUniversities()
+      .then((data) => {
+        if (isMounted) {
+          setUniversities(enrichUniversityData(data));
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error("[CommunityClient] 대학 목록 로드 실패:", err);
+        if (isMounted) {
+          setError("데이터를 불러오는데 실패했습니다.");
+          setIsLoading(false);
+        }
+      });
 
-    // cleanup: isLoggedIn이 변경되거나 컴포넌트가 unmount될 때 실행
     return () => {
-      isMounted = false; // 진행 중인 fetch의 setState 방지
+      isMounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn]); // initialUniversities는 서버에서 한 번만 전달되므로 의도적으로 제외
+  }, []);
 
+  // 로딩 중
+  if (isLoading) {
+    return (
+      <>
+        <div className="flex min-h-screen flex-col">
+          <Header title="커뮤니티" showPrevButton showHomeButton />
+          <div className="flex flex-1 items-center justify-center px-[20px] py-[60px]">
+            <p className="body-2 text-gray-500">로딩 중...</p>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  // 에러 발생
+  if (error) {
+    return (
+      <>
+        <div className="flex min-h-screen flex-col">
+          <Header title="커뮤니티" showPrevButton showHomeButton />
+          <div className="flex flex-1 items-center justify-center px-[20px] py-[60px]">
+            <div className="text-center">
+              <p className="body-2 text-gray-700">{error}</p>
+              <p className="caption-2 mt-[8px] text-gray-500">잠시 후 다시 시도해주세요.</p>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  // 정상 렌더링
   return (
     <>
       <div className="flex min-h-screen flex-col">
         <Header title="커뮤니티" showPrevButton showHomeButton />
         <Suspense fallback={<div className="p-[20px]">Loading...</div>}>
-          {/* 나라 빈배열 */}
           <CommunityTabs countries={[]} universities={universities} />
         </Suspense>
       </div>
