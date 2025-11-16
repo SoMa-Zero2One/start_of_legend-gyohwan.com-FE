@@ -11,7 +11,7 @@ export default function NavigationTab() {
       </NavigationCard>
 
       {/* 건의/문의하기 버튼 */}
-      <NavigationCard href="https://open.kakao.com/o/sOeiKL1h" label="건의/문의하기" openInNewTab>
+      <NavigationCard href="https://pf.kakao.com/_xaxdQLn" label="건의/문의하기" openInNewTab>
         <WriteIcon />
       </NavigationCard>
     </div>
