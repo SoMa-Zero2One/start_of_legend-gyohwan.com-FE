@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getSeasonSlots } from "@/lib/api/slot";
 import StrategyRoomClient from "@/components/strategy-room/StrategyRoomClient";
+import { getSiteUrl } from "@/lib/utils/siteUrl";
 
 type Props = {
   params: Promise<{ seasonId: string }>;
@@ -9,6 +10,7 @@ type Props = {
 // 동적 메타데이터 생성 (경쟁률 페이지 SEO)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { seasonId } = await params;
+  const siteUrl = getSiteUrl();
 
   try {
     // 서버에서 시즌 정보 가져오기
@@ -37,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       openGraph: {
         title,
         description,
-        url: `https://gyohwan.com/strategy-room/${seasonId}`,
+        url: `${siteUrl}/strategy-room/${seasonId}`,
         type: "website",
       },
       twitter: {

@@ -3,27 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import { MSWProvider } from "@/components/providers/MSWProvider";
 import { SentryProvider } from "@/components/providers/SentryProvider";
-
-// 환경에 따른 사이트 URL 결정
-function getSiteUrl(): string {
-  // 1. 명시적 환경변수 (최우선)
-  if (process.env.NEXT_PUBLIC_SITE_URL) {
-    return process.env.NEXT_PUBLIC_SITE_URL;
-  }
-
-  // 2. Vercel 배포 환경
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-
-  // 3. 로컬 개발 환경 fallback
-  if (process.env.NODE_ENV === "development") {
-    return "http://localhost:3000";
-  }
-
-  // 4. 최종 fallback (프로덕션)
-  return "https://gyohwan.com";
-}
+import { getSiteUrl } from "@/lib/utils/siteUrl";
 
 const siteUrl = getSiteUrl();
 

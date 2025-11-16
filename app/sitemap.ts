@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { getSeasons } from "@/lib/api/season";
+import { getSiteUrl } from "@/lib/utils/siteUrl";
 
 // 24시간(86400초)마다 재생성 (ISR)
 export const revalidate = 86400;
@@ -8,7 +9,7 @@ export const revalidate = 86400;
 let cachedDynamicPages: MetadataRoute.Sitemap | null = null;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gyohwan.com";
+  const baseUrl = getSiteUrl();
 
   // 정적 페이지들 (검색엔진에 노출되어야 하는 공개 페이지)
   const staticPages: MetadataRoute.Sitemap = [

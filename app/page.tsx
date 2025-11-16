@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getSeasons } from "@/lib/api/season";
 import HomePage from "@/components/home/HomePage";
 import StructuredData from "@/components/common/StructuredData";
+import { getSiteUrl } from "@/lib/utils/siteUrl";
 
 export const metadata: Metadata = {
   alternates: {
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function Page() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gyohwan.com";
+  const siteUrl = getSiteUrl();
 
   // JSON-LD 구조화 데이터
   const organizationSchema = {
