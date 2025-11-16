@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useModalHistory } from "@/hooks/useModalHistory";
+import { revalidateCommunityPage } from "@/app/actions/community";
 import PostCreateModal from "./PostCreateModal";
 
 const MODAL_KEY = "write";
@@ -24,34 +24,30 @@ interface WritePostButtonProps {
  * WHY:
  * - useModalHistory로 브라우저 뒤로가기와 동기화
  * - URL에 ?modal=write 파라미터로 모달 상태 관리
- * - useEffect + useRef 패턴으로 모달이 닫힌 후 정확한 타이밍에 새로고침
+ * - Server Action (revalidatePath)으로 서버 캐시 무효화
+ * - 대학 페이지에서는 ?tab=커뮤니티 유지하여 탭 상태 보존
  *
  * @param countryCode 국가 코드 (국가 커뮤니티)
  * @param outgoingUnivId 대학 ID (대학 커뮤니티)
  */
 export default function WritePostButton({ countryCode, outgoingUnivId }: WritePostButtonProps) {
-  const searchParams = useSearchParams();
+  const router = useRouter();
   const { isOpen, openModal, closeModal } = useModalHistory({ modalKey: MODAL_KEY });
-  const shouldRefreshRef = useRef(false);
-  const modalParam = searchParams.get("modal");
 
-  // 모달이 닫힌 후 (URL에서 ?modal=write 제거됨) 새로고침 실행
-  useEffect(() => {
-    if (modalParam !== MODAL_KEY && shouldRefreshRef.current) {
-      shouldRefreshRef.current = false;
+  const handleSuccess = async () => {
+    // 1. Server Action으로 캐시 무효화
+    await revalidateCommunityPage(outgoingUnivId, countryCode);
 
-      // 새 글은 항상 1페이지 최상단에 추가되므로
-      // 현재 페이지와 관계없이 1페이지로 이동 (page 파라미터 제거)
-      const currentPath = window.location.pathname;
-      window.location.href = currentPath; // query params 제거하고 리로드
-    }
-  }, [modalParam]);
-
-  const handleSuccess = () => {
-    // 새로고침 플래그 설정
-    // closeModal()이 실행되면 modalParam이 변경되고, useEffect가 트리거됨
-    shouldRefreshRef.current = true;
+    // 2. 모달 닫기
     closeModal();
+
+    // 3. 대학 커뮤니티인 경우 커뮤니티 탭으로 이동
+    if (outgoingUnivId) {
+      router.push(`${window.location.pathname}?tab=커뮤니티`);
+    } else {
+      // 국가 커뮤니티는 현재 페이지 유지 (revalidate만 실행됨)
+      router.refresh();
+    }
   };
 
   return (
