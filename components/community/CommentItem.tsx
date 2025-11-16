@@ -66,11 +66,12 @@ export default function CommentItem({ comment, onRefetch, onOptimisticDelete }: 
     try {
       // 2. API 호출
       await deleteComment(comment.commentId);
-      showMessage("댓글이 삭제되었습니다.", "info");
       // 3. 서버 데이터와 동기화
       await onRefetch();
+      // 4. refetch 성공 후 성공 메시지 표시
+      showMessage("댓글이 삭제되었습니다.", "info");
     } catch (error) {
-      // 4. 실패 시 refetch로 원복
+      // 5. 실패 시 refetch로 원복
       await onRefetch();
       showMessage(error instanceof Error ? error.message : "삭제에 실패했습니다.", "error");
     } finally {
@@ -94,11 +95,12 @@ export default function CommentItem({ comment, onRefetch, onOptimisticDelete }: 
       // 2. API 호출
       await deleteComment(comment.commentId, password);
       passwordModal.closeModal();
-      showMessage("댓글이 삭제되었습니다.", "info");
       // 3. 서버 데이터와 동기화
       await onRefetch();
+      // 4. refetch 성공 후 성공 메시지 표시
+      showMessage("댓글이 삭제되었습니다.", "info");
     } catch (error) {
-      // 4. 실패 시 refetch로 원복
+      // 5. 실패 시 refetch로 원복
       await onRefetch();
       // 에러는 PasswordConfirmModal에서 표시하도록 throw
       throw error;
