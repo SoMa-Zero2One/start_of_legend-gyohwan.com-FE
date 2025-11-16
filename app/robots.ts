@@ -21,7 +21,6 @@ export default function robots(): MetadataRoute.Robots {
           "/create-account-complete", // 회원가입 완료
           "/auth/*", // OAuth 콜백
           "/strategy-room/*/applications/*", // 개인 지원서 (하위 전체)
-          "/strategy-room/*/slots/*", // 슬롯 상세 (하위 전체, 로그인 필요)
         ],
       },
     ],
