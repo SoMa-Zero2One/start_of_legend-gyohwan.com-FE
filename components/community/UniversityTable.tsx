@@ -111,13 +111,13 @@ export default function UniversityTable({
                     <StarIcon size={16} filled={university.isFavorite} />
                   </div>
                 )}
-                <SchoolLogoWithFallback
+                {/* <SchoolLogoWithFallback
                   src={university.logoUrl}
                   alt={`${university.name} 로고`}
                   width={20}
                   height={20}
                   className="object-contain"
-                />
+                /> */}
                 <div className="min-w-0 flex-1">
                   <p className="line-clamp-2 text-[13px] font-bold">{university.name}</p>
                 </div>
