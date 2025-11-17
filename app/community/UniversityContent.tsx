@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import UniversityTable from "@/components/community/UniversityTable";
 import UniversityFilterModal from "@/components/community/UniversityFilterModal";
@@ -19,6 +19,8 @@ interface UniversityContentProps {
   universities: EnrichedUniversity[];
 }
 
+const UNIVERSITY_LOAD_CHUNK = 30;
+
 // 클라이언트 컴포넌트 (인터랙션 처리)
 export default function UniversityContent({ universities }: UniversityContentProps) {
   const router = useRouter();
@@ -26,6 +28,8 @@ export default function UniversityContent({ universities }: UniversityContentPro
   const [localUniversities, setLocalUniversities] = useState(universities);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [showFilledOnly, setShowFilledOnly] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(UNIVERSITY_LOAD_CHUNK);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
   const { isLoggedIn } = useAuthStore();
   const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
@@ -86,6 +90,43 @@ export default function UniversityContent({ universities }: UniversityContentPro
     if (!showFilledOnly) return favoritedUniversities;
     return favoritedUniversities.filter((university) => university.isFilled);
   }, [favoritedUniversities, showFilledOnly]);
+
+  const visibleUniversities = useMemo(() => {
+    return displayedUniversities.slice(0, visibleCount);
+  }, [displayedUniversities, visibleCount]);
+
+  const hasMoreUniversities = visibleCount < displayedUniversities.length;
+
+  useEffect(() => {
+    // 필터 결과가 바뀌면 초기 페이지로 리셋
+    setVisibleCount(Math.min(UNIVERSITY_LOAD_CHUNK, displayedUniversities.length || UNIVERSITY_LOAD_CHUNK));
+  }, [displayedUniversities.length]);
+
+  useEffect(() => {
+    if (!hasMoreUniversities) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + UNIVERSITY_LOAD_CHUNK, displayedUniversities.length));
+        }
+      },
+      { rootMargin: "120px 0px" }
+    );
+
+    const currentSentinel = sentinelRef.current;
+    if (currentSentinel) {
+      observer.observe(currentSentinel);
+    }
+
+    return () => {
+      if (currentSentinel) {
+        observer.unobserve(currentSentinel);
+      }
+      observer.disconnect();
+    };
+  }, [hasMoreUniversities, displayedUniversities.length]);
 
   // 비로그인 + 즐겨찾기 토글 ON → CTA 표시
   const shouldShowLoginCTA = !isLoggedIn && showFavoritesOnly;
@@ -153,13 +194,20 @@ export default function UniversityContent({ universities }: UniversityContentPro
         </div>
       ) : (
         <UniversityTable
-          universities={displayedUniversities}
+          universities={visibleUniversities}
           visibleFieldKeys={visibleFieldKeys}
           isLoggedIn={isLoggedIn}
           onSort={handleSort}
           sortConfig={sortConfig}
           onFavoriteToggle={handleFavoriteToggle}
         />
+      )}
+
+      {/* 무한 스크롤 센티널 */}
+      {hasMoreUniversities && (
+        <div ref={sentinelRef} className="flex justify-center px-[20px] py-6">
+          <span className="caption-1 text-gray-500">불러오는 중...</span>
+        </div>
       )}
 
       {/* Toast */}

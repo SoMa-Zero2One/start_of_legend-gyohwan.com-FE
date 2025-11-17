@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import CountryListItem from "@/components/community/CountryListItem";
 import type { EnrichedCountry, Continent } from "@/types/community";
 import { CONTINENTS } from "@/types/community";
@@ -9,14 +9,54 @@ interface CountryContentProps {
   countries: EnrichedCountry[];
 }
 
+const COUNTRY_LOAD_CHUNK = 30;
+
 // 클라이언트 컴포넌트 (인터랙션 처리)
 export default function CountryContent({ countries }: CountryContentProps) {
   const [activeContinents, setActiveContinents] = useState<Continent[]>(CONTINENTS);
+  const [visibleCount, setVisibleCount] = useState(COUNTRY_LOAD_CHUNK);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const filteredCountries = useMemo(() => {
     if (activeContinents.length === CONTINENTS.length) return countries;
     return countries.filter((country) => activeContinents.includes(country.continent));
   }, [countries, activeContinents]);
+
+  useEffect(() => {
+    setVisibleCount(Math.min(COUNTRY_LOAD_CHUNK, filteredCountries.length || COUNTRY_LOAD_CHUNK));
+  }, [filteredCountries.length]);
+
+  const visibleCountries = useMemo(() => {
+    return filteredCountries.slice(0, visibleCount);
+  }, [filteredCountries, visibleCount]);
+
+  const hasMoreCountries = visibleCount < filteredCountries.length;
+
+  useEffect(() => {
+    if (!hasMoreCountries) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + COUNTRY_LOAD_CHUNK, filteredCountries.length));
+        }
+      },
+      { rootMargin: "120px 0px" }
+    );
+
+    const currentSentinel = sentinelRef.current;
+    if (currentSentinel) {
+      observer.observe(currentSentinel);
+    }
+
+    return () => {
+      if (currentSentinel) {
+        observer.unobserve(currentSentinel);
+      }
+      observer.disconnect();
+    };
+  }, [hasMoreCountries, filteredCountries.length]);
 
   const handleToggleContinent = (continent: Continent) => {
     setActiveContinents((prev) =>
@@ -48,15 +88,21 @@ export default function CountryContent({ countries }: CountryContentProps) {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-[12px] px-[20px] pb-[80px]">
+      <div className="flex flex-1 flex-col gap-[12px] px-[20px] pb-[40px]">
         {filteredCountries.length === 0 ? (
           <div className="flex flex-1 items-center justify-center py-[60px]">
             <p className="body-2 text-gray-500">선택한 대륙에 해당하는 나라가 없습니다</p>
           </div>
         ) : (
-          filteredCountries.map((country) => <CountryListItem key={country.countryCode} country={country} />)
+          visibleCountries.map((country) => <CountryListItem key={country.countryCode} country={country} />)
         )}
       </div>
+
+      {hasMoreCountries && (
+        <div ref={sentinelRef} className="flex justify-center px-[20px] pb-[40px] text-gray-500">
+          <span className="caption-1">불러오는 중...</span>
+        </div>
+      )}
     </div>
   );
 }
