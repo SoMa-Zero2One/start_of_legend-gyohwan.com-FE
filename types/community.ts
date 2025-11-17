@@ -58,27 +58,6 @@ export interface EnrichedCountry {
   countryCode: string;
   name: string;
   continent: Continent; // 필터 전용 (테이블에 표시 안 함)
-  fields: Map<string, CountryFieldValue>; // key → value 매핑
-  isFilled: boolean; // 하나라도 값이 있는 필드가 있는지 여부 (continent 제외)
-  rawData: Array<{
-    fieldId: number;
-    fieldName: string | null;
-    value: string | null;
-    type: "LEVEL" | "STRING" | "NUMBER" | null;
-  }>; // 변환 레이어에서 항상 배열로 보장
-}
-
-export interface CountryFieldValue {
-  fieldId: number;
-  key: string; // "visaDifficulty"
-  label: string; // "비자 발급 난이도"
-  value: string; // "1~5"
-  displayValue: string; // "상" (변환된 값)
-  numericValue?: number; // 정렬용 숫자값
-  type: FieldMetadata["type"];
-  sortable: boolean; // 정렬 가능 여부
-  displayOrder: number; // 화면 표시 순서
-  renderConfig?: FieldMetadata["renderConfig"]; // 렌더링 설정
 }
 
 // ==================== 대학 탭 타입 ====================
