@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CommunityTabs from "./CommunityTabs";
+import HeaderAuthSection from "@/components/layout/HeaderAuthSection";
 import { fetchCountries, fetchUniversities } from "@/lib/api/community";
 import { handleApiError } from "@/lib/utils/apiError";
 import { enrichUniversityData } from "@/lib/utils/universityTransform";
@@ -53,7 +54,9 @@ export default function CommunityClient() {
     return (
       <>
         <div className="flex min-h-screen flex-col">
-          <Header title="커뮤니티" showPrevButton showHomeButton />
+          <Header title="커뮤니티" showPrevButton showHomeButton>
+            <HeaderAuthSection />
+          </Header>
           <div className="flex flex-1 items-center justify-center px-[20px] py-[60px]">
             <p className="body-2 text-gray-500">로딩 중...</p>
           </div>
@@ -68,7 +71,9 @@ export default function CommunityClient() {
     return (
       <>
         <div className="flex min-h-screen flex-col">
-          <Header title="커뮤니티" showPrevButton showHomeButton />
+          <Header title="커뮤니티" showPrevButton showHomeButton>
+            <HeaderAuthSection />
+          </Header>
           <div className="flex flex-1 items-center justify-center px-[20px] py-[60px]">
             <div className="text-center">
               <p className="body-2 text-gray-700">{error}</p>
@@ -85,7 +90,9 @@ export default function CommunityClient() {
   return (
     <>
       <div className="flex min-h-screen flex-col">
-        <Header title="커뮤니티" showPrevButton showHomeButton />
+        <Header title="커뮤니티" showPrevButton showHomeButton>
+          <HeaderAuthSection />
+        </Header>
         <Suspense fallback={<div className="p-[20px]">Loading...</div>}>
           <CommunityTabs countries={countries} universities={universities} />
         </Suspense>

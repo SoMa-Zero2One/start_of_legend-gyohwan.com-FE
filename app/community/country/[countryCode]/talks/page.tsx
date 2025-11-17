@@ -4,6 +4,7 @@ import Footer from "@/components/layout/Footer";
 import CommunityPostList from "@/components/country/CommunityPostList";
 import Pagination from "@/components/common/Pagination";
 import { getCountryCommunityPosts } from "@/lib/api/communityPosts";
+import HeaderAuthSection from "@/components/layout/HeaderAuthSection";
 
 interface TalksPageProps {
   params: Promise<{ countryCode: string }>;
@@ -42,7 +43,9 @@ export default async function TalksPage({ params, searchParams }: TalksPageProps
       <div className="flex min-h-screen flex-col">
         {/* Sticky Header */}
         <div className="sticky top-0 z-20 bg-white">
-          <Header title={`${displayName} 커뮤니티`} showPrevButton showHomeButton />
+          <Header title={`${displayName} 커뮤니티`} showPrevButton showHomeButton>
+            <HeaderAuthSection />
+          </Header>
         </div>
 
         <main className="mx-auto w-full max-w-[430px] flex-1">

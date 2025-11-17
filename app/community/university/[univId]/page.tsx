@@ -4,6 +4,7 @@ import Footer from "@/components/layout/Footer";
 import UniversityDetailContent from "@/components/university/UniversityDetailContent";
 import { getUniversityDetail } from "@/lib/api/university";
 import { getUniversityCommunityPosts } from "@/lib/api/communityPosts";
+import HeaderAuthSection from "@/components/layout/HeaderAuthSection";
 
 interface UniversityDetailPageProps {
   params: Promise<{ univId: string }>;
@@ -56,7 +57,9 @@ export default async function UniversityDetailPage({ params }: UniversityDetailP
     <div className="flex min-h-screen flex-col">
       {/* Sticky Header */}
       <div className="sticky top-0 z-20 bg-white">
-        <Header showPrevButton showHomeButton />
+        <Header showPrevButton showHomeButton>
+          <HeaderAuthSection />
+        </Header>
       </div>
 
       <main className="mx-auto w-full max-w-[430px] flex-1">

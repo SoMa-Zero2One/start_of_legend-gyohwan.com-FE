@@ -4,6 +4,7 @@ import Footer from "@/components/layout/Footer";
 import CountryDetailContent from "@/components/country/CountryDetailContent";
 import { getCountryDetail } from "@/lib/api/country";
 import { getCountryCommunityPosts } from "@/lib/api/communityPosts";
+import HeaderAuthSection from "@/components/layout/HeaderAuthSection";
 
 interface CountryDetailPageProps {
   params: Promise<{ countryCode: string }>;
@@ -34,7 +35,9 @@ export default async function CountryDetailPage({ params }: CountryDetailPagePro
     <div className="flex min-h-screen flex-col">
       {/* Sticky Header */}
       <div className="sticky top-0 z-20 bg-white">
-        <Header showPrevButton showHomeButton />
+        <Header showPrevButton showHomeButton>
+          <HeaderAuthSection />
+        </Header>
       </div>
 
       <main className="mx-auto w-full max-w-[430px] flex-1">
