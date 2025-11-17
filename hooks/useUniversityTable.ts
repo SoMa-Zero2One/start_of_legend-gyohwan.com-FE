@@ -32,8 +32,7 @@ export function useUniversityTable(universities: EnrichedUniversity[]) {
   // 대륙 활성화 + 나라로 필터링된 대학 목록
   const filteredUniversities = useMemo(() => {
     return universities.filter(
-      (univ) =>
-        activeContinents.includes(univ.continent as Continent) && selectedCountries.includes(univ.countryName)
+      (univ) => activeContinents.includes(univ.continent) && selectedCountries.includes(univ.countryName)
     );
   }, [universities, activeContinents, selectedCountries]);
 

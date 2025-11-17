@@ -6,8 +6,9 @@ export const mockCountriesApi: CountryApiResponse[] = [
   {
     countryCode: "JP",
     name: "일본",
+    continentCode: "ASIA",
+    continentName: "아시아",
     data: [
-      { fieldId: 1, fieldName: "대륙", value: "아시아", type: "STRING" },
       { fieldId: 2, fieldName: "비자 발급 특이사항", value: "관광비자 90일", type: "STRING" },
       { fieldId: 3, fieldName: "사용 언어", value: "일본어", type: "STRING" },
       { fieldId: 4, fieldName: "영어 사용 비율", value: "30:70", type: "STRING" },
@@ -16,8 +17,9 @@ export const mockCountriesApi: CountryApiResponse[] = [
   {
     countryCode: "CN",
     name: "중국",
+    continentCode: "ASIA",
+    continentName: "아시아",
     data: [
-      { fieldId: 1, fieldName: "대륙", value: "아시아", type: "STRING" },
       { fieldId: 2, fieldName: "비자 발급 특이사항", value: "학생비자 필요", type: "STRING" },
       { fieldId: 3, fieldName: "사용 언어", value: "중국어", type: "STRING" },
       { fieldId: 4, fieldName: "영어 사용 비율", value: "20:80", type: "STRING" },
@@ -28,8 +30,9 @@ export const mockCountriesApi: CountryApiResponse[] = [
   {
     countryCode: "XX",
     name: "테스트나라(전체NULL)",
+    continentCode: null,
+    continentName: null,
     data: [
-      { fieldId: 1, fieldName: "대륙", value: "아시아", type: "STRING" },
       { fieldId: 2, fieldName: "비자 발급 특이사항", value: null, type: "STRING" },
       { fieldId: 3, fieldName: "사용 언어", value: null, type: "STRING" },
       { fieldId: 4, fieldName: "영어 사용 비율", value: null, type: "STRING" },
@@ -40,8 +43,9 @@ export const mockCountriesApi: CountryApiResponse[] = [
   {
     countryCode: "YY",
     name: "테스트나라(일부NULL)",
+    continentCode: "EUROPE",
+    continentName: "유럽",
     data: [
-      { fieldId: 1, fieldName: "대륙", value: "유럽", type: "STRING" },
       { fieldId: 2, fieldName: "비자 발급 특이사항", value: "무비자", type: "STRING" },
       { fieldId: 3, fieldName: "사용 언어", value: null, type: "STRING" },
       { fieldId: 4, fieldName: "영어 사용 비율", value: null, type: "STRING" },

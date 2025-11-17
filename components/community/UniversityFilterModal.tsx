@@ -49,7 +49,7 @@ export default function UniversityFilterModal({
     CONTINENTS.forEach((continent) => map.set(continent, new Set()));
 
     universities.forEach((univ) => {
-      const continent = univ.continent as Continent;
+      const continent = univ.continent;
       if (map.has(continent)) {
         map.get(continent)!.add(univ.countryName);
       }
