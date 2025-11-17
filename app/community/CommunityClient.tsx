@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Suspense } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -28,52 +28,77 @@ import type { EnrichedCountry, EnrichedUniversity } from "@/types/community";
 export default function CommunityClient() {
   const [countries, setCountries] = useState<EnrichedCountry[]>([]);
   const [universities, setUniversities] = useState<EnrichedUniversity[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isCountryLoading, setIsCountryLoading] = useState(true);
+  const [isUniversityLoading, setIsUniversityLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [headerHeight, setHeaderHeight] = useState(50);
 
   useEffect(() => {
-    const loadCommunityData = async () => {
+    // Country 데이터 로드 (우선순위)
+    const loadCountries = async () => {
       try {
-        const [countryResponse, universityResponse] = await Promise.all([fetchCountries(), fetchUniversities()]);
+        const countryResponse = await fetchCountries();
         setCountries(enrichCountryData(countryResponse));
-        setUniversities(enrichUniversityData(universityResponse));
       } catch (error) {
-        console.error("[CommunityClient] 커뮤니티 데이터 로드 실패:", error);
+        console.error("[CommunityClient] Country 데이터 로드 실패:", error);
         const errorMessage = handleApiError(error);
         setError(errorMessage);
       } finally {
-        setIsLoading(false);
+        setIsCountryLoading(false);
       }
     };
 
-    loadCommunityData();
+    // University 데이터 로드 (백그라운드)
+    const loadUniversities = async () => {
+      try {
+        const universityResponse = await fetchUniversities();
+        setUniversities(enrichUniversityData(universityResponse));
+      } catch (error) {
+        console.error("[CommunityClient] University 데이터 로드 실패:", error);
+        // University 로드 실패는 Country 표시에 영향 없음
+      } finally {
+        setIsUniversityLoading(false);
+      }
+    };
+
+    // 병렬 실행하되, Country가 먼저 완료되면 즉시 렌더링
+    loadCountries();
+    loadUniversities();
   }, []);
 
-  // 로딩 중
-  if (isLoading) {
-    return (
-      <>
-        <div className="flex min-h-screen flex-col">
-          <Header title="커뮤니티" showPrevButton showHomeButton>
-            <HeaderAuthSection />
-          </Header>
-          <div className="flex flex-1 items-center justify-center px-[20px] py-[60px]">
-            <p className="body-2 text-gray-500">로딩 중...</p>
-          </div>
-        </div>
-        <Footer />
-      </>
-    );
-  }
+  useEffect(() => {
+    const element = headerRef.current;
+    if (!element) {
+      return;
+    }
+
+    const updateHeight = () => {
+      setHeaderHeight(element.getBoundingClientRect().height || 50);
+    };
+
+    updateHeight();
+
+    if (typeof ResizeObserver !== "undefined") {
+      const observer = new ResizeObserver(updateHeight);
+      observer.observe(element);
+      return () => observer.disconnect();
+    }
+
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
 
   // 에러 발생
   if (error) {
     return (
       <>
         <div className="flex min-h-screen flex-col">
-          <Header title="커뮤니티" showPrevButton showHomeButton>
-            <HeaderAuthSection />
-          </Header>
+          <div ref={headerRef} className="sticky top-0 z-20 bg-white">
+            <Header title="커뮤니티" showPrevButton showHomeButton showBorder>
+              <HeaderAuthSection />
+            </Header>
+          </div>
           <div className="flex flex-1 items-center justify-center px-[20px] py-[60px]">
             <div className="text-center">
               <p className="body-2 text-gray-700">{error}</p>
@@ -86,15 +111,23 @@ export default function CommunityClient() {
     );
   }
 
-  // 정상 렌더링
+  // 정상 렌더링 (Country가 먼저 로드되면 즉시 표시, University는 백그라운드 로딩)
   return (
     <>
       <div className="flex min-h-screen flex-col">
-        <Header title="커뮤니티" showPrevButton showHomeButton>
-          <HeaderAuthSection />
-        </Header>
+        <div ref={headerRef} className="sticky top-0 z-20 bg-white">
+          <Header title="커뮤니티" showPrevButton showHomeButton>
+            <HeaderAuthSection />
+          </Header>
+        </div>
         <Suspense fallback={<div className="p-[20px]">Loading...</div>}>
-          <CommunityTabs countries={countries} universities={universities} />
+          <CommunityTabs
+            countries={countries}
+            universities={universities}
+            headerHeight={headerHeight}
+            isCountryLoading={isCountryLoading}
+            isUniversityLoading={isUniversityLoading}
+          />
         </Suspense>
       </div>
       <Footer />
