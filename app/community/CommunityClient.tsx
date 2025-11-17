@@ -10,7 +10,9 @@ import { fetchCountries, fetchUniversities } from "@/lib/api/community";
 import { handleApiError } from "@/lib/utils/apiError";
 import { enrichUniversityData } from "@/lib/utils/universityTransform";
 import { enrichCountryData } from "@/lib/utils/countryTransform";
+import { getCachedData, setCachedData } from "@/lib/utils/sessionCache";
 import type { EnrichedCountry, EnrichedUniversity } from "@/types/community";
+import type { CountryApiResponse, UniversityApiResponse } from "@/types/community";
 
 /**
  * Community 페이지 클라이언트 컴포넌트
@@ -35,28 +37,49 @@ export default function CommunityClient() {
   const [headerHeight, setHeaderHeight] = useState(50);
 
   useEffect(() => {
-    // Country 데이터 로드 (우선순위)
+    // Country 데이터 로드 (Stale-While-Revalidate 패턴)
     const loadCountries = async () => {
+      // 1. 캐시에서 즉시 로드 (있으면 0.1초 만에 렌더링)
+      const cachedCountries = getCachedData<CountryApiResponse[]>("COUNTRIES");
+      if (cachedCountries) {
+        setCountries(enrichCountryData(cachedCountries));
+        setIsCountryLoading(false);
+      }
+
+      // 2. 백그라운드에서 최신 데이터 fetch & 업데이트
       try {
-        const countryResponse = await fetchCountries();
-        setCountries(enrichCountryData(countryResponse));
+        const freshCountries = await fetchCountries();
+        setCountries(enrichCountryData(freshCountries));
+        setCachedData("COUNTRIES", freshCountries); // 캐시 갱신
       } catch (error) {
         console.error("[CommunityClient] Country 데이터 로드 실패:", error);
-        const errorMessage = handleApiError(error);
-        setError(errorMessage);
+        // 캐시 데이터가 없는 경우에만 에러 표시
+        if (!cachedCountries) {
+          const errorMessage = handleApiError(error);
+          setError(errorMessage);
+        }
       } finally {
         setIsCountryLoading(false);
       }
     };
 
-    // University 데이터 로드 (백그라운드)
+    // University 데이터 로드 (Stale-While-Revalidate 패턴)
     const loadUniversities = async () => {
+      // 1. 캐시에서 즉시 로드
+      const cachedUniversities = getCachedData<UniversityApiResponse[]>("UNIVERSITIES");
+      if (cachedUniversities) {
+        setUniversities(enrichUniversityData(cachedUniversities));
+        setIsUniversityLoading(false);
+      }
+
+      // 2. 백그라운드에서 최신 데이터 fetch & 업데이트
       try {
-        const universityResponse = await fetchUniversities();
-        setUniversities(enrichUniversityData(universityResponse));
+        const freshUniversities = await fetchUniversities();
+        setUniversities(enrichUniversityData(freshUniversities));
+        setCachedData("UNIVERSITIES", freshUniversities); // 캐시 갱신
       } catch (error) {
         console.error("[CommunityClient] University 데이터 로드 실패:", error);
-        // University 로드 실패는 Country 표시에 영향 없음
+        // University 로드 실패는 Country 표시에 영향 없음 (조용히 실패)
       } finally {
         setIsUniversityLoading(false);
       }
