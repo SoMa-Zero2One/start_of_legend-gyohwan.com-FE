@@ -4,91 +4,137 @@ import {
   UniversityFieldValue,
   FieldMetadata,
 } from "@/types/community";
-import { getUniversityFieldMetadata, getUniversityFieldByKey } from "@/lib/metadata/universityFields";
+import { UNIVERSITY_FIELDS, getUniversityFieldByKey } from "@/lib/metadata/universityFields";
 
 /**
  * API 응답을 EnrichedUniversity로 변환 (방어적 코딩)
  */
 export function enrichUniversityData(apiData: UniversityApiResponse[]): EnrichedUniversity[] {
-  return apiData.map((university) => {
-    const fields = new Map<string, UniversityFieldValue>();
-    let continent = "미분류"; // 기본값: 미분류 (필터 일치)
+  return apiData.map(transformUniversity);
+}
 
-    // 방어: data가 null이면 빈 배열로 처리
-    const universityData = university.data ?? [];
+type UniversityDataField = NonNullable<UniversityApiResponse["data"]>[number];
 
-    // countryName을 "country" 필드로 추가 (fieldId: 0, 프론트 전용)
-    const countryMetadata = getUniversityFieldByKey("country");
-    if (countryMetadata) {
-      const countryName = university.countryName ?? "기타";
-      const countryField: UniversityFieldValue = {
-        fieldId: 0,
-        key: "country",
-        label: "나라",
-        value: countryName,
-        displayValue: countryName,
-        numericValue: undefined,
-        type: "string",
-        sortable: true,
-        displayOrder: countryMetadata.displayOrder,
-        renderConfig: countryMetadata.renderConfig,
-      };
-      fields.set("country", countryField);
+const DEFAULT_CONTINENT = "미분류";
+const UNIVERSITY_FIELD_METADATA_BY_ID = new Map<number, FieldMetadata>(
+  Object.values(UNIVERSITY_FIELDS).map((field) => [field.fieldId, field])
+);
+
+const CONTINENT_LABEL_BY_CODE: Record<string, string> = {
+  ASIA: "아시아",
+  EUROPE: "유럽",
+  NORTH_AMERICA: "북아메리카",
+  SOUTH_AMERICA: "남아메리카",
+  AFRICA: "아프리카",
+  OCEANIA: "오세아니아",
+};
+
+function transformUniversity(university: UniversityApiResponse): EnrichedUniversity {
+  const fields = new Map<string, UniversityFieldValue>();
+  const universityData: UniversityDataField[] = university.data ?? [];
+
+  addCountryField(fields, university);
+  populateDynamicFields(fields, universityData);
+
+  const continent = resolveContinent(university);
+  const isFilled = hasAnyContent(universityData);
+
+  return {
+    univId: university.univId,
+    name: university.name ?? `대학교 #${university.univId}`,
+    countryName: university.countryName ?? "기타",
+    continent,
+    isFavorite: university.isFavorite ?? false,
+    logoUrl: university.logoUrl ?? "",
+    fields,
+    isFilled,
+    rawData: universityData,
+  };
+}
+
+function addCountryField(fields: Map<string, UniversityFieldValue>, university: UniversityApiResponse) {
+  const countryMetadata = getUniversityFieldByKey("country");
+  if (!countryMetadata) return;
+
+  const countryName = sanitizeText(university.countryName) ?? "기타";
+  const countryField: UniversityFieldValue = {
+    fieldId: 0,
+    key: "country",
+    label: "나라",
+    value: countryName,
+    displayValue: countryName,
+    numericValue: undefined,
+    type: "string",
+    sortable: true,
+    displayOrder: countryMetadata.displayOrder,
+    renderConfig: countryMetadata.renderConfig,
+  };
+  fields.set("country", countryField);
+}
+
+function populateDynamicFields(fields: Map<string, UniversityFieldValue>, universityData: UniversityDataField[]) {
+  universityData.forEach((field) => {
+    const metadata = getMetadataByFieldId(field.fieldId);
+
+    if (!metadata) {
+      console.warn(`Unknown field: ${field.fieldId} - ${field.fieldName}`);
+      return;
     }
 
-    // API data 필드들 변환
-    universityData.forEach((field) => {
-      // fieldId로 메타데이터 조회
-      const metadata = getUniversityFieldMetadata(field.fieldId);
-
-      if (!metadata) {
-        // 메타데이터 없는 필드는 무시하거나 경고
-        console.warn(`Unknown field: ${field.fieldId} - ${field.fieldName}`);
-        return;
-      }
-
-      // 대륙은 필터 전용으로 별도 처리 (fieldId 기반)
-      if (metadata.key === "continent") {
-        continent = field.value ?? "미분류";
-        return; // 테이블에 표시 안 함
-      }
-
-      const enrichedField: UniversityFieldValue = {
-        fieldId: field.fieldId,
-        key: metadata.key,
-        label: metadata.label,
-        value: field.value ?? "", // null → "" for consistency
-        displayValue: transformDisplayValue(field.value, metadata),
-        numericValue: extractNumericValue(field.value, metadata.type),
-        type: metadata.type,
-        sortable: metadata.sortable,
-        displayOrder: metadata.displayOrder,
-        renderConfig: metadata.renderConfig,
-      };
-
-      fields.set(metadata.key, enrichedField);
-    });
-
-    // isFilled 계산: 나라와 대륙을 제외한 필드 중 하나라도 값이 있는지 체크
-    // 원본 API 데이터(universityData)에서 체크해야 함!
-    const isFilled = universityData.some((field) => {
-      const metadata = getUniversityFieldMetadata(field.fieldId);
-      // continent 제외하고 값이 있는 필드가 있으면 true (country는 프론트 전용이라 여기서 체크 안함)
-      return metadata && metadata.key !== "continent" && field.value !== null && field.value !== "";
-    });
-
-    return {
-      univId: university.univId,
-      name: university.name ?? `대학교 #${university.univId}`,
-      countryName: university.countryName ?? "기타",
-      continent,
-      isFavorite: university.isFavorite ?? false,
-      logoUrl: university.logoUrl ?? "",
-      fields,
-      isFilled,
-      rawData: universityData,
-    };
+    fields.set(metadata.key, createFieldValue(field, metadata));
   });
+}
+
+function resolveContinent(university: UniversityApiResponse): string {
+  const continentName = sanitizeText(university.continentName);
+  if (continentName) return continentName;
+
+  const continentFromCode = mapContinentCode(university.continentCode);
+  if (continentFromCode) return continentFromCode;
+
+  return DEFAULT_CONTINENT;
+}
+
+function hasAnyContent(universityData: UniversityDataField[]): boolean {
+  return universityData.some((field) => {
+    const metadata = getMetadataByFieldId(field.fieldId);
+    return metadata && hasValue(field.value);
+  });
+}
+
+function createFieldValue(field: UniversityDataField, metadata: FieldMetadata): UniversityFieldValue {
+  return {
+    fieldId: field.fieldId,
+    key: metadata.key,
+    label: metadata.label,
+    value: field.value ?? "",
+    displayValue: transformDisplayValue(field.value, metadata),
+    numericValue: extractNumericValue(field.value, metadata.type),
+    type: metadata.type,
+    sortable: metadata.sortable,
+    displayOrder: metadata.displayOrder,
+    renderConfig: metadata.renderConfig,
+  };
+}
+
+function getMetadataByFieldId(fieldId: number): FieldMetadata | undefined {
+  return UNIVERSITY_FIELD_METADATA_BY_ID.get(fieldId);
+}
+
+function sanitizeText(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const trimmed = value.trim();
+  return trimmed === "" ? null : trimmed;
+}
+
+function hasValue(value: string | null | undefined): value is string {
+  return sanitizeText(value) !== null;
+}
+
+function mapContinentCode(code: string | null | undefined): string | null {
+  if (!code) return null;
+  const normalized = code.trim().toUpperCase();
+  return CONTINENT_LABEL_BY_CODE[normalized] ?? null;
 }
 
 /**

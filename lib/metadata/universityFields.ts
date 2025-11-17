@@ -2,15 +2,6 @@ import { FieldMetadata } from "@/types/community";
 
 // 대학 필드 메타데이터 (프론트엔드에서 중앙 관리)
 export const UNIVERSITY_FIELDS: Record<string, FieldMetadata> = {
-  continent: {
-    fieldId: 1, // 백엔드 API의 fieldId (대륙)
-    key: "continent",
-    label: "대륙",
-    type: "string",
-    sortable: false,
-    defaultVisible: false, // 필터 전용 (테이블에 표시 안 함)
-    displayOrder: 99, // 맨 뒤
-  },
   country: {
     fieldId: 0, // 프론트 전용 (countryName을 필드로 추가)
     key: "country",

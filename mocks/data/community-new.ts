@@ -55,11 +55,13 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
   {
     univId: 1,
     name: "도쿄대학",
+    countryCode: "JP",
     countryName: "일본",
+    continentCode: "ASIA",
+    continentName: "아시아",
     isFavorite: true,
     logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/University_of_Tokyo.png",
     data: [
-      { fieldId: 1, fieldName: "대륙", value: "아시아", type: "STRING" },
       { fieldId: 5, fieldName: "총액", value: "₩15,000,000", type: "STRING" },
       { fieldId: 6, fieldName: "QS 랭킹", value: "28", type: "STRING" },
       { fieldId: 7, fieldName: "영어 사용 비율", value: "50:50", type: "STRING" },
@@ -73,11 +75,13 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
   {
     univId: 2,
     name: "와세다대학",
+    countryCode: "JP",
     countryName: "일본",
+    continentCode: "ASIA",
+    continentName: "아시아",
     isFavorite: false,
     logoUrl: "d2kydfinz3830f.cloudfront.net/outgoing_univ_logo/Waseda_University.png",
     data: [
-      { fieldId: 1, fieldName: "대륙", value: "아시아", type: "STRING" },
       { fieldId: 5, fieldName: "총액", value: "₩18,000,000", type: "STRING" },
       { fieldId: 6, fieldName: "QS 랭킹", value: "197", type: "STRING" },
       { fieldId: 7, fieldName: "영어 사용 비율", value: "70:30", type: "STRING" },
@@ -93,11 +97,13 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
   {
     univId: 9999,
     name: "테스트대학(전체NULL)",
+    countryCode: "JP",
     countryName: "일본",
+    continentCode: "ASIA",
+    continentName: "아시아",
     isFavorite: false,
     logoUrl: null,
     data: [
-      { fieldId: 1, fieldName: "대륙", value: "아시아", type: "STRING" },
       { fieldId: 5, fieldName: "총액", value: null, type: "STRING" },
       { fieldId: 6, fieldName: "QS 랭킹", value: null, type: "STRING" },
       { fieldId: 7, fieldName: "영어 사용 비율", value: null, type: "STRING" },
@@ -113,11 +119,13 @@ export const mockUniversitiesApi: UniversityApiResponse[] = [
   {
     univId: 9998,
     name: "테스트대학(일부NULL)",
+    countryCode: "FR",
     countryName: "프랑스",
+    continentCode: "EUROPE",
+    continentName: "유럽",
     isFavorite: false,
     logoUrl: null,
     data: [
-      { fieldId: 1, fieldName: "대륙", value: "유럽", type: "STRING" },
       { fieldId: 5, fieldName: "총액", value: "₩20,000,000", type: "STRING" },
       { fieldId: 6, fieldName: "QS 랭킹", value: null, type: "STRING" },
       { fieldId: 7, fieldName: "영어 사용 비율", value: "60:40", type: "STRING" },

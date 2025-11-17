@@ -85,7 +85,10 @@ export interface CountryFieldValue {
 export interface UniversityApiResponse {
   univId: number; // ✅ ID는 필수
   name: string | null;
+  countryCode: string | null;
   countryName: string | null;
+  continentCode: string | null;
+  continentName: string | null;
   isFavorite: boolean | null;
   logoUrl: string | null;
   data: Array<{
