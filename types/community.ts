@@ -43,6 +43,8 @@ export interface FieldMetadata {
 export interface CountryApiResponse {
   countryCode: string; // ✅ ID 역할
   name: string | null;
+  continentCode: string | null;
+  continentName: string | null;
   data: Array<{
     fieldId: number; // ✅ ID는 필수
     fieldName: string | null;
@@ -55,7 +57,7 @@ export interface CountryApiResponse {
 export interface EnrichedCountry {
   countryCode: string;
   name: string;
-  continent: string; // 필터 전용 (테이블에 표시 안 함)
+  continent: Continent; // 필터 전용 (테이블에 표시 안 함)
   fields: Map<string, CountryFieldValue>; // key → value 매핑
   isFilled: boolean; // 하나라도 값이 있는 필드가 있는지 여부 (continent 제외)
   rawData: Array<{
@@ -104,7 +106,7 @@ export interface EnrichedUniversity {
   univId: number;
   name: string;
   countryName: string; // 원본 보존
-  continent: string; // 대륙 (필터 전용, fieldName으로 추출)
+  continent: Continent; // 대륙 (필터 전용)
   isFavorite: boolean;
   logoUrl: string; // 대학 로고 URL
   fields: Map<string, UniversityFieldValue>; // key → value 매핑 (countryName도 "country" 키로 포함)

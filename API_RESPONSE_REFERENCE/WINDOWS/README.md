@@ -36,7 +36,8 @@
   ]
   ```
   - 모든 국가를 반환하며, `data`는 설정된 커스텀 필드 목록이다. 값이 없으면 `value`가 `null`.
-  - `continentCode`, `continentName`은 `Country.continent`가 없으면 `null`이다.
+  - `continentCode`, `continentName`은 `Country.continent`가 없으면 `null`이며, 대륙 정보는 최상단으로만 제공된다.
+  - `data` 배열에는 더 이상 `fieldId: 1`(대륙) 항목이 포함되지 않는다.
 - **오류 응답**: 별도 정의 없음.
 
 ---

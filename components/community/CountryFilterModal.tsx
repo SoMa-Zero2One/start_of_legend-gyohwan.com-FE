@@ -24,10 +24,8 @@ export default function CountryFilterModal({
   const [selectedFieldKeys, setSelectedFieldKeys] = useState<string[]>(initialFieldKeys);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // 속성 선택에 표시할 필드만 (대륙 제외: 필터 전용)
-  const allFields = Object.values(COUNTRY_FIELDS)
-    .filter((field) => field.key !== "continent")
-    .sort((a, b) => a.displayOrder - b.displayOrder);
+  // 속성 선택에 표시할 필드 목록
+  const allFields = Object.values(COUNTRY_FIELDS).sort((a, b) => a.displayOrder - b.displayOrder);
 
   useEffect(() => {
     if (isOpen) {

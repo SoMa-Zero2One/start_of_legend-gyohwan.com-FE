@@ -5,10 +5,11 @@ import { Suspense } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CommunityTabs from "./CommunityTabs";
-import { fetchUniversities } from "@/lib/api/community";
+import { fetchCountries, fetchUniversities } from "@/lib/api/community";
 import { handleApiError } from "@/lib/utils/apiError";
 import { enrichUniversityData } from "@/lib/utils/universityTransform";
-import type { EnrichedUniversity } from "@/types/community";
+import { enrichCountryData } from "@/lib/utils/countryTransform";
+import type { EnrichedCountry, EnrichedUniversity } from "@/types/community";
 
 /**
  * Community 페이지 클라이언트 컴포넌트
@@ -24,17 +25,19 @@ import type { EnrichedUniversity } from "@/types/community";
  * - 코드 단순화 (서버/클라이언트 분리 불필요)
  */
 export default function CommunityClient() {
+  const [countries, setCountries] = useState<EnrichedCountry[]>([]);
   const [universities, setUniversities] = useState<EnrichedUniversity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadUniversities = async () => {
+    const loadCommunityData = async () => {
       try {
-        const data = await fetchUniversities();
-        setUniversities(enrichUniversityData(data));
+        const [countryResponse, universityResponse] = await Promise.all([fetchCountries(), fetchUniversities()]);
+        setCountries(enrichCountryData(countryResponse));
+        setUniversities(enrichUniversityData(universityResponse));
       } catch (error) {
-        console.error("[CommunityClient] 대학 목록 로드 실패:", error);
+        console.error("[CommunityClient] 커뮤니티 데이터 로드 실패:", error);
         const errorMessage = handleApiError(error);
         setError(errorMessage);
       } finally {
@@ -42,7 +45,7 @@ export default function CommunityClient() {
       }
     };
 
-    loadUniversities();
+    loadCommunityData();
   }, []);
 
   // 로딩 중
@@ -84,7 +87,7 @@ export default function CommunityClient() {
       <div className="flex min-h-screen flex-col">
         <Header title="커뮤니티" showPrevButton showHomeButton />
         <Suspense fallback={<div className="p-[20px]">Loading...</div>}>
-          <CommunityTabs countries={[]} universities={universities} />
+          <CommunityTabs countries={countries} universities={universities} />
         </Suspense>
       </div>
       <Footer />

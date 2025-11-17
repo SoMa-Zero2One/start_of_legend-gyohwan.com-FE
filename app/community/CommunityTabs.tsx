@@ -44,15 +44,17 @@ export default function CommunityTabs({ countries, universities }: CommunityTabs
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* <Tabs tabs={TABS} selectedTab={currentTab} onTabChange={handleTabChange} />
+      <Tabs tabs={TABS} selectedTab={currentTab} onTabChange={handleTabChange} />
 
-      <div style={{ display: currentTab === "나라" ? "flex" : "none" }} className="flex flex-1 flex-col">
-        <CountryContent countries={countries} />
-      </div> */}
-      {/* style 다시 추 */}
-      <div className="flex flex-1 flex-col">
-        <UniversityContent universities={universities} />
-      </div>
+      {currentTab === "나라" ? (
+        <div className="flex flex-1 flex-col">
+          <CountryContent countries={countries} />
+        </div>
+      ) : (
+        <div className="flex flex-1 flex-col">
+          <UniversityContent universities={universities} />
+        </div>
+      )}
     </div>
   );
 }

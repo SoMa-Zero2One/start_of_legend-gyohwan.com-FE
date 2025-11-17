@@ -3,8 +3,10 @@ import {
   EnrichedUniversity,
   UniversityFieldValue,
   FieldMetadata,
+  Continent,
 } from "@/types/community";
 import { UNIVERSITY_FIELDS, getUniversityFieldByKey } from "@/lib/metadata/universityFields";
+import { DEFAULT_CONTINENT, mapContinentCodeToLabel, normalizeContinentName } from "@/lib/utils/continent";
 
 /**
  * API 응답을 EnrichedUniversity로 변환 (방어적 코딩)
@@ -15,19 +17,9 @@ export function enrichUniversityData(apiData: UniversityApiResponse[]): Enriched
 
 type UniversityDataField = NonNullable<UniversityApiResponse["data"]>[number];
 
-const DEFAULT_CONTINENT = "미분류";
 const UNIVERSITY_FIELD_METADATA_BY_ID = new Map<number, FieldMetadata>(
   Object.values(UNIVERSITY_FIELDS).map((field) => [field.fieldId, field])
 );
-
-const CONTINENT_LABEL_BY_CODE: Record<string, string> = {
-  ASIA: "아시아",
-  EUROPE: "유럽",
-  NORTH_AMERICA: "북아메리카",
-  SOUTH_AMERICA: "남아메리카",
-  AFRICA: "아프리카",
-  OCEANIA: "오세아니아",
-};
 
 function transformUniversity(university: UniversityApiResponse): EnrichedUniversity {
   const fields = new Map<string, UniversityFieldValue>();
@@ -85,11 +77,11 @@ function populateDynamicFields(fields: Map<string, UniversityFieldValue>, univer
   });
 }
 
-function resolveContinent(university: UniversityApiResponse): string {
-  const continentName = sanitizeText(university.continentName);
+function resolveContinent(university: UniversityApiResponse): Continent {
+  const continentName = normalizeContinentName(university.continentName);
   if (continentName) return continentName;
 
-  const continentFromCode = mapContinentCode(university.continentCode);
+  const continentFromCode = mapContinentCodeToLabel(university.continentCode);
   if (continentFromCode) return continentFromCode;
 
   return DEFAULT_CONTINENT;
@@ -129,12 +121,6 @@ function sanitizeText(value: string | null | undefined): string | null {
 
 function hasValue(value: string | null | undefined): value is string {
   return sanitizeText(value) !== null;
-}
-
-function mapContinentCode(code: string | null | undefined): string | null {
-  if (!code) return null;
-  const normalized = code.trim().toUpperCase();
-  return CONTINENT_LABEL_BY_CODE[normalized] ?? null;
 }
 
 /**

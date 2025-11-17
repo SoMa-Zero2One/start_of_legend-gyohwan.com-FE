@@ -85,7 +85,7 @@ export default function CountryContent({ countries }: CountryContentProps) {
       <CountryFilterModal
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
-        selectedContinents={selectedContinents as Continent[]}
+        selectedContinents={selectedContinents}
         visibleFieldKeys={visibleFieldKeys}
         onApply={handleApplyFilter}
       />
