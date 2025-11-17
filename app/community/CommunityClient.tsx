@@ -10,7 +10,8 @@ import { fetchCountries, fetchUniversities } from "@/lib/api/community";
 import { handleApiError } from "@/lib/utils/apiError";
 import { enrichUniversityData } from "@/lib/utils/universityTransform";
 import { enrichCountryData } from "@/lib/utils/countryTransform";
-import { getCachedData, setCachedData } from "@/lib/utils/sessionCache";
+import { getCachedData, setCachedData, CACHE_KEYS } from "@/lib/utils/sessionCache";
+import { useAuthStore } from "@/stores/authStore";
 import type { EnrichedCountry, EnrichedUniversity } from "@/types/community";
 import type { CountryApiResponse, UniversityApiResponse } from "@/types/community";
 
@@ -35,6 +36,11 @@ export default function CommunityClient() {
   const [error, setError] = useState<string | null>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(50);
+  const { user, isLoggedIn, isLoading: isAuthLoading } = useAuthStore();
+
+  const universityCacheKey = isLoggedIn && user?.userId
+    ? `${CACHE_KEYS.UNIVERSITIES}_${user.userId}`
+    : `${CACHE_KEYS.UNIVERSITIES}_guest`;
 
   useEffect(() => {
     // Country 데이터 로드 (Stale-While-Revalidate 패턴)
@@ -64,10 +70,22 @@ export default function CommunityClient() {
     };
 
     // University 데이터 로드 (Stale-While-Revalidate 패턴)
+    // 병렬 실행하되, Country가 먼저 완료되면 즉시 렌더링
+    loadCountries();
+  }, []);
+
+  useEffect(() => {
+    if (isAuthLoading) {
+      return;
+    }
+
+    let isMounted = true;
     const loadUniversities = async () => {
+      setIsUniversityLoading(true);
+
       // 1. 캐시에서 즉시 로드
-      const cachedUniversities = getCachedData<UniversityApiResponse[]>("UNIVERSITIES");
-      if (cachedUniversities) {
+      const cachedUniversities = getCachedData<UniversityApiResponse[]>(universityCacheKey);
+      if (cachedUniversities && isMounted) {
         setUniversities(enrichUniversityData(cachedUniversities));
         setIsUniversityLoading(false);
       }
@@ -75,20 +93,25 @@ export default function CommunityClient() {
       // 2. 백그라운드에서 최신 데이터 fetch & 업데이트
       try {
         const freshUniversities = await fetchUniversities();
+        if (!isMounted) return;
         setUniversities(enrichUniversityData(freshUniversities));
-        setCachedData("UNIVERSITIES", freshUniversities); // 캐시 갱신
+        setCachedData(universityCacheKey, freshUniversities); // 캐시 갱신
       } catch (error) {
         console.error("[CommunityClient] University 데이터 로드 실패:", error);
         // University 로드 실패는 Country 표시에 영향 없음 (조용히 실패)
       } finally {
-        setIsUniversityLoading(false);
+        if (isMounted) {
+          setIsUniversityLoading(false);
+        }
       }
     };
 
-    // 병렬 실행하되, Country가 먼저 완료되면 즉시 렌더링
-    loadCountries();
     loadUniversities();
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isAuthLoading, universityCacheKey]);
 
   useEffect(() => {
     const element = headerRef.current;

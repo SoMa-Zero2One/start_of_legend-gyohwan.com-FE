@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import UniversityTable from "@/components/community/UniversityTable";
 import UniversityFilterModal from "@/components/community/UniversityFilterModal";
@@ -28,6 +28,10 @@ export default function UniversityContent({ universities }: UniversityContentPro
   const [showFilledOnly, setShowFilledOnly] = useState(true);
   const { isLoggedIn } = useAuthStore();
   const { message, messageType, isExiting, showMessage, hideToast } = useToast();
+
+  useEffect(() => {
+    setLocalUniversities(universities);
+  }, [universities]);
 
   // 커스텀 훅으로 정렬/필터 관리
   const {

@@ -16,10 +16,23 @@ interface CacheData<T> {
   timestamp: number;
 }
 
-const CACHE_KEYS = {
+export const CACHE_KEYS = {
   COUNTRIES: "community_countries",
   UNIVERSITIES: "community_universities",
 } as const;
+
+type CacheKey = keyof typeof CACHE_KEYS | string;
+
+const isPredefinedKey = (key: string): key is keyof typeof CACHE_KEYS =>
+  Object.prototype.hasOwnProperty.call(CACHE_KEYS, key);
+
+const resolveCacheKey = (key: CacheKey): string => {
+  if (typeof key === "string" && !isPredefinedKey(key)) {
+    return key;
+  }
+  const normalizedKey = key as keyof typeof CACHE_KEYS;
+  return CACHE_KEYS[normalizedKey];
+};
 
 /**
  * SessionStorage에서 캐시된 데이터 가져오기
@@ -27,11 +40,12 @@ const CACHE_KEYS = {
  * @param key - 캐시 키
  * @returns 캐시된 데이터 또는 null
  */
-export function getCachedData<T>(key: keyof typeof CACHE_KEYS): T | null {
+export function getCachedData<T>(key: CacheKey): T | null {
   if (typeof window === "undefined") return null;
 
   try {
-    const cached = sessionStorage.getItem(CACHE_KEYS[key]);
+    const cacheKey = resolveCacheKey(key);
+    const cached = sessionStorage.getItem(cacheKey);
     if (!cached) return null;
 
     const { data } = JSON.parse(cached) as CacheData<T>;
@@ -48,7 +62,7 @@ export function getCachedData<T>(key: keyof typeof CACHE_KEYS): T | null {
  * @param key - 캐시 키
  * @param data - 저장할 데이터
  */
-export function setCachedData<T>(key: keyof typeof CACHE_KEYS, data: T): void {
+export function setCachedData<T>(key: CacheKey, data: T): void {
   if (typeof window === "undefined") return;
 
   try {
@@ -56,7 +70,8 @@ export function setCachedData<T>(key: keyof typeof CACHE_KEYS, data: T): void {
       data,
       timestamp: Date.now(),
     };
-    sessionStorage.setItem(CACHE_KEYS[key], JSON.stringify(cacheData));
+    const cacheKey = resolveCacheKey(key);
+    sessionStorage.setItem(cacheKey, JSON.stringify(cacheData));
   } catch (error) {
     console.error(`[SessionCache] Failed to cache data for ${key}:`, error);
   }
@@ -67,11 +82,12 @@ export function setCachedData<T>(key: keyof typeof CACHE_KEYS, data: T): void {
  *
  * @param key - 캐시 키
  */
-export function invalidateCache(key: keyof typeof CACHE_KEYS): void {
+export function invalidateCache(key: CacheKey): void {
   if (typeof window === "undefined") return;
 
   try {
-    sessionStorage.removeItem(CACHE_KEYS[key]);
+    const cacheKey = resolveCacheKey(key);
+    sessionStorage.removeItem(cacheKey);
   } catch (error) {
     console.error(`[SessionCache] Failed to invalidate cache for ${key}:`, error);
   }

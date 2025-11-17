@@ -64,7 +64,7 @@ export default function UniversityTable({
       <table className="w-full border-collapse">
         <thead className="caption-1">
           <tr className="flex border-t border-gray-300 text-gray-700">
-            <th className="sticky left-0 z-1 flex w-[150px] items-center bg-white px-[16px] py-[12px]">대학명</th>
+            <th className="sticky left-0 z-10 flex w-[150px] items-center bg-white px-[16px] py-[12px]">대학명</th>
             {visibleFields.map((field) => (
               <th
                 key={field.key}
@@ -100,7 +100,7 @@ export default function UniversityTable({
               onClick={() => handleUniversityClick(university.univId)}
             >
               <td
-                className={`interactive-row-child sticky left-0 z-1 flex min-h-[120px] w-[150px] items-center gap-[8px] bg-white py-[20px] ${isLoggedIn ? "pr-[16px]" : "px-[16px]"}`}
+                className={`interactive-row-child sticky left-0 z-10 flex min-h-[120px] w-[150px] items-center gap-[8px] bg-white py-[20px] ${isLoggedIn ? "pr-[16px]" : "px-[16px]"}`}
               >
                 {/* 즐겨찾기 버튼 (로그인 유저만 표시) */}
                 {isLoggedIn && (
