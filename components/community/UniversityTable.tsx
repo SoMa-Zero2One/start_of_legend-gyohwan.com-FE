@@ -100,7 +100,7 @@ export default function UniversityTable({
               onClick={() => handleUniversityClick(university.univId)}
             >
               <td
-                className={`interactive-row-child sticky left-0 z-20 flex min-h-[120px] w-[150px] items-center gap-[8px] bg-white py-[20px] ${isLoggedIn ? "pr-[16px]" : "px-[16px]"}`}
+                className={`interactive-row-child sticky left-0 z-10 flex min-h-[120px] w-[150px] items-center gap-[8px] bg-white py-[20px] ${isLoggedIn ? "pr-[16px]" : "px-[16px]"}`}
               >
                 {/* 즐겨찾기 버튼 (로그인 유저만 표시) */}
                 {isLoggedIn && (

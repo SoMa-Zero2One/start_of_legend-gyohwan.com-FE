@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Suspense } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -10,7 +10,10 @@ import { fetchCountries, fetchUniversities } from "@/lib/api/community";
 import { handleApiError } from "@/lib/utils/apiError";
 import { enrichUniversityData } from "@/lib/utils/universityTransform";
 import { enrichCountryData } from "@/lib/utils/countryTransform";
+import { getCachedData, setCachedData, CACHE_KEYS } from "@/lib/utils/sessionCache";
+import { useAuthStore } from "@/stores/authStore";
 import type { EnrichedCountry, EnrichedUniversity } from "@/types/community";
+import type { CountryApiResponse, UniversityApiResponse } from "@/types/community";
 
 /**
  * Community 페이지 클라이언트 컴포넌트
@@ -28,52 +31,120 @@ import type { EnrichedCountry, EnrichedUniversity } from "@/types/community";
 export default function CommunityClient() {
   const [countries, setCountries] = useState<EnrichedCountry[]>([]);
   const [universities, setUniversities] = useState<EnrichedUniversity[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isCountryLoading, setIsCountryLoading] = useState(true);
+  const [isUniversityLoading, setIsUniversityLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [headerHeight, setHeaderHeight] = useState(50);
+  const { user, isLoggedIn, isLoading: isAuthLoading } = useAuthStore();
+
+  const universityCacheKey = isLoggedIn && user?.userId
+    ? `${CACHE_KEYS.UNIVERSITIES}_${user.userId}`
+    : `${CACHE_KEYS.UNIVERSITIES}_guest`;
 
   useEffect(() => {
-    const loadCommunityData = async () => {
+    // Country 데이터 로드 (Stale-While-Revalidate 패턴)
+    const loadCountries = async () => {
+      // 1. 캐시에서 즉시 로드 (있으면 0.1초 만에 렌더링)
+      const cachedCountries = getCachedData<CountryApiResponse[]>("COUNTRIES");
+      if (cachedCountries) {
+        setCountries(enrichCountryData(cachedCountries));
+        setIsCountryLoading(false);
+      }
+
+      // 2. 백그라운드에서 최신 데이터 fetch & 업데이트
       try {
-        const [countryResponse, universityResponse] = await Promise.all([fetchCountries(), fetchUniversities()]);
-        setCountries(enrichCountryData(countryResponse));
-        setUniversities(enrichUniversityData(universityResponse));
+        const freshCountries = await fetchCountries();
+        setCountries(enrichCountryData(freshCountries));
+        setCachedData("COUNTRIES", freshCountries); // 캐시 갱신
       } catch (error) {
-        console.error("[CommunityClient] 커뮤니티 데이터 로드 실패:", error);
-        const errorMessage = handleApiError(error);
-        setError(errorMessage);
+        console.error("[CommunityClient] Country 데이터 로드 실패:", error);
+        // 캐시 데이터가 없는 경우에만 에러 표시
+        if (!cachedCountries) {
+          const errorMessage = handleApiError(error);
+          setError(errorMessage);
+        }
       } finally {
-        setIsLoading(false);
+        setIsCountryLoading(false);
       }
     };
 
-    loadCommunityData();
+    // University 데이터 로드 (Stale-While-Revalidate 패턴)
+    // 병렬 실행하되, Country가 먼저 완료되면 즉시 렌더링
+    loadCountries();
   }, []);
 
-  // 로딩 중
-  if (isLoading) {
-    return (
-      <>
-        <div className="flex min-h-screen flex-col">
-          <Header title="커뮤니티" showPrevButton showHomeButton>
-            <HeaderAuthSection />
-          </Header>
-          <div className="flex flex-1 items-center justify-center px-[20px] py-[60px]">
-            <p className="body-2 text-gray-500">로딩 중...</p>
-          </div>
-        </div>
-        <Footer />
-      </>
-    );
-  }
+  useEffect(() => {
+    if (isAuthLoading) {
+      return;
+    }
+
+    let isMounted = true;
+    const loadUniversities = async () => {
+      setIsUniversityLoading(true);
+
+      // 1. 캐시에서 즉시 로드
+      const cachedUniversities = getCachedData<UniversityApiResponse[]>(universityCacheKey);
+      if (cachedUniversities && isMounted) {
+        setUniversities(enrichUniversityData(cachedUniversities));
+        setIsUniversityLoading(false);
+      }
+
+      // 2. 백그라운드에서 최신 데이터 fetch & 업데이트
+      try {
+        const freshUniversities = await fetchUniversities();
+        if (!isMounted) return;
+        setUniversities(enrichUniversityData(freshUniversities));
+        setCachedData(universityCacheKey, freshUniversities); // 캐시 갱신
+      } catch (error) {
+        console.error("[CommunityClient] University 데이터 로드 실패:", error);
+        // University 로드 실패는 Country 표시에 영향 없음 (조용히 실패)
+      } finally {
+        if (isMounted) {
+          setIsUniversityLoading(false);
+        }
+      }
+    };
+
+    loadUniversities();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isAuthLoading, universityCacheKey]);
+
+  useEffect(() => {
+    const element = headerRef.current;
+    if (!element) {
+      return;
+    }
+
+    const updateHeight = () => {
+      setHeaderHeight(element.getBoundingClientRect().height || 50);
+    };
+
+    updateHeight();
+
+    if (typeof ResizeObserver !== "undefined") {
+      const observer = new ResizeObserver(updateHeight);
+      observer.observe(element);
+      return () => observer.disconnect();
+    }
+
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
 
   // 에러 발생
   if (error) {
     return (
       <>
         <div className="flex min-h-screen flex-col">
-          <Header title="커뮤니티" showPrevButton showHomeButton>
-            <HeaderAuthSection />
-          </Header>
+          <div ref={headerRef} className="sticky top-0 z-20 bg-white">
+            <Header title="커뮤니티" showPrevButton showHomeButton showBorder>
+              <HeaderAuthSection />
+            </Header>
+          </div>
           <div className="flex flex-1 items-center justify-center px-[20px] py-[60px]">
             <div className="text-center">
               <p className="body-2 text-gray-700">{error}</p>
@@ -86,15 +157,23 @@ export default function CommunityClient() {
     );
   }
 
-  // 정상 렌더링
+  // 정상 렌더링 (Country가 먼저 로드되면 즉시 표시, University는 백그라운드 로딩)
   return (
     <>
       <div className="flex min-h-screen flex-col">
-        <Header title="커뮤니티" showPrevButton showHomeButton>
-          <HeaderAuthSection />
-        </Header>
+        <div ref={headerRef} className="sticky top-0 z-20 bg-white">
+          <Header title="커뮤니티" showPrevButton showHomeButton>
+            <HeaderAuthSection />
+          </Header>
+        </div>
         <Suspense fallback={<div className="p-[20px]">Loading...</div>}>
-          <CommunityTabs countries={countries} universities={universities} />
+          <CommunityTabs
+            countries={countries}
+            universities={universities}
+            headerHeight={headerHeight}
+            isCountryLoading={isCountryLoading}
+            isUniversityLoading={isUniversityLoading}
+          />
         </Suspense>
       </div>
       <Footer />
