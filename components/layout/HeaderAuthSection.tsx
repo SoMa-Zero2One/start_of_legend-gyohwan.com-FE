@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useAuthStore } from "@/stores/authStore";
 import ProfileMenu from "@/components/layout/ProfileMenu";
+import LoginIcon from "@/components/icons/LoginIcon";
 
 export default function HeaderAuthSection() {
   const { isLoading, isLoggedIn } = useAuthStore();
@@ -17,8 +17,8 @@ export default function HeaderAuthSection() {
   }
 
   return (
-    <Link href="/log-in-or-create-account" className="caption-2 flex items-center gap-[4px]">
-      <Image src="/icons/ico_login.svg" alt="Login" width={20} height={20} />
+    <Link href="/log-in-or-create-account" className="caption-2 flex items-center gap-[4px] text-gray-900">
+      <LoginIcon size={20} />
       로그인
     </Link>
   );
