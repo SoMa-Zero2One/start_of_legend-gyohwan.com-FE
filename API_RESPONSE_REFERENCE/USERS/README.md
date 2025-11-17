@@ -102,7 +102,7 @@
     ]
   }
   ```
-  - `testType`는 `Language.TestType` 열거형 이름(`TOEFL_IBT`, `TOEFL_ITP`, `IELTS`, `TOEIC`, `HSK`, `JLPT`) 중 하나.
+  - `testType`는 `Language.TestType` 열거형 이름(`TOEFL_IBT`, `TOEFL_ITP`, `IELTS`, `TOEIC`, `HSK`, `JLPT`, `OTHER`) 중 하나.
   - `score`, `grade`, `statusReason`는 문자형이며 없으면 `null`.
 - **오류 응답**
 
@@ -117,7 +117,7 @@
   ```json
   { "testType": "TOEIC", "score": "900", "grade": "A" }
   ```
-  - `testType`는 필수(`@NotNull`), 대문자 열거형 이름으로 전달해야 한다.
+  - `testType`는 필수(`@NotNull`), 대문자 열거형 이름(`TOEFL_IBT`~`JLPT`, `OTHER`)으로 전달해야 한다.
   - `score`, `grade`는 선택 문자열.
 - **성공 (200 OK)**: `LanguageResponse`(`common/dto/LanguageResponse.java:5`)
   ```json

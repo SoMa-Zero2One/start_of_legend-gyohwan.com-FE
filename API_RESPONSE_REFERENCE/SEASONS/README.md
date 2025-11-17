@@ -210,7 +210,7 @@
   }
   ```
   - `gpa.criteria`는 문자열 `"4.5"`, `"4.3"`, `"4.0"` 중 하나.
-  - `language.testType`는 `Language.TestType` 열거형 이름(대문자).
+  - `language.testType`는 `Language.TestType` 열거형 이름(대문자, `TOEFL_IBT`~`JLPT`, `OTHER` 포함).
   - 지원서에 GPA/어학 정보가 비어 있으면 각 필드는 `null`.
   - `choices[].slot.country`는 한글 국가명이며, 미연결 시 `null`.
 - **오류 응답**

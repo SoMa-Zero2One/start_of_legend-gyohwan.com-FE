@@ -16,6 +16,8 @@
     {
       "countryCode": "US",
       "name": "미국",
+      "continentCode": "NORTH_AMERICA",
+      "continentName": "북아메리카",
       "data": [
         {
           "fieldId": 1,
@@ -34,6 +36,7 @@
   ]
   ```
   - 모든 국가를 반환하며, `data`는 설정된 커스텀 필드 목록이다. 값이 없으면 `value`가 `null`.
+  - `continentCode`, `continentName`은 `Country.continent`가 없으면 `null`이다.
 - **오류 응답**: 별도 정의 없음.
 
 ---
@@ -44,6 +47,8 @@
   {
     "countryCode": "FR",
     "name": "프랑스",
+    "continentCode": "EUROPE",
+    "continentName": "유럽",
     "data": [
       {
         "fieldId": 1,
@@ -62,7 +67,8 @@
     ]
   }
   ```
-  - `universities`는 해당 국가에 속한 교환 대학 요약 정보다.
+  - `universities`는 `UnivSimpleDto` 목록으로, 각 항목이 `nameKo`, `nameEn`, `logoUrl`을 모두 포함한다.
+  - `continentCode`, `continentName`은 `Country.continent`가 없으면 `null`.
 - **오류 응답**
 
 | HTTP 상태 | ErrorCode | `detail` 메시지 | 발생 조건 |
@@ -82,6 +88,8 @@
       "name": "UC Berkeley",
       "countryCode": "US",
       "countryName": "미국",
+      "continentCode": "NORTH_AMERICA",
+      "continentName": "북아메리카",
       "isFavorite": true,
       "data": [
         {
@@ -101,6 +109,7 @@
   ]
   ```
   - 로그인하지 않은 경우 `isFavorite`는 항상 `false`.
+  - `continentCode`, `continentName`은 국가 정보에서 바로 추출되며, 더 이상 `data` 배열 안에 포함되지 않는다. (기존 `fieldId: 1` 대륙 필드는 관리자 설정에 남아 있을 수 있으나, 필터/정렬 용도라면 상단 필드를 우선 사용)
   - `seasons` 파라미터가 없으면 모든 대학이 반환된다.
 - **오류 응답**: 별도 정의 없음.
 
@@ -115,6 +124,8 @@
     "logoUrl": "https://cdn.example.com/univ/ucb.png",
     "countryCode": "US",
     "countryName": "미국",
+    "continentCode": "NORTH_AMERICA",
+    "continentName": "북아메리카",
     "data": [
       {
         "fieldId": 5,
@@ -122,10 +133,12 @@
         "value": "학기",
         "type": "STRING"
       }
-    ]
+    ],
+    "information": "학교 소개/세부 정보"
   }
   ```
-  - 즐겨찾기 여부는 포함되지 않는다. 대학에 매핑된 모든 필드를 내려준다.
+  - 즐겨찾기 여부는 포함되지 않는다. 대학에 매핑된 모든 필드를 내려주며 `information`은 관리자 페이지에서 수정하는 자유 입력 텍스트다.
+  - `continentCode`, `continentName`은 국가 데이터에서 파생된다(값이 없으면 `null`).
 - **오류 응답**
 
 | HTTP 상태 | ErrorCode | `detail` 메시지 | 발생 조건 |

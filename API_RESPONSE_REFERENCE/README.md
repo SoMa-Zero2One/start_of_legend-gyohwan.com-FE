@@ -9,6 +9,7 @@
 - `COMMUNITY/README.md`: 커뮤니티 게시글/댓글 API
 - `WINDOWS/README.md`: 국가·대학 탐색 및 즐겨찾기 API
 - `ARTICLES/README.md`: 아티클 그룹/본문 API
+- `ADMIN/README.md`: 관리자 전용 OutgoingUniv 정보 수정 API
 
 ---
 
@@ -16,6 +17,9 @@
 
 | 날짜 | 커밋 | 요약 | 비고 |
 |------|------|------|------|
+| 2025-11-17 | 64cd7c8 | `/api/admin` 모듈 추가, OutgoingUniv 정보 수정 서비스 도입 | Admin 문서 신설 (`PUT /api/admin/outgoing-univs/{id}/information`) |
+| 2025-11-16 | 6e45e74 | `Language.TestType`에 `OTHER` 열거값 추가 | Users/Seasons/Applications 문서의 어학 시험 목록 업데이트 |
+| 2025-11-15 | 315bbef | 커뮤니티 게시글 좋아요 API 추가 (`POST/DELETE /like`) | Community 문서에 좋아요 엔드포인트 및 `PostLikeResponse` 반영 |
 | 2025-11-12 | 73fb46a | 시즌 목록 DTO에 `applicationCount` 필드 추가 | Seasons 문서 `GET /v1/seasons` 응답/설명 갱신 완료 |
 | 2025-11-10 | bcbdf1d | `UnivDetailResponse`에 `logoUrl` 노출 | Windows 상세 응답에 필드 추가 |
 | 2025-11-05 | 8efd7db | Window API가 `DataField` 전체 목록을 항상 반환하도록 수정 | Windows 문서 `data` 동작 설명 추가 |

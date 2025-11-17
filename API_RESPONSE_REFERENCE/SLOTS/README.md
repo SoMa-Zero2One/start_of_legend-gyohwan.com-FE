@@ -13,6 +13,7 @@
   {
     "slotId": 12,
     "seasonId": 3,
+    "universityId": 98,
     "name": "UC Berkeley",
     "country": "미국",
     "logoUrl": "https://...",
@@ -40,6 +41,7 @@
   }
   ```
   - `choiceCount`는 `long`이며, 해당 슬롯을 선택한 지원서 수다.
+  - `universityId`는 파트너 대학(`OutgoingUniv`)의 ID이며, `SeasonSlotsResponse`의 `slots[].slotId`와 동일한 대학 정보를 식별하는 데 사용한다.
   - `slotCount`는 문자열이므로 `"2"`, `"2명"`, `"15-20"`처럼 단위나 범위가 포함될 수 있으며, 데이터에 따라 공백 문자가 남아 있을 수도 있다.
   - `country`는 파트너 대학의 국가 한글명이며, 슬롯에 국가가 연결되지 않은 경우 `null`로 내려간다.
   - `homepageUrl`은 파트너 대학 홈페이지 URL 문자열이며, 데이터가 없으면 `null`.
