@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Season } from "@/types/season";
 import { useAuthStore } from "@/stores/authStore";
 import StrategyRoomCard from "./StrategyRoomCard";
+import PastSeasonCard from "./PastSeasonCard";
 
 interface StrategyRoomEntrancesProps {
   initialSeasons: Season[];
@@ -11,6 +12,33 @@ interface StrategyRoomEntrancesProps {
 
 export default function StrategyRoomEntrances({ initialSeasons }: StrategyRoomEntrancesProps) {
   const { user } = useAuthStore();
+  const [activeTab, setActiveTab] = useState<"current" | "past">("current");
+  const [pastSeasons, setPastSeasons] = useState<Season[]>([]);
+
+  // 과거 시즌 데이터 로드
+  useEffect(() => {
+    const loadPastSeasons = async () => {
+      try {
+        const response = await fetch("/data/pastSeasons.json");
+        const data = await response.json();
+        const seasons = data.seasons || [];
+
+        // applicationCount 내림차순 정렬
+        const sorted = seasons.sort((a: Season, b: Season) => {
+          const countA = a.applicationCount ?? 0;
+          const countB = b.applicationCount ?? 0;
+          return countB - countA; // 내림차순
+        });
+
+        setPastSeasons(sorted);
+      } catch (error) {
+        console.error("Failed to load past seasons:", error);
+        setPastSeasons([]);
+      }
+    };
+
+    loadPastSeasons();
+  }, []);
 
   // 서버에서 받은 시즌을 사용자 기준으로 정렬
   const sortedSeasons = useMemo(() => {
@@ -45,16 +73,59 @@ export default function StrategyRoomEntrances({ initialSeasons }: StrategyRoomEn
     });
   }, [initialSeasons, user?.domesticUniversity]);
 
+  // 과거 시즌 총 참여 인원 계산
+  const totalPastParticipants = pastSeasons.reduce((sum, season) => {
+    return sum + (season.applicationCount ?? 0);
+  }, 0);
+
   return (
     <div id="strategy-room-entrances" className="relative flex flex-col gap-[40px] px-[20px] pb-[100px]">
+      {/* 헤더 */}
       <div className="flex flex-col items-center gap-[12px]">
-        <h2 className="head-4">교환학생 모집 중인 대학</h2>
-        <p className="g-head-2 text-primary-blue">{sortedSeasons.length}개 대학</p>
+        <h2 className="head-4">
+          {activeTab === "current" ? "교환학생 모집 중인 대학" : "과거 진행한 대학"}
+        </h2>
+
+        {/* 탭 UI */}
+        <div className="flex gap-[24px] border-b border-gray-300">
+          <button
+            onClick={() => setActiveTab("current")}
+            className={`g-body-1 cursor-pointer pb-[8px] transition-colors ${
+              activeTab === "current"
+                ? "border-b-2 border-primary-blue text-primary-blue font-bold"
+                : "text-gray-500"
+            }`}
+          >
+            모집 중
+          </button>
+          <button
+            onClick={() => setActiveTab("past")}
+            className={`g-body-1 cursor-pointer pb-[8px] transition-colors ${
+              activeTab === "past"
+                ? "border-b-2 border-primary-blue text-primary-blue font-bold"
+                : "text-gray-500"
+            }`}
+          >
+            과거 진행
+          </button>
+        </div>
+
+        {/* 개수 표시 */}
+        {activeTab === "current" ? (
+          <p className="g-head-2 text-primary-blue">{sortedSeasons.length}개 대학</p>
+        ) : (
+          <div className="flex flex-col items-center gap-[4px]">
+            <p className="g-head-2 text-primary-blue">{pastSeasons.length}개 대학</p>
+            <p className="g-body-1 text-primary-blue">총 {totalPastParticipants}명 참여</p>
+          </div>
+        )}
       </div>
+
+      {/* 카드 리스트 */}
       <div className="grid grid-cols-1 gap-[12px]">
-        {sortedSeasons.map((season) => (
-          <StrategyRoomCard key={season.seasonId} data={season} />
-        ))}
+        {activeTab === "current"
+          ? sortedSeasons.map((season) => <StrategyRoomCard key={season.seasonId} data={season} />)
+          : pastSeasons.map((season) => <PastSeasonCard key={season.seasonId} data={season} />)}
       </div>
     </div>
   );
