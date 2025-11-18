@@ -204,7 +204,7 @@ function ApplicationEditContent() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="지망 대학 변경하기" showPrevButton showHomeButton />
+        <Header title="지망 대학 변경하기" showPrevButton showHomeButton fallbackUrl={`/strategy-room/${seasonId}`} />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-gray-500">로딩 중...</p>
         </div>
@@ -215,7 +215,7 @@ function ApplicationEditContent() {
   if (error || !myApplication) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="지망 대학 변경하기" showPrevButton showHomeButton />
+        <Header title="지망 대학 변경하기" showPrevButton showHomeButton fallbackUrl={`/strategy-room/${seasonId}`} />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-red-500">{error || "데이터를 불러올 수 없습니다."}</p>
         </div>
@@ -225,7 +225,7 @@ function ApplicationEditContent() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header title="지망 대학 변경하기" showPrevButton showHomeButton />
+      <Header title="지망 대학 변경하기" showPrevButton showHomeButton fallbackUrl={`/strategy-room/${seasonId}`} />
 
       <UniversitySelectionStep
         selectedUniversities={selectedUniversities}
