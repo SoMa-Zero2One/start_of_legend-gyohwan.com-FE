@@ -6,6 +6,7 @@ import UniversityTable from "@/components/community/UniversityTable";
 import UniversityFilterModal from "@/components/community/UniversityFilterModal";
 import FavoriteFilterToggle from "@/components/community/FavoriteFilterToggle";
 import FilterIcon from "@/components/icons/FilterIcon";
+import SearchIcon from "@/components/icons/SearchIcon";
 import Toast from "@/components/common/Toast";
 import { EnrichedUniversity, Continent } from "@/types/community";
 import { useUniversityTable } from "@/hooks/useUniversityTable";
@@ -26,6 +27,8 @@ export default function UniversityContent({ universities }: UniversityContentPro
   const [localUniversities, setLocalUniversities] = useState(universities);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [showFilledOnly, setShowFilledOnly] = useState(true);
+  const [isSearchMode, setIsSearchMode] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { isLoggedIn } = useAuthStore();
   const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
@@ -87,9 +90,25 @@ export default function UniversityContent({ universities }: UniversityContentPro
 
   // showFilledOnly가 true면 나라를 제외한 모든 필드가 null인 대학 제외
   const displayedUniversities = useMemo(() => {
-    if (!showFilledOnly) return favoritedUniversities;
-    return favoritedUniversities.filter((university) => university.isFilled);
-  }, [favoritedUniversities, showFilledOnly]);
+    let result = favoritedUniversities;
+
+    // 1단계: isFilled 필터링
+    if (showFilledOnly) {
+      result = result.filter((university) => university.isFilled);
+    }
+
+    // 2단계: 검색어 필터링
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      result = result.filter((university) => {
+        const name = university.name?.toLowerCase() || "";
+        const countryName = university.countryName?.toLowerCase() || "";
+        return name.includes(query) || countryName.includes(query);
+      });
+    }
+
+    return result;
+  }, [favoritedUniversities, showFilledOnly, searchQuery]);
 
   // 비로그인 + 즐겨찾기 토글 ON → CTA 표시
   const shouldShowLoginCTA = !isLoggedIn && showFavoritesOnly;
@@ -108,13 +127,52 @@ export default function UniversityContent({ universities }: UniversityContentPro
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* 전체 개수 + 필터 버튼 */}
-      <div className="flex items-center justify-between px-[20px] py-4">
-        <div>
-          <h2 className="subhead-1">전체 ({displayedUniversities.length})</h2>
-          <p className="caption-2 mt-[4px] text-gray-700">행을 클릭하여 대학 상세 정보를 확인하세요</p>
+      {/* 검색 모드가 아닐 때: 전체 제목 + 검색 버튼 */}
+      {!isSearchMode && (
+        <div className="flex items-center justify-between px-[20px] py-4">
+          <div>
+            <h2 className="subhead-1">전체 ({displayedUniversities.length})</h2>
+            <p className="caption-2 mt-[4px] text-gray-700">행을 클릭하여 대학 상세 정보를 확인하세요</p>
+          </div>
+          <button
+            onClick={() => setIsSearchMode(true)}
+            className="flex h-[24px] w-[24px] cursor-pointer items-center justify-center"
+          >
+            <SearchIcon size={20} />
+          </button>
         </div>
-      </div>
+      )}
+
+      {/* 검색 모드일 때: 검색창 */}
+      {isSearchMode && (
+        <div className="px-[20px] py-4">
+          <div className="flex items-center gap-3">
+            <div className="relative flex flex-1">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="대학명 또는 국가로 검색..."
+                className="w-full rounded-[4px] bg-gray-100 py-1 pr-3 pl-10 text-[14px] focus:outline-none"
+                autoFocus
+              />
+              <div className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400">
+                <SearchIcon size={16} />
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                setIsSearchMode(false);
+                setSearchQuery("");
+              }}
+              className="caption-2 cursor-pointer text-gray-600 hover:text-gray-900"
+            >
+              취소
+            </button>
+          </div>
+          <p className="caption-2 mt-[4px] text-gray-700">검색 결과 ({displayedUniversities.length})</p>
+        </div>
+      )}
 
       {/* 정보 입력된 항목만 보기 토글 */}
       <div className="flex items-center justify-between px-[20px] pb-4">
