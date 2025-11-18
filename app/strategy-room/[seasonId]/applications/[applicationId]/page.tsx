@@ -97,7 +97,7 @@ export default function ApplicationDetailPage() {
       {/* 메인 콘텐츠 - data가 있을 때만 렌더링 */}
       {data && (
         <>
-          <Header title={isMe ? "내 프로필" : "프로필"} showPrevButton showHomeButton />
+          <Header title={isMe ? "내 프로필" : "프로필"} showPrevButton showHomeButton fallbackUrl={`/strategy-room/${seasonId}`} />
           <div className="flex flex-col px-[20px]">
             {/* 상단 요약 */}
             <div className="flex flex-col gap-[20px] border-b-[8px] border-gray-300 py-[20px]">

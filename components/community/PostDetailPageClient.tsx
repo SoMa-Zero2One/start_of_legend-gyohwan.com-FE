@@ -90,7 +90,7 @@ export default function PostDetailPageClient({ postId }: PostDetailPageClientPro
   return (
     <div className="flex min-h-screen flex-col">
       <div className="sticky top-0 z-20 bg-white">
-        <Header showPrevButton showHomeButton showBorder>
+        <Header showPrevButton showHomeButton showBorder fallbackUrl="/community">
           {post && !isLoading ? <PostActionMenuButton post={post} /> : null}
         </Header>
       </div>

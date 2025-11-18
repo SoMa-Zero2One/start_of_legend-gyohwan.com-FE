@@ -57,7 +57,7 @@ export default async function UniversityDetailPage({ params }: UniversityDetailP
     <div className="flex min-h-screen flex-col">
       {/* Sticky Header */}
       <div className="sticky top-0 z-20 bg-white">
-        <Header showPrevButton showHomeButton>
+        <Header showPrevButton showHomeButton fallbackUrl="/community">
           <HeaderAuthSection />
         </Header>
       </div>

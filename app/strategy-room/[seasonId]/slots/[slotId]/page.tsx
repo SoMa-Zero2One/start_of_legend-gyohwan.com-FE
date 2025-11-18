@@ -190,7 +190,7 @@ export default function SlotDetailPage() {
   if (error || !data) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="지원자 목록" showPrevButton showHomeButton showBorder />
+        <Header title="지원자 목록" showPrevButton showHomeButton showBorder fallbackUrl={`/strategy-room/${seasonId}`} />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-error-red">{error || "데이터를 찾을 수 없습니다."}</p>
         </div>
@@ -208,7 +208,7 @@ export default function SlotDetailPage() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* 상단 헤더 */}
-      <Header title="지원자 목록" showPrevButton showHomeButton />
+      <Header title="지원자 목록" showPrevButton showHomeButton fallbackUrl={`/strategy-room/${seasonId}`} />
 
       {/* 대학 정보 */}
       <section className="border-b border-gray-100 p-[20px]">

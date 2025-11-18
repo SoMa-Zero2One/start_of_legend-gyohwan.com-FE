@@ -18,6 +18,7 @@ interface HeaderProps {
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
   showBorder?: boolean;
+  fallbackUrl?: string; // 뒤로가기 히스토리 없을 때 이동할 경로
 }
 
 export default function Header({
@@ -30,6 +31,7 @@ export default function Header({
   searchQuery = "",
   onSearchChange,
   showBorder = false,
+  fallbackUrl,
 }: HeaderProps) {
   const [isSearchMode, setIsSearchMode] = useState(false);
 
@@ -51,6 +53,7 @@ export default function Header({
         onCancel={handleSearchCancel}
         showBorder={showBorder}
         showPrevButton={showPrevButton}
+        fallbackUrl={fallbackUrl}
       />
     );
   }
@@ -65,6 +68,7 @@ export default function Header({
       showSearchButton={showSearchButton}
       onSearchClick={handleSearchClick}
       showBorder={showBorder}
+      fallbackUrl={fallbackUrl}
     >
       {children}
     </NormalHeader>
@@ -78,14 +82,24 @@ function SearchHeader({
   onCancel,
   showBorder,
   showPrevButton,
+  fallbackUrl,
 }: {
   searchQuery: string;
   onSearchChange?: (query: string) => void;
   onCancel: () => void;
   showBorder: boolean;
   showPrevButton: boolean;
+  fallbackUrl?: string;
 }) {
   const router = useRouter();
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else if (fallbackUrl) {
+      router.replace(fallbackUrl); // push → replace: 현재 페이지를 히스토리에서 제거
+    }
+  };
 
   return (
     <header
@@ -93,7 +107,7 @@ function SearchHeader({
     >
       {showPrevButton && (
         <button
-          onClick={() => router.back()}
+          onClick={handleBack}
           className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center"
         >
           <PrevIcon size={14} />
@@ -133,6 +147,7 @@ function NormalHeader({
   showSearchButton,
   onSearchClick,
   showBorder,
+  fallbackUrl,
 }: {
   children?: React.ReactNode;
   title?: string;
@@ -142,8 +157,17 @@ function NormalHeader({
   showSearchButton: boolean;
   onSearchClick: () => void;
   showBorder: boolean;
+  fallbackUrl?: string;
 }) {
   const router = useRouter();
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else if (fallbackUrl) {
+      router.replace(fallbackUrl); // push → replace: 현재 페이지를 히스토리에서 제거
+    }
+  };
 
   return (
     <header
@@ -159,7 +183,7 @@ function NormalHeader({
           </Link>
         )}
         {showPrevButton && (
-          <button onClick={() => router.back()} className="flex h-[20px] w-[20px] cursor-pointer items-center">
+          <button onClick={handleBack} className="flex h-[20px] w-[20px] cursor-pointer items-center">
             <PrevIcon size={14} />
           </button>
         )}
