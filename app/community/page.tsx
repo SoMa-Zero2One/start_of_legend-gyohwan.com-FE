@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import CommunityClient from "./CommunityClient";
 
 /**
@@ -16,5 +17,9 @@ import CommunityClient from "./CommunityClient";
  * - 코드 단순화 (서버/클라이언트 분리 불필요)
  */
 export default function CommunityPage() {
-  return <CommunityClient />;
+  return (
+    <Suspense fallback={null}>
+      <CommunityClient />
+    </Suspense>
+  );
 }
