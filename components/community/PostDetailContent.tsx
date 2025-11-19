@@ -5,6 +5,7 @@ import { formatDateTime } from "@/lib/utils/date";
 import { likePost, unlikePost } from "@/lib/api/communityPosts";
 import { useAuthStore } from "@/stores/authStore";
 import { useToast } from "@/hooks/useToast";
+import { handleApiError } from "@/lib/utils/apiError";
 import HeartIcon from "@/components/icons/HeartIcon";
 import CommentIcon from "@/components/icons/CommentIcon";
 import Toast from "@/components/common/Toast";
@@ -27,7 +28,7 @@ interface PostDetailContentProps {
  * - authStore로 로그인 여부 체크 (비로그인 시 안내 메시지)
  * - likePost / unlikePost API로 서버에 좋아요 상태 저장
  * - 낙관적 업데이트: UI 먼저 변경 후 API 호출, 실패 시 롤백
- * - useToast로 에러 처리
+ * - handleApiError로 구체적인 에러 메시지 파싱 후 토스트 표시
  * - 날짜 포맷: "2025-01-05 12:34" 형식
  * - HeartIcon, CommentIcon 재사용
  *
@@ -70,7 +71,8 @@ export default function PostDetailContent({ post }: PostDetailContentProps) {
       // 에러 발생 시 이전 상태로 롤백
       setIsLiked(previousIsLiked);
       setLikeCount(previousLikeCount);
-      showMessage("좋아요 처리에 실패했습니다.", "error");
+      const errorMessage = handleApiError(error);
+      showMessage(errorMessage, "error");
     } finally {
       setIsLikeLoading(false);
     }
