@@ -12,15 +12,15 @@ interface CountryContentProps {
 
 // 클라이언트 컴포넌트 (인터랙션 처리)
 export default function CountryContent({ countries }: CountryContentProps) {
-  const [activeContinents, setActiveContinents] = useState<Continent[]>(CONTINENTS);
+  const [activeContinents, setActiveContinents] = useState<Continent[]>([]);
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredCountries = useMemo(() => {
     let result = countries;
 
-    // 1단계: 대륙 필터링
-    if (activeContinents.length !== CONTINENTS.length) {
+    // 1단계: 대륙 필터링 (빈 배열이면 모든 나라 표시)
+    if (activeContinents.length > 0) {
       result = result.filter((country) => activeContinents.includes(country.continent));
     }
 
@@ -41,9 +41,6 @@ export default function CountryContent({ countries }: CountryContentProps) {
       prev.includes(continent) ? prev.filter((item) => item !== continent) : [...prev, continent]
     );
   };
-
-  const isAllSelected = activeContinents.length === CONTINENTS.length;
-  const handleSelectAll = () => setActiveContinents(CONTINENTS);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -96,7 +93,6 @@ export default function CountryContent({ countries }: CountryContentProps) {
 
       <div className="px-[20px] pb-4">
         <div className="flex flex-wrap gap-[8px]">
-          <FilterChip label="전체" active={isAllSelected} onClick={handleSelectAll} />
           {CONTINENTS.map((continent) => (
             <FilterChip
               key={continent}
@@ -132,7 +128,7 @@ function FilterChip({ label, active, onClick }: FilterChipProps) {
     <button
       type="button"
       onClick={onClick}
-      className={`caption-2 rounded-full px-[14px] py-[6px] transition-colors ${
+      className={`caption-2 cursor-pointer rounded-full px-[14px] py-[6px] transition-colors ${
         active ? "bg-primary-blue text-white" : "bg-gray-100 text-gray-700"
       }`}
       aria-pressed={active}
