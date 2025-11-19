@@ -41,7 +41,8 @@ export default async function Page() {
         // 조용한 실패 방지: 명시적 경고 로그
         console.warn("[HOME WARNING] seasons is null - homepage will show 0 universities");
       }
-      return data.seasons ?? [];
+      // seasonId가 1 또는 2인 시즌 제외
+      return (data.seasons ?? []).filter((season) => season.seasonId !== 1 && season.seasonId !== 2);
     })
     .catch((error) => {
       console.error("Failed to fetch seasons:", error);
