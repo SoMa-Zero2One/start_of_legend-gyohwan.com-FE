@@ -40,7 +40,7 @@ export default function HeaderAuthSection() {
     <button
       type="button"
       onClick={handleLogin}
-      className="caption-2 flex items-center gap-[4px] text-gray-900"
+      className="caption-2 flex cursor-pointer items-center gap-[4px] text-gray-900"
     >
       <LoginIcon size={20} />
       로그인
