@@ -6,6 +6,7 @@ import Header from "@/components/layout/Header";
 import PasswordInput from "@/components/auth/PasswordInput";
 import { useAuthStore } from "@/stores/authStore";
 import { changePassword } from "@/lib/api/user";
+import { handleApiError } from "@/lib/utils/apiError";
 import { saveRedirectUrl } from "@/lib/utils/redirect";
 
 export default function ChangePasswordPage() {
@@ -93,16 +94,9 @@ export default function ChangePasswordPage() {
         router.push("/my-page");
       }, 1500);
     } catch (error) {
-      if (error instanceof Error) {
-        // 에러 메시지에서 HTTP 상태 코드 확인
-        if (error.message.includes("401") || error.message.includes("403")) {
-          setError("현재 비밀번호가 올바르지 않습니다.");
-        } else {
-          setError("비밀번호 변경에 실패했습니다. 다시 시도해주세요.");
-        }
-      } else {
-        setError("비밀번호 변경에 실패했습니다. 다시 시도해주세요.");
-      }
+      console.error("Change password error:", error);
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

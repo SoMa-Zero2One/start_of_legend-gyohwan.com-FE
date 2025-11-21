@@ -12,6 +12,7 @@ import ExternalLinkIcon from "@/components/icons/ExternalLinkIcon";
 import CommunityIcon from "@/components/icons/CommunityIcon";
 import Link from "next/link";
 import { getSlotDetail, getMyApplication } from "@/lib/api/slot";
+import { handleApiError } from "@/lib/utils/apiError";
 import { SlotDetailResponse, MyApplicationResponse } from "@/types/slot";
 import { getSlotSafeDefaults, getChoiceCountDisplay, getSlotCountDisplay } from "@/lib/utils/slot";
 
@@ -56,9 +57,10 @@ export default function SlotDetailPage() {
         ]);
         setData(slotResult);
         setMyApplication(applicationResult);
-      } catch (err) {
-        console.error("Data fetch error:", err);
-        setError("데이터를 불러오는데 실패했습니다.");
+      } catch (error) {
+        console.error("Data fetch error:", error);
+        const errorMessage = handleApiError(error);
+        setError(errorMessage);
       } finally {
         setIsLoading(false);
       }

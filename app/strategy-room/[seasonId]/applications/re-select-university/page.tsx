@@ -9,6 +9,7 @@ import ConfirmModal from "@/components/common/ConfirmModal";
 import { getMyApplication } from "@/lib/api/slot";
 import { getSeasonSlots } from "@/lib/api/slot";
 import { updateApplication } from "@/lib/api/application";
+import { handleApiError } from "@/lib/utils/apiError";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 import { useModalHistory } from "@/hooks/useModalHistory";
 import type { Slot } from "@/types/slot";
@@ -67,9 +68,10 @@ function ApplicationEditContent() {
         }));
 
         setSelectedUniversities(initialSelections);
-      } catch (err) {
-        console.error("Data fetch error:", err);
-        setError("데이터를 불러오는데 실패했습니다.");
+      } catch (error) {
+        console.error("Data fetch error:", error);
+        const errorMessage = handleApiError(error);
+        setError(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -195,7 +197,8 @@ function ApplicationEditContent() {
       router.push(`/strategy-room/${seasonId}`);
     } catch (error) {
       console.error("Application update error:", error);
-      showMessage("지망 대학 수정에 실패했습니다. 다시 시도해주세요.");
+      const errorMessage = handleApiError(error);
+      showMessage(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

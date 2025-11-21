@@ -1,5 +1,6 @@
 import type { LanguagesResponse, CreateLanguageRequest, CreateLanguageResponse } from "@/types/grade";
 import { getBackendUrl } from "@/lib/utils/api";
+import { parseApiError } from "@/lib/utils/apiError";
 
 /**
  * 사용자 어학 성적 정보 조회
@@ -18,7 +19,8 @@ export const getLanguages = async (): Promise<LanguagesResponse> => {
   });
 
   if (!response.ok) {
-    throw new Error(`어학 성적 정보 조회 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -43,7 +45,8 @@ export const createLanguage = async (data: CreateLanguageRequest): Promise<Creat
   });
 
   if (!response.ok) {
-    throw new Error(`어학 성적 정보 생성 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();

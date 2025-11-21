@@ -1,5 +1,6 @@
 import type { GpasResponse, CreateGpaRequest, CreateGpaResponse } from "@/types/grade";
 import { getBackendUrl } from "@/lib/utils/api";
+import { parseApiError } from "@/lib/utils/apiError";
 
 /**
  * 사용자 학점 정보 조회
@@ -18,7 +19,8 @@ export const getGpas = async (): Promise<GpasResponse> => {
   });
 
   if (!response.ok) {
-    throw new Error(`학점 정보 조회 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -43,7 +45,8 @@ export const createGpa = async (data: CreateGpaRequest): Promise<CreateGpaRespon
   });
 
   if (!response.ok) {
-    throw new Error(`학점 정보 생성 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();

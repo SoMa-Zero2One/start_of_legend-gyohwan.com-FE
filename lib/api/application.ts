@@ -1,5 +1,6 @@
 import type { SubmitApplicationRequest, UpdateApplicationRequest } from "@/types/application";
 import { getBackendUrl } from "@/lib/utils/api";
+import { parseApiError } from "@/lib/utils/apiError";
 
 /**
  * 지원서 제출
@@ -20,7 +21,8 @@ export const submitApplication = async (seasonId: number, data: SubmitApplicatio
   });
 
   if (!response.ok) {
-    throw new Error(`지원서 제출 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };
 
@@ -43,6 +45,7 @@ export const updateApplication = async (seasonId: number, data: UpdateApplicatio
   });
 
   if (!response.ok) {
-    throw new Error(`지원서 수정 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };

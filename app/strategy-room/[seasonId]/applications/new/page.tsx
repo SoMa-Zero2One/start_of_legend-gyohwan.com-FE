@@ -14,6 +14,7 @@ import { getGpas } from "@/lib/api/gpa";
 import { getLanguages } from "@/lib/api/language";
 import { checkEligibility } from "@/lib/api/season";
 import { submitApplication } from "@/lib/api/application";
+import { handleApiError } from "@/lib/utils/apiError";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 import { useModalHistory } from "@/hooks/useModalHistory";
 import type { Gpa, Language } from "@/types/grade";
@@ -66,9 +67,10 @@ function ApplicationNewContent() {
         // 1. 지원 가능 여부 확인 (eligibility)
         try {
           await checkEligibility(seasonId);
-        } catch (err) {
-          // 403 에러 시 모달 표시
-          const errorMessage = (err as { detail?: string }).detail || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
+        } catch (error) {
+          // 지원 불가(403 등) → 모달 표시
+          const errorMessage =
+            handleApiError(error) || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
           setEligibilityErrorMessage(errorMessage);
           eligibility.openModal();
           return;
@@ -85,18 +87,25 @@ function ApplicationNewContent() {
         }
 
         // 2. 기존 성적 데이터 확인 (배열의 마지막 값이 최신 값)
-        const [gpasData, languagesData] = await Promise.all([getGpas(), getLanguages()]);
+        try {
+          const [gpasData, languagesData] = await Promise.all([getGpas(), getLanguages()]);
 
-        if (gpasData.gpas.length > 0) {
-          const gpa = gpasData.gpas[gpasData.gpas.length - 1];
-          setGpaId(gpa.gpaId);
-          setExistingGpa(gpa);
-        }
+          if (gpasData.gpas.length > 0) {
+            const gpa = gpasData.gpas[gpasData.gpas.length - 1];
+            setGpaId(gpa.gpaId);
+            setExistingGpa(gpa);
+          }
 
-        if (languagesData.languages.length > 0) {
-          const language = languagesData.languages[languagesData.languages.length - 1];
-          setLanguageId(language.languageId);
-          setExistingLanguage(language);
+          if (languagesData.languages.length > 0) {
+            const language = languagesData.languages[languagesData.languages.length - 1];
+            setLanguageId(language.languageId);
+            setExistingLanguage(language);
+          }
+        } catch (error) {
+          console.error("Failed to fetch GPA or language data:", error);
+          const errorMessage = handleApiError(error);
+          showMessage(errorMessage);
+          return;
         }
       } catch (error) {
         console.error("Application status check error:", error);
@@ -109,6 +118,7 @@ function ApplicationNewContent() {
     // eligibility는 useModalHistory 반환 객체로 매 렌더마다 재생성되므로
     // 의존성에 추가하면 무한 루프 발생. eligibility.openModal()은 조건부로
     // 한 번만 실행되고 return으로 빠져나가므로 실제로는 안전함.
+    // showMessage 역시 커스텀 훅에서 생성된 함수라 dependency에 추가하지 않음.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seasonId, router, step]);
 
@@ -331,7 +341,8 @@ function ApplicationNewContent() {
       router.push(`/strategy-room/${seasonId}`);
     } catch (error) {
       console.error("Application submission error:", error);
-      showMessage("지원서 제출에 실패했습니다. 다시 시도해주세요.");
+      const errorMessage = handleApiError(error);
+      showMessage(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

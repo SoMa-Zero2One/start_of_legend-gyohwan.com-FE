@@ -6,6 +6,7 @@ import Header from "@/components/layout/Header";
 import EmailStep from "@/components/school-verification/EmailStep";
 import VerificationStep from "@/components/school-verification/VerificationStep";
 import { sendSchoolEmailVerification, confirmSchoolEmailVerification } from "@/lib/api/user";
+import { handleApiError } from "@/lib/utils/apiError";
 import { getRedirectUrl, clearRedirectUrl, saveRedirectUrl } from "@/lib/utils/redirect";
 import { useAuthStore } from "@/stores/authStore";
 import TermsAgreement from "@/components/auth/TermsAgreement";
@@ -46,9 +47,10 @@ function SchoolVerificationContent() {
       setEmail(schoolEmail);
       // URL 업데이트로 step 변경
       router.push("/school-verification?step=verification");
-    } catch (err) {
-      console.error("School email verification error:", err);
-      setError("인증 메일 발송 중 오류가 발생했습니다.");
+    } catch (error) {
+      console.error("School email verification error:", error);
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -76,9 +78,10 @@ function SchoolVerificationContent() {
         // redirectUrl 없으면 홈으로
         router.push("/");
       }
-    } catch (err) {
-      console.error("Code verification error:", err);
-      setError("인증 코드가 올바르지 않습니다.");
+    } catch (error) {
+      console.error("Code verification error:", error);
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -91,9 +94,10 @@ function SchoolVerificationContent() {
 
     try {
       await sendSchoolEmailVerification(email);
-    } catch (err) {
-      console.error("Resend email error:", err);
-      setError("이메일 재전송 중 오류가 발생했습니다.");
+    } catch (error) {
+      console.error("Resend email error:", error);
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -6,6 +6,7 @@ import type {
 } from "@/types/slot";
 import { getBackendUrl } from "@/lib/utils/api";
 import { formatLanguageTest } from "@/lib/utils/language";
+import { parseApiError } from "@/lib/utils/apiError";
 
 /**
  * 시즌별 교환학생 지원 슬롯 목록 조회
@@ -25,7 +26,8 @@ export const getSeasonSlots = async (seasonId: number): Promise<SeasonSlotsRespo
   });
 
   if (!response.ok) {
-    throw new Error(`슬롯 목록 조회 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -49,7 +51,8 @@ export const getMyApplication = async (seasonId: number): Promise<MyApplicationR
   });
 
   if (!response.ok) {
-    throw new Error(`내 지원서 조회 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   const data: MyApplicationResponse = await response.json();
@@ -80,7 +83,8 @@ export const getSlotDetail = async (slotId: number): Promise<SlotDetailResponse>
   });
 
   if (!response.ok) {
-    throw new Error(`슬롯 상세 조회 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   const data: SlotDetailResponse = await response.json();
@@ -114,7 +118,8 @@ export const getApplicationDetail = async (applicationId: number): Promise<Appli
   });
 
   if (!response.ok) {
-    throw new Error(`지원자 상세 조회 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   const data: ApplicationDetailResponse = await response.json();

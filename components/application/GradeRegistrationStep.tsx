@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import CTAButton from "@/components/common/CTAButton";
 import { createGpa } from "@/lib/api/gpa";
 import { createLanguage } from "@/lib/api/language";
+import { handleApiError } from "@/lib/utils/apiError";
 import type { Gpa, Language, CreateLanguageRequest } from "@/types/grade";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 
@@ -179,7 +180,8 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
       onSubmit(gpaResponse.gpaId, languageResponse.languageId);
     } catch (error) {
       console.error("Submit error:", error);
-      showMessage("성적 등록 중 오류가 발생했습니다.");
+      const errorMessage = handleApiError(error);
+      showMessage(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

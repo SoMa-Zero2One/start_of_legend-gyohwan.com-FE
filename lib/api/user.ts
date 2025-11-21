@@ -1,5 +1,6 @@
 import type { User } from "@/types/user";
 import { getBackendUrl } from "@/lib/utils/api";
+import { parseApiError } from "@/lib/utils/apiError";
 
 /**
  * 현재 로그인한 사용자 정보 조회
@@ -15,8 +16,8 @@ export const getUserMe = async (): Promise<User> => {
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`사용자 정보 조회 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -40,8 +41,8 @@ export const sendSchoolEmailVerification = async (schoolEmail: string): Promise<
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`학교 이메일 인증 코드 발송 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };
 
@@ -64,8 +65,8 @@ export const confirmSchoolEmailVerification = async (schoolEmail: string, code: 
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`학교 이메일 인증 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };
 
@@ -82,8 +83,8 @@ export const withdrawAccount = async (): Promise<void> => {
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`회원 탈퇴 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };
 
@@ -109,7 +110,7 @@ export const changePassword = async (currentPassword: string, newPassword: strin
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`비밀번호 변경 실패 (HTTP ${response.status})${errorText ? `: ${errorText}` : ""}`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 };

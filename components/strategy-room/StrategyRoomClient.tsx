@@ -10,6 +10,7 @@ import StrategyRoomPageSkeleton from "@/components/strategy-room/StrategyRoomPag
 import Tabs from "@/components/common/Tabs";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import { getSeasonSlots, getMyApplication } from "@/lib/api/slot";
+import { handleApiError } from "@/lib/utils/apiError";
 import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
 
 type TabType = "지망한 대학" | "지원자가 있는 대학" | "모든 대학";
@@ -60,9 +61,10 @@ export default function StrategyRoomClient() {
         ]);
         setData(slotsResult);
         setMyApplication(applicationResult);
-      } catch (err) {
-        console.error("Data fetch error:", err);
-        setError("데이터를 불러오는데 실패했습니다.");
+      } catch (error) {
+        console.error("Data fetch error:", error);
+        const errorMessage = handleApiError(error);
+        setError(errorMessage);
       } finally {
         setIsLoading(false);
       }

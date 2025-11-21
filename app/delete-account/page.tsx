@@ -7,6 +7,7 @@ import RoundCheckbox from "@/components/common/RoundCheckbox";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { useAuthStore } from "@/stores/authStore";
 import { withdrawAccount } from "@/lib/api/user";
+import { handleApiError } from "@/lib/utils/apiError";
 import { saveRedirectUrl } from "@/lib/utils/redirect";
 import { useModalHistory } from "@/hooks/useModalHistory";
 
@@ -72,7 +73,8 @@ function DeleteAccountContent() {
       // isWithdrawing 플래그로 인해 useEffect가 간섭하지 않음
       router.push("/");
     } catch (error) {
-      setError(error instanceof Error ? error.message : "회원 탈퇴에 실패했습니다.");
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
       closeModal();
       setIsWithdrawing(false); // 실패 시 플래그 해제
     } finally {

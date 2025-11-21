@@ -1,5 +1,6 @@
 import type { SeasonsResponse, EligibilityResponse } from "@/types/season";
 import { getBackendUrl } from "@/lib/utils/api";
+import { parseApiError } from "@/lib/utils/apiError";
 
 /**
  * 교환학생 모집 시즌 목록 조회
@@ -15,7 +16,8 @@ export const getSeasons = async (): Promise<SeasonsResponse> => {
   });
 
   if (!response.ok) {
-    throw new Error(`시즌 목록 조회 실패 (HTTP ${response.status})`);
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -36,12 +38,8 @@ export const checkEligibility = async (seasonId: number): Promise<EligibilityRes
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw {
-      status: response.status,
-      detail: errorData.detail || "지원 가능 여부 확인 실패",
-      ...errorData,
-    };
+    const errorMessage = await parseApiError(response);
+    throw new Error(errorMessage);
   }
 
   return await response.json();

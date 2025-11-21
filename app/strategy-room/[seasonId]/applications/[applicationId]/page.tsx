@@ -9,6 +9,7 @@ import LanguageChart from "@/components/application/LanguageChart";
 import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
 import { getApplicationDetail, getMyApplication } from "@/lib/api/slot";
 import { getSeasonSlots } from "@/lib/api/slot";
+import { handleApiError } from "@/lib/utils/apiError";
 import { ApplicationDetailResponse, MyApplicationResponse, SeasonSlotsResponse } from "@/types/slot";
 
 export default function ApplicationDetailPage() {
@@ -43,9 +44,10 @@ export default function ApplicationDetailPage() {
 
         setData(applicationResult);
         setMyApplication(myAppResult);
-      } catch (err) {
-        console.error("Data fetch error:", err);
-        setError("데이터를 불러오는데 실패했습니다.");
+      } catch (error) {
+        console.error("Data fetch error:", error);
+        const errorMessage = handleApiError(error);
+        setError(errorMessage);
       } finally {
         setIsLoading(false);
       }
