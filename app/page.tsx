@@ -22,7 +22,7 @@ export default async function Page() {
     "@type": "Organization",
     name: "교환닷컴",
     url: siteUrl,
-    logo: `${siteUrl}/logos/logo-blue.svg`,
+    logo: `${siteUrl}/favicon.svg`,
     description: "교환학생 정보 공유 플랫폼. 실시간 지원 현황, GPA·어학성적 비교, 파견교 정보를 제공합니다.",
   };
 

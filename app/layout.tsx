@@ -51,8 +51,8 @@ export const metadata: Metadata = {
   },
   icons: {
     // 다크모드 지원 제거 - light 버전 아이콘만 사용
-    icon: "/logos/logo-blue.svg",
-    apple: "/logos/logo-blue.svg",
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
   },
 };
 
@@ -91,7 +91,7 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className="body-3 m-auto max-w-[430px] bg-white antialiased">
+      <body className="body-3 m-auto max-w-[430px] bg-white antialiased 2xl:max-w-none">
         <SentryProvider>
           <MSWProvider>
             <div className="flex flex-col">{children}</div>
