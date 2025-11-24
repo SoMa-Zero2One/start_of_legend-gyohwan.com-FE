@@ -7,6 +7,9 @@ import Link from "next/link";
 import PrevIcon from "@/components/icons/PrevIcon";
 import SearchIcon from "@/components/icons/SearchIcon";
 import HomeIcon from "@/components/icons/HomeIcon";
+import NavigationCard from "@/components/home/NavigationCard";
+import CommunityIcon from "@/components/icons/CommunityIcon";
+import WriteIcon from "@/components/icons/WriteIcon";
 
 interface HeaderProps {
   children?: React.ReactNode;
@@ -19,6 +22,7 @@ interface HeaderProps {
   onSearchChange?: (query: string) => void;
   showBorder?: boolean;
   fallbackUrl?: string; // 뒤로가기 히스토리 없을 때 이동할 경로
+  showDesktopNav?: boolean; // 데스크탑 글로벌 네비게이션 표시 (HomePage 전용)
 }
 
 export default function Header({
@@ -32,6 +36,7 @@ export default function Header({
   onSearchChange,
   showBorder = false,
   fallbackUrl,
+  showDesktopNav = false,
 }: HeaderProps) {
   const [isSearchMode, setIsSearchMode] = useState(false);
 
@@ -55,6 +60,32 @@ export default function Header({
         showPrevButton={showPrevButton}
         fallbackUrl={fallbackUrl}
       />
+    );
+  }
+
+  // 데스크탑 네비게이션 모드 (HomePage 전용)
+  if (showDesktopNav) {
+    return (
+      <>
+        {/* 모바일 헤더 (기존) */}
+        <div className="2xl:hidden">
+          <NormalHeader
+            title={title}
+            showLogo={showLogo}
+            showPrevButton={showPrevButton}
+            showHomeButton={showHomeButton}
+            showSearchButton={showSearchButton}
+            onSearchClick={handleSearchClick}
+            showBorder={showBorder}
+            fallbackUrl={fallbackUrl}
+          >
+            {children}
+          </NormalHeader>
+        </div>
+
+        {/* 데스크탑 헤더 */}
+        <DesktopNavHeader showBorder={showBorder}>{children}</DesktopNavHeader>
+      </>
     );
   }
 
@@ -213,6 +244,46 @@ function NormalHeader({
           </button>
         )}
         {children}
+      </div>
+    </header>
+  );
+}
+
+// 🖥️ 데스크탑 네비게이션 Header (HomePage 전용)
+function DesktopNavHeader({
+  children,
+  showBorder,
+}: {
+  children?: React.ReactNode;
+  showBorder: boolean;
+}) {
+  return (
+    <header
+      className={`hidden h-[70px] items-center bg-white px-[80px] 2xl:flex ${
+        showBorder ? "border-b-[1px] border-b-gray-300" : ""
+      }`}
+    >
+      <div className="flex w-full items-center justify-between">
+        {/* 로고 */}
+        <Link href="/">
+          <Image src="/logos/logo-blue-full.svg" alt="Logo" width={120} height={24} priority />
+        </Link>
+
+        <div className="flex items-center gap-[80px]">
+          {/* 네비게이션 메뉴 */}
+          <nav className="flex items-center gap-[40px]" aria-label="주요 메뉴">
+            <NavigationCard href="https://pf.kakao.com/_xaxdQLn" label="문의하기" openInNewTab>
+              <WriteIcon />
+            </NavigationCard>
+
+            <NavigationCard href="/community" label="커뮤니티" showNewBadge>
+              <CommunityIcon />
+            </NavigationCard>
+          </nav>
+
+          {/* 로그인/회원가입 또는 프로필 */}
+          <div className="flex items-center">{children}</div>
+        </div>
       </div>
     </header>
   );

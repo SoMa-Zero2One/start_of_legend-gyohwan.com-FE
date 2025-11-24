@@ -100,7 +100,7 @@ export default function HomePage({ initialSeasons }: HomePageProps) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header showLogo showBorder>
+      <Header showLogo showBorder showDesktopNav>
         <HeaderAuthSection />
       </Header>
       <NavigationTab />

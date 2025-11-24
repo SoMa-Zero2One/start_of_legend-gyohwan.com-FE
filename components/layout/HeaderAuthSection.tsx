@@ -21,12 +21,20 @@ export default function HeaderAuthSection() {
     return search ? `${pathname}?${search}` : pathname;
   }, [pathname, searchParams]);
 
-  const handleLogin = useCallback(() => {
+  const navigateToAuthEntry = useCallback(() => {
     if (redirectPath) {
       saveRedirectUrl(redirectPath);
     }
     router.push("/log-in-or-create-account");
   }, [redirectPath, router]);
+
+  const handleLogin = useCallback(() => {
+    navigateToAuthEntry();
+  }, [navigateToAuthEntry]);
+
+  const handleSignup = useCallback(() => {
+    navigateToAuthEntry();
+  }, [navigateToAuthEntry]);
 
   if (isLoading) {
     return <div className="h-[32px] w-[32px] animate-pulse rounded-full bg-[#ECECEC]" />;
@@ -37,13 +45,23 @@ export default function HeaderAuthSection() {
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleLogin}
-      className="caption-2 flex cursor-pointer items-center gap-[4px] text-gray-900"
-    >
-      <LoginIcon size={20} />
-      로그인
-    </button>
+    <div className="flex items-center gap-[8px] text-gray-900">
+      <button
+        type="button"
+        onClick={handleLogin}
+        className="body-2 flex cursor-pointer items-center gap-[6px] rounded-[6px] px-[4px] py-[2px] transition-colors duration-200 hover:text-primary-blue"
+      >
+        <LoginIcon size={20} />
+        <span className="body-2">로그인</span>
+      </button>
+      <span className="hidden h-[16px] w-px bg-gray-200 2xl:block" aria-hidden="true" />
+      <button
+        type="button"
+        onClick={handleSignup}
+        className="body-2 hidden cursor-pointer text-gray-900 transition-colors duration-200 hover:text-primary-blue 2xl:block"
+      >
+        <span className="body-2">회원가입</span>
+      </button>
+    </div>
   );
 }
