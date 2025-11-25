@@ -4,7 +4,7 @@ import NavigationCard from "./NavigationCard";
 
 export default function NavigationTab() {
   return (
-    <div className="flex items-center gap-[16px] bg-gradient-to-b from-[#F7F8FA] to-white px-[20px] py-[16px] 2xl:hidden">
+    <div className="flex items-center gap-[16px] bg-gradient-to-b from-[#F7F8FA] to-white px-[20px] py-[16px] lg:hidden">
       {/* 커뮤니티 버튼 */}
       <NavigationCard href="/community" label="커뮤니티" showNewBadge>
         <CommunityIcon />

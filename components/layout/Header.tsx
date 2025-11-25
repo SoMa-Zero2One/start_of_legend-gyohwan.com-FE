@@ -68,7 +68,7 @@ export default function Header({
     return (
       <>
         {/* 모바일 헤더 (기존) */}
-        <div className="2xl:hidden">
+        <div className="lg:hidden">
           <NormalHeader
             title={title}
             showLogo={showLogo}
@@ -137,10 +137,7 @@ function SearchHeader({
       className={`flex h-[50px] items-center gap-3 px-[20px] ${showBorder ? "border-b-[1px] border-b-gray-300" : ""}`}
     >
       {showPrevButton && (
-        <button
-          onClick={handleBack}
-          className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center"
-        >
+        <button onClick={handleBack} className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center">
           <PrevIcon size={14} />
         </button>
       )}
@@ -227,7 +224,7 @@ function NormalHeader({
 
       {/* 중앙: 제목 */}
       {title && (
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <h1 className="body-2 truncate">{title}</h1>
         </div>
       )}
@@ -250,16 +247,10 @@ function NormalHeader({
 }
 
 // 🖥️ 데스크탑 네비게이션 Header (HomePage 전용)
-function DesktopNavHeader({
-  children,
-  showBorder,
-}: {
-  children?: React.ReactNode;
-  showBorder: boolean;
-}) {
+function DesktopNavHeader({ children, showBorder }: { children?: React.ReactNode; showBorder: boolean }) {
   return (
     <header
-      className={`hidden h-[70px] items-center bg-white px-[80px] 2xl:flex ${
+      className={`hidden h-[70px] items-center bg-white px-[80px] lg:flex ${
         showBorder ? "border-b-[1px] border-b-gray-300" : ""
       }`}
     >
