@@ -8,27 +8,29 @@ import { useState, useEffect } from "react";
  * @returns 미디어 쿼리 매칭 여부
  */
 export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
+  // 초기값을 함수로 지연 실행하여 SSR 호환 + 초기 렌더링 최적화
+  const [matches, setMatches] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia(query).matches;
+  });
 
   useEffect(() => {
     const media = window.matchMedia(query);
 
-    // 초기값 설정
-    if (media.matches !== matches) {
-      setMatches(media.matches);
-    }
+    // 초기 마운트 시 상태 동기화 (query 변경 시에도 동기화)
+    setMatches(media.matches);
 
-    // 리스너 함수
+    // 브레이크포인트 변경 시 호출되는 리스너
     const listener = (event: MediaQueryListEvent) => {
       setMatches(event.matches);
     };
 
-    // 리스너 등록
+    // 리스너 등록 (브레이크포인트 넘을 때만 발생, 디바운싱 불필요)
     media.addEventListener("change", listener);
 
     // 클린업
     return () => media.removeEventListener("change", listener);
-  }, [matches, query]);
+  }, [query]); // matches 제거: query 변경 시에만 effect 재실행
 
   return matches;
 }
