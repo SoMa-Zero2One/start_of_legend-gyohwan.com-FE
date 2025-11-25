@@ -91,7 +91,7 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className="body-3 m-auto max-w-[430px] bg-white antialiased 2xl:max-w-none">
+      <body className="body-3 m-auto max-w-[430px] bg-white antialiased">
         <SentryProvider>
           <MSWProvider>
             <div className="flex flex-col">{children}</div>
