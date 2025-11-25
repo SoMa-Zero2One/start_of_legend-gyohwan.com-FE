@@ -15,7 +15,7 @@ export default function FeatureSection() {
             지원 대학과 <span className="text-primary-blue">성적을 공유하며</span>
             <br /> 함께 전략을 세워보세요
           </h2>
-          <p className="body-2 lg:!body-1 text-gray-900">
+          <p className="body-2 lg:!text-[20px] text-gray-900">
             어학 점수와 학점을 입력하면
             <br />
             다른 지원자들의 정보를 한눈에 볼 수 있어요.
@@ -27,7 +27,14 @@ export default function FeatureSection() {
 
       {/* 이미지 */}
       <div className="relative h-[192px] w-[350px] overflow-hidden rounded-[10px] lg:h-[400px] lg:w-[540px]">
-        <Image src="/images/mainPage-2.png" alt="교환닷컴" fill priority className="object-cover" />
+        <Image
+          src="/images/mainPage-2.png"
+          alt="교환닷컴"
+          fill
+          priority
+          className="object-cover"
+          sizes="(min-width: 1024px) 540px, 350px"
+        />
       </div>
     </div>
   );

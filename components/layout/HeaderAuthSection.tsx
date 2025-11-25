@@ -52,7 +52,7 @@ export default function HeaderAuthSection() {
         className="body-2 hover:text-primary-blue flex cursor-pointer items-center gap-[6px] rounded-[6px] px-[4px] py-[2px] transition-colors duration-200"
       >
         <LoginIcon size={20} />
-        <span className="body-2">로그인</span>
+        <span>로그인</span>
       </button>
       <span className="hidden h-[16px] w-px bg-gray-200 lg:block" aria-hidden="true" />
       <button
@@ -60,7 +60,7 @@ export default function HeaderAuthSection() {
         onClick={handleSignup}
         className="body-2 hover:text-primary-blue hidden cursor-pointer text-gray-900 transition-colors duration-200 lg:block"
       >
-        <span className="body-2">회원가입</span>
+        <span>회원가입</span>
       </button>
     </div>
   );
