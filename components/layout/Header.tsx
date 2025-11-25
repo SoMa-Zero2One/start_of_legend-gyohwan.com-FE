@@ -7,6 +7,9 @@ import Link from "next/link";
 import PrevIcon from "@/components/icons/PrevIcon";
 import SearchIcon from "@/components/icons/SearchIcon";
 import HomeIcon from "@/components/icons/HomeIcon";
+import NavigationCard from "@/components/home/NavigationCard";
+import CommunityIcon from "@/components/icons/CommunityIcon";
+import WriteIcon from "@/components/icons/WriteIcon";
 
 interface HeaderProps {
   children?: React.ReactNode;
@@ -19,6 +22,7 @@ interface HeaderProps {
   onSearchChange?: (query: string) => void;
   showBorder?: boolean;
   fallbackUrl?: string; // 뒤로가기 히스토리 없을 때 이동할 경로
+  showDesktopNav?: boolean; // 데스크탑 글로벌 네비게이션 표시 (HomePage 전용)
 }
 
 export default function Header({
@@ -32,6 +36,7 @@ export default function Header({
   onSearchChange,
   showBorder = false,
   fallbackUrl,
+  showDesktopNav = false,
 }: HeaderProps) {
   const [isSearchMode, setIsSearchMode] = useState(false);
 
@@ -55,6 +60,32 @@ export default function Header({
         showPrevButton={showPrevButton}
         fallbackUrl={fallbackUrl}
       />
+    );
+  }
+
+  // 데스크탑 네비게이션 모드 (HomePage 전용)
+  if (showDesktopNav) {
+    return (
+      <>
+        {/* 모바일 헤더 (기존) */}
+        <div className="lg:hidden">
+          <NormalHeader
+            title={title}
+            showLogo={showLogo}
+            showPrevButton={showPrevButton}
+            showHomeButton={showHomeButton}
+            showSearchButton={showSearchButton}
+            onSearchClick={handleSearchClick}
+            showBorder={showBorder}
+            fallbackUrl={fallbackUrl}
+          >
+            {children}
+          </NormalHeader>
+        </div>
+
+        {/* 데스크탑 헤더 */}
+        <DesktopNavHeader showBorder={showBorder}>{children}</DesktopNavHeader>
+      </>
     );
   }
 
@@ -106,10 +137,7 @@ function SearchHeader({
       className={`flex h-[50px] items-center gap-3 px-[20px] ${showBorder ? "border-b-[1px] border-b-gray-300" : ""}`}
     >
       {showPrevButton && (
-        <button
-          onClick={handleBack}
-          className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center"
-        >
+        <button onClick={handleBack} className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center">
           <PrevIcon size={14} />
         </button>
       )}
@@ -196,7 +224,7 @@ function NormalHeader({
 
       {/* 중앙: 제목 */}
       {title && (
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <h1 className="body-2 truncate">{title}</h1>
         </div>
       )}
@@ -213,6 +241,40 @@ function NormalHeader({
           </button>
         )}
         {children}
+      </div>
+    </header>
+  );
+}
+
+// 🖥️ 데스크탑 네비게이션 Header (HomePage 전용)
+function DesktopNavHeader({ children, showBorder }: { children?: React.ReactNode; showBorder: boolean }) {
+  return (
+    <header
+      className={`hidden h-[70px] items-center bg-white px-[20px] lg:flex ${
+        showBorder ? "border-b-[1px] border-b-gray-300" : ""
+      }`}
+    >
+      <div className="flex w-full items-center justify-between">
+        {/* 로고 */}
+        <Link href="/">
+          <Image src="/logos/logo-blue-full.svg" alt="Logo" width={120} height={24} priority />
+        </Link>
+
+        <div className="flex items-center gap-[80px]">
+          {/* 네비게이션 메뉴 */}
+          <nav className="flex items-center gap-[40px]" aria-label="주요 메뉴">
+            <NavigationCard href="https://pf.kakao.com/_xaxdQLn" label="문의하기" openInNewTab>
+              <WriteIcon />
+            </NavigationCard>
+
+            <NavigationCard href="/community" label="커뮤니티" showNewBadge>
+              <CommunityIcon />
+            </NavigationCard>
+          </nav>
+
+          {/* 로그인/회원가입 또는 프로필 */}
+          <div className="flex items-center">{children}</div>
+        </div>
       </div>
     </header>
   );

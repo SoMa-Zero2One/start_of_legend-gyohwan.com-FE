@@ -6,6 +6,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/home/HeroSection";
 import FeatureSection from "@/components/home/FeatureSection";
+import CommunityBannerSection from "@/components/home/CommunityBannerSection";
 import StrategyRoomEntrances from "@/components/home/StrategyRoomEntrances";
 import HeaderAuthSection from "@/components/layout/HeaderAuthSection";
 import FloatingActionButton from "@/components/common/FloatingActionButton";
@@ -100,12 +101,13 @@ export default function HomePage({ initialSeasons }: HomePageProps) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header showLogo showBorder>
+      <Header showLogo showBorder showDesktopNav>
         <HeaderAuthSection />
       </Header>
       <NavigationTab />
       <HeroSection />
       <FeatureSection />
+      <CommunityBannerSection />
       <StrategyRoomEntrances initialSeasons={initialSeasons} />
       <Footer />
 
