@@ -250,7 +250,7 @@ function NormalHeader({
 function DesktopNavHeader({ children, showBorder }: { children?: React.ReactNode; showBorder: boolean }) {
   return (
     <header
-      className={`hidden h-[70px] items-center bg-white px-[80px] lg:flex ${
+      className={`hidden h-[70px] items-center bg-white px-[20px] lg:flex ${
         showBorder ? "border-b-[1px] border-b-gray-300" : ""
       }`}
     >
