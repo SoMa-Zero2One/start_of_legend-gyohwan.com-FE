@@ -4,6 +4,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
+import SearchHeaderDialog from "@/components/layout/SearchHeaderDialog";
 import Footer from "@/components/layout/Footer";
 import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
 import StrategyRoomPageSkeleton from "@/components/strategy-room/StrategyRoomPageSkeleton";
@@ -33,6 +34,7 @@ export default function StrategyRoomClient() {
     tabParam && ["지망한 대학", "지원자가 있는 대학", "모든 대학"].includes(tabParam) ? tabParam : "지원자가 있는 대학"
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
 
   // 탭 변경 핸들러 (URL 업데이트 포함)
   const handleTabChange = (tab: TabType) => {
@@ -155,8 +157,18 @@ export default function StrategyRoomClient() {
           showSearchButton
           showPrevButton
           showHomeButton
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
+          onSearchClick={() => setIsSearchDialogOpen(true)}
+        />
+
+        <SearchHeaderDialog
+          isOpen={isSearchDialogOpen}
+          value={searchQuery}
+          onChange={setSearchQuery}
+          onClose={() => {
+            setIsSearchDialogOpen(false);
+            setSearchQuery("");
+          }}
+          placeholder="대학명 또는 국가로 검색..."
         />
 
         {/* 제목 */}

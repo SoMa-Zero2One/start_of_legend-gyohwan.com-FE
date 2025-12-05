@@ -5,7 +5,7 @@ export default function StrategyRoomPageSkeleton() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* 상단 헤더 - 실제와 동일 */}
-      <Header title="실시간 경쟁률" showSearchButton showPrevButton showHomeButton />
+      <Header title="실시간 경쟁률" showPrevButton showHomeButton />
 
       {/* 제목 섹션 - 실제 구조 기반 */}
       <section className="px-[20px] py-[16px]">
