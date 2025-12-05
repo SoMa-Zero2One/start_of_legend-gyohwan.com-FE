@@ -20,6 +20,7 @@ interface HeaderProps {
   showSearchButton?: boolean;
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
+  onSearchClick?: () => void;
   showBorder?: boolean;
   fallbackUrl?: string; // 뒤로가기 히스토리 없을 때 이동할 경로
   showDesktopNav?: boolean; // 데스크탑 글로벌 네비게이션 표시 (HomePage 전용)
@@ -34,6 +35,7 @@ export default function Header({
   showSearchButton = false,
   searchQuery = "",
   onSearchChange,
+  onSearchClick,
   showBorder = false,
   fallbackUrl,
   showDesktopNav = false,
@@ -41,6 +43,10 @@ export default function Header({
   const [isSearchMode, setIsSearchMode] = useState(false);
 
   const handleSearchClick = () => {
+    if (onSearchClick) {
+      onSearchClick();
+      return;
+    }
     setIsSearchMode(true);
   };
 
@@ -50,7 +56,7 @@ export default function Header({
   };
 
   // 검색 모드
-  if (isSearchMode && showSearchButton) {
+  if (isSearchMode && showSearchButton && !onSearchClick) {
     return (
       <SearchHeader
         searchQuery={searchQuery}
