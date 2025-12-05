@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Header from "@/components/layout/Header";
-import SearchDialog from "@/components/common/SearchDialog";
+import SearchHeaderDialog from "@/components/layout/SearchHeaderDialog";
 import UniversityListItem from "@/components/country/UniversityListItem";
 import type { UniversitySimple } from "@/types/country";
 
@@ -56,7 +56,7 @@ export default function UniversityListClient({
         />
       </div>
 
-      <SearchDialog
+      <SearchHeaderDialog
         isOpen={isSearchDialogOpen}
         value={searchQuery}
         onChange={setSearchQuery}

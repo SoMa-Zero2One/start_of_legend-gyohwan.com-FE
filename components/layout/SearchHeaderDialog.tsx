@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import PrevIcon from "@/components/icons/PrevIcon";
 import SearchIcon from "@/components/icons/SearchIcon";
 
-interface SearchDialogProps {
+interface SearchHeaderDialogProps {
   isOpen: boolean;
   value: string;
   onChange: (value: string) => void;
@@ -14,14 +14,14 @@ interface SearchDialogProps {
   showBackButton?: boolean;
 }
 
-export default function SearchDialog({
+export default function SearchHeaderDialog({
   isOpen,
   value,
   onChange,
   onClose,
   placeholder = "검색어를 입력하세요",
   showBackButton = true,
-}: SearchDialogProps) {
+}: SearchHeaderDialogProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const lastFocusedElement = useRef<Element | null>(null);
@@ -62,12 +62,7 @@ export default function SearchDialog({
         className="flex h-[50px] w-full max-w-[430px] items-center gap-3 border-b border-gray-300 px-5"
       >
         {showBackButton && (
-          <button
-            type="button"
-            aria-label="뒤로가기"
-            className="flex h-5 w-5 items-center justify-center"
-            onClick={onClose}
-          >
+          <button type="button" aria-label="뒤로가기" className="flex h-5 w-5 items-center justify-center" onClick={onClose}>
             <PrevIcon size={14} />
           </button>
         )}
@@ -80,7 +75,7 @@ export default function SearchDialog({
             placeholder={placeholder}
             className="w-full rounded-[4px] bg-gray-100 py-2 pr-14 pl-10 text-[14px] focus:outline-none"
           />
-          <div className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-500">
+          <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
             <SearchIcon size={16} />
           </div>
         </div>
@@ -92,3 +87,4 @@ export default function SearchDialog({
     document.body
   );
 }
+

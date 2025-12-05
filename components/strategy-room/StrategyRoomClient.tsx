@@ -4,7 +4,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
-import SearchDialog from "@/components/common/SearchDialog";
+import SearchHeaderDialog from "@/components/layout/SearchHeaderDialog";
 import Footer from "@/components/layout/Footer";
 import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
 import StrategyRoomPageSkeleton from "@/components/strategy-room/StrategyRoomPageSkeleton";
@@ -160,7 +160,7 @@ export default function StrategyRoomClient() {
           onSearchClick={() => setIsSearchDialogOpen(true)}
         />
 
-        <SearchDialog
+        <SearchHeaderDialog
           isOpen={isSearchDialogOpen}
           value={searchQuery}
           onChange={setSearchQuery}
