@@ -7,6 +7,7 @@ import { handleApiError } from "@/lib/utils/apiError";
 import PasswordStep from "./signUpSteps/PasswordStep";
 import TermsStep from "./signUpSteps/TermsStep";
 import VerificationStep from "./signUpSteps/VerificationStep";
+import { useAuthStore } from "@/stores/authStore";
 
 type Step = "password" | "terms" | "verification";
 
@@ -18,6 +19,7 @@ interface SignupFormProps {
 export default function SignupForm({ onStepChange, onEmailChange }: SignupFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const fetchUser = useAuthStore((state) => state.fetchUser);
 
   // URL 쿼리 파라미터에서 step 읽기
   const step = (searchParams.get("step") as Step) || "password";
@@ -144,7 +146,10 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
       // 인증코드 검증 API 호출
       await confirmEmailSignup(email, code);
 
-      // 성공 시 세션 정리 및 회원가입 완료 페이지로 이동
+      // 최신 사용자 정보 가져오기 (로그인 상태 반영)
+      await fetchUser();
+
+      // 성공 시 회원가입 완료 페이지로 이동
       sessionStorage.removeItem("pendingEmail");
       router.push("/create-account-complete");
     } catch (error) {

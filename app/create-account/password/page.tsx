@@ -15,12 +15,15 @@ function PasswordSignupContent() {
   const [currentStep, setCurrentStep] = useState<Step>("password");
   const [, setEmail] = useState("");
 
-  // 이미 로그인된 사용자는 홈으로 리다이렉트
+  // 이미 로그인된 사용자는 홈으로 리다이렉트 (가입 진행 중이 아닌 경우에만)
   useEffect(() => {
     // authStore 로딩 완료 후에만 체크
     if (authLoading) return;
 
-    if (isLoggedIn && user) {
+    const pendingEmail = sessionStorage.getItem("pendingEmail");
+    const isSignupInProgress = !!pendingEmail;
+
+    if (isLoggedIn && user && !isSignupInProgress) {
       router.push("/");
     }
   }, [isLoggedIn, user, router, authLoading]);

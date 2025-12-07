@@ -22,7 +22,8 @@ export default function HeaderAuthSection() {
   }, [pathname, searchParams]);
 
   const navigateToAuthEntry = useCallback(() => {
-    if (redirectPath) {
+    const shouldSaveRedirect = redirectPath && redirectPath !== "/";
+    if (shouldSaveRedirect) {
       saveRedirectUrl(redirectPath);
     }
     router.push("/log-in-or-create-account");
