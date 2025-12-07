@@ -56,13 +56,16 @@ export default function CreateAccountComplete() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header showLogo />
-      <div className="flex flex-1 flex-col items-center px-[20px]">
-        <div className="flex w-[330px] flex-col items-center gap-[60px] pt-[60px]">
+      <div className="flex flex-1 flex-col items-center justify-center pt-[60px] pb-[36px]">
+        <div className="flex w-full flex-col items-center gap-[60px] px-[20px] lg:w-[430px]">
           {/* 헤더 */}
           <div className="flex flex-col items-center gap-[12px] text-center">
-            <h1 className="head-4">
-              {user?.nickname}님<br /> 환영합니다
-            </h1>
+            <div className="head-4">
+              <h1>
+                {user?.nickname}님
+                <br /> 환영합니다
+              </h1>
+            </div>
             <p className="body-2 text-gray-900">교환학생 준비, 교환닷컴과 함께하세요.</p>
           </div>
 

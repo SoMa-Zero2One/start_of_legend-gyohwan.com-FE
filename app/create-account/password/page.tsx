@@ -44,14 +44,14 @@ function PasswordSignupContent() {
     <div className="flex min-h-screen flex-col">
       <Header title="회원 가입" showPrevButton showHomeButton />
       <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px]">
-        <div className="flex w-full flex-col items-center gap-[24px] px-[10px]">
-          <div className="flex w-[330px] flex-col justify-center gap-[60px]">
+        <div className="flex w-full flex-col items-center gap-[24px] px-[20px] lg:w-[430px]">
+          <div className="flex w-full flex-col justify-center gap-[60px]">
             {/* 헤더 */}
-            <div className="text-center">
-              <h1 className="head-4">{headerContent[currentStep].title}</h1>
-              <p className="body-2 mt-[12px] whitespace-pre-line text-gray-900">
-                {headerContent[currentStep].subtitle}
-              </p>
+            <div className="flex flex-col gap-[12px] text-center">
+              <div className="head-4">
+                <h1>{headerContent[currentStep].title}</h1>
+              </div>
+              <p className="body-2 whitespace-pre-line text-gray-900">{headerContent[currentStep].subtitle}</p>
             </div>
 
             {/* 비밀번호 입력 폼 */}
