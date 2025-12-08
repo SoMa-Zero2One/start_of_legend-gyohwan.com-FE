@@ -74,6 +74,7 @@ export const userHandlers = [
       schoolVerified: user.schoolVerified,
       loginType: user.loginType,
       socialType: user.socialType,
+      profileUrl: user.profileUrl ?? null,
     });
   }),
 

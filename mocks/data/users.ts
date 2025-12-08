@@ -16,6 +16,7 @@ export const mockCurrentUser: User = {
   schoolVerified: true,
   loginType: "BASIC",
   socialType: null,
+  profileUrl: "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=256&h=256&fit=crop",
 };
 
 // 학교 인증 안된 유저
@@ -28,6 +29,7 @@ export const mockUnverifiedUser: User = {
   schoolVerified: false,
   loginType: "BASIC",
   socialType: null,
+  profileUrl: null,
 };
 
 // 소셜 로그인 유저 (카카오)
@@ -53,6 +55,7 @@ export const mockGoogleUser: User = {
   schoolVerified: true,
   loginType: "SOCIAL",
   socialType: "GOOGLE",
+  profileUrl: "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=256&h=256&fit=crop",
 };
 
 // 전체 유저 목록 (userId로 조회 가능)
@@ -236,6 +239,7 @@ export function createMockBasicUser(email: string): User {
     schoolVerified: false,
     loginType: "BASIC",
     socialType: null,
+    profileUrl: null,
   };
 
   mockUsers[userId] = newUser;
