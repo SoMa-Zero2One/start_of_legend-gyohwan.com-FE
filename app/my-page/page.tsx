@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import ChevronRightIcon from "@/components/icons/ChevronRightIcon";
@@ -15,10 +15,11 @@ import { saveRedirectUrl } from "@/lib/utils/redirect";
 export default function MyInfoPage() {
   const { user, isLoading: authLoading, logout } = useAuthStore();
   const router = useRouter();
+  const isLoggingOutRef = useRef(false);
 
   // 로그인 체크 - Hard-gate
   useEffect(() => {
-    if (authLoading) return;
+    if (authLoading || isLoggingOutRef.current) return;
 
     if (!user) {
       saveRedirectUrl("/my-page");
@@ -49,8 +50,14 @@ export default function MyInfoPage() {
   };
 
   const handleLogout = async () => {
-    await logout();
-    router.replace("/");
+    isLoggingOutRef.current = true;
+    try {
+      await logout();
+      router.replace("/");
+    } catch (error) {
+      console.error("Failed to logout:", error);
+      isLoggingOutRef.current = false;
+    }
   };
 
   const navigationItems = [
@@ -138,7 +145,7 @@ export default function MyInfoPage() {
 
                 {/* Profile fields */}
                 <div className="flex flex-1 flex-col gap-[16px]">
-                  <ProfileField label="닉네임" value={user.nickname} buttonText="" />
+                  <ProfileField label="닉네임" value={user.nickname} />
 
                   {/* 이메일 (BASIC 로그인만 표시) */}
                   {isBasicLogin && user.email && <ProfileField label="이메일" value={user.email} showCheckIcon />}

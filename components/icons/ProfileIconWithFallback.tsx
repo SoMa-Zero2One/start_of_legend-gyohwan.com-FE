@@ -1,4 +1,6 @@
-import { useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import DefaultProfileIcon from "./DefaultProfileIcon";
 
@@ -17,6 +19,10 @@ export default function ProfileIconWithFallback({
 
   const showFallback = !profileUrl || hasError;
   const iconSize = size * 0.625; // 기본 아이콘 크기 조정
+
+  useEffect(() => {
+    setHasError(false);
+  }, [profileUrl]);
 
   if (showFallback) {
     return (
