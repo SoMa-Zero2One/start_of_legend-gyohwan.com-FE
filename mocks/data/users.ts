@@ -175,19 +175,42 @@ export const mockCredentials: Record<string, string> = {
   "existing@example.com": "password123456", // 이미 가입된 이메일 테스트용
 };
 
+export const SIGNUP_VERIFICATION_CODE = "123456";
+export const SCHOOL_EMAIL_VERIFICATION_CODE = "111111";
+export const PASSWORD_RESET_VERIFICATION_CODE = "222222";
+
 /**
- * Mock 이메일 인증 코드 저장소 (회원가입/학교인증 테스트용)
+ * Mock 이메일 인증 코드 저장소 (회원가입용)
  */
-export const mockVerificationCodes: Record<string, string> = {
-  "test@example.com": "123456",
-  "newuser@example.com": "654321",
-  "test@univ.ac.kr": "111111",
+export const mockSignupVerificationCodes: Record<string, string> = {
+  "test@example.com": SIGNUP_VERIFICATION_CODE,
+  "newuser@example.com": SIGNUP_VERIFICATION_CODE,
 };
+
+/**
+ * Mock 학교 이메일 인증 코드 저장소
+ */
+export const mockSchoolEmailVerificationCodes: Record<string, string> = {
+  "test@univ.ac.kr": SCHOOL_EMAIL_VERIFICATION_CODE,
+};
+
+/**
+ * Mock 비밀번호 재설정 코드 저장소
+ */
+export const mockPasswordResetCodes: Record<string, string> = {};
 
 /**
  * 현재 로그인된 유저 ID (전역 상태 시뮬레이션)
  */
 export let currentUserId: number | null = null;
+
+const initialUserIds = Object.keys(mockUsers).map((id) => Number(id));
+let nextUserId = (initialUserIds.length ? Math.max(...initialUserIds) : 0) + 1;
+
+const deriveNicknameFromEmail = (email: string) => {
+  const localPart = email.split("@")[0];
+  return localPart || "새로운 회원";
+};
 
 export function setCurrentUserId(userId: number | null) {
   currentUserId = userId;
@@ -196,4 +219,34 @@ export function setCurrentUserId(userId: number | null) {
 export function getCurrentUser(): User | null {
   if (currentUserId === null) return null;
   return mockUsers[currentUserId] || null;
+}
+
+export function findMockUserByEmail(email: string): User | undefined {
+  return Object.values(mockUsers).find((user) => user.email?.toLowerCase() === email.toLowerCase());
+}
+
+export function createMockBasicUser(email: string): User {
+  const userId = nextUserId++;
+  const newUser: User = {
+    userId,
+    email,
+    schoolEmail: null,
+    nickname: deriveNicknameFromEmail(email),
+    domesticUniversity: null,
+    schoolVerified: false,
+    loginType: "BASIC",
+    socialType: null,
+  };
+
+  mockUsers[userId] = newUser;
+  return newUser;
+}
+
+export function ensureMockBasicUser(email: string): User {
+  const existing = findMockUserByEmail(email);
+  if (existing) {
+    return existing;
+  }
+
+  return createMockBasicUser(email);
 }

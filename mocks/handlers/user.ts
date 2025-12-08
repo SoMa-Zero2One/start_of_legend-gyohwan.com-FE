@@ -1,5 +1,12 @@
 import { http, HttpResponse } from "msw";
-import { getCurrentUser, mockUsers, mockGpas, mockLanguages, mockVerificationCodes } from "../data/users";
+import {
+  getCurrentUser,
+  mockUsers,
+  mockGpas,
+  mockLanguages,
+  mockSchoolEmailVerificationCodes,
+  SCHOOL_EMAIL_VERIFICATION_CODE,
+} from "../data/users";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
@@ -36,7 +43,7 @@ function getStatusText(status: number): string {
 function checkAuth() {
   const user = getCurrentUser();
   if (!user) {
-    return createErrorResponse(401, "Full authentication is required to access this resource", "Unauthorized");
+    return createErrorResponse(401, "로그인이 필요한 요청입니다.", "Unauthorized");
   }
   return null; // 인증 성공
 }
@@ -289,7 +296,7 @@ export const userHandlers = [
     }
 
     // 인증 코드 저장 (실제로는 Redis)
-    mockVerificationCodes[body.schoolEmail] = "111111";
+    mockSchoolEmailVerificationCodes[body.schoolEmail] = SCHOOL_EMAIL_VERIFICATION_CODE;
 
     return HttpResponse.json({ schoolEmail: body.schoolEmail }, { status: 202 });
   }),
@@ -316,7 +323,7 @@ export const userHandlers = [
     }
 
     // 학교 이메일 찾기 (간단한 시뮬레이션)
-    const schoolEmail = Object.keys(mockVerificationCodes).find(
+    const schoolEmail = Object.keys(mockSchoolEmailVerificationCodes).find(
       (email) => email.includes("univ.ac.kr") || email.includes("university.edu")
     );
 
@@ -324,7 +331,7 @@ export const userHandlers = [
       return createErrorResponse(400, "인증 시간이 만료되었거나 요청된 적 없는 이메일입니다.");
     }
 
-    const savedCode = mockVerificationCodes[schoolEmail];
+    const savedCode = mockSchoolEmailVerificationCodes[schoolEmail];
     if (savedCode !== body.code) {
       return createErrorResponse(400, "인증 코드가 일치하지 않습니다.");
     }
@@ -335,7 +342,7 @@ export const userHandlers = [
     mockUsers[user.userId].domesticUniversity = "교환대학교";
 
     // 인증 코드 삭제
-    delete mockVerificationCodes[schoolEmail];
+    delete mockSchoolEmailVerificationCodes[schoolEmail];
 
     return HttpResponse.json({ schoolEmail });
   }),

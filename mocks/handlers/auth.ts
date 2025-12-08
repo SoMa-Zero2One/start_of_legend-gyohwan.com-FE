@@ -1,5 +1,14 @@
 import { http, HttpResponse } from "msw";
-import { mockCredentials, mockVerificationCodes, mockUsers, setCurrentUserId } from "../data/users";
+import {
+  mockCredentials,
+  mockSignupVerificationCodes,
+  mockPasswordResetCodes,
+  SIGNUP_VERIFICATION_CODE,
+  PASSWORD_RESET_VERIFICATION_CODE,
+  setCurrentUserId,
+  ensureMockBasicUser,
+  findMockUserByEmail,
+} from "../data/users";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
@@ -37,6 +46,8 @@ function generateMockToken(userId: number): string {
   return `mock-jwt-token-user-${userId}-${Date.now()}`;
 }
 
+const normalizeEmail = (email: string) => email.trim().toLowerCase();
+
 /**
  * Auth Handlers
  */
@@ -53,7 +64,8 @@ export const authHandlers = [
       return createErrorResponse(400, "이메일 파라미터가 필요합니다.");
     }
 
-    const exists = email in mockCredentials;
+    const normalizedEmail = normalizeEmail(email);
+    const exists = normalizedEmail in mockCredentials;
 
     return HttpResponse.json({ exists });
   }),
@@ -78,8 +90,10 @@ export const authHandlers = [
       return createErrorResponse(400, "비밀번호를 입력해 주세요.");
     }
 
+    const email = normalizeEmail(body.email);
+
     // 이메일 중복 체크
-    if (body.email === "existing@example.com") {
+    if (email === "existing@example.com") {
       return createErrorResponse(409, "이미 사용 중인 이메일입니다.");
     }
 
@@ -89,9 +103,9 @@ export const authHandlers = [
     }
 
     // 인증 코드 저장 (실제로는 Redis)
-    mockVerificationCodes[body.email] = "123456";
+    mockSignupVerificationCodes[email] = SIGNUP_VERIFICATION_CODE;
 
-    return HttpResponse.json({ email: body.email });
+    return HttpResponse.json({ email });
   }),
 
   /**
@@ -114,12 +128,14 @@ export const authHandlers = [
     }
 
     // 만료된 이메일 시뮬레이션
-    if (body.email === "expired@example.com") {
+    const email = normalizeEmail(body.email);
+
+    if (email === "expired@example.com") {
       return createErrorResponse(400, "인증 시간이 만료되었거나 요청된 적 없는 이메일입니다.");
     }
 
     // 인증 코드 확인
-    const savedCode = mockVerificationCodes[body.email];
+    const savedCode = mockSignupVerificationCodes[email];
     if (!savedCode) {
       return createErrorResponse(400, "인증 시간이 만료되었거나 요청된 적 없는 이메일입니다.");
     }
@@ -129,15 +145,15 @@ export const authHandlers = [
     }
 
     // 새 유저 생성 및 로그인 처리
-    const newUserId = Object.keys(mockUsers).length + 1;
-    const accessToken = generateMockToken(newUserId);
+    const user = ensureMockBasicUser(email);
+    const accessToken = generateMockToken(user.userId);
 
-    // Mock 유저 추가 (실제로는 DB에 저장)
-    mockCredentials[body.email] = "password123456"; // 임시 비밀번호
-    setCurrentUserId(newUserId);
+    // Mock credential 저장 (실제로는 DB에 저장)
+    mockCredentials[email] = "password123456"; // 임시 비밀번호
+    setCurrentUserId(user.userId);
 
     // 인증 코드 삭제
-    delete mockVerificationCodes[body.email];
+    delete mockSignupVerificationCodes[email];
 
     return HttpResponse.json(
       { accessToken },
@@ -173,19 +189,22 @@ export const authHandlers = [
       return createErrorResponse(400, "must be a well-formed email address");
     }
 
+    const email = normalizeEmail(body.email);
+
     // 로그인 실패 테스트
-    const savedPassword = mockCredentials[body.email];
+    const savedPassword = mockCredentials[email];
     if (!savedPassword || savedPassword !== body.password) {
       return createErrorResponse(401, "이메일 로그인에 실패하였습니다. 이메일 또는 비밀번호를 확인해주세요.");
     }
 
     // 로그인 성공 - userId 찾기
-    let userId = 1; // 기본값
-    if (body.email === "test@example.com") userId = 1;
-    else if (body.email === "unverified@example.com") userId = 2;
+    const user = findMockUserByEmail(email);
+    if (!user) {
+      return createErrorResponse(401, "이메일 로그인에 실패하였습니다. 이메일 또는 비밀번호를 확인해주세요.");
+    }
 
-    const accessToken = generateMockToken(userId);
-    setCurrentUserId(userId);
+    const accessToken = generateMockToken(user.userId);
+    setCurrentUserId(user.userId);
 
     return HttpResponse.json(
       { accessToken },
@@ -195,6 +214,78 @@ export const authHandlers = [
         },
       }
     );
+  }),
+
+  /**
+   * POST /v1/auth/password-reset/request
+   * 비밀번호 재설정 요청 (이메일로 인증번호 발송)
+   *
+   * 에러 테스트:
+   * - blocked@example.com → 429 TOO_MANY_REQUESTS
+   * - 빈 이메일 → 400 Bean Validation
+   */
+  http.post(`${BACKEND_URL}/v1/auth/password-reset/request`, async ({ request }) => {
+    const body = (await request.json()) as { email: string };
+
+    if (!body.email || body.email.trim() === "") {
+      return createErrorResponse(400, "이메일을 입력해 주세요.");
+    }
+
+    const email = normalizeEmail(body.email);
+
+    if (email === "blocked@example.com") {
+      return createErrorResponse(429, "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.");
+    }
+
+    if (email in mockCredentials) {
+      mockPasswordResetCodes[email] = PASSWORD_RESET_VERIFICATION_CODE;
+    } else {
+      delete mockPasswordResetCodes[email];
+    }
+
+    return HttpResponse.json({ email }, { status: 202 });
+  }),
+
+  /**
+   * POST /v1/auth/password-reset/confirm
+   * 인증번호 + 새 비밀번호로 재설정
+   *
+   * 에러 테스트:
+   * - 잘못된 코드 → 400 PASSWORD_RESET_CODE_INVALID
+   * - 만료된 코드 → 400 PASSWORD_RESET_REQUEST_NOT_FOUND
+   * - 새 비밀번호 12자 미만 → 400 INVALID_PASSWORD_FORMAT
+   */
+  http.post(`${BACKEND_URL}/v1/auth/password-reset/confirm`, async ({ request }) => {
+    const body = (await request.json()) as { email: string; code: string; newPassword: string };
+
+    if (!body.email || body.email.trim() === "") {
+      return createErrorResponse(400, "이메일을 입력해 주세요.");
+    }
+    if (!body.code || body.code.trim() === "") {
+      return createErrorResponse(400, "인증 코드를 입력해 주세요.");
+    }
+    if (!body.newPassword || body.newPassword.trim() === "") {
+      return createErrorResponse(400, "새 비밀번호를 입력해 주세요.");
+    }
+
+    const email = normalizeEmail(body.email);
+    const savedCode = mockPasswordResetCodes[email];
+    if (!savedCode) {
+      return createErrorResponse(400, "비밀번호 재설정 요청이 만료되었거나 존재하지 않습니다.");
+    }
+
+    if (savedCode !== body.code) {
+      return createErrorResponse(400, "인증 코드가 일치하지 않습니다.");
+    }
+
+    if (body.newPassword.length < 12) {
+      return createErrorResponse(400, "비밀번호는 최소 12자 이상이어야 합니다.");
+    }
+
+    mockCredentials[email] = body.newPassword;
+    delete mockPasswordResetCodes[email];
+
+    return HttpResponse.json({ message: "비밀번호가 재설정되었습니다." });
   }),
 
   /**

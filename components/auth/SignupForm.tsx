@@ -7,6 +7,7 @@ import { handleApiError } from "@/lib/utils/apiError";
 import PasswordStep from "./signUpSteps/PasswordStep";
 import TermsStep from "./signUpSteps/TermsStep";
 import VerificationStep from "./signUpSteps/VerificationStep";
+import { useAuthStore } from "@/stores/authStore";
 
 type Step = "password" | "terms" | "verification";
 
@@ -18,14 +19,13 @@ interface SignupFormProps {
 export default function SignupForm({ onStepChange, onEmailChange }: SignupFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  // URL 쿼리 파라미터에서 step 읽기
-  const step = (searchParams.get("step") as Step) || "password";
+  const fetchUser = useAuthStore((state) => state.fetchUser);
 
   // 이메일 및 비밀번호 상태
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [step, setStep] = useState<Step>("password");
 
   // 약관 동의 상태
   const [agreeTerms, setAgreeTerms] = useState(false);
@@ -88,8 +88,7 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
     }
 
     // 약관 동의 화면으로 이동 (URL 업데이트)
-    const emailParam = searchParams.get("email") || email;
-    router.push(`/create-account/password?email=${encodeURIComponent(emailParam)}&step=terms`);
+    setStep("terms");
   };
 
   // 약관 동의 후 회원가입 API 호출
@@ -108,8 +107,7 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
       await signupWithEmail(email, password);
 
       // 성공 시 이메일 인증 화면으로 전환 (URL 업데이트)
-      const emailParam = searchParams.get("email") || email;
-      router.push(`/create-account/password?email=${encodeURIComponent(emailParam)}&step=verification`);
+      setStep("verification");
     } catch (error) {
       // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
       const errorMessage = handleApiError(error);
@@ -144,7 +142,10 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
       // 인증코드 검증 API 호출
       await confirmEmailSignup(email, code);
 
-      // 성공 시 세션 정리 및 회원가입 완료 페이지로 이동
+      // 최신 사용자 정보 가져오기 (로그인 상태 반영)
+      await fetchUser();
+
+      // 성공 시 회원가입 완료 페이지로 이동
       sessionStorage.removeItem("pendingEmail");
       router.push("/create-account-complete");
     } catch (error) {
