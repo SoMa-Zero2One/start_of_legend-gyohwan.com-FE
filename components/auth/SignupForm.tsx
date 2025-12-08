@@ -21,13 +21,11 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
   const searchParams = useSearchParams();
   const fetchUser = useAuthStore((state) => state.fetchUser);
 
-  // URL 쿼리 파라미터에서 step 읽기
-  const step = (searchParams.get("step") as Step) || "password";
-
   // 이메일 및 비밀번호 상태
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [step, setStep] = useState<Step>("password");
 
   // 약관 동의 상태
   const [agreeTerms, setAgreeTerms] = useState(false);
@@ -90,8 +88,7 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
     }
 
     // 약관 동의 화면으로 이동 (URL 업데이트)
-    const emailParam = searchParams.get("email") || email;
-    router.push(`/create-account/password?email=${encodeURIComponent(emailParam)}&step=terms`);
+    setStep("terms");
   };
 
   // 약관 동의 후 회원가입 API 호출
@@ -110,8 +107,7 @@ export default function SignupForm({ onStepChange, onEmailChange }: SignupFormPr
       await signupWithEmail(email, password);
 
       // 성공 시 이메일 인증 화면으로 전환 (URL 업데이트)
-      const emailParam = searchParams.get("email") || email;
-      router.push(`/create-account/password?email=${encodeURIComponent(emailParam)}&step=verification`);
+      setStep("verification");
     } catch (error) {
       // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
       const errorMessage = handleApiError(error);
