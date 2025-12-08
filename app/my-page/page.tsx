@@ -7,7 +7,7 @@ import ChevronRightIcon from "@/components/icons/ChevronRightIcon";
 import PencilIcon from "@/components/icons/PencilIcon";
 import GoogleIcon from "@/components/icons/GoogleIcon";
 import KakaoIcon from "@/components/icons/KakaoIcon";
-import ProfileIcon from "@/components/icons/ProfileIcon";
+import ProfileIconWithFallback from "@/components/icons/ProfileIconWithFallback";
 import ProfileField from "@/components/my-page/ProfileField";
 import { useAuthStore } from "@/stores/authStore";
 import { saveRedirectUrl } from "@/lib/utils/redirect";
@@ -126,7 +126,7 @@ export default function MyInfoPage() {
                 {/* 프로필 이미지 */}
                 <div className="flex flex-col items-center gap-[12px] lg:w-[260px] lg:items-center">
                   <div className="relative">
-                    <ProfileIcon profileUrl={user.profileUrl} size={130} />
+                    <ProfileIconWithFallback profileUrl={user.profileUrl} size={130} />
                     {/* <button
                       onClick={handleComingSoon}
                       className="absolute right-2 bottom-2 flex h-[40px] w-[40px] items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm transition-colors hover:bg-gray-50 active:bg-gray-100"

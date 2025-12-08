@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
-import ProfileIcon from "@/components/icons/ProfileIcon";
+import ProfileIconWithFallback from "@/components/icons/ProfileIconWithFallback";
 
 export default function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -36,7 +36,7 @@ export default function ProfileMenu() {
     <div className="relative" ref={menuRef}>
       {/* 프로필 버튼 */}
       <button onClick={() => setIsMenuOpen((prev) => !prev)} className="cursor-pointer">
-        <ProfileIcon profileUrl={user?.profileUrl} size={32} />
+        <ProfileIconWithFallback profileUrl={user?.profileUrl} size={32} />
       </button>
 
       {/* Dropdown 메뉴 */}
