@@ -1,9 +1,10 @@
+import { useIsDesktop } from "@/lib/hooks/useMediaQuery";
+
 interface TabsProps<T extends string> {
   tabs: readonly T[] | T[];
   selectedTab: T;
   onTabChange: (tab: T) => void;
   counts?: Record<T, number>;
-  desktopVariant?: "underline" | "pill";
   className?: string;
 }
 
@@ -12,10 +13,9 @@ export default function Tabs<T extends string>({
   selectedTab,
   onTabChange,
   counts,
-  desktopVariant = "underline",
   className = "",
 }: TabsProps<T>) {
-  const showPillDesktop = desktopVariant === "pill";
+  const isDesktop = useIsDesktop();
 
   const renderUnderlineTabs = () => (
     <div className="relative flex border-b border-gray-100">
@@ -68,8 +68,8 @@ export default function Tabs<T extends string>({
 
   return (
     <div className={`flex w-full flex-col gap-[12px] ${className}`}>
-      {!showPillDesktop && <div>{renderUnderlineTabs()}</div>}
-      {showPillDesktop && <div>{renderPillTabs()}</div>}
+      {!isDesktop && <div>{renderUnderlineTabs()}</div>}
+      {isDesktop && <div>{renderPillTabs()}</div>}
     </div>
   );
 }
