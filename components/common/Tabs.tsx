@@ -7,7 +7,7 @@ interface TabsProps<T extends string> {
 
 export default function Tabs<T extends string>({ tabs, selectedTab, onTabChange, counts }: TabsProps<T>) {
   return (
-    <div className="relative flex border-b border-gray-200">
+    <div className="relative flex border-b border-gray-100">
       {tabs.map((tab) => (
         <button
           key={tab}
