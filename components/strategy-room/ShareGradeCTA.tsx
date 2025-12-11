@@ -77,7 +77,7 @@ export default function ShareGradeCTA({
       <button
         ref={ctaButtonRef}
         onClick={handleClick}
-        className={`btn-primary cursor-pointer rounded-[4px] p-[12px] shadow-[0_0_8px_rgba(0,0,0,0.06)] lg:w-[420px] lg:rounded-[12px] lg:py-[16px] ${
+        className={`btn-primary w-full cursor-pointer rounded-[4px] p-[12px] shadow-[0_0_8px_rgba(0,0,0,0.06)] lg:w-[420px] lg:rounded-[12px] lg:py-[16px] ${
           shouldShake ? "animate-shake" : ""
         }`}
       >

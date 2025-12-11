@@ -215,16 +215,9 @@ export default function StrategyRoomClient() {
                 🔥 총 {data.applicantCount}명 성적 공유 참여 중!
               </span>
             </div>
-
-            <Link
-              href="/community"
-              className="btn-primary body-2 flex items-center justify-center rounded-[8px] px-[20px] py-[14px] lg:rounded-[12px]"
-            >
-              💬 파견 생활 보러 가기
-            </Link>
           </section>
 
-          <section className="flex flex-col gap-[12px] px-[20px] lg:flex-row lg:items-center lg:justify-between">
+          <section className="flex flex-col gap-[12px] lg:flex-row lg:items-center lg:justify-between">
             <Tabs
               tabs={["지망한 대학", "지원자가 있는 대학", "모든 대학"] as const}
               selectedTab={selectedTab}
@@ -234,7 +227,7 @@ export default function StrategyRoomClient() {
             {renderDesktopSearch()}
           </section>
 
-          <section className="relative flex-1 px-[20px]">
+          <section className="relative flex-1">
             {shouldShowBlur && (
               <>
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
