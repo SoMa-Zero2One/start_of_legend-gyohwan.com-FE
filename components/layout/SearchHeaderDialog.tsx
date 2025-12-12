@@ -54,7 +54,7 @@ export default function SearchHeaderDialog({
   }
 
   return createPortal(
-    <div className="fixed inset-x-0 top-0 z-50 flex justify-center bg-white">
+    <div className="fixed inset-x-0 top-0 z-50 flex justify-center bg-white lg:hidden">
       <div
         ref={containerRef}
         role="dialog"
@@ -62,7 +62,12 @@ export default function SearchHeaderDialog({
         className="flex h-[50px] w-full max-w-[430px] items-center gap-3 border-b border-gray-300 px-5"
       >
         {showBackButton && (
-          <button type="button" aria-label="뒤로가기" className="flex h-5 w-5 items-center justify-center" onClick={onClose}>
+          <button
+            type="button"
+            aria-label="뒤로가기"
+            className="flex h-5 w-5 items-center justify-center"
+            onClick={onClose}
+          >
             <PrevIcon size={14} />
           </button>
         )}
@@ -75,7 +80,7 @@ export default function SearchHeaderDialog({
             placeholder={placeholder}
             className="w-full rounded-[4px] bg-gray-100 py-2 pr-14 pl-10 text-[14px] focus:outline-none"
           />
-          <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <div className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-400">
             <SearchIcon size={16} />
           </div>
         </div>
@@ -87,4 +92,3 @@ export default function SearchHeaderDialog({
     document.body
   );
 }
-

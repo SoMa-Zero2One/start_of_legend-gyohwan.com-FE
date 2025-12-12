@@ -71,6 +71,28 @@ export const mockSlots: Slot[] = [
     homepageUrl: null, // 일부 대학은 홈페이지 URL이 없을 수 있음
     universityId: null, // 커뮤니티에 없는 대학
   },
+  {
+    slotId: 7,
+    name: "McGill University",
+    country: "캐나다",
+    logoUrl: "https://example.com/mcgill.png",
+    choiceCount: 0, // 지원자가 없는 슬롯 케이스
+    slotCount: "2",
+    duration: "1학기",
+    homepageUrl: "https://www.mcgill.ca/",
+    universityId: 6,
+  },
+  {
+    slotId: 8,
+    name: "Lund University",
+    country: "스웨덴",
+    logoUrl: "https://example.com/lund.png",
+    choiceCount: null, // 경쟁률 집계가 아직 안 된 케이스
+    slotCount: "미정",
+    duration: "1년",
+    homepageUrl: "https://www.lunduniversity.lu.se/",
+    universityId: null,
+  },
 ];
 
 /**
@@ -84,10 +106,16 @@ export function findSlotById(slotId: number): Slot | undefined {
  * 시즌별 슬롯 매핑
  */
 export const mockSeasonSlots: Record<number, number[]> = {
-  1: [1, 2, 3, 4, 5], // 시즌 1에 속한 슬롯 ID들
-  2: [1, 3, 5, 6], // 시즌 2에 속한 슬롯 ID들
-  3: [2, 4, 6], // 시즌 3에 속한 슬롯 ID들
-  4: [1, 2, 3], // 시즌 4에 속한 슬롯 ID들
+  // 시즌 1은 hasApplied=false 상태에서 탭/검색 케이스 확인용
+  1: [1, 2, 7, 8],
+  // 시즌 2는 아직 지원 전인 다른 학기
+  2: [3, 5, 6],
+  // 시즌 3은 mockCurrentUser(userId=1)이 지원한 시즌
+  3: [2, 4, 6],
+  // 시즌 4는 다른 대학교 시즌 (학교 미매치 케이스)
+  4: [1, 5],
+  // 시즌 5는 방어적 코딩 케이스 (슬롯 없음)
+  5: [],
 };
 
 /**
@@ -210,6 +238,8 @@ export const mockSlotApplicants: Record<number, MockApplicant[]> = {
       etc: "",
     },
   ],
+  7: [], // 지원자가 없는 슬롯
+  8: [], // 경쟁률 데이터 미집계 슬롯
 };
 
 /**
@@ -317,4 +347,6 @@ export const mockSlotApplicantsRestricted: Record<number, MockApplicant[]> = {
       etc: "",
     },
   ],
+  7: [],
+  8: [],
 };

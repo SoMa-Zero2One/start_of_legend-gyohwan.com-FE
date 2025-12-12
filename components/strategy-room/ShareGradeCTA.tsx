@@ -60,7 +60,7 @@ export default function ShareGradeCTA({
 
   return (
     <div
-      className="fixed bottom-0 left-1/2 w-full max-w-[420px] -translate-x-1/2 bg-white px-[20px] pb-[20px]"
+      className="medium-body-2 fixed bottom-0 left-1/2 flex w-full max-w-[420px] -translate-x-1/2 justify-center bg-white px-[20px] pb-[20px] lg:pb-[40px] 2xl:pb-[60px]"
       style={{ opacity }}
     >
       {/* 그라데이션 */}
@@ -77,7 +77,7 @@ export default function ShareGradeCTA({
       <button
         ref={ctaButtonRef}
         onClick={handleClick}
-        className={`btn-primary w-full cursor-pointer rounded-[4px] p-[12px] shadow-[0_0_8px_rgba(0,0,0,0.06)] ${
+        className={`btn-primary w-full cursor-pointer rounded-[4px] p-[12px] shadow-[0_0_8px_rgba(0,0,0,0.06)] lg:w-[420px] lg:rounded-[12px] lg:py-[16px] ${
           shouldShake ? "animate-shake" : ""
         }`}
       >
