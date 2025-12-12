@@ -35,9 +35,9 @@ export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
                 className="h-[20px] w-[20px] object-contain lg:h-[60px] lg:w-[60px]"
               />
             </div>
-            <p className="subhead-2 line-clamp-1 max-w-[200px] leading-[24px] lg:line-clamp-2 lg:min-h-[48px] lg:text-center lg:leading-[24px]">
+            <h3 className="subhead-2 line-clamp-1 max-w-[200px] leading-[24px] lg:line-clamp-2 lg:min-h-[48px] lg:text-center">
               {name}
-            </p>
+            </h3>
           </div>
           <div className="flex items-center gap-[4px]">
             <CountryFlag country={country} size={20} />

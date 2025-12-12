@@ -232,7 +232,7 @@ export default function StrategyRoomClient() {
             {shouldShowBlur && (
               <>
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                  <div className="grid grid-cols-1 gap-[16px] blur-sm sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  <div className="grid grid-cols-1 gap-[16px] blur-sm lg:grid-cols-4">
                     {backgroundSlots.map((slot) => (
                       <UniversitySlotCard key={slot.slotId} slot={slot} />
                     ))}

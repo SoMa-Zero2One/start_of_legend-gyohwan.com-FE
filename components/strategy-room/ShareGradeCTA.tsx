@@ -60,7 +60,7 @@ export default function ShareGradeCTA({
 
   return (
     <div
-      className="medium-body-2 fixed bottom-0 left-1/2 flex w-full -translate-x-1/2 justify-center bg-white px-[20px] pb-[20px] lg:pb-[40px] 2xl:pb-[60px]"
+      className="medium-body-2 fixed bottom-0 left-1/2 flex w-full max-w-[420px] -translate-x-1/2 justify-center bg-white px-[20px] pb-[20px] lg:pb-[40px] 2xl:pb-[60px]"
       style={{ opacity }}
     >
       {/* 그라데이션 */}
