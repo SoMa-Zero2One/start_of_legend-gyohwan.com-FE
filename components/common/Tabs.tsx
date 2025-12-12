@@ -3,9 +3,16 @@ interface TabsProps<T extends string> {
   selectedTab: T;
   onTabChange: (tab: T) => void;
   counts?: Record<T, number>;
+  className?: string;
 }
 
-export default function Tabs<T extends string>({ tabs, selectedTab, onTabChange, counts }: TabsProps<T>) {
+export default function Tabs<T extends string>({
+  tabs,
+  selectedTab,
+  onTabChange,
+  counts,
+  className = "",
+}: TabsProps<T>) {
   const renderUnderlineTabs = () => (
     <div className="relative flex border-b border-gray-100">
       {tabs.map((tab) => {
@@ -56,7 +63,7 @@ export default function Tabs<T extends string>({ tabs, selectedTab, onTabChange,
   );
 
   return (
-    <div className="flex w-full flex-col gap-[12px]">
+    <div className={`flex w-full flex-col gap-[12px] ${className}`}>
       <div className="lg:hidden">{renderUnderlineTabs()}</div>
       <div className="hidden lg:block">{renderPillTabs()}</div>
     </div>
