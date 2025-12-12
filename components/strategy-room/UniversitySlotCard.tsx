@@ -31,6 +31,7 @@ export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
                 src={logoUrl}
                 alt={`${name} 로고`}
                 fill
+                sizes="(min-width:1024px) 60px, 20px"
                 className="h-[20px] w-[20px] object-contain lg:h-[60px] lg:w-[60px]"
               />
             </div>

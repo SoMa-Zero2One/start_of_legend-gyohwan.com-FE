@@ -148,8 +148,9 @@ export default function StrategyRoomClient() {
   }
 
   // seasonName 파싱: "인천대학교 2026-1 모집" -> "인천대학교", "26-1 학기"
-  const universityName = data.seasonName.split(" ")[0]; // "영남대학교"
-  const match = data.seasonName.match(/(\d{4})-(\d)/);
+  const seasonName = data.seasonName ?? "";
+  const universityName = seasonName ? seasonName.split(" ")[0] : "";
+  const match = seasonName.match(/(\d{4})-(\d)/);
   const parsedSemester = match ? `${match[1].slice(-2)}-${match[2]} 학기` : "";
 
   const tabCounts = {
@@ -174,7 +175,7 @@ export default function StrategyRoomClient() {
     <>
       <div className="flex min-h-screen flex-col">
         <Header
-          title={data.seasonName}
+          title={seasonName || "실시간 경쟁률"}
           showPrevButton
           showHomeButton
           showSearchButton
