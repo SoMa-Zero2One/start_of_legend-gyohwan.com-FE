@@ -117,11 +117,11 @@ export default function ApplicationDetailPage() {
             <div className="flex flex-col gap-[20px] py-[20px] lg:gap-[24px] lg:py-[32px]">
               {/* 상단 요약 */}
               <section className="flex flex-col gap-[20px] border-b-[8px] border-gray-300 py-[20px] lg:flex-row lg:items-center lg:border-0 lg:bg-[#FAFAFA] lg:p-[40px]">
-                <div className="flex flex-1">
-                  <h1 className="text-[24px] font-bold lg:text-[32px]">{data.nickname}</h1>
-                  <div className="flex items-start">
+                <div className="flex flex-1 gap-[4px] lg:gap-[8px]">
+                  <h1 className="text-[24px] font-bold lg:text-[36px]">{data.nickname}</h1>
+                  <div className="flex items-start lg:items-center">
                     {isMe && (
-                      <span className="bg-primary-blue rounded-full px-[6px] py-[2px] text-[10px] font-bold text-white">
+                      <span className="bg-primary-blue rounded-full px-[6px] py-[2px] text-[10px] font-bold text-white lg:text-[12px]">
                         ME
                       </span>
                     )}
@@ -129,7 +129,7 @@ export default function ApplicationDetailPage() {
                 </div>
 
                 <div className="flex items-center gap-[24px] text-gray-700 lg:text-black">
-                  <div className="flex flex-1 justify-between rounded-[16px] lg:w-[254px] lg:flex-col lg:bg-white lg:p-[24px]">
+                  <div className="flex flex-1 justify-between rounded-[16px] lg:w-[254px] lg:flex-none lg:flex-col lg:bg-white lg:p-[24px]">
                     <div className="flex items-center gap-[8px] text-gray-700 lg:!text-[18px] lg:!font-bold lg:text-black">
                       {isDesktop && <SchoolIcon size={18} />}
                       <span>지망 대학교</span>
@@ -138,7 +138,7 @@ export default function ApplicationDetailPage() {
                       <span>{data.choices.length}</span>
                     </div>
                   </div>
-                  <div className="flex flex-1 justify-between rounded-[16px] lg:w-[254px] lg:flex-col lg:bg-white lg:p-[24px]">
+                  <div className="flex flex-1 justify-between rounded-[16px] lg:w-[254px] lg:flex-none lg:flex-col lg:bg-white lg:p-[24px]">
                     <div className="flex items-center gap-[8px] text-gray-700 lg:!text-[18px] lg:!font-bold lg:text-black">
                       {isDesktop && <PencilIcon size={18} />}
                       <span>어학 성적</span>
@@ -162,14 +162,21 @@ export default function ApplicationDetailPage() {
                   </section>
 
                   {/* 어학 */}
-                  <section className="flex flex-col gap-[12px] border-b-[8px] border-gray-300 py-[20px] lg:rounded-[16px] lg:border lg:p-[24px]">
-                    <h3 className="text-[16px] lg:text-[18px] lg:font-bold">어학</h3>
-                    <LanguageChart
-                      testType={data.language.testType}
-                      score={data.language.score}
-                      grade={data.language.grade}
-                    />
-                  </section>
+                  {languageCount < 0 ? (
+                    <section className="flex flex-col gap-[12px] border-b-[8px] border-gray-300 py-[20px] lg:rounded-[16px] lg:border lg:p-[24px]">
+                      <h3 className="text-[16px] lg:text-[18px] lg:font-bold">어학</h3>
+                      <LanguageChart
+                        testType={data.language.testType}
+                        score={data.language.score}
+                        grade={data.language.grade}
+                      />
+                    </section>
+                  ) : (
+                    <section className="flex flex-col gap-[12px] border-b-[8px] border-gray-300 py-[20px] text-gray-700 lg:rounded-[16px] lg:border lg:p-[24px]">
+                      <h3 className="text-[16px] lg:text-[18px] lg:font-bold">어학</h3>
+                      <p className="body-3 text-gray-700">등록된 어학 성적이 없어요.</p>
+                    </section>
+                  )}
                 </div>
 
                 {/* 지망한 대학교 */}
