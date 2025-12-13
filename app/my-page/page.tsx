@@ -138,7 +138,7 @@ export default function MyInfoPage() {
                       onClick={handleComingSoon}
                       className="absolute right-2 bottom-2 flex h-[40px] w-[40px] items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm transition-colors hover:bg-gray-50 active:bg-gray-100"
                     >
-                      <PencilIcon size={20} strokeWidth={1.2} />
+                      <PencilIcon size={20} />
                     </button> */}
                   </div>
                 </div>

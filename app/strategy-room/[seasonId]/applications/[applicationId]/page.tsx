@@ -4,13 +4,17 @@ import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
+import HeaderAuthSection from "@/components/layout/HeaderAuthSection";
 import GradeProgressBar from "@/components/application/GradeProgressBar";
 import LanguageChart from "@/components/application/LanguageChart";
 import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
-import { getApplicationDetail, getMyApplication } from "@/lib/api/slot";
-import { getSeasonSlots } from "@/lib/api/slot";
+import SchoolIcon from "@/components/icons/SchoolIcon";
+import PencilIcon from "@/components/icons/PencilIcon";
+import { useIsDesktop } from "@/lib/hooks/useMediaQuery";
+import { getApplicationDetail, getMyApplication, getSeasonSlots } from "@/lib/api/slot";
 import { handleApiError } from "@/lib/utils/apiError";
 import { ApplicationDetailResponse, MyApplicationResponse, SeasonSlotsResponse } from "@/types/slot";
+import Footer from "@/components/layout/Footer";
 
 export default function ApplicationDetailPage() {
   const params = useParams();
@@ -23,9 +27,11 @@ export default function ApplicationDetailPage() {
   const [seasonData, setSeasonData] = useState<SeasonSlotsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isDesktop = useIsDesktop();
 
   const isMe = myApplication?.applicationId === applicationId;
   const hasApplied = seasonData?.hasApplied ?? false;
+  const languageCount = data?.language?.testType ? 1 : 0;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,7 +89,7 @@ export default function ApplicationDetailPage() {
     <div className="relative flex min-h-screen flex-col">
       {/* hasApplied = false일 때 오버레이 */}
       {!hasApplied && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/95">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/95 px-[20px]">
           <div className="medium-body-2 flex w-full max-w-[350px] flex-col items-center gap-[20px] px-[20px]">
             <div className="text-center">성적 공유하고 지금 바로 경쟁률을 확인하세요.</div>
             <button
@@ -99,76 +105,106 @@ export default function ApplicationDetailPage() {
       {/* 메인 콘텐츠 - data가 있을 때만 렌더링 */}
       {data && (
         <>
-          <Header title={isMe ? "내 프로필" : "프로필"} showPrevButton showHomeButton fallbackUrl={`/strategy-room/${seasonId}`} />
-          <div className="flex flex-col px-[20px]">
-            {/* 상단 요약 */}
-            <div className="flex flex-col gap-[20px] border-b-[8px] border-gray-300 py-[20px]">
-              {/* 닉네임 + ME 배지 */}
-              <div className="flex gap-[4px]">
-                <h1 className="text-[24px] font-bold">{data.nickname}</h1>
-                <div className="flex items-start">
-                  {isMe && (
-                    <span className="bg-primary-blue rounded-full px-[6px] py-[2px] text-[10px] font-bold text-white">
-                      ME
-                    </span>
+          <Header
+            title={isMe ? "내 프로필" : "프로필"}
+            showPrevButton
+            showHomeButton
+            fallbackUrl={`/strategy-room/${seasonId}`}
+          >
+            {isDesktop && <HeaderAuthSection />}
+          </Header>
+          <main className="flex flex-1 flex-col px-[20px] pb-[40px] lg:pb-[80px]">
+            <div className="flex flex-col gap-[20px] py-[20px] lg:gap-[24px] lg:py-[32px]">
+              {/* 상단 요약 */}
+              <section className="flex flex-col gap-[20px] border-b-[8px] border-gray-300 py-[20px] lg:flex-row lg:items-center lg:border-0 lg:bg-[#FAFAFA] lg:p-[40px]">
+                <div className="flex flex-1 gap-[4px] lg:gap-[8px]">
+                  <h1 className="text-[24px] font-bold lg:text-[36px]">{data.nickname}</h1>
+                  <div className="flex items-start lg:items-center">
+                    {isMe && (
+                      <span className="bg-primary-blue rounded-full px-[6px] py-[2px] text-[10px] font-bold text-white lg:text-[12px]">
+                        ME
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-[24px] text-gray-700 lg:text-black">
+                  <div className="flex flex-1 justify-between rounded-[16px] lg:w-[254px] lg:flex-none lg:flex-col lg:bg-white lg:p-[24px]">
+                    <div className="flex items-center gap-[8px] text-gray-700 lg:!text-[18px] lg:!font-bold lg:text-black">
+                      {isDesktop && <SchoolIcon size={18} />}
+                      <span>지망 대학교</span>
+                    </div>
+                    <div className="subhead-3 flex flex-col items-end text-black lg:!text-[24px]">
+                      <span>{data.choices.length}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-1 justify-between rounded-[16px] lg:w-[254px] lg:flex-none lg:flex-col lg:bg-white lg:p-[24px]">
+                    <div className="flex items-center gap-[8px] text-gray-700 lg:!text-[18px] lg:!font-bold lg:text-black">
+                      {isDesktop && <PencilIcon size={18} />}
+                      <span>어학 성적</span>
+                    </div>
+                    <div className="subhead-3 flex flex-col items-end text-black lg:!text-[24px]">
+                      <span>{languageCount}</span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <div className="flex flex-col gap-[20px] lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-start lg:gap-[24px]">
+                <div className="flex flex-col lg:gap-[20px]">
+                  <h2 className="border-gray-100 text-[18px] font-bold lg:border-b-1 lg:pb-[20px] lg:text-[20px]">
+                    성적 정보
+                  </h2>
+                  {/* 성적 정보 */}
+                  <section className="flex flex-col gap-[8px] border-b border-gray-300 py-[20px] lg:rounded-[16px] lg:border lg:p-[24px]">
+                    <h3 className="text-[16px] lg:text-[18px] lg:font-bold">학점</h3>
+                    <GradeProgressBar score={data.gpa.score} criteria={data.gpa.criteria} />
+                  </section>
+
+                  {/* 어학 */}
+                  {languageCount < 0 ? (
+                    <section className="flex flex-col gap-[12px] border-b-[8px] border-gray-300 py-[20px] lg:rounded-[16px] lg:border lg:p-[24px]">
+                      <h3 className="text-[16px] lg:text-[18px] lg:font-bold">어학</h3>
+                      <LanguageChart
+                        testType={data.language.testType}
+                        score={data.language.score}
+                        grade={data.language.grade}
+                      />
+                    </section>
+                  ) : (
+                    <section className="flex flex-col gap-[12px] border-b-[8px] border-gray-300 py-[20px] text-gray-700 lg:rounded-[16px] lg:border lg:p-[24px]">
+                      <h3 className="text-[16px] lg:text-[18px] lg:font-bold">어학</h3>
+                      <p className="body-3 text-gray-700">등록된 어학 성적이 없어요.</p>
+                    </section>
                   )}
                 </div>
-              </div>
 
-              {/* 지망 대학교 / 어학 성적 개수 */}
-              <div className="flex items-center gap-[24px] text-[14px] text-gray-700">
-                <div className="flex flex-1 justify-between">
-                  지망 대학교 <span className="subhead-3 text-black">{data.choices.length}</span>
+                {/* 지망한 대학교 */}
+                <div className="flex flex-col gap-[16px] lg:gap-[20px]">
+                  <div className="flex items-center justify-between border-gray-100 lg:border-b-1 lg:pb-[20px]">
+                    <h2 className="subhead-2 lg:!text-[20px]">지망한 대학교 ({data.choices.length}개)</h2>
+                    <div className="flex items-center justify-between">
+                      {isMe && (
+                        <Link
+                          href={`/strategy-room/${data.seasonId}/applications/re-select-university`}
+                          className="cursor-pointer rounded-full bg-gray-300 px-[12px] py-[6px]"
+                        >
+                          지원 대학교 변경
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-[12px]">
+                    {data.choices.map((choiceItem) => (
+                      <UniversitySlotCard key={choiceItem.choice} slot={choiceItem.slot} variant="mobile" />
+                    ))}
+                  </div>
                 </div>
-                <div className="flex flex-1 justify-between">
-                  어학 성적 <span className="subhead-3 text-black">1</span>
-                </div>
               </div>
             </div>
-
-            {/* 성적 정보 */}
-            <div className="flex flex-col gap-[16px] border-b border-gray-300 py-[20px]">
-              <h2 className="text-[18px] font-bold">성적 정보</h2>
-
-              {/* 학점 */}
-              <div className="flex flex-col gap-[8px]">
-                <h3>학점</h3>
-                <GradeProgressBar score={data.gpa.score} criteria={data.gpa.criteria} />
-              </div>
-            </div>
-            <div className="flex flex-col border-b-[8px] border-gray-300 py-[20px]">
-              {/* 어학 */}
-              <div className="flex flex-col gap-[12px]">
-                <h3 className="text-[14px] font-medium text-gray-700">어학</h3>
-                <LanguageChart
-                  testType={data.language.testType}
-                  score={data.language.score}
-                  grade={data.language.grade}
-                />
-              </div>
-            </div>
-
-            {/* 지망한 대학교 */}
-            <div className="flex flex-col gap-[16px] py-[20px]">
-              <div className="flex items-center justify-between">
-                <h2 className="text-[18px] font-bold">지망한 대학교 ({data.choices.length}개)</h2>
-                {isMe && (
-                  <Link
-                    href={`/strategy-room/${data.seasonId}/applications/re-select-university`}
-                    className="cursor-pointer rounded-full bg-gray-300 px-[12px] py-[6px] text-[12px]"
-                  >
-                    지원 대학교 변경
-                  </Link>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-[12px]">
-                {data.choices.map((choiceItem) => (
-                  <UniversitySlotCard key={choiceItem.choice} slot={choiceItem.slot} />
-                ))}
-              </div>
-            </div>
-          </div>
+          </main>
+          <Footer />
         </>
       )}
     </div>
