@@ -1,11 +1,12 @@
 import { http, HttpResponse } from "msw";
 import { getCurrentUser, mockGpas, mockLanguages } from "../data/users";
-import { mockSeasons, findSeasonById, mockSeasonApplicantCounts } from "../data/seasons";
-import { mockSeasonSlots, findSlotById } from "../data/slots";
+import { mockSeasons, findSeasonById } from "../data/seasons";
+import { mockSeasonSlots, findSlotById, getSlotChoiceCount } from "../data/slots";
 import {
   findApplicationByUserAndSeason,
   addApplication,
   updateApplication,
+  countApplicantsBySeason,
 } from "../data/applications";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
@@ -62,9 +63,11 @@ export const seasonHandlers = [
     // 사용자별 hasApplied 업데이트
     const seasonsWithApplied = mockSeasons.map((season) => {
       const hasApplied = user ? !!findApplicationByUserAndSeason(user.userId, season.seasonId) : false;
+      const applicantCount = countApplicantsBySeason(season.seasonId);
 
       return {
         ...season,
+        applicationCount: applicantCount,
         isApplied: hasApplied, // API 명세에서는 isApplied로 되어 있음
       };
     });
@@ -92,7 +95,7 @@ export const seasonHandlers = [
     const user = getCurrentUser();
     const hasApplied = user ? !!findApplicationByUserAndSeason(user.userId, seasonId) : false;
 
-    const applicantCount = mockSeasonApplicantCounts[seasonId] || 0;
+    const applicantCount = countApplicantsBySeason(seasonId);
 
     return HttpResponse.json({
       seasonId: season.seasonId,
@@ -124,11 +127,20 @@ export const seasonHandlers = [
     const user = getCurrentUser();
     const hasApplied = user ? !!findApplicationByUserAndSeason(user.userId, seasonId) : false;
 
-    const applicantCount = mockSeasonApplicantCounts[seasonId] || 0;
+    const applicantCount = countApplicantsBySeason(seasonId);
 
     // 시즌에 속한 슬롯들 가져오기
     const slotIds = mockSeasonSlots[seasonId] || [];
-    const slots = slotIds.map((id) => findSlotById(id)).filter((slot) => slot !== undefined);
+    const slots = slotIds.flatMap((id) => {
+      const slot = findSlotById(id);
+      if (!slot) return [];
+      return [
+        {
+          ...slot,
+          choiceCount: getSlotChoiceCount(id),
+        },
+      ];
+    });
 
     return HttpResponse.json({
       seasonId,
@@ -263,6 +275,9 @@ export const seasonHandlers = [
       if (!slot) {
         return createErrorResponse(404, "슬롯을 찾을 수 없습니다.");
       }
+      if (!(mockSeasonSlots[seasonId] || []).includes(choice.slotId)) {
+        return createErrorResponse(403, "해당 시즌에서 지원할 수 없는 대학입니다.");
+      }
     }
 
     // 지원서 생성
@@ -393,6 +408,9 @@ export const seasonHandlers = [
       const slot = findSlotById(choice.slotId);
       if (!slot) {
         return createErrorResponse(404, "슬롯을 찾을 수 없습니다.");
+      }
+      if (!(mockSeasonSlots[seasonId] || []).includes(choice.slotId)) {
+        return createErrorResponse(403, "해당 시즌에서 지원할 수 없는 대학입니다.");
       }
     }
 

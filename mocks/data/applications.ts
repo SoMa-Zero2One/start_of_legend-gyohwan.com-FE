@@ -32,23 +32,105 @@ export const mockApplications: MockApplication[] = [
     languageId: 1,
     extraScore: 1.5,
     choices: [
-      { choice: 1, slotId: 2 },
-      { choice: 2, slotId: 4 },
-      { choice: 3, slotId: 6 },
+      { choice: 1, slotId: 7 },
+      { choice: 2, slotId: 9 },
+      { choice: 3, slotId: 10 },
     ],
     modifyCount: 3,
   },
   {
     applicationId: 2,
     seasonId: 1,
+    userId: 5,
+    nickname: "성실한사자",
+    gpaId: 6,
+    languageId: 6,
+    extraScore: 0,
+    choices: [
+      { choice: 1, slotId: 1 },
+      { choice: 2, slotId: 2 },
+    ],
+    modifyCount: 3,
+  },
+  {
+    applicationId: 3,
+    seasonId: 1,
+    userId: 6,
+    nickname: "똑똑한여우",
+    gpaId: 7,
+    languageId: 7,
+    extraScore: 2.0,
+    choices: [
+      { choice: 1, slotId: 1 },
+      { choice: 2, slotId: 3 },
+    ],
+    modifyCount: 3,
+  },
+  {
+    applicationId: 4,
+    seasonId: 1,
+    userId: 7,
+    nickname: "용감한독수리",
+    gpaId: 8,
+    languageId: 8,
+    extraScore: 1.0,
+    choices: [
+      { choice: 1, slotId: 2 },
+      { choice: 2, slotId: 4 },
+    ],
+    modifyCount: 2,
+  },
+  {
+    applicationId: 5,
+    seasonId: 2,
+    userId: 8,
+    nickname: "부지런한토끼",
+    gpaId: 9,
+    languageId: 9,
+    extraScore: 0.5,
+    choices: [
+      { choice: 1, slotId: 5 },
+      { choice: 2, slotId: 6 },
+    ],
+    modifyCount: 2,
+  },
+  {
+    applicationId: 6,
+    seasonId: 2,
     userId: 3,
     nickname: "카카오유저",
     gpaId: 4,
     languageId: 4,
     extraScore: 0,
+    choices: [{ choice: 1, slotId: 5 }],
+    modifyCount: 3,
+  },
+  {
+    applicationId: 7,
+    seasonId: 3,
+    userId: 9,
+    nickname: "침착한고래",
+    gpaId: 10,
+    languageId: 10,
+    extraScore: 1.2,
     choices: [
-      { choice: 1, slotId: 1 },
-      { choice: 2, slotId: 2 },
+      { choice: 1, slotId: 8 },
+      { choice: 2, slotId: 7 },
+    ],
+    modifyCount: 3,
+  },
+  {
+    applicationId: 8,
+    seasonId: 3,
+    userId: 10,
+    nickname: "차분한기린",
+    gpaId: 11,
+    languageId: 11,
+    extraScore: 0.8,
+    choices: [
+      { choice: 1, slotId: 9 },
+      { choice: 2, slotId: 8 },
+      { choice: 3, slotId: 10 },
     ],
     modifyCount: 3,
   },
@@ -66,6 +148,18 @@ export function findApplicationByUserAndSeason(userId: number, seasonId: number)
  */
 export function findApplicationById(applicationId: number): MockApplication | undefined {
   return mockApplications.find((app) => app.applicationId === applicationId);
+}
+
+export function findApplicationsBySeason(seasonId: number): MockApplication[] {
+  return mockApplications.filter((app) => app.seasonId === seasonId);
+}
+
+export function countApplicantsBySeason(seasonId: number): number {
+  return findApplicationsBySeason(seasonId).length;
+}
+
+export function findApplicationsBySlot(slotId: number): MockApplication[] {
+  return mockApplications.filter((app) => app.choices.some((choice) => choice.slotId === slotId));
 }
 
 /**

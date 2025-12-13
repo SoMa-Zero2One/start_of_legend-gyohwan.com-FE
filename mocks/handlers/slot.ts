@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { getCurrentUser, mockGpas, mockLanguages } from "../data/users";
-import { findSlotById, mockSlotApplicants, mockSlotApplicantsRestricted } from "../data/slots";
+import { findSlotById, getSlotApplicants, findSeasonIdBySlotId } from "../data/slots";
 import { findApplicationById, mockApplications } from "../data/applications";
 import type { Gpa, Language } from "@/types/grade";
 
@@ -74,25 +74,20 @@ export const slotHandlers = [
     // 사용자가 이 슬롯에 지원했는지 확인
     const hasApplied = user ? hasUserAppliedToSlot(user.userId, slotId) : false;
 
-    // 지원자 목록 가져오기
-    let applicants = mockSlotApplicants[slotId] || [];
-
-    // 지원하지 않은 경우 민감 정보 숨김
-    if (!hasApplied) {
-      applicants = (mockSlotApplicantsRestricted[slotId] || applicants).map((applicant) => ({
-        ...applicant,
-        gpaScore: null,
-        gpaCriteria: null,
-        languageTest: null,
-        languageGrade: null,
-        languageScore: null,
-        extraScore: null,
-        score: null,
-      }));
-    }
-
-    // 슬롯이 속한 시즌 찾기 (간단하게 첫 번째 시즌으로 가정)
-    const seasonId = 1; // 실제로는 슬롯에서 seasonId를 가져와야 함
+    const seasonId = findSeasonIdBySlotId(slotId) ?? 0;
+    const allApplicants = getSlotApplicants(slotId);
+    const applicants = hasApplied
+      ? allApplicants
+      : allApplicants.map((applicant) => ({
+          ...applicant,
+          gpaScore: null,
+          gpaCriteria: null,
+          languageTest: null,
+          languageGrade: null,
+          languageScore: null,
+          extraScore: null,
+          score: null,
+        }));
 
     return HttpResponse.json({
       slotId: slot.slotId,
@@ -101,7 +96,7 @@ export const slotHandlers = [
       country: slot.country,
       logoUrl: slot.logoUrl,
       homepageUrl: slot.homepageUrl,
-      choiceCount: slot.choiceCount,
+      choiceCount: allApplicants.length,
       slotCount: slot.slotCount,
       duration: slot.duration,
       etc: null,

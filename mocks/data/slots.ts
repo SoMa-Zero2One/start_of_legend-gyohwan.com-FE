@@ -1,82 +1,83 @@
 import type { Slot } from "@/types/slot";
+import { mockApplications } from "./applications";
+import { mockGpas, mockLanguages } from "./users";
 
 /**
  * Mock 슬롯 (교환 대학) 데이터
  */
-
 export const mockSlots: Slot[] = [
   {
     slotId: 1,
     name: "UC Berkeley",
     country: "미국",
     logoUrl: "https://example.com/berkeley.png",
-    choiceCount: 15,
+    choiceCount: 0,
     slotCount: "2",
     duration: "1학기",
     homepageUrl: "https://www.berkeley.edu/",
-    universityId: 1, // 커뮤니티 대학 ID
+    universityId: 1,
   },
   {
     slotId: 2,
     name: "UCLA",
     country: "미국",
     logoUrl: "https://example.com/ucla.png",
-    choiceCount: 23,
+    choiceCount: 0,
     slotCount: "3",
     duration: "1학기",
     homepageUrl: "https://www.ucla.edu/",
-    universityId: 2, // 커뮤니티 대학 ID
+    universityId: 2,
   },
   {
     slotId: 3,
     name: "University of Tokyo",
     country: "일본",
     logoUrl: "https://example.com/tokyo.png",
-    choiceCount: 18,
+    choiceCount: 0,
     slotCount: "2",
     duration: "1학기",
     homepageUrl: "https://www.u-tokyo.ac.jp/en/",
-    universityId: 3, // 커뮤니티 대학 ID
+    universityId: 3,
   },
   {
     slotId: 4,
     name: "Oxford University",
     country: "영국",
     logoUrl: "https://example.com/oxford.png",
-    choiceCount: 30,
+    choiceCount: 0,
     slotCount: "1",
     duration: "1년",
     homepageUrl: "https://www.ox.ac.uk/",
-    universityId: 4, // 커뮤니티 대학 ID
+    universityId: 4,
   },
   {
     slotId: 5,
     name: "National University of Singapore",
     country: "싱가포르",
     logoUrl: "https://example.com/nus.png",
-    choiceCount: 12,
+    choiceCount: 0,
     slotCount: "4",
     duration: "1학기",
     homepageUrl: "https://www.nus.edu.sg/",
-    universityId: 5, // 커뮤니티 대학 ID
+    universityId: 5,
   },
   {
     slotId: 6,
     name: "ETH Zurich",
     country: "스위스",
     logoUrl: "https://example.com/eth.png",
-    choiceCount: 8,
+    choiceCount: 0,
     slotCount: "2",
     duration: "미정",
-    homepageUrl: null, // 일부 대학은 홈페이지 URL이 없을 수 있음
-    universityId: null, // 커뮤니티에 없는 대학
+    homepageUrl: null,
+    universityId: null,
   },
   {
     slotId: 7,
     name: "McGill University",
     country: "캐나다",
     logoUrl: "https://example.com/mcgill.png",
-    choiceCount: 0, // 지원자가 없는 슬롯 케이스
+    choiceCount: 0,
     slotCount: "2",
     duration: "1학기",
     homepageUrl: "https://www.mcgill.ca/",
@@ -87,41 +88,69 @@ export const mockSlots: Slot[] = [
     name: "Lund University",
     country: "스웨덴",
     logoUrl: "https://example.com/lund.png",
-    choiceCount: null, // 경쟁률 집계가 아직 안 된 케이스
+    choiceCount: 0,
     slotCount: "미정",
     duration: "1년",
     homepageUrl: "https://www.lunduniversity.lu.se/",
     universityId: null,
   },
+  {
+    slotId: 9,
+    name: "University of Sydney",
+    country: "호주",
+    logoUrl: "https://example.com/sydney.png",
+    choiceCount: 0,
+    slotCount: "2",
+    duration: "1학기",
+    homepageUrl: "https://www.sydney.edu.au/",
+    universityId: null,
+  },
+  {
+    slotId: 10,
+    name: "KU Leuven",
+    country: "벨기에",
+    logoUrl: "https://example.com/leuven.png",
+    choiceCount: 0,
+    slotCount: "1",
+    duration: "1학기",
+    homepageUrl: "https://www.kuleuven.be/",
+    universityId: null,
+  },
+  {
+    slotId: 11,
+    name: "University of Granada",
+    country: "스페인",
+    logoUrl: "https://example.com/granada.png",
+    choiceCount: 0,
+    slotCount: "미정",
+    duration: "1학기",
+    homepageUrl: "https://www.ugr.es/",
+    universityId: null,
+  },
 ];
 
-/**
- * 슬롯 ID로 슬롯 찾기
- */
 export function findSlotById(slotId: number): Slot | undefined {
   return mockSlots.find((s) => s.slotId === slotId);
 }
 
-/**
- * 시즌별 슬롯 매핑
- */
 export const mockSeasonSlots: Record<number, number[]> = {
-  // 시즌 1은 hasApplied=false 상태에서 탭/검색 케이스 확인용
-  1: [1, 2, 7, 8],
-  // 시즌 2는 아직 지원 전인 다른 학기
-  2: [3, 5, 6],
-  // 시즌 3은 mockCurrentUser(userId=1)이 지원한 시즌
-  3: [2, 4, 6],
-  // 시즌 4는 다른 대학교 시즌 (학교 미매치 케이스)
-  4: [1, 5],
-  // 시즌 5는 방어적 코딩 케이스 (슬롯 없음)
+  1: [1, 2, 3, 4],
+  2: [5, 6],
+  3: [7, 8, 9, 10, 11],
+  4: [],
   5: [],
 };
 
-/**
- * 슬롯별 지원자 목록 (간단한 mock)
- */
-export interface MockApplicant {
+export function findSeasonIdBySlotId(slotId: number): number | null {
+  for (const [seasonId, slots] of Object.entries(mockSeasonSlots)) {
+    if (slots.includes(slotId)) {
+      return Number(seasonId);
+    }
+  }
+  return null;
+}
+
+export interface SlotApplicant {
   applicationId: number;
   nickname: string;
   choice: number;
@@ -135,218 +164,49 @@ export interface MockApplicant {
   etc: string;
 }
 
-export const mockSlotApplicants: Record<number, MockApplicant[]> = {
-  1: [
-    {
-      applicationId: 2,
-      nickname: "성실한사자",
-      choice: 2,
-      gpaScore: 4.0,
-      gpaCriteria: 4.3,
-      languageTest: "TOEFL_IBT",
-      languageGrade: null,
-      languageScore: "105",
-      extraScore: 0,
-      score: 82.3,
-      etc: "",
-    },
-    {
-      applicationId: 3,
-      nickname: "똑똑한여우",
-      choice: 1,
-      gpaScore: 4.5,
-      gpaCriteria: 4.5,
-      languageTest: "IELTS",
-      languageGrade: null,
-      languageScore: "8.0",
-      extraScore: 2.0,
-      score: 90.0,
-      etc: "",
-    },
-  ],
-  2: [
-    {
-      applicationId: 1,
-      nickname: "열정적인펭귄",
-      choice: 1,
-      gpaScore: 4.21,
-      gpaCriteria: 4.5,
-      languageTest: "TOEIC",
-      languageGrade: "A",
-      languageScore: "900",
-      extraScore: 1.5,
-      score: 85.5,
-      etc: "",
-    },
-    {
-      applicationId: 4,
-      nickname: "용감한독수리",
-      choice: 1,
-      gpaScore: 3.9,
-      gpaCriteria: 4.5,
-      languageTest: "TOEIC",
-      languageGrade: "B",
-      languageScore: "850",
-      extraScore: 1.0,
-      score: 80.0,
-      etc: "",
-    },
-  ],
-  3: [
-    {
-      applicationId: 5,
-      nickname: "부지런한토끼",
-      choice: 1,
-      gpaScore: 4.1,
-      gpaCriteria: 4.3,
-      languageTest: "JLPT",
-      languageGrade: "N1",
-      languageScore: null,
-      extraScore: 0.5,
-      score: 83.0,
-      etc: "",
-    },
-  ],
-  4: [
-    {
-      applicationId: 1,
-      nickname: "열정적인펭귄",
-      choice: 2,
-      gpaScore: 4.21,
-      gpaCriteria: 4.5,
-      languageTest: "TOEIC",
-      languageGrade: "A",
-      languageScore: "900",
-      extraScore: 1.5,
-      score: 83.0,
-      etc: "",
-    },
-  ],
-  5: [],
-  6: [
-    {
-      applicationId: 1,
-      nickname: "열정적인펭귄",
-      choice: 3,
-      gpaScore: 4.21,
-      gpaCriteria: 4.5,
-      languageTest: "TOEIC",
-      languageGrade: "A",
-      languageScore: "900",
-      extraScore: 1.5,
-      score: 80.0,
-      etc: "",
-    },
-  ],
-  7: [], // 지원자가 없는 슬롯
-  8: [], // 경쟁률 데이터 미집계 슬롯
-};
+export function getSlotChoiceCount(slotId: number): number {
+  return mockApplications.reduce((acc, application) => {
+    return acc + (application.choices.some((choice) => choice.slotId === slotId) ? 1 : 0);
+  }, 0);
+}
 
-/**
- * 지원자가 지원하지 않은 슬롯에서는 민감 정보가 null로 표시됨
- */
-export const mockSlotApplicantsRestricted: Record<number, MockApplicant[]> = {
-  1: [
-    {
-      applicationId: 2,
-      nickname: "성실한사자",
-      choice: 2,
-      gpaScore: null,
-      gpaCriteria: null,
-      languageTest: null,
-      languageGrade: null,
-      languageScore: null,
-      extraScore: null,
-      score: null,
-      etc: "",
-    },
-    {
-      applicationId: 3,
-      nickname: "똑똑한여우",
-      choice: 1,
-      gpaScore: null,
-      gpaCriteria: null,
-      languageTest: null,
-      languageGrade: null,
-      languageScore: null,
-      extraScore: null,
-      score: null,
-      etc: "",
-    },
-  ],
-  2: [
-    {
-      applicationId: 1,
-      nickname: "열정적인펭귄",
-      choice: 1,
-      gpaScore: null,
-      gpaCriteria: null,
-      languageTest: null,
-      languageGrade: null,
-      languageScore: null,
-      extraScore: null,
-      score: null,
-      etc: "",
-    },
-    {
-      applicationId: 4,
-      nickname: "용감한독수리",
-      choice: 1,
-      gpaScore: null,
-      gpaCriteria: null,
-      languageTest: null,
-      languageGrade: null,
-      languageScore: null,
-      extraScore: null,
-      score: null,
-      etc: "",
-    },
-  ],
-  3: [
-    {
-      applicationId: 5,
-      nickname: "부지런한토끼",
-      choice: 1,
-      gpaScore: null,
-      gpaCriteria: null,
-      languageTest: null,
-      languageGrade: null,
-      languageScore: null,
-      extraScore: null,
-      score: null,
-      etc: "",
-    },
-  ],
-  4: [
-    {
-      applicationId: 1,
-      nickname: "열정적인펭귄",
-      choice: 2,
-      gpaScore: null,
-      gpaCriteria: null,
-      languageTest: null,
-      languageGrade: null,
-      languageScore: null,
-      extraScore: null,
-      score: null,
-      etc: "",
-    },
-  ],
-  6: [
-    {
-      applicationId: 1,
-      nickname: "열정적인펭귄",
-      choice: 3,
-      gpaScore: null,
-      gpaCriteria: null,
-      languageTest: null,
-      languageGrade: null,
-      languageScore: null,
-      extraScore: null,
-      score: null,
-      etc: "",
-    },
-  ],
-  7: [],
-  8: [],
-};
+export function getSlotApplicants(slotId: number): SlotApplicant[] {
+  const applicants = mockApplications.filter((application) =>
+    application.choices.some((choice) => choice.slotId === slotId)
+  );
+
+  return applicants
+    .map((application) => {
+      const choiceInfo = application.choices.find((choice) => choice.slotId === slotId)!;
+      const gpa = (mockGpas[application.userId] || []).find((g) => g.gpaId === application.gpaId);
+      const language = (mockLanguages[application.userId] || []).find(
+        (l) => l.languageId === application.languageId
+      );
+
+      const gpaScore = gpa?.score ?? null;
+      const gpaCriteria = gpa ? Number(gpa.criteria) : null;
+      const baseScore = gpaScore !== null && gpaCriteria ? (gpaScore / gpaCriteria) * 80 : null;
+      const combinedScore =
+        baseScore !== null ? Math.round((baseScore + (application.extraScore ?? 0)) * 10) / 10 : null;
+
+      return {
+        applicationId: application.applicationId,
+        nickname: application.nickname,
+        choice: choiceInfo.choice,
+        gpaScore,
+        gpaCriteria,
+        languageTest: language?.testType ?? null,
+        languageGrade: language?.grade ?? null,
+        languageScore: language?.score ?? null,
+        extraScore: application.extraScore ?? null,
+        score: combinedScore,
+        etc: "",
+      };
+    })
+    .sort((a, b) => {
+      if (a.choice !== b.choice) {
+        return a.choice - b.choice;
+      }
+      return a.applicationId - b.applicationId;
+    });
+}

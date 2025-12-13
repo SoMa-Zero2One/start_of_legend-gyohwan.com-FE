@@ -58,12 +58,91 @@ export const mockGoogleUser: User = {
   profileUrl: "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=256&h=256&fit=crop",
 };
 
+// 전략방 시나리오용 가상 지원자들
+export const mockApplicantLionUser: User = {
+  userId: 5,
+  email: null,
+  schoolEmail: null,
+  nickname: "성실한사자",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
+export const mockApplicantFoxUser: User = {
+  userId: 6,
+  email: null,
+  schoolEmail: null,
+  nickname: "똑똑한여우",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
+export const mockApplicantEagleUser: User = {
+  userId: 7,
+  email: null,
+  schoolEmail: null,
+  nickname: "용감한독수리",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
+export const mockApplicantRabbitUser: User = {
+  userId: 8,
+  email: null,
+  schoolEmail: null,
+  nickname: "부지런한토끼",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
+export const mockApplicantWhaleUser: User = {
+  userId: 9,
+  email: null,
+  schoolEmail: null,
+  nickname: "침착한고래",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
+export const mockApplicantGiraffeUser: User = {
+  userId: 10,
+  email: null,
+  schoolEmail: null,
+  nickname: "차분한기린",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
 // 전체 유저 목록 (userId로 조회 가능)
 export const mockUsers: Record<number, User> = {
   1: mockCurrentUser,
   2: mockUnverifiedUser,
   3: mockKakaoUser,
   4: mockGoogleUser,
+  5: mockApplicantLionUser,
+  6: mockApplicantFoxUser,
+  7: mockApplicantEagleUser,
+  8: mockApplicantRabbitUser,
+  9: mockApplicantWhaleUser,
+  10: mockApplicantGiraffeUser,
 };
 
 /**
@@ -111,6 +190,60 @@ export const mockGpas: Record<number, Gpa[]> = {
       criteria: "4.0",
       verifyStatus: "REJECTED",
       statusReason: "증빙 자료가 불충분합니다.",
+    },
+  ],
+  5: [
+    {
+      gpaId: 6,
+      score: 4.0,
+      criteria: "4.3",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  6: [
+    {
+      gpaId: 7,
+      score: 4.5,
+      criteria: "4.5",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  7: [
+    {
+      gpaId: 8,
+      score: 3.9,
+      criteria: "4.5",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  8: [
+    {
+      gpaId: 9,
+      score: 4.1,
+      criteria: "4.3",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  9: [
+    {
+      gpaId: 10,
+      score: 3.7,
+      criteria: "4.5",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  10: [
+    {
+      gpaId: 11,
+      score: 4.3,
+      criteria: "4.5",
+      verifyStatus: "APPROVED",
+      statusReason: null,
     },
   ],
 };
@@ -163,6 +296,66 @@ export const mockLanguages: Record<number, Language[]> = {
       testType: "JLPT",
       score: null,
       grade: "N1",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  5: [
+    {
+      languageId: 6,
+      testType: "TOEFL_IBT",
+      score: "105",
+      grade: null,
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  6: [
+    {
+      languageId: 7,
+      testType: "IELTS",
+      score: "8.0",
+      grade: null,
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  7: [
+    {
+      languageId: 8,
+      testType: "TOEIC",
+      score: "850",
+      grade: "B",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  8: [
+    {
+      languageId: 9,
+      testType: "JLPT",
+      score: null,
+      grade: "N1",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  9: [
+    {
+      languageId: 10,
+      testType: "IELTS",
+      score: "7.0",
+      grade: null,
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  10: [
+    {
+      languageId: 11,
+      testType: "TOEFL_IBT",
+      score: "110",
+      grade: null,
       verifyStatus: "APPROVED",
       statusReason: null,
     },
