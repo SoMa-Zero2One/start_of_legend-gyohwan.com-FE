@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { getCurrentUser, mockGpas, mockLanguages } from "../data/users";
-import { findSlotById, getSlotApplicants, findSeasonIdBySlotId } from "../data/slots";
+import { findSlotById, getSlotApplicants, findSeasonIdBySlotId, getSlotChoiceCount } from "../data/slots";
 import { findApplicationById, mockApplications } from "../data/applications";
 import type { Gpa, Language } from "@/types/grade";
 
@@ -128,10 +128,20 @@ export const slotHandlers = [
     const language = userLanguages.find((l: Language) => l.languageId === application.languageId);
 
     // Choices 변환
-    const choicesWithSlot = application.choices.map((c) => ({
-      choice: c.choice,
-      slot: findSlotById(c.slotId)!,
-    }));
+    const choicesWithSlot = application.choices.map((c) => {
+      const slot = findSlotById(c.slotId);
+      if (!slot) {
+        throw new Error(`Slot not found for slotId ${c.slotId}`);
+      }
+
+      return {
+        choice: c.choice,
+        slot: {
+          ...slot,
+          choiceCount: getSlotChoiceCount(c.slotId),
+        },
+      };
+    });
 
     return HttpResponse.json({
       applicationId: application.applicationId,
