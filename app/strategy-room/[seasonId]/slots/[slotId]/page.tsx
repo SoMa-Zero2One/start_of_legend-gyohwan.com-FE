@@ -258,10 +258,8 @@ export default function SlotDetailPage() {
                 {isDesktop && <HandIcon size={18} />}
                 <span>지원자 수</span>
               </div>
-              <div className="flex flex-col items-end">
-                <div className="flex gap-[8px] lg:!text-[24px]">
-                  <span className="font-bold">{choiceCountDisplay}</span>
-                </div>
+              <div className="flex flex-col items-end lg:!text-[24px]">
+                <span className="font-bold">{choiceCountDisplay}</span>
               </div>
             </div>
             <div className="flex justify-between rounded-[16px] lg:w-[254px] lg:flex-col lg:border lg:border-gray-300 lg:p-[24px] lg:shadow-[0_0_8px_0_rgba(0_0_0_/_0.06)]">
@@ -269,10 +267,8 @@ export default function SlotDetailPage() {
                 {isDesktop && <UserIcon size={18} />}
                 <span>모집인원</span>
               </div>
-              <div className="flex flex-col items-end">
-                <div className="flex gap-[8px] lg:!text-[24px]">
-                  <span className="font-bold">{slotCountDisplay}</span>
-                </div>
+              <div className="flex flex-col items-end lg:!text-[24px]">
+                <span className="font-bold">{slotCountDisplay}</span>
               </div>
             </div>
           </div>
