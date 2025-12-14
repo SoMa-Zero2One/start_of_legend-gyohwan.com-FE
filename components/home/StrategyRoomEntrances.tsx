@@ -82,7 +82,7 @@ export default function StrategyRoomEntrances({ initialSeasons }: StrategyRoomEn
     <div id="strategy-room-entrances" className="relative flex flex-col gap-[40px] px-[20px] pb-[100px]">
       {/* 헤더 */}
       <div className="flex flex-col items-center gap-[12px]">
-        <h2 className="head-4">
+        <h2 className="head-4 lg:!text-[36px]">
           {activeTab === "current" ? "교환학생 모집 중인 대학" : "과거 진행한 대학"}
         </h2>
 
@@ -91,9 +91,7 @@ export default function StrategyRoomEntrances({ initialSeasons }: StrategyRoomEn
           <button
             onClick={() => setActiveTab("current")}
             className={`g-body-1 cursor-pointer pb-[8px] transition-colors ${
-              activeTab === "current"
-                ? "border-b-2 border-primary-blue text-primary-blue font-bold"
-                : "text-gray-500"
+              activeTab === "current" ? "border-primary-blue text-primary-blue border-b-2 font-bold" : "text-gray-500"
             }`}
           >
             모집 중
@@ -101,9 +99,7 @@ export default function StrategyRoomEntrances({ initialSeasons }: StrategyRoomEn
           <button
             onClick={() => setActiveTab("past")}
             className={`g-body-1 cursor-pointer pb-[8px] transition-colors ${
-              activeTab === "past"
-                ? "border-b-2 border-primary-blue text-primary-blue font-bold"
-                : "text-gray-500"
+              activeTab === "past" ? "border-primary-blue text-primary-blue border-b-2 font-bold" : "text-gray-500"
             }`}
           >
             과거 진행
@@ -112,7 +108,7 @@ export default function StrategyRoomEntrances({ initialSeasons }: StrategyRoomEn
 
         {/* 개수 표시 */}
         {activeTab === "current" ? (
-          <p className="g-head-2 text-primary-blue">{sortedSeasons.length}개 대학</p>
+          <p className="g-head-2 text-primary-blue lg:text-[48px]">{sortedSeasons.length}개 대학</p>
         ) : (
           <div className="flex flex-col items-center gap-[4px]">
             <p className="g-head-2 text-primary-blue">{pastSeasons.length}개 대학</p>
@@ -122,7 +118,7 @@ export default function StrategyRoomEntrances({ initialSeasons }: StrategyRoomEn
       </div>
 
       {/* 카드 리스트 */}
-      <div className="grid grid-cols-1 gap-[12px]">
+      <div className="grid grid-cols-1 gap-[12px] lg:grid-cols-3">
         {activeTab === "current"
           ? sortedSeasons.map((season) => <StrategyRoomCard key={season.seasonId} data={season} />)
           : pastSeasons.map((season) => <PastSeasonCard key={season.seasonId} data={season} />)}

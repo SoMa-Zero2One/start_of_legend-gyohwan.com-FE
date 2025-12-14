@@ -3,18 +3,25 @@
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useMemo, useRef } from "react";
 import Header from "@/components/layout/Header";
+import HeaderAuthSection from "@/components/layout/HeaderAuthSection";
 import ApplicantCard from "@/components/strategy-room/ApplicantCard";
 import SlotDetailPageSkeleton from "@/components/strategy-room/SlotDetailPageSkeleton";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import Tabs from "@/components/common/Tabs";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
+import CountryFlag from "@/components/common/CountryFlag";
 import ExternalLinkIcon from "@/components/icons/ExternalLinkIcon";
 import CommunityIcon from "@/components/icons/CommunityIcon";
+import GlobeIcon from "@/components/icons/GlobeIcon";
+import UserIcon from "@/components/icons/UserIcon";
+import HandIcon from "@/components/icons/HandIcon";
 import Link from "next/link";
 import { getSlotDetail, getMyApplication } from "@/lib/api/slot";
 import { handleApiError } from "@/lib/utils/apiError";
 import { SlotDetailResponse, MyApplicationResponse } from "@/types/slot";
 import { getSlotSafeDefaults, getChoiceCountDisplay, getSlotCountDisplay } from "@/lib/utils/slot";
+import { useIsDesktop } from "@/lib/hooks/useMediaQuery";
+import Footer from "@/components/layout/Footer";
 
 type TabType = "지망순위" | "환산점수" | "학점";
 
@@ -28,6 +35,7 @@ export default function SlotDetailPage() {
   const searchParams = useSearchParams();
   const slotId = params.slotId as string;
   const seasonId = params.seasonId as string;
+  const isDesktop = useIsDesktop();
 
   const [data, setData] = useState<SlotDetailResponse | null>(null);
   const [myApplication, setMyApplication] = useState<MyApplicationResponse | null>(null);
@@ -46,6 +54,7 @@ export default function SlotDetailPage() {
   // Timeout ID를 저장하기 위한 ref
   const tooltipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const shakeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hasSharedGrade = data?.hasApplied ?? false;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -192,8 +201,10 @@ export default function SlotDetailPage() {
   if (error || !data) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header title="지원자 목록" showPrevButton showHomeButton showBorder fallbackUrl={`/strategy-room/${seasonId}`} />
-        <div className="flex flex-1 items-center justify-center">
+        <Header title="지원자 목록" showPrevButton showHomeButton showBorder fallbackUrl={`/strategy-room/${seasonId}`}>
+          {isDesktop && <HeaderAuthSection />}
+        </Header>
+        <div className="flex flex-1 items-center justify-center px-[20px] text-center">
           <p className="text-error-red">{error || "데이터를 찾을 수 없습니다."}</p>
         </div>
       </div>
@@ -208,104 +219,118 @@ export default function SlotDetailPage() {
   const slotCountDisplay = getSlotCountDisplay(slotCount);
 
   return (
-    <div className="flex min-h-screen flex-col">
-      {/* 상단 헤더 */}
-      <Header title="지원자 목록" showPrevButton showHomeButton fallbackUrl={`/strategy-room/${seasonId}`} />
+    <>
+      <div className="flex min-h-screen flex-col">
+        <Header title="지원자 목록" showPrevButton showHomeButton fallbackUrl={`/strategy-room/${seasonId}`}>
+          {isDesktop && <HeaderAuthSection />}
+        </Header>
 
-      {/* 대학 정보 */}
-      <section className="border-b border-gray-100 p-[20px]">
-        {/* 학교 로고 */}
-        <div className="mb-[8px]">
-          <div className="relative h-[40px] w-[40px] overflow-hidden rounded-full">
-            <SchoolLogoWithFallback
-              src={logoUrl}
-              alt={`${name} 로고`}
-              width={40}
-              height={40}
-              className="object-contain"
-            />
+        <section className="flex flex-col border-b border-gray-100 p-[20px] lg:flex-row lg:gap-[40px]">
+          <div className="head-4 mb-[20px] lg:mb-[24px] lg:line-clamp-2 lg:flex-1 lg:text-ellipsis">
+            <div className="relative mb-[8px] h-[40px] w-[40px] overflow-hidden rounded-full lg:h-[60px] lg:w-[60px]">
+              <SchoolLogoWithFallback
+                src={logoUrl}
+                alt={`${name} 로고`}
+                fill
+                sizes="(min-width:1024px) 60px, 40px"
+                className="h-[40px] w-[40px] object-contain lg:h-[60px] lg:w-[60px]"
+              />
+            </div>
+
+            <h2>{name}</h2>
           </div>
-        </div>
 
-        {/* 학교 이름 */}
-        <h2 className={`head-4 ${data.homepageUrl ? "mb-[8px]" : "mb-[20px]"}`}>{name}</h2>
+          <div className="flex flex-col gap-[12px] lg:flex-row lg:justify-between">
+            <div className="flex justify-between rounded-[16px] lg:w-[254px] lg:flex-col lg:border lg:border-gray-300 lg:p-[24px] lg:shadow-[0_0_8px_0_rgba(0_0_0_/_0.06)]">
+              <div className="flex items-center gap-[8px] text-gray-700 lg:!text-[18px] lg:!font-bold lg:text-black">
+                {isDesktop && <GlobeIcon size={18} />}
+                <span>국가</span>
+              </div>
+              <div className="flex flex-col items-end">
+                <div className="flex gap-[8px] lg:!text-[24px]">
+                  {isDesktop && <CountryFlag country={country} size={30} />}
+                  <span className="font-bold">{country}</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-between rounded-[16px] lg:w-[254px] lg:flex-col lg:border lg:border-gray-300 lg:p-[24px] lg:shadow-[0_0_8px_0_rgba(0_0_0_/_0.06)]">
+              <div className="flex items-center gap-[8px] text-gray-700 lg:!text-[18px] lg:!font-bold lg:text-black">
+                {isDesktop && <HandIcon size={18} />}
+                <span>지원자 수</span>
+              </div>
+              <div className="flex flex-col items-end lg:!text-[24px]">
+                <span className="font-bold">{choiceCountDisplay}</span>
+              </div>
+            </div>
+            <div className="flex justify-between rounded-[16px] lg:w-[254px] lg:flex-col lg:border lg:border-gray-300 lg:p-[24px] lg:shadow-[0_0_8px_0_rgba(0_0_0_/_0.06)]">
+              <div className="flex items-center gap-[8px] text-gray-700 lg:!text-[18px] lg:!font-bold lg:text-black">
+                {isDesktop && <UserIcon size={18} />}
+                <span>모집인원</span>
+              </div>
+              <div className="flex flex-col items-end lg:!text-[24px]">
+                <span className="font-bold">{slotCountDisplay}</span>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        <div className="mb-[20px] flex gap-[12px]">
-          {/* 홈페이지 바로가기 버튼 */}
-          {data.homepageUrl && (
-            <a
-              href={data.homepageUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-[4px] rounded-full bg-gray-300 px-[12px] py-[6px] text-[12px] transition-colors hover:bg-gray-400"
+        <div className="mt-[12px] flex flex-col items-start justify-between gap-[8px] rounded-[12px] border border-gray-100 bg-gray-50 p-[12px] text-gray-700 lg:flex-row lg:items-center lg:px-[24px] lg:py-[16px]">
+          <p>홈페이지와 커뮤니티에서 학교 정보와 선배들의 파견 생생 후기를 확인할 수 있어요.</p>
+          <div className="flex gap-[12px]">
+            {data.homepageUrl && (
+              <a
+                href={data.homepageUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="caption-2 inline-flex cursor-pointer items-center gap-[4px] rounded-full bg-gray-300 px-[12px] py-[6px] hover:bg-gray-500 lg:gap-[6px] lg:px-[16px] lg:py-[10px] lg:!text-[13px]"
+              >
+                홈페이지 바로가기
+                <ExternalLinkIcon size={isDesktop ? 16 : 12} />
+              </a>
+            )}
+
+            <Link
+              href={data.universityId ? `/community/university/${data.universityId}` : "/community?tabs=대학"}
+              className="caption-2 btn-primary inline-flex cursor-pointer items-center gap-[4px] rounded-full px-[12px] py-[6px] lg:gap-[6px] lg:px-[16px] lg:py-[10px] lg:!text-[13px]"
             >
-              홈페이지 바로가기
-              <ExternalLinkIcon />
-            </a>
+              파견 생활 알아보기
+              <CommunityIcon size={isDesktop ? 16 : 12} className="text-white" />
+            </Link>
+          </div>
+        </div>
+
+        <section className="px-[20px] pt-[16px]">
+          <h3 className="subhead-2 lg:!text-[20px]">지원자 목록 ({data.choices.length}명)</h3>
+          <p className="mt-[4px] text-gray-700 lg:!text-[16px]">모든 지원자들의 성적 정보를 확인하세요.</p>
+        </section>
+
+        <Tabs className="lg:p-[20px]" tabs={availableTabs} selectedTab={selectedTab} onTabChange={handleSortChange} />
+        <div className="grid grid-cols-1 gap-[10px] px-[20px] py-[20px] pb-[100px] lg:grid-cols-3">
+          {sortedChoices.length === 0 ? (
+            <p className="col-span-full text-center text-gray-500">지원자가 없습니다.</p>
+          ) : (
+            sortedChoices.map((choice) => (
+              <ApplicantCard
+                key={choice.applicationId}
+                choice={choice}
+                onClick={() => handleApplicantClick(choice.applicationId)}
+                isBlurred={!data?.hasApplied}
+                isMe={myApplication?.applicationId === choice.applicationId}
+              />
+            ))
           )}
-
-          {/* 커뮤니티 버튼 */}
-          <Link
-            href={data.universityId ? `/community/university/${data.universityId}` : "/community?tabs=대학"}
-            className="btn-primary inline-flex cursor-pointer items-center gap-[4px] rounded-full px-[12px] py-[6px] text-[12px] text-white transition-colors"
-          >
-            파견 생활 알아보기
-            <CommunityIcon size={16} className="text-white" />
-          </Link>
         </div>
 
-        {/* 정보 목록 */}
-        <div className="flex flex-col gap-[12px]">
-          <div className="flex items-center justify-between">
-            <span className="text-gray-700">국가</span>
-            <span className="font-bold">{country}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-gray-700">지원자 수</span>
-            <span className="font-bold">{choiceCountDisplay}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-gray-700">모집인원</span>
-            <span className="font-bold">{slotCountDisplay}</span>
-          </div>
-        </div>
-      </section>
-
-      {/* 지원자 목록 제목 */}
-      <section className="px-[20px] py-[16px]">
-        <h3 className="subhead-2">지원자 목록 ({data.choices.length}명)</h3>
-        <p className="mt-[4px] text-gray-700">모든 지원자들의 성적 정보를 확인하세요.</p>
-      </section>
-
-      {/* 탭 메뉴 */}
-      <Tabs tabs={availableTabs} selectedTab={selectedTab} onTabChange={handleSortChange} />
-
-      {/* 지원자 목록 */}
-      <div className="flex flex-1 flex-col gap-[10px] p-[20px] pb-[100px]">
-        {sortedChoices.length === 0 ? (
-          <p className="text-center text-gray-500">지원자가 없습니다.</p>
-        ) : (
-          sortedChoices.map((choice) => (
-            <ApplicantCard
-              key={choice.applicationId}
-              choice={choice}
-              onClick={() => handleApplicantClick(choice.applicationId)}
-              isBlurred={!data?.hasApplied}
-              isMe={myApplication?.applicationId === choice.applicationId}
-            />
-          ))
+        {!hasSharedGrade && (
+          <ShareGradeCTA
+            seasonId={seasonId}
+            showTooltip={showTooltip}
+            shouldShake={shouldShake}
+            tooltipMessage="성적 공유하면 지원자들이 어느 학교에 지원했는지 확인할 수 있어요!"
+          />
         )}
       </div>
-
-      {/* 하단 고정 CTA */}
-      {!data?.hasApplied && (
-        <ShareGradeCTA
-          seasonId={seasonId}
-          showTooltip={showTooltip}
-          shouldShake={shouldShake}
-          tooltipMessage="성적 공유하면 지원자들이 어느 학교에 지원했는지 확인할 수 있어요!"
-        />
-      )}
-    </div>
+      <Footer />
+    </>
   );
 }

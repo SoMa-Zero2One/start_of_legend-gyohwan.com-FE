@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Header from "@/components/layout/Header";
+import SearchHeaderDialog from "@/components/layout/SearchHeaderDialog";
 import UniversityListItem from "@/components/country/UniversityListItem";
 import type { UniversitySimple } from "@/types/country";
 
@@ -28,6 +29,7 @@ export default function UniversityListClient({
   universities,
 }: UniversityListClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
 
   // 검색 필터링 (한글/영문 부분 일치, 대소문자 무시)
   const filteredUniversities = useMemo(() => {
@@ -50,10 +52,17 @@ export default function UniversityListClient({
           showPrevButton
           showHomeButton
           showSearchButton
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
+          onSearchClick={() => setIsSearchDialogOpen(true)}
         />
       </div>
+
+      <SearchHeaderDialog
+        isOpen={isSearchDialogOpen}
+        value={searchQuery}
+        onChange={setSearchQuery}
+        onClose={() => setIsSearchDialogOpen(false)}
+        placeholder="대학명 또는 국가로 검색..."
+      />
 
       <main className="mx-auto w-full max-w-[430px] flex-1">
         {/* 개수 표시 */}

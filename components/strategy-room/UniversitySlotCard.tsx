@@ -7,11 +7,13 @@ import { getSlotSafeDefaults, getChoiceCountDisplay, getSlotCountDisplay } from 
 
 interface UniversitySlotCardProps {
   slot: Slot;
+  variant?: "responsive" | "mobile";
 }
 
-export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
+export default function UniversitySlotCard({ slot, variant = "responsive" }: UniversitySlotCardProps) {
   const params = useParams();
   const seasonId = params.seasonId as string;
+  const isMobileVariant = variant === "mobile";
 
   // 방어적 기본값 적용
   const { name, country, choiceCount, slotCount, logoUrl } = getSlotSafeDefaults(slot);
@@ -22,34 +24,56 @@ export default function UniversitySlotCard({ slot }: UniversitySlotCardProps) {
 
   return (
     <Link href={`/strategy-room/${seasonId}/slots/${slot.slotId}`}>
-      <div className="flex cursor-pointer flex-col items-end gap-[16px] rounded-[10px] border border-gray-100 p-[16px] shadow-[0_0_8px_rgba(0,0,0,0.06)] hover:bg-gray-100">
-        <div className="flex w-full items-center justify-between">
-          <div className="flex items-center justify-center gap-[8px]">
-            {/* 학교 로고 */}
-            <div className="relative h-[20px] w-[20px] overflow-hidden">
+      <div
+        className={`flex cursor-pointer flex-col items-end gap-[16px] rounded-[10px] border border-gray-100 p-[16px] shadow-[0_0_8px_rgba(0,0,0,0.06)] hover:bg-gray-100 ${
+          isMobileVariant ? "" : "lg:items-center lg:gap-[20px]"
+        }`}
+      >
+        <div className={`flex w-full items-center justify-between ${isMobileVariant ? "" : "lg:flex-col lg:gap-[8px]"}`}>
+          <div
+            className={`flex items-center justify-center gap-[8px] ${
+              isMobileVariant ? "" : "lg:flex-col lg:gap-[12px]"
+            }`}
+          >
+            <div
+              className={`relative h-[20px] w-[20px] overflow-hidden rounded-full ${
+                isMobileVariant ? "" : "lg:h-[60px] lg:w-[60px]"
+              }`}
+            >
+              {/* 학교 로고 */}
               <SchoolLogoWithFallback
                 src={logoUrl}
                 alt={`${name} 로고`}
-                width={20}
-                height={20}
-                className="object-contain"
+                fill
+                sizes={isMobileVariant ? "20px" : "(min-width:1024px) 60px, 20px"}
+                className={`h-[20px] w-[20px] object-contain ${isMobileVariant ? "" : "lg:h-[60px] lg:w-[60px]"}`}
               />
             </div>
-            <div className="subhead-3 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{name}</div>
+            <h3
+              className={`subhead-2 line-clamp-1 max-w-[200px] leading-[24px] ${
+                isMobileVariant ? "" : "lg:line-clamp-2 lg:min-h-[48px] lg:text-center"
+              }`}
+            >
+              {name}
+            </h3>
           </div>
           <div className="flex items-center gap-[4px]">
             <CountryFlag country={country} size={20} />
             <div className="caption-1">{country}</div>
           </div>
         </div>
-        <div className="flex w-[286px] justify-between">
-          <div className="flex w-[130px] justify-between">
+        <div
+          className={`flex w-[286px] justify-between ${
+            isMobileVariant ? "" : "lg:w-full lg:flex-col lg:items-center"
+          }`}
+        >
+          <div className={`flex w-[130px] justify-between ${isMobileVariant ? "" : "lg:w-full"}`}>
             <span className="caption-1 text-gray-700">지원자 수</span>
-            <span className="medium-body-3">{choiceCountDisplay}</span>
+            <span className={`medium-body-3 ${isMobileVariant ? "" : "lg:!font-bold"}`}>{choiceCountDisplay}</span>
           </div>
-          <div className="flex w-[130px] justify-between">
+          <div className={`flex w-[130px] justify-between ${isMobileVariant ? "" : "lg:w-full"}`}>
             <span className="caption-1 text-gray-700">모집인원</span>
-            <span className="medium-body-3">{slotCountDisplay}</span>
+            <span className={`medium-body-3 ${isMobileVariant ? "" : "lg:!font-bold"}`}>{slotCountDisplay}</span>
           </div>
         </div>
       </div>

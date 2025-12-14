@@ -1,6 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { setCurrentUserId } from "@/mocks/data/users";
+import { useAuthStore } from "@/stores/authStore";
+
+declare global {
+  interface Window {
+    __setMockUser?: (userId: number | null) => void;
+  }
+}
 
 /**
  * MSW Provider
@@ -24,6 +32,14 @@ export function MSWProvider({ children }: { children: React.ReactNode }) {
           } catch (error) {
             console.error("Failed to initialize MSW:", error);
           }
+        }
+
+        if (typeof window !== "undefined") {
+          window.__setMockUser = (userId) => {
+            setCurrentUserId(userId);
+            useAuthStore.getState().fetchUser();
+            console.info("[MSW] currentUserId ->", userId);
+          };
         }
       }
       setIsReady(true);

@@ -16,6 +16,7 @@ export const mockCurrentUser: User = {
   schoolVerified: true,
   loginType: "BASIC",
   socialType: null,
+  profileUrl: "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=256&h=256&fit=crop",
 };
 
 // 학교 인증 안된 유저
@@ -28,6 +29,7 @@ export const mockUnverifiedUser: User = {
   schoolVerified: false,
   loginType: "BASIC",
   socialType: null,
+  profileUrl: null,
 };
 
 // 소셜 로그인 유저 (카카오)
@@ -53,6 +55,93 @@ export const mockGoogleUser: User = {
   schoolVerified: true,
   loginType: "SOCIAL",
   socialType: "GOOGLE",
+  profileUrl: "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=256&h=256&fit=crop",
+};
+
+// 전략방 시나리오용 가상 지원자들
+export const mockApplicantLionUser: User = {
+  userId: 5,
+  email: null,
+  schoolEmail: null,
+  nickname: "성실한사자",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
+export const mockApplicantFoxUser: User = {
+  userId: 6,
+  email: null,
+  schoolEmail: null,
+  nickname: "똑똑한여우",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
+export const mockApplicantEagleUser: User = {
+  userId: 7,
+  email: null,
+  schoolEmail: null,
+  nickname: "용감한독수리",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
+export const mockApplicantRabbitUser: User = {
+  userId: 8,
+  email: null,
+  schoolEmail: null,
+  nickname: "부지런한토끼",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
+export const mockApplicantWhaleUser: User = {
+  userId: 9,
+  email: null,
+  schoolEmail: null,
+  nickname: "침착한고래",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
+export const mockApplicantGiraffeUser: User = {
+  userId: 10,
+  email: null,
+  schoolEmail: null,
+  nickname: "차분한기린",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
+// 성적 등록 플로우 테스트용 유저 (학교 인증 완료 & 미지원 상태)
+export const mockResponsiveTesterUser: User = {
+  userId: 11,
+  email: "responsive@test.com",
+  schoolEmail: "responsive@univ.ac.kr",
+  nickname: "반응형테스터",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
 };
 
 // 전체 유저 목록 (userId로 조회 가능)
@@ -61,6 +150,13 @@ export const mockUsers: Record<number, User> = {
   2: mockUnverifiedUser,
   3: mockKakaoUser,
   4: mockGoogleUser,
+  5: mockApplicantLionUser,
+  6: mockApplicantFoxUser,
+  7: mockApplicantEagleUser,
+  8: mockApplicantRabbitUser,
+  9: mockApplicantWhaleUser,
+  10: mockApplicantGiraffeUser,
+  11: mockResponsiveTesterUser,
 };
 
 /**
@@ -110,6 +206,61 @@ export const mockGpas: Record<number, Gpa[]> = {
       statusReason: "증빙 자료가 불충분합니다.",
     },
   ],
+  5: [
+    {
+      gpaId: 6,
+      score: 4.0,
+      criteria: "4.3",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  6: [
+    {
+      gpaId: 7,
+      score: 4.5,
+      criteria: "4.5",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  7: [
+    {
+      gpaId: 8,
+      score: 3.9,
+      criteria: "4.5",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  8: [
+    {
+      gpaId: 9,
+      score: 4.1,
+      criteria: "4.3",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  9: [
+    {
+      gpaId: 10,
+      score: 3.7,
+      criteria: "4.5",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  10: [
+    {
+      gpaId: 11,
+      score: 4.3,
+      criteria: "4.5",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  11: [],
 };
 
 /**
@@ -121,7 +272,7 @@ export const mockLanguages: Record<number, Language[]> = {
       languageId: 1,
       testType: "TOEIC",
       score: "900",
-      grade: "A",
+      grade: null,
       verifyStatus: "APPROVED",
       statusReason: null,
     },
@@ -149,7 +300,7 @@ export const mockLanguages: Record<number, Language[]> = {
       languageId: 4,
       testType: "TOEIC",
       score: "850",
-      grade: "B",
+      grade: null,
       verifyStatus: "APPROVED",
       statusReason: null,
     },
@@ -164,6 +315,67 @@ export const mockLanguages: Record<number, Language[]> = {
       statusReason: null,
     },
   ],
+  5: [
+    {
+      languageId: 6,
+      testType: "TOEFL_IBT",
+      score: "105",
+      grade: null,
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  6: [
+    {
+      languageId: 7,
+      testType: "IELTS",
+      score: "8.0",
+      grade: null,
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  7: [
+    {
+      languageId: 8,
+      testType: "TOEIC",
+      score: "850",
+      grade: "B",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  8: [
+    {
+      languageId: 9,
+      testType: "JLPT",
+      score: null,
+      grade: "N1",
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  9: [
+    {
+      languageId: 10,
+      testType: "IELTS",
+      score: "7.0",
+      grade: null,
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  10: [
+    {
+      languageId: 11,
+      testType: "TOEFL_IBT",
+      score: "110",
+      grade: null,
+      verifyStatus: "APPROVED",
+      statusReason: null,
+    },
+  ],
+  11: [],
 };
 
 /**
@@ -173,21 +385,45 @@ export const mockCredentials: Record<string, string> = {
   "test@example.com": "password123456",
   "unverified@example.com": "password123456",
   "existing@example.com": "password123456", // 이미 가입된 이메일 테스트용
+  "responsive@test.com": "password123456",
+};
+
+export const SIGNUP_VERIFICATION_CODE = "123456";
+export const SCHOOL_EMAIL_VERIFICATION_CODE = "111111";
+export const PASSWORD_RESET_VERIFICATION_CODE = "222222";
+
+/**
+ * Mock 이메일 인증 코드 저장소 (회원가입용)
+ */
+export const mockSignupVerificationCodes: Record<string, string> = {
+  "test@example.com": SIGNUP_VERIFICATION_CODE,
+  "newuser@example.com": SIGNUP_VERIFICATION_CODE,
 };
 
 /**
- * Mock 이메일 인증 코드 저장소 (회원가입/학교인증 테스트용)
+ * Mock 학교 이메일 인증 코드 저장소
  */
-export const mockVerificationCodes: Record<string, string> = {
-  "test@example.com": "123456",
-  "newuser@example.com": "654321",
-  "test@univ.ac.kr": "111111",
+export const mockSchoolEmailVerificationCodes: Record<string, string> = {
+  "test@univ.ac.kr": SCHOOL_EMAIL_VERIFICATION_CODE,
 };
+
+/**
+ * Mock 비밀번호 재설정 코드 저장소
+ */
+export const mockPasswordResetCodes: Record<string, string> = {};
 
 /**
  * 현재 로그인된 유저 ID (전역 상태 시뮬레이션)
  */
 export let currentUserId: number | null = null;
+
+const initialUserIds = Object.keys(mockUsers).map((id) => Number(id));
+let nextUserId = (initialUserIds.length ? Math.max(...initialUserIds) : 0) + 1;
+
+const deriveNicknameFromEmail = (email: string) => {
+  const localPart = email.split("@")[0];
+  return localPart || "새로운 회원";
+};
 
 export function setCurrentUserId(userId: number | null) {
   currentUserId = userId;
@@ -196,4 +432,35 @@ export function setCurrentUserId(userId: number | null) {
 export function getCurrentUser(): User | null {
   if (currentUserId === null) return null;
   return mockUsers[currentUserId] || null;
+}
+
+export function findMockUserByEmail(email: string): User | undefined {
+  return Object.values(mockUsers).find((user) => user.email?.toLowerCase() === email.toLowerCase());
+}
+
+export function createMockBasicUser(email: string): User {
+  const userId = nextUserId++;
+  const newUser: User = {
+    userId,
+    email,
+    schoolEmail: null,
+    nickname: deriveNicknameFromEmail(email),
+    domesticUniversity: null,
+    schoolVerified: false,
+    loginType: "BASIC",
+    socialType: null,
+    profileUrl: null,
+  };
+
+  mockUsers[userId] = newUser;
+  return newUser;
+}
+
+export function ensureMockBasicUser(email: string): User {
+  const existing = findMockUserByEmail(email);
+  if (existing) {
+    return existing;
+  }
+
+  return createMockBasicUser(email);
 }

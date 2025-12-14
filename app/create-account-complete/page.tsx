@@ -8,16 +8,14 @@ import Header from "@/components/layout/Header";
 
 export default function CreateAccountComplete() {
   const router = useRouter();
-  const { user, isLoggedIn, isLoading: authLoading, fetchUser } = useAuthStore();
+  const { user, isLoggedIn, isLoading: authLoading } = useAuthStore();
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
 
-  // 회원가입 직후이므로 최신 사용자 정보 가져오기
+  // 회원가입 직후이므로 리다이렉트 URL 설정 및 플로우 데이터 정리
   useEffect(() => {
-    fetchUser();
-
     const storedRedirectUrl = getRedirectUrl();
     setRedirectUrl(storedRedirectUrl);
-  }, [fetchUser]);
+  }, []);
 
   // authStore 로딩 완료 후 로그인 체크
   useEffect(() => {
@@ -56,13 +54,16 @@ export default function CreateAccountComplete() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header showLogo />
-      <div className="flex flex-1 flex-col items-center px-[20px]">
-        <div className="flex w-[330px] flex-col items-center gap-[60px] pt-[60px]">
+      <div className="flex flex-1 flex-col items-center pt-[80px] pb-[36px]">
+        <div className="flex w-full flex-col items-center gap-[60px] px-[20px] lg:w-[430px]">
           {/* 헤더 */}
           <div className="flex flex-col items-center gap-[12px] text-center">
-            <h1 className="head-4">
-              {user?.nickname}님<br /> 환영합니다
-            </h1>
+            <div className="head-4">
+              <h1>
+                {user?.nickname}님
+                <br /> 환영합니다
+              </h1>
+            </div>
             <p className="body-2 text-gray-900">교환학생 준비, 교환닷컴과 함께하세요.</p>
           </div>
 

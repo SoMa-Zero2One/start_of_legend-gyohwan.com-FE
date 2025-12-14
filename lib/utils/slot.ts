@@ -72,5 +72,5 @@ export function getChoiceCountDisplay(choiceCount: number | null): string {
  * @returns 표시용 문자열
  */
 export function getSlotCountDisplay(slotCount: string | null): string {
-  return slotCount === null ? "미정" : `${slotCount}명`;
+  return slotCount === null || slotCount === "미정" ? "미정" : `${slotCount}명`;
 }
