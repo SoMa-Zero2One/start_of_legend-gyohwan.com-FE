@@ -24,10 +24,10 @@ export default function CTAButton({
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="fixed bottom-0 left-1/2 w-full max-w-[420px] -translate-x-1/2 bg-white px-[20px] pb-[20px]">
+    <div className="fixed bottom-0 left-1/2 w-full max-w-[420px] -translate-x-1/2 px-[20px] pb-[20px] lg:relative">
       {/* 그라데이션 (optional) */}
       {showGradient && (
-        <div className="pointer-events-none absolute -top-[60px] left-0 h-[60px] w-full bg-gradient-to-t from-white to-transparent" />
+        <div className="pointer-events-none absolute -top-[60px] left-0 h-[60px] w-full bg-gradient-to-t from-white to-transparent lg:hidden" />
       )}
 
       {/* 툴팁 (tooltipMessage가 있으면 자동으로 표시) */}

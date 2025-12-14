@@ -232,6 +232,8 @@ function ApplicationEditContent() {
 
       <UniversitySelectionStep
         selectedUniversities={selectedUniversities}
+        slots={slots}
+        onSelectUniversity={handleSelectUniversity}
         onOpenSearch={handleOpenSearch}
         onDelete={handleDelete}
         onReorder={handleReorder}

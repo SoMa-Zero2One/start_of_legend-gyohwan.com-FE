@@ -188,14 +188,14 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
   };
 
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="flex-1 px-[20px] pt-[24px] pb-[100px]">
-        {/* Step 타이틀 */}
-        <p className="caption-1 text-primary-blue mb-[8px]">Step 01</p>
-        <h1 className="head-4 mb-[32px]">성적 등록하기</h1>
+    <div className="px-[20px] pt-[24px] pb-[100px]">
+      {/* Step 타이틀 */}
+      <p className="caption-1 text-primary-blue mb-[8px] lg:!text-[20px] lg:!font-bold">Step 01</p>
+      <h1 className="head-4 mb-[32px] lg:!text-[36px]">성적 등록하기</h1>
 
-        {/* 학점 입력 */}
-        <section className="mb-[32px]">
+      {/* 학점 입력 */}
+      <div className="flex flex-col gap-[32px] lg:mx-auto lg:w-[820px] lg:rounded-[16px] lg:border lg:border-gray-300 lg:p-[40px]">
+        <section>
           <label className="body-2 mb-[12px] block font-semibold">학점</label>
           <div className="flex gap-[12px]">
             <input
@@ -220,44 +220,41 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
         </section>
 
         {/* 어학 성적 입력 */}
-        <section>
-          <label className="body-2 mb-[12px] block font-semibold">어학</label>
-          <div className="flex flex-col gap-[12px]">
-            {/* 시험 종류 선택 */}
-            <select
-              value={testType}
-              onChange={(e) => setTestType(e.target.value)}
-              className="body-2 focus:border-primary-blue flex-1 rounded-[8px] border border-gray-300 px-[16px] py-[14px] focus:outline-none"
-            >
-              <option value="">선택하세요</option>
-              {LANGUAGE_TEST_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
+        <section className="mb-[12px] flex flex-col gap-[12px]">
+          <label className="body-2 font-semibold">어학</label>
+          {/* 시험 종류 선택 */}
+          <select
+            value={testType}
+            onChange={(e) => setTestType(e.target.value)}
+            className="body-2 focus:border-primary-blue flex-1 rounded-[8px] border border-gray-300 px-[16px] py-[14px] focus:outline-none"
+          >
+            <option value="">선택하세요</option>
+            {LANGUAGE_TEST_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
 
-            {/* 점수 입력 */}
-            {testType && (
-              <input
-                type="text"
-                placeholder={testType === "기타" ? "어학 시험과 점수를 입력해주세요" : "점수를 입력하세요"}
-                value={score}
-                onChange={(e) => setScore(e.target.value)}
-                className="body-2 focus:border-primary-blue rounded-[8px] border border-gray-300 px-[16px] py-[14px] focus:outline-none"
-              />
-            )}
-          </div>
+          {/* 점수 입력 */}
+          {testType && (
+            <input
+              type="text"
+              placeholder={testType === "기타" ? "어학 시험과 점수를 입력해주세요" : "점수를 입력하세요"}
+              value={score}
+              onChange={(e) => setScore(e.target.value)}
+              className="body-2 focus:border-primary-blue rounded-[8px] border border-gray-300 px-[16px] py-[14px] focus:outline-none"
+            />
+          )}
         </section>
+        <CTAButton
+          message="다음"
+          onClick={handleSubmit}
+          isLoading={isSubmitting}
+          tooltipMessage={tooltipMessage}
+          shouldShake={shouldShake}
+        />
       </div>
-
-      <CTAButton
-        message="다음"
-        onClick={handleSubmit}
-        isLoading={isSubmitting}
-        tooltipMessage={tooltipMessage}
-        shouldShake={shouldShake}
-      />
     </div>
   );
 }
