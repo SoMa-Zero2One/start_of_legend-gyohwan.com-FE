@@ -391,6 +391,8 @@ function ApplicationNewContent() {
         <>
           <UniversitySelectionStep
             selectedUniversities={selectedUniversities}
+            slots={slots}
+            onSelectUniversity={handleSelectUniversity}
             onOpenSearch={handleOpenSearch}
             onDelete={handleDelete}
             onReorder={handleReorder}
