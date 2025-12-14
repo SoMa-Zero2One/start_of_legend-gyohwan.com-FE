@@ -131,6 +131,19 @@ export const mockApplicantGiraffeUser: User = {
   profileUrl: null,
 };
 
+// 성적 등록 플로우 테스트용 유저 (학교 인증 완료 & 미지원 상태)
+export const mockResponsiveTesterUser: User = {
+  userId: 11,
+  email: "responsive@test.com",
+  schoolEmail: "responsive@univ.ac.kr",
+  nickname: "반응형테스터",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
 // 전체 유저 목록 (userId로 조회 가능)
 export const mockUsers: Record<number, User> = {
   1: mockCurrentUser,
@@ -143,6 +156,7 @@ export const mockUsers: Record<number, User> = {
   8: mockApplicantRabbitUser,
   9: mockApplicantWhaleUser,
   10: mockApplicantGiraffeUser,
+  11: mockResponsiveTesterUser,
 };
 
 /**
@@ -246,6 +260,7 @@ export const mockGpas: Record<number, Gpa[]> = {
       statusReason: null,
     },
   ],
+  11: [],
 };
 
 /**
@@ -360,6 +375,7 @@ export const mockLanguages: Record<number, Language[]> = {
       statusReason: null,
     },
   ],
+  11: [],
 };
 
 /**
@@ -369,6 +385,7 @@ export const mockCredentials: Record<string, string> = {
   "test@example.com": "password123456",
   "unverified@example.com": "password123456",
   "existing@example.com": "password123456", // 이미 가입된 이메일 테스트용
+  "responsive@test.com": "password123456",
 };
 
 export const SIGNUP_VERIFICATION_CODE = "123456";
