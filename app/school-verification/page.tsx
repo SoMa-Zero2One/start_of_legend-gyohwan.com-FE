@@ -117,8 +117,8 @@ function SchoolVerificationContent() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header title="학교 인증" showPrevButton showHomeButton showBorder />
-      <div className="flex flex-1 flex-col items-center justify-between px-[20px] pt-[60px] pb-[36px]">
-        <div className="flex w-[330px] flex-col items-center gap-[60px]">
+      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px]">
+        <div className="flex w-full flex-col items-center gap-[60px] px-[20px] lg:w-[430px]">
           {/* 헤더 */}
           <div className="text-center">
             <h1 className="head-4">{headerContent[step].title}</h1>
