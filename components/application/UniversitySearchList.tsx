@@ -110,7 +110,7 @@ export default function UniversitySearchList({
                 ? "cursor-not-allowed opacity-50"
                 : variant === "panel"
                   ? "hover:border-primary-blue hover:bg-blue-50/30"
-                  : "cursor-pointer hover:bg-gray-50"
+                  : "hover:bg-gray-50"
             }`}
           >
             <div className="relative h-[40px] w-[40px] overflow-hidden rounded-full">

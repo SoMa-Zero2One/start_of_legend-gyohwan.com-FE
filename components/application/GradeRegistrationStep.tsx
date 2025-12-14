@@ -7,7 +7,6 @@ import { createLanguage } from "@/lib/api/language";
 import { handleApiError } from "@/lib/utils/apiError";
 import type { Gpa, Language, CreateLanguageRequest } from "@/types/grade";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
-import { useIsDesktop } from "@/lib/hooks/useMediaQuery";
 
 interface GradeRegistrationStepProps {
   existingGpa: Gpa | null;
@@ -57,7 +56,6 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
   const [score, setScore] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const isDesktop = useIsDesktop();
 
   // 기존 데이터로 초기화
   useEffect(() => {

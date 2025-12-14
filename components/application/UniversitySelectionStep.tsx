@@ -144,7 +144,12 @@ export default function UniversitySelectionStep({
   }, [selectedUniversities]);
 
   const renderChoiceList = (sectionClassName = "mb-[32px] flex flex-col gap-[8px]") => (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
       <SortableContext
         items={choices.map((choice) => {
           const selected = selectedUniversities.find((u) => u.choice === choice);
@@ -199,7 +204,9 @@ export default function UniversitySelectionStep({
                     </div>
                     <span className="medium-body-3 w-0 flex-1 truncate text-left">{draggedName}</span>
                     {displayLanguage && (
-                      <span className="caption-2 bg-primary-blue rounded-[4px] px-[8px] py-[4px] text-white">{displayLanguage}</span>
+                      <span className="caption-2 bg-primary-blue rounded-[4px] px-[8px] py-[4px] text-white">
+                        {displayLanguage}
+                      </span>
                     )}
                   </div>
                   <div className="p-[4px]">
@@ -283,7 +290,9 @@ export default function UniversitySelectionStep({
         <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-[24px]">
           <div>
             <p className="caption-1 text-primary-blue mb-[8px] text-[20px] font-bold">Step 02</p>
-            <h1 className="head-4 mb-[16px] text-[36px]">{mode === "edit" ? "지망 대학 변경하기" : "지망 대학 등록하기"}</h1>
+            <h1 className="head-4 mb-[16px] text-[36px]">
+              {mode === "edit" ? "지망 대학 변경하기" : "지망 대학 등록하기"}
+            </h1>
           </div>
           <div className="flex items-start gap-[32px]">
             <div className="flex-1 rounded-[16px] border border-gray-200 bg-white p-[32px] shadow-[0_12px_24px_rgba(15,23,42,0.04)]">
@@ -333,10 +342,10 @@ export default function UniversitySelectionStep({
                   {isSubmitting ? "처리 중..." : desktopButtonLabel}
                 </button>
               </div>
-              {tooltipMessage && <p className="mt-[8px] text-right text-error-red text-sm">{tooltipMessage}</p>}
+              {tooltipMessage && <p className="text-error-red mt-[8px] text-right text-sm">{tooltipMessage}</p>}
             </div>
 
-            <div className="w-full max-w-[360px] flex-col rounded-[16px] border border-gray-200 bg-white p-[24px] shadow-[0_12px_24px_rgba(15,23,42,0.04)]">
+            <div className="flex w-full max-w-[360px] flex-col rounded-[16px] border border-gray-200 bg-white p-[24px] shadow-[0_12px_24px_rgba(15,23,42,0.04)]">
               <div className="flex items-center justify-between">
                 <h3 className="subhead-2">지망 대학</h3>
                 <span className="caption-2 text-gray-500">{selectedUniversities.length}/5 선택</span>
@@ -351,7 +360,7 @@ export default function UniversitySelectionStep({
                   className="body-3 w-full rounded-full border border-gray-300 py-[10px] pr-[16px] pl-[38px] focus:border-black focus:outline-none"
                 />
               </div>
-              <div className="mt-[16px] flex-1 overflow-y-auto pr-[4px]">
+              <div className="mt-[16px] max-h-[60vh] min-h-0 flex-1 overflow-y-auto pr-[4px]">
                 <UniversitySearchList
                   slots={filteredSlots}
                   selectedSlotChoices={selectedChoiceMap}
