@@ -16,9 +16,10 @@ import { Season } from "@/types/season";
 
 interface HomePageProps {
   initialSeasons: Season[];
+  initialPastSeasons: Season[];
 }
 
-export default function HomePage({ initialSeasons }: HomePageProps) {
+export default function HomePage({ initialSeasons, initialPastSeasons }: HomePageProps) {
   const router = useRouter();
   const { user, isLoggedIn } = useAuthStore();
   const [floatingButton, setFloatingButton] = useState<{
@@ -108,7 +109,7 @@ export default function HomePage({ initialSeasons }: HomePageProps) {
       <HeroSection />
       <FeatureSection />
       <CommunityBannerSection />
-      <StrategyRoomEntrances initialSeasons={initialSeasons} />
+      <StrategyRoomEntrances initialSeasons={initialSeasons} initialPastSeasons={initialPastSeasons} />
       <Footer />
 
       {floatingButton && (

@@ -34,7 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let dynamicPages: MetadataRoute.Sitemap = [];
 
   try {
-    const seasonsData = await getSeasons();
+    const seasonsData = await getSeasons({ expired: false });
 
     // 각 시즌별 전략실 페이지 추가 (null 안전 처리)
     const seasons = seasonsData.seasons;

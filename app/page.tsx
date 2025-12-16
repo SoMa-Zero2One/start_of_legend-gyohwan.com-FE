@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { Season } from "@/types/season";
 import { getSeasons } from "@/lib/api/season";
 import HomePage from "@/components/home/HomePage";
 import StructuredData from "@/components/common/StructuredData";
@@ -12,6 +13,20 @@ export const metadata: Metadata = {
 
 // 캐싱 완전 비활성화 - 항상 최신 데이터 조회
 export const dynamic = 'force-dynamic';
+
+const fetchSeasonList = async ({ expired, label }: { expired: boolean; label: string }): Promise<Season[]> => {
+  try {
+    const data = await getSeasons({ expired });
+    if (data.seasons === null) {
+      console.warn(`[HOME WARNING] ${label} seasons is null - homepage will show 0 universities`);
+      return [];
+    }
+    return data.seasons;
+  } catch (error) {
+    console.error(`Failed to fetch ${label} seasons:`, error);
+    return [];
+  }
+};
 
 export default async function Page() {
   const siteUrl = getSiteUrl();
@@ -35,27 +50,17 @@ export default async function Page() {
   };
 
   // 서버에서 시즌 목록만 가져오기 (인증 불필요)
-  const initialSeasons = await getSeasons()
-    .then((data) => {
-      if (data.seasons === null) {
-        // 조용한 실패 방지: 명시적 경고 로그
-        console.warn("[HOME WARNING] seasons is null - homepage will show 0 universities");
-      }
-      // seasonId가 1 또는 2인 시즌 제외
-      return (data.seasons ?? []).filter((season) => season.seasonId !== 1 && season.seasonId !== 2);
-    })
-    .catch((error) => {
-      console.error("Failed to fetch seasons:", error);
-      // API 실패 시 빈 배열로 fallback (빌드/재생성 중 에러 방지)
-      return [];
-    });
+  const [initialSeasons, initialPastSeasons] = await Promise.all([
+    fetchSeasonList({ expired: false, label: "active" }),
+    fetchSeasonList({ expired: true, label: "expired" }),
+  ]);
 
   return (
     <>
       {/* JSON-LD 구조화 데이터 */}
       <StructuredData data={organizationSchema} />
       <StructuredData data={websiteSchema} />
-      <HomePage initialSeasons={initialSeasons} />
+      <HomePage initialSeasons={initialSeasons} initialPastSeasons={initialPastSeasons} />
     </>
   );
 }
