@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { getSeasons } from "@/lib/api/season";
 import { getSiteUrl } from "@/lib/utils/siteUrl";
+import { filterVisibleSeasons } from "@/lib/utils/seasonFilter";
 
 // 24시간(86400초)마다 재생성 (ISR)
 export const revalidate = 86400;
@@ -35,8 +36,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const seasonsData = await getSeasons({ expired: false });
-
-    // 각 시즌별 전략실 페이지 추가 (null 안전 처리)
     const seasons = seasonsData.seasons;
 
     if (seasons === null) {
@@ -49,7 +48,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return staticPages;
     }
 
-    dynamicPages = seasons.map((season) => ({
+    const visibleSeasons = filterVisibleSeasons(seasons);
+
+    if (visibleSeasons.length === 0) {
+      console.warn("[SEO WARNING] sitemap: no visible seasons after filtering - fallback to cache/static only");
+      if (cachedDynamicPages) {
+        throw new Error("No visible seasons - reuse previous sitemap");
+      }
+      return staticPages;
+    }
+
+    dynamicPages = visibleSeasons.map((season) => ({
       url: `${baseUrl}/strategy-room/${season.seasonId}`,
       changeFrequency: "daily" as const,
       priority: 0.8, // 핵심 기능 페이지

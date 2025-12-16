@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Season } from "@/types/season";
 import { useAuthStore } from "@/stores/authStore";
 import StrategyRoomCard from "./StrategyRoomCard";
@@ -17,6 +17,40 @@ export default function StrategyRoomEntrances({
 }: StrategyRoomEntrancesProps) {
   const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState<"current" | "past">("current");
+  const [pastSeasons, setPastSeasons] = useState<Season[]>(initialPastSeasons);
+
+  useEffect(() => {
+    if (initialPastSeasons.length > 0) {
+      setPastSeasons(initialPastSeasons);
+      return;
+    }
+
+    let isCancelled = false;
+
+    const loadPastSeasons = async () => {
+      try {
+        const response = await fetch("/data/pastSeasons.json");
+        if (!response.ok) {
+          throw new Error(`Failed to fetch fallback past seasons: ${response.status}`);
+        }
+        const data = (await response.json()) as { seasons?: Season[] | null };
+        if (!isCancelled) {
+          setPastSeasons(data.seasons ?? []);
+        }
+      } catch (error) {
+        console.error("Failed to load past seasons:", error);
+        if (!isCancelled) {
+          setPastSeasons([]);
+        }
+      }
+    };
+
+    loadPastSeasons();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [initialPastSeasons]);
 
   // 서버에서 받은 시즌을 사용자 기준으로 정렬
   const sortedSeasons = useMemo(() => {
@@ -52,12 +86,12 @@ export default function StrategyRoomEntrances({
   }, [initialSeasons, user?.domesticUniversity]);
 
   const sortedPastSeasons = useMemo(() => {
-    return [...initialPastSeasons].sort((a, b) => {
+    return [...pastSeasons].sort((a, b) => {
       const countA = a.applicationCount ?? 0;
       const countB = b.applicationCount ?? 0;
       return countB - countA;
     });
-  }, [initialPastSeasons]);
+  }, [pastSeasons]);
 
   // 과거 시즌 총 참여 인원 계산
   const totalPastParticipants = sortedPastSeasons.reduce((sum, season) => {

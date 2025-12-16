@@ -1,9 +1,13 @@
+import { promises as fs } from "node:fs";
+import path from "node:path";
 import type { Metadata } from "next";
 import type { Season } from "@/types/season";
+import type { GetSeasonOptions } from "@/lib/api/season";
 import { getSeasons } from "@/lib/api/season";
 import HomePage from "@/components/home/HomePage";
 import StructuredData from "@/components/common/StructuredData";
 import { getSiteUrl } from "@/lib/utils/siteUrl";
+import { filterVisibleSeasons } from "@/lib/utils/seasonFilter";
 
 export const metadata: Metadata = {
   alternates: {
@@ -14,18 +18,42 @@ export const metadata: Metadata = {
 // 캐싱 완전 비활성화 - 항상 최신 데이터 조회
 export const dynamic = 'force-dynamic';
 
-const fetchSeasonList = async ({ expired, label }: { expired: boolean; label: string }): Promise<Season[]> => {
+const FALLBACK_PAST_SEASONS_PATH = path.join(process.cwd(), "public/data/pastSeasons.json");
+
+const fetchSeasonList = async ({
+  label,
+  ...options
+}: { label: string } & GetSeasonOptions): Promise<Season[]> => {
   try {
-    const data = await getSeasons({ expired });
+    const data = await getSeasons(options);
     if (data.seasons === null) {
       console.warn(`[HOME WARNING] ${label} seasons is null - homepage will show 0 universities`);
       return [];
     }
-    return data.seasons;
+    return filterVisibleSeasons(data.seasons);
   } catch (error) {
     console.error(`Failed to fetch ${label} seasons:`, error);
     return [];
   }
+};
+
+const loadFallbackPastSeasons = async (): Promise<Season[]> => {
+  try {
+    const json = await fs.readFile(FALLBACK_PAST_SEASONS_PATH, "utf-8");
+    const parsed = JSON.parse(json) as { seasons?: Season[] | null };
+    return filterVisibleSeasons(parsed.seasons ?? []);
+  } catch (error) {
+    console.error("[HOME ERROR] Failed to load fallback past seasons:", error);
+    return [];
+  }
+};
+
+const hasSeasonOverlap = (active: Season[], past: Season[]): boolean => {
+  if (active.length === 0 || past.length === 0) {
+    return false;
+  }
+  const activeIds = new Set(active.map((season) => season.seasonId));
+  return past.some((season) => activeIds.has(season.seasonId));
 };
 
 export default async function Page() {
@@ -50,10 +78,31 @@ export default async function Page() {
   };
 
   // 서버에서 시즌 목록만 가져오기 (인증 불필요)
-  const [initialSeasons, initialPastSeasons] = await Promise.all([
+  const [initialSeasons, pastSeasonsFromApi] = await Promise.all([
     fetchSeasonList({ expired: false, label: "active" }),
     fetchSeasonList({ expired: true, label: "expired" }),
   ]);
+
+  const shouldUseFallback =
+    pastSeasonsFromApi.length === 0 || hasSeasonOverlap(initialSeasons, pastSeasonsFromApi);
+
+  let initialPastSeasons = pastSeasonsFromApi;
+
+  if (shouldUseFallback) {
+    const fallbackPastSeasons = await loadFallbackPastSeasons();
+    if (fallbackPastSeasons.length > 0) {
+      const reason =
+        pastSeasonsFromApi.length === 0 ? "no rows returned" : "overlapping active season IDs";
+      console.warn(
+        `[HOME WARNING] expired seasons API ${reason} - falling back to static dataset for past seasons`
+      );
+      initialPastSeasons = fallbackPastSeasons;
+    } else {
+      console.warn(
+        "[HOME WARNING] unable to load fallback past seasons - using API response even though it may be incomplete"
+      );
+    }
+  }
 
   return (
     <>

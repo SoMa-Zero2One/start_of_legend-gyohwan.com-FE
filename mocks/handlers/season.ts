@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { getCurrentUser, mockGpas, mockLanguages } from "../data/users";
 import { mockSeasons, findSeasonById } from "../data/seasons";
+import { mockPastSeasons } from "../data/pastSeasons";
 import { mockSeasonSlots, findSlotById, getSlotChoiceCount } from "../data/slots";
 import {
   findApplicationByUserAndSeason,
@@ -57,7 +58,16 @@ export const seasonHandlers = [
    * GET /v1/seasons
    * 시즌 목록 조회 (인증 선택)
    */
-  http.get(`${BACKEND_URL}/v1/seasons`, () => {
+  http.get(`${BACKEND_URL}/v1/seasons`, ({ request }) => {
+    const url = new URL(request.url);
+    const expired = url.searchParams.get("expired") === "true";
+
+    if (expired) {
+      return HttpResponse.json({
+        seasons: mockPastSeasons,
+      });
+    }
+
     const user = getCurrentUser();
 
     // 사용자별 hasApplied 업데이트

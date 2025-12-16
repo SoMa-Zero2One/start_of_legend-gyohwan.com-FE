@@ -2,7 +2,7 @@ import type { SeasonsResponse, EligibilityResponse } from "@/types/season";
 import { getBackendUrl } from "@/lib/utils/api";
 import { parseApiError } from "@/lib/utils/apiError";
 
-interface GetSeasonOptions {
+export interface GetSeasonOptions {
   expired?: boolean;
 }
 
