@@ -2,15 +2,25 @@ import type { SeasonsResponse, EligibilityResponse } from "@/types/season";
 import { getBackendUrl } from "@/lib/utils/api";
 import { parseApiError } from "@/lib/utils/apiError";
 
+export interface GetSeasonOptions {
+  expired?: boolean;
+}
+
 /**
  * 교환학생 모집 시즌 목록 조회
+ * @param options.expired - true면 마감된 시즌, false면 진행 중 시즌
  * @returns 시즌 목록
  * @throws {Error} API 호출 실패 시
  */
-export const getSeasons = async (): Promise<SeasonsResponse> => {
+export const getSeasons = async (options: GetSeasonOptions = {}): Promise<SeasonsResponse> => {
   const backendUrl = getBackendUrl();
+  const url = new URL(`${backendUrl}/v1/seasons`);
 
-  const response = await fetch(`${backendUrl}/v1/seasons`, {
+  if (typeof options.expired === "boolean") {
+    url.searchParams.set("expired", String(options.expired));
+  }
+
+  const response = await fetch(url.toString(), {
     method: "GET",
     credentials: typeof window !== "undefined" ? "include" : "omit", // 브라우저에서만 쿠키 포함
   });
