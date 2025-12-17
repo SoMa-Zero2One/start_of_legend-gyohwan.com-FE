@@ -17,12 +17,15 @@ import { getSeasonSlots, getMyApplication } from "@/lib/api/slot";
 import { handleApiError } from "@/lib/utils/apiError";
 import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
 
-type TabType = "지망한 대학" | "지원자가 있는 대학" | "모든 대학";
+const TAB_OPTIONS = ["지망한 대학", "지원자가 있는 대학", "모든 대학"] as const;
+type TabType = (typeof TAB_OPTIONS)[number];
 
 export default function StrategyRoomClient() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const tabFromUrl = TAB_OPTIONS.find((tab) => tab === tabParam) ?? null;
   const seasonId = params.seasonId as string;
   const isDesktop = useIsDesktop();
 
@@ -31,12 +34,7 @@ export default function StrategyRoomClient() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // URL query parameter에서 초기 탭 상태 읽기
-  const tabParam = searchParams.get("tab") as TabType;
-
-  const [selectedTab, setSelectedTab] = useState<TabType>(
-    tabParam && ["지망한 대학", "지원자가 있는 대학", "모든 대학"].includes(tabParam) ? tabParam : "지원자가 있는 대학"
-  );
+  const [selectedTab, setSelectedTab] = useState<TabType>(tabFromUrl ?? "모든 대학");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
 
@@ -81,13 +79,32 @@ export default function StrategyRoomClient() {
     }
   }, [seasonId]);
 
-  // hasApplied가 true이고 URL에 tab 파라미터가 없으면 "지망한 대학" 탭으로 자동 설정
+  const applicantSlotCount = useMemo(() => {
+    if (!data) return 0;
+    return data.slots.filter((slot) => slot.choiceCount !== null && slot.choiceCount >= 1).length;
+  }, [data]);
+
+  const hasApplicantSlots = applicantSlotCount > 0;
+
+  // URL -> 성적 공유 여부 -> 지원자 수 순으로 초기 탭 결정
   useEffect(() => {
-    const tabParam = searchParams.get("tab");
-    if (data?.hasApplied && !tabParam) {
-      setSelectedTab("지망한 대학");
+    if (tabFromUrl) {
+      setSelectedTab(tabFromUrl);
+      return;
     }
-  }, [data?.hasApplied, searchParams]);
+
+    if (data?.hasApplied) {
+      setSelectedTab("지망한 대학");
+      return;
+    }
+
+    if (hasApplicantSlots) {
+      setSelectedTab("지원자가 있는 대학");
+      return;
+    }
+
+    setSelectedTab("모든 대학");
+  }, [tabFromUrl, data?.hasApplied, hasApplicantSlots]);
 
   // 필터링된 슬롯 목록 (탭 + 검색)
   const filteredSlots = useMemo(() => {
@@ -155,7 +172,7 @@ export default function StrategyRoomClient() {
 
   const tabCounts = {
     "지망한 대학": !hasSharedGrade ? 0 : myChosenUniversities.length,
-    "지원자가 있는 대학": data.slots.filter((slot) => slot.choiceCount !== null && slot.choiceCount >= 1).length,
+    "지원자가 있는 대학": applicantSlotCount,
     "모든 대학": data.slots.length,
   };
 
@@ -220,7 +237,7 @@ export default function StrategyRoomClient() {
 
           <section className="flex flex-col gap-[12px] lg:flex-row lg:items-center lg:justify-between">
             <Tabs
-              tabs={["지망한 대학", "지원자가 있는 대학", "모든 대학"] as const}
+              tabs={TAB_OPTIONS}
               selectedTab={selectedTab}
               onTabChange={handleTabChange}
               counts={tabCounts}
