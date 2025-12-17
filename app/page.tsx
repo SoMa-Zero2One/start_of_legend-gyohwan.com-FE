@@ -7,7 +7,6 @@ import { getSeasons } from "@/lib/api/season";
 import HomePage from "@/components/home/HomePage";
 import StructuredData from "@/components/common/StructuredData";
 import { getSiteUrl } from "@/lib/utils/siteUrl";
-import { filterVisibleSeasons } from "@/lib/utils/seasonFilter";
 
 export const metadata: Metadata = {
   alternates: {
@@ -30,7 +29,7 @@ const fetchSeasonList = async ({
       console.warn(`[HOME WARNING] ${label} seasons is null - homepage will show 0 universities`);
       return [];
     }
-    return filterVisibleSeasons(data.seasons);
+    return data.seasons ?? [];
   } catch (error) {
     console.error(`Failed to fetch ${label} seasons:`, error);
     return [];
@@ -41,7 +40,7 @@ const loadFallbackPastSeasons = async (): Promise<Season[]> => {
   try {
     const json = await fs.readFile(FALLBACK_PAST_SEASONS_PATH, "utf-8");
     const parsed = JSON.parse(json) as { seasons?: Season[] | null };
-    return filterVisibleSeasons(parsed.seasons ?? []);
+    return parsed.seasons ?? [];
   } catch (error) {
     console.error("[HOME ERROR] Failed to load fallback past seasons:", error);
     return [];

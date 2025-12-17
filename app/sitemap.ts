@@ -1,7 +1,6 @@
 import { MetadataRoute } from "next";
 import { getSeasons } from "@/lib/api/season";
 import { getSiteUrl } from "@/lib/utils/siteUrl";
-import { filterVisibleSeasons } from "@/lib/utils/seasonFilter";
 
 // 24시간(86400초)마다 재생성 (ISR)
 export const revalidate = 86400;
@@ -47,18 +46,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       // 최초 빌드 등 캐시가 없으면 정적 페이지만 제공
       return staticPages;
     }
-
-    const visibleSeasons = filterVisibleSeasons(seasons);
-
-    if (visibleSeasons.length === 0) {
-      console.warn("[SEO WARNING] sitemap: no visible seasons after filtering - fallback to cache/static only");
+    if (seasons.length === 0) {
+      console.warn("[SEO WARNING] sitemap: 0 seasons returned - fallback to cache/static only");
       if (cachedDynamicPages) {
-        throw new Error("No visible seasons - reuse previous sitemap");
+        throw new Error("No seasons - reuse previous sitemap");
       }
       return staticPages;
     }
 
-    dynamicPages = visibleSeasons.map((season) => ({
+    dynamicPages = seasons.map((season) => ({
       url: `${baseUrl}/strategy-room/${season.seasonId}`,
       changeFrequency: "daily" as const,
       priority: 0.8, // 핵심 기능 페이지
