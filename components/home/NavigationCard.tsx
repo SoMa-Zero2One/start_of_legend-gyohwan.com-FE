@@ -2,13 +2,22 @@ import { cloneElement } from "react";
 import type { ReactElement } from "react";
 import Link from "next/link";
 
-interface NavigationCardProps {
-  href: string;
+type NavigationCardProps = {
   label: string;
   children: ReactElement<{ className?: string }>;
   showNewBadge?: boolean;
-  openInNewTab?: boolean;
-}
+} & (
+  | {
+      href: string;
+      onClick?: never;
+      openInNewTab?: boolean;
+    }
+  | {
+      href?: never;
+      onClick: () => void;
+      openInNewTab?: never;
+    }
+);
 
 export default function NavigationCard({
   href,
@@ -16,6 +25,7 @@ export default function NavigationCard({
   children,
   showNewBadge = false,
   openInNewTab = false,
+  onClick,
 }: NavigationCardProps) {
   const linkProps = openInNewTab
     ? {
@@ -30,8 +40,8 @@ export default function NavigationCard({
   });
   const shouldShowDesktopIcon = !showNewBadge;
 
-  return (
-    <Link href={href} className="group" {...linkProps}>
+  const content = (
+    <>
       {/* 모바일 레이아웃: 세로 카드 */}
       <div className="flex flex-col items-center justify-between gap-[8px] lg:hidden">
         <div className="relative rounded-[10px] bg-white p-[12px] shadow-[0_0_8px_0_rgba(0,0,0,0.06)] group-hover:shadow-md">
@@ -55,6 +65,20 @@ export default function NavigationCard({
         )}
         <span className="subhead-2">{label}</span>
       </div>
-    </Link>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className="group" {...linkProps}>
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <button type="button" onClick={onClick} className="group cursor-pointer" aria-label={label}>
+      {content}
+    </button>
   );
 }
