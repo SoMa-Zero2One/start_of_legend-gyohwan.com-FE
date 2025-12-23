@@ -50,3 +50,8 @@ export const useSeasonsStore = create<SeasonsState & SeasonsActions>((set, get) 
     }
   },
 }));
+
+// 앱 초기화 시 자동으로 진행 중 시즌 목록 가져오기
+if (typeof window !== "undefined") {
+  useSeasonsStore.getState().fetchActiveSeasons();
+}
