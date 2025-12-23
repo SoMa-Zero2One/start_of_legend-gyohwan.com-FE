@@ -9,6 +9,8 @@ import HomeIcon from "@/components/icons/HomeIcon";
 import NavigationCard from "@/components/home/NavigationCard";
 import CommunityIcon from "@/components/icons/CommunityIcon";
 import WriteIcon from "@/components/icons/WriteIcon";
+import GradeIcon from "@/components/icons/GradeIcon";
+import { useGradeShareAction } from "@/hooks/useGradeShareAction";
 
 interface HeaderProps {
   children?: React.ReactNode;
@@ -34,6 +36,7 @@ export default function Header({
   fallbackUrl,
 }: HeaderProps) {
   const router = useRouter();
+  const handleGradeShareClick = useGradeShareAction();
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -106,6 +109,10 @@ export default function Header({
           <nav className="flex items-center gap-[40px]" aria-label="주요 메뉴">
             <NavigationCard href="https://pf.kakao.com/_xaxdQLn" label="문의하기" openInNewTab>
               <WriteIcon />
+            </NavigationCard>
+
+            <NavigationCard label="성적 공유" onClick={handleGradeShareClick}>
+              <GradeIcon />
             </NavigationCard>
 
             <NavigationCard href="/community" label="커뮤니티" showNewBadge>
