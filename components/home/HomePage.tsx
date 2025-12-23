@@ -11,6 +11,7 @@ import HeaderAuthSection from "@/components/layout/HeaderAuthSection";
 import NavigationTab from "@/components/home/NavigationTab";
 import { useSeasonsStore } from "@/stores/seasonsStore";
 import { Season } from "@/types/season";
+import { GRADE_SHARE_SCROLL_KEY, GRADE_SHARE_SCROLL_TARGET_ID } from "@/lib/constants/scrollTargets";
 
 interface HomePageProps {
   initialSeasons: Season[];
@@ -27,8 +28,26 @@ export default function HomePage({ initialSeasons, initialPastSeasons }: HomePag
   }, [initialSeasons, setActiveSeasons]);
 
   useEffect(() => {
-    if (window.location.hash === "#strategy-room-entrances") {
-      document.getElementById("strategy-room-entrances")?.scrollIntoView({ behavior: "smooth" });
+    let targetId: string | null = null;
+    try {
+      targetId = sessionStorage.getItem(GRADE_SHARE_SCROLL_KEY);
+    } catch {
+      targetId = null;
+    }
+    if (targetId !== GRADE_SHARE_SCROLL_TARGET_ID) {
+      return;
+    }
+
+    const target = document.getElementById(targetId);
+    if (!target) {
+      return;
+    }
+
+    target.scrollIntoView({ behavior: "smooth" });
+    try {
+      sessionStorage.removeItem(GRADE_SHARE_SCROLL_KEY);
+    } catch {
+      // ignore storage failures
     }
   }, []);
 

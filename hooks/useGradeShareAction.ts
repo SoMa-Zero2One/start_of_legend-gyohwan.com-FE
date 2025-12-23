@@ -2,8 +2,7 @@ import { useCallback, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
 import { useSeasonsStore } from "@/stores/seasonsStore";
-
-const STRATEGY_ANCHOR_ID = "strategy-room-entrances";
+import { GRADE_SHARE_SCROLL_KEY, GRADE_SHARE_SCROLL_TARGET_ID } from "@/lib/constants/scrollTargets";
 
 export function useGradeShareAction() {
   const router = useRouter();
@@ -38,10 +37,15 @@ export function useGradeShareAction() {
     }
 
     if (pathname === "/") {
-      document.getElementById(STRATEGY_ANCHOR_ID)?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById(GRADE_SHARE_SCROLL_TARGET_ID)?.scrollIntoView({ behavior: "smooth" });
       return;
     }
 
-    router.push(`/#${STRATEGY_ANCHOR_ID}`);
+    try {
+      sessionStorage.setItem(GRADE_SHARE_SCROLL_KEY, GRADE_SHARE_SCROLL_TARGET_ID);
+    } catch {
+      // sessionStorage may be unavailable; fallback to plain navigation
+    }
+    router.push("/");
   }, [pathname, router]);
 }
