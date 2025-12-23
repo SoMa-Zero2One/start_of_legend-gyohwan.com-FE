@@ -1,6 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import type { Season } from "@/types/season";
 import type { GetSeasonOptions } from "@/lib/api/season";
 import { getSeasons } from "@/lib/api/season";
@@ -14,8 +15,8 @@ export const metadata: Metadata = {
   },
 };
 
-// 캐싱 완전 비활성화 - 항상 최신 데이터 조회
-export const dynamic = 'force-dynamic';
+// 서버 캐싱 사용, 필요 시 on-demand revalidate로 갱신
+export const revalidate = 43200;
 
 const FALLBACK_PAST_SEASONS_PATH = path.join(process.cwd(), "public/data/pastSeasons.json");
 
@@ -108,7 +109,9 @@ export default async function Page() {
       {/* JSON-LD 구조화 데이터 */}
       <StructuredData data={organizationSchema} />
       <StructuredData data={websiteSchema} />
-      <HomePage initialSeasons={initialSeasons} initialPastSeasons={initialPastSeasons} />
+      <Suspense fallback={null}>
+        <HomePage initialSeasons={initialSeasons} initialPastSeasons={initialPastSeasons} />
+      </Suspense>
     </>
   );
 }
