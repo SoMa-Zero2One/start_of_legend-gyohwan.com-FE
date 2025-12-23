@@ -14,8 +14,8 @@ export const metadata: Metadata = {
   },
 };
 
-// 캐싱 완전 비활성화 - 항상 최신 데이터 조회
-export const dynamic = 'force-dynamic';
+// 서버 캐싱 사용, 필요 시 on-demand revalidate로 갱신
+export const revalidate = 60 * 60 * 12;
 
 const FALLBACK_PAST_SEASONS_PATH = path.join(process.cwd(), "public/data/pastSeasons.json");
 

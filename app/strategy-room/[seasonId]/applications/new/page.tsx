@@ -14,6 +14,7 @@ import { getGpas } from "@/lib/api/gpa";
 import { getLanguages } from "@/lib/api/language";
 import { checkEligibility } from "@/lib/api/season";
 import { submitApplication } from "@/lib/api/application";
+import { revalidateHomePage } from "@/app/actions/home";
 import { handleApiError } from "@/lib/utils/apiError";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 import { useModalHistory } from "@/hooks/useModalHistory";
@@ -327,6 +328,12 @@ function ApplicationNewContent() {
       };
 
       await submitApplication(seasonId, requestData);
+
+      try {
+        await revalidateHomePage();
+      } catch (revalidateError) {
+        console.warn("Home revalidate failed:", revalidateError);
+      }
 
       // 제출 성공 시 sessionStorage 클리어
       if (typeof window !== "undefined") {
