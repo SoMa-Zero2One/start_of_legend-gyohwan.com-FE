@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const semester = match ? `${match[1]}-${match[2]}` : "";
 
     const title = `${universityName} ${semester} 교환학생 실시간 경쟁률`;
-    const description = `${universityName} ${semester} 교환학생 지원 현황을 실시간으로 확인하세요. 총 ${data.applicantCount}명이 성적을 공유하며 경쟁률을 분석 중입니다. GPA, 어학 점수 비교로 합격 가능성을 높이세요.`;
+    const description = `${universityName} ${semester} 교환학생 지원 현황을 실시간으로 확인하세요. 총 ${data.applicantCount}명이 성적을 공유 중입니다. GPA, 어학 점수 비교로 합격 가능성을 높이세요.`;
 
     return {
       title,
