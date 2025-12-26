@@ -2,31 +2,32 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-> 📚 **Detailed Documentation**: For architecture details, see [docs/architecture.md](docs/architecture.md). For advanced guides, see [docs/development-guide.md](docs/development-guide.md).
+> 📚 **Detailed Documentation**: For architecture details, see [docs/architecture.md](docs/architecture.md). For development workflows, see [docs/development-guide.md](docs/development-guide.md).
 
 ---
 
-## 🎯 Quick Overview
+## 🎯 Project Overview
 
-**Gyohwan (교환닷컴)** is a Next.js 15 web application for exchange student program management.
+**Gyohwan (교환닷컴)** is a Next.js 15 exchange student program management platform.
 
 - **Framework**: Next.js 15 (App Router) + React 19 + TypeScript
-- **State**: Zustand
+- **State**: Zustand 5.0.8
 - **Styling**: Tailwind CSS v4
 - **Package Manager**: pnpm (NEVER npm/yarn!)
-- **Max Width**: 430px (mobile-first)
+- **Build Tool**: Turbopack
+- **Max Width**: 430px (mobile-first design)
 
 ---
 
-## ⚡ Essential Rules (READ FIRST!)
+## ⚡ Essential Rules
 
-### 0. Communication & Decision Making (MOST IMPORTANT!)
+### 0. Communication & Decision Making (CRITICAL!)
 
 **ALWAYS ask questions when uncertain:**
-- ❓ **UI/Design**: Don't assume layouts, colors, or component styles - ask for clarification
-- ❓ **Architecture**: If multiple approaches exist, explain options and ask which to use
+- ❓ **UI/Design**: Don't assume layouts, colors, or component styles
+- ❓ **Architecture**: If multiple approaches exist, explain options and ask
 - ❓ **Requirements**: If user intent is unclear, ask before implementing
-- ❓ **Edge cases**: When handling special cases, confirm expected behavior
+- ❓ **Edge cases**: Confirm expected behavior for special cases
 
 **ALWAYS explain your changes:**
 - 🎯 **Usage**: Where and how will this code be used? What calls it?
@@ -34,35 +35,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 🤔 **Why**: Explain the reasoning behind the change
 - 💡 **Alternatives**: Mention other options considered (if any)
 
-**Examples:**
+**Example:**
 ```
-❌ BAD: "I'll add a helper function transformData()."
 ✅ GOOD: "I'll add transformData() helper function:
    USAGE: Called by CountryContent when processing API responses
-   WHAT: Function that converts API fieldId to displayOrder
-   WHY:
-   - Centralizes field mapping logic (DRY principle)
-   - Easier to test in isolation
-   - Reusable for UniversityContent later
-   ALTERNATIVES:
-   - Inline transformation (rejected: duplicates code)
-   - Use library like lodash (rejected: unnecessary dependency)"
+   WHAT: Converts API fieldId to displayOrder
+   WHY: Centralizes field mapping logic, easier to test, reusable
+   ALTERNATIVES: Inline transformation (rejected: code duplication)"
 
-❌ BAD: "Adding a new type interface."
-✅ GOOD: "I'll add UniversityFieldMetadata interface:
-   USAGE: Used by universityFields.ts metadata and UniversityTable props
-   WHAT: TypeScript interface defining university field structure
-   WHY:
-   - Type safety for field configuration
-   - IntelliSense support in IDE
-   - Matches CountryFieldMetadata pattern for consistency
-   ALTERNATIVES:
-   - Use type alias (rejected: interface allows extension)
-   - Reuse CountryFieldMetadata (rejected: different field sets)"
+❌ BAD: "I'll add a helper function transformData()."
 ```
-
-**Purpose of this rule:**
-Prevents "where is this used?" and "why did we add this?" confusion later. Clear usage context helps maintainability and code review.
 
 ### 1. Package Manager
 ```bash
@@ -70,6 +52,8 @@ Prevents "where is this used?" and "why did we add this?" confusion later. Clear
 pnpm install
 pnpm dev
 pnpm build
+pnpm test
+pnpm lint
 
 # ❌ NEVER use npm or yarn
 ```
@@ -77,8 +61,8 @@ pnpm build
 ### 2. Before Committing
 ```bash
 # MUST run build before every commit!
-pnpm build  # ← REQUIRED
-pnpm lint   # Check for errors
+pnpm build  # ← REQUIRED - catches TypeScript/build errors
+pnpm lint   # Check for linting errors
 
 # Then commit
 git add .
@@ -86,16 +70,21 @@ git commit -m "feat: 기능 설명"
 ```
 
 ### 3. Git Branch Flow
+```
+feat/* or fix/* → dev → test → main
+```
 - Work on `feat/*` or `fix/*` branches
 - Merge to `dev` first (NOT `main`)
 - `main` is for production only
+- Hotfixes go directly to `main` then sync to `dev`
 
 ### 4. Component Rules
-- **Default**: Server Components (faster!)
+- **Default**: Server Components (faster, SEO-friendly)
 - **Only use `'use client'` when**:
-  - Using React hooks (useState, useEffect)
+  - Using React hooks (useState, useEffect, useRef)
   - Event handlers (onClick, onChange)
-  - Browser APIs (window, localStorage)
+  - Browser APIs (window, localStorage, document)
+  - Third-party libraries that require client-side (drag-and-drop, etc.)
 
 ### 5. Button Styling (IMPORTANT!)
 ```tsx
@@ -109,49 +98,64 @@ git commit -m "feat: 기능 설명"
 
 ---
 
-## 📂 Project Structure (Key Folders)
+## 📂 Key Architecture Patterns
 
+### 1. Server/Client Component Split Pattern
+
+**Core Pattern**: Server fetches data, Client handles interactions.
+
+**Server Component** (app/strategy-room/[seasonId]/page.tsx):
+```typescript
+export default async function Page({ params }: Props) {
+  const seasonId = (await params).seasonId;  // ← Next.js 15: await params
+
+  // ✅ Server-side data fetching (fast, SEO-friendly)
+  const slots = await getSeasonSlots(seasonId);
+
+  return <StrategyRoomClient slots={slots} />;
+}
 ```
-gyohwan/
-├── app/                    # Next.js pages (App Router)
-├── components/             # React components (69 total)
-│   ├── common/            # Reusable UI (Tabs, Modal, etc.)
-│   ├── auth/              # Auth components
-│   └── icons/             # SVG icon components (19 total)
-├── lib/
-│   ├── api/               # API clients (auth, user, season, etc.)
-│   └── utils/             # Helper functions
-├── stores/                # Zustand state (authStore.ts)
-├── types/                 # TypeScript type definitions
-├── mocks/                 # MSW mock data (dev only)
-└── public/                # Static assets
+
+**Client Component** (components/strategy-room/StrategyRoomClient.tsx):
+```typescript
+"use client";
+
+export default function StrategyRoomClient({ slots }: Props) {
+  const [filter, setFilter] = useState("");
+
+  // ✅ Client-side interactivity
+  return <input onChange={(e) => setFilter(e.target.value)} />;
+}
 ```
 
----
+### 2. API Call Pattern
 
-## 🔑 Core Patterns
-
-### API Calls
 ```typescript
 import { getBackendUrl } from "@/lib/utils/api";
 
-export const myApi = async (): Promise<ResponseType> => {
-  const backendUrl = getBackendUrl();
+export const getUserMe = async (): Promise<User> => {
+  const backendUrl = getBackendUrl();  // ← Never hardcode URLs
 
-  const response = await fetch(`${backendUrl}/v1/endpoint`, {
-    credentials: "include",  // ✅ REQUIRED for cookies
+  const response = await fetch(`${backendUrl}/v1/users/me`, {
+    credentials: "include",  // ← REQUIRED for session cookies
   });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch user: ${response.status}`);
+  }
 
   return await response.json();
 };
 ```
 
 **Rules**:
-- ✅ Use `getBackendUrl()` (never hardcode URLs)
+- ✅ Use `getBackendUrl()` (handles dev/test/prod environments)
 - ✅ Include `credentials: "include"` (for session cookies)
-- ✅ Handle errors with try-catch
+- ✅ Use TypeScript return types
+- ✅ Export named functions (not default)
 
-### Component Props
+### 3. Component Props Pattern
+
 ```typescript
 // ✅ ALWAYS use interface (NOT type)
 interface MyComponentProps {
@@ -164,77 +168,70 @@ export default function MyComponent({ title, onClick }: MyComponentProps) {
 }
 ```
 
-### Styling
-```tsx
-// ✅ Tailwind first
-<div className="flex items-center gap-4 px-[20px]">
+### 4. Import Path Pattern
 
-// ✅ Use custom utilities when needed
-<button className="btn-primary">Submit</button>
+```typescript
+// ✅ ALWAYS use path alias @/*
+import { User } from "@/types/user";
+import CTAButton from "@/components/common/CTAButton";
 
-// ❌ Avoid inline styles
-<div style={{ padding: '20px' }}>
+// ❌ NEVER use relative imports
+import { User } from "../../../types/user";
 ```
-
-**Available Custom Classes**:
-- `.btn-primary` - Blue CTA button
-- `.btn-secondary` - Black button
-- `.animate-shake` - Shake animation
 
 ---
 
-## 🎨 Styling Guidelines
+## 🎨 Common Styling Patterns
 
-### Button Pattern
+### Container (Mobile-First)
 ```tsx
-// ✅ Complete button example
-<button
-  className="btn-primary cursor-pointer body-1 w-full rounded-[4px] py-[12px]"
-  onClick={handleClick}
->
+<div className="mx-auto w-full max-w-[430px] px-[20px]">
+  {/* All content here */}
+</div>
+```
+
+### Button (Primary)
+```tsx
+<button className="btn-primary body-1 w-full cursor-pointer rounded-[4px] p-[12px]">
   클릭
+</button>
+```
+
+### Button (Secondary)
+```tsx
+<button className="btn-secondary body-1 w-full cursor-pointer rounded-[4px] p-[12px]">
+  취소
 </button>
 ```
 
 ### Touch Targets (Mobile)
 ```tsx
-// ✅ Minimum 44px for touch targets
 <button className="min-h-[44px] min-w-[44px] cursor-pointer">
   Icon
 </button>
 ```
 
-### Container Pattern
+### Typography
 ```tsx
-// ✅ Standard container
-<div className="mx-auto w-full max-w-[430px] px-[20px]">
-  {/* All content here */}
-</div>
+<h1 className="heading-1">Main Title</h1>
+<p className="body-1">Regular text</p>
+<span className="caption-1">Small text</span>
 ```
 
 ---
 
 ## 🚨 Common Pitfalls
 
-### ❌ Pitfall 1: Import Paths
-```typescript
-// ❌ BAD - Relative import hell
-import { User } from "../../../types/user";
-
-// ✅ GOOD - Use path alias
-import { User } from "@/types/user";
-```
-
-### ❌ Pitfall 2: Missing credentials
+### ❌ Pitfall 1: Missing credentials in API calls
 ```typescript
 // ❌ BAD - Session cookies won't be sent
 fetch(`${backendUrl}/api`);
 
-// ✅ GOOD - Include credentials
+// ✅ GOOD
 fetch(`${backendUrl}/api`, { credentials: "include" });
 ```
 
-### ❌ Pitfall 3: Unnecessary 'use client'
+### ❌ Pitfall 2: Unnecessary 'use client'
 ```typescript
 // ❌ BAD - Static component doesn't need 'use client'
 "use client";
@@ -248,9 +245,9 @@ export default function StaticPage() {
 }
 ```
 
-### ❌ Pitfall 4: Next.js 15 Dynamic Params
+### ❌ Pitfall 3: Next.js 15 Dynamic Params
 ```typescript
-// ❌ OLD Next.js pattern
+// ❌ BAD - Old Next.js pattern
 export default function Page({ params }) {
   const id = params.id; // Error in Next.js 15!
 }
@@ -261,26 +258,49 @@ export default async function Page({ params }) {
 }
 ```
 
+### ❌ Pitfall 4: Hardcoded backend URL
+```typescript
+// ❌ BAD
+fetch("https://api.gyohwan.com/v1/users/me");
+
+// ✅ GOOD
+import { getBackendUrl } from "@/lib/utils/api";
+const backendUrl = getBackendUrl();
+fetch(`${backendUrl}/v1/users/me`);
+```
+
+### ❌ Pitfall 5: Relative import hell
+```typescript
+// ❌ BAD
+import { User } from "../../../types/user";
+
+// ✅ GOOD
+import { User } from "@/types/user";
+```
+
 ---
 
 ## 🔄 Development Workflow
 
 ### Daily Routine
 ```bash
-# Morning: Get latest changes
+# 1. Get latest changes
 git checkout dev
 git pull origin dev
 
-# Create feature branch
+# 2. Create feature branch
 git checkout -b feat/your-feature
 
-# Work... then before commit:
+# 3. Work... then before commit:
 pnpm build  # ← MUST pass!
+pnpm lint
+
+# 4. Commit and push
 git add .
 git commit -m "feat: 기능 설명"
 git push origin feat/your-feature
 
-# Create PR: feat/your-feature → dev
+# 5. Create PR: feat/your-feature → dev
 ```
 
 ### Commit Message Format
@@ -291,71 +311,178 @@ refactor: 코드 리팩토링
 style: 스타일 변경
 docs: 문서 수정
 chore: 기타 작업
+test: 테스트 추가/수정
+```
+
+### Hotfix Workflow (Critical Bugs Only)
+```bash
+# 1. Start from main
+git checkout main
+git pull origin main
+git checkout -b hotfix/critical-bug
+
+# 2. Fix, test, commit
+pnpm build
+git commit -m "hotfix: 버그 설명"
+
+# 3. PR to main, then sync to dev
+git push origin hotfix/critical-bug
+# After merge to main:
+git checkout dev
+git merge main
 ```
 
 ---
 
-## 🛠️ Debugging Tips
+## 🧪 Testing
 
-### TypeScript Errors
+### Run Tests
 ```bash
-pnpm build  # Check all errors
+pnpm test          # Run all tests
+pnpm test:watch    # Watch mode
+pnpm test:run      # Run once (CI mode)
 ```
 
-### API Not Working
+### Test Strategy
+- **Unit tests**: Utilities (`lib/utils/*`)
+- **Integration tests**: API clients with MSW
+- **E2E tests**: Playwright (planned)
+
+See [docs/testing-strategy.md](docs/testing-strategy.md) for details.
+
+---
+
+## 🛠️ MSW (Mock Service Worker)
+
+### Enable MSW
 ```bash
-# 1. Check if MSW is enabled
+# .env.local
+NEXT_PUBLIC_ENABLE_MSW=true
+```
+
+### Test Accounts
+- Email: `test@example.com`
+- Password: `password123456`
+- Verification code: `123456`
+
+### Debug MSW
+```bash
+# Check if enabled
 cat .env.local | grep ENABLE_MSW
 
-# 2. Check browser console for "[MSW] Mocking enabled"
+# Browser console should show:
+# "[MSW] Mocking enabled"
 
-# 3. Check if endpoint is mocked
+# Check if endpoint is mocked
 grep -r "your-endpoint" mocks/handlers/
 ```
 
-### Build Failing
-```bash
-# Clear cache and rebuild
-rm -rf .next
-pnpm install
-pnpm build
+See `mocks/README.md` for error test cases.
+
+---
+
+## 📂 Directory Structure
+
+```
+gyohwan/
+├── app/                    # Next.js App Router pages
+│   ├── (routes)/          # Route groups
+│   ├── api/               # API routes
+│   └── layout.tsx         # Root layout
+├── components/            # React components (69 total)
+│   ├── common/           # Reusable UI (Tabs, Modal, etc.)
+│   ├── auth/             # Auth components
+│   ├── strategy-room/    # Strategy room features
+│   ├── community/        # Community features
+│   └── icons/            # SVG icons (39 total)
+├── lib/
+│   ├── api/              # API clients (auth, user, season, slot, etc.)
+│   ├── utils/            # Helper functions
+│   ├── oauth/            # OAuth configs (Google, Kakao)
+│   └── constants/        # Constants
+├── stores/               # Zustand state (authStore.ts)
+├── types/                # TypeScript definitions
+├── hooks/                # Custom React hooks
+├── mocks/                # MSW setup
+│   ├── handlers/         # API request handlers
+│   └── data/             # Mock data
+├── docs/                 # Documentation
+└── public/               # Static assets
 ```
 
 ---
 
-## 📚 Detailed Documentation
+## 🔑 Environment Variables
 
-For more detailed information, see:
-- **[Architecture Guide](docs/architecture.md)** - Tech stack, directory structure, patterns
-- **[Development Guide](docs/development-guide.md)** - Advanced patterns, examples, best practices
+Required in `.env.local`:
+```bash
+# Backend API
+NEXT_PUBLIC_BACKEND_URL=<backend-url>
+
+# OAuth
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=<id>
+NEXT_PUBLIC_GOOGLE_REDIRECT_URI=<url>
+NEXT_PUBLIC_KAKAO_CLIENT_ID=<id>
+NEXT_PUBLIC_KAKAO_REDIRECT_URI=<url>
+
+# MSW (dev only)
+NEXT_PUBLIC_ENABLE_MSW=true
+
+# Analytics
+NEXT_PUBLIC_GA_ID=<id>
+
+# Revalidation
+REVALIDATE_SECRET=<secret>
+```
+
+---
+
+## 📝 Naming Conventions
+
+### Components
+- Page components: `[Feature]Page.tsx`
+- Client wrappers: `[Feature]Client.tsx`
+- Modals: `[Feature]Modal.tsx`
+- Skeletons: `[Component]Skeleton.tsx`
+- Icons: `[Name]Icon.tsx`
+
+### Files
+- API clients: lowercase (e.g., `auth.ts`, `user.ts`)
+- Types: lowercase (e.g., `user.ts`, `season.ts`)
+- Utils: lowercase (e.g., `date.ts`, `api.ts`)
+
+### Variables
+- Components: PascalCase
+- Functions: camelCase
+- Constants: UPPER_SNAKE_CASE
+- Interfaces: PascalCase with suffix
+  - Props: `[Component]Props`
+  - Request: `[Feature]Request`
+  - Response: `[Feature]Response`
 
 ---
 
 ## 🔗 Quick Reference
 
-| Topic | Location |
-|-------|----------|
+| Task | Location |
+|------|----------|
 | API Clients | `lib/api/` |
 | Components | `components/` |
 | Types | `types/` |
 | State | `stores/authStore.ts` |
+| Utils | `lib/utils/` |
 | Mock Data | `mocks/data/` |
 | Icons | `components/icons/` |
-| Common UI | `components/common/` |
 
 ---
 
-## ⚙️ Environment Variables
+## 📚 Documentation
 
-Required in `.env.local`:
-```bash
-NEXT_PUBLIC_BACKEND_URL=<backend-api-url>
-NEXT_PUBLIC_ENABLE_MSW=true  # Enable mock API
-NEXT_PUBLIC_GA_ID=<google-analytics-id>
-```
+- **[Architecture Guide](docs/architecture.md)** - Detailed tech stack and patterns
+- **[Development Guide](docs/development-guide.md)** - Advanced workflows and best practices
+- **[Testing Strategy](docs/testing-strategy.md)** - Testing approach and roadmap
+- **[Zustand Guide](docs/zustand-react-rendering.md)** - State management patterns
 
 ---
 
 **Last Updated**: 2025-01-03
-
-**Note**: This is a condensed version. For comprehensive documentation, refer to the docs folder.
