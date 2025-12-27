@@ -108,16 +108,14 @@ function ResetPasswordContent() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header title="비밀번호 찾기" showPrevButton showHomeButton />
-      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px]">
-        <div className="flex w-full flex-col items-center gap-[24px] px-[20px] xl:w-[370px]">
-          <div className="flex w-full flex-col justify-center gap-[60px]">
+      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px] md:pt-[100px] xl:pt-[80px]">
+        <div className="flex w-full flex-col items-center gap-[24px] px-[20px]">
+          <div className="flex w-full flex-col items-center justify-center gap-[60px]">
             {/* 헤더 */}
-            <div className="head-4 text-center">
-              <h1>비밀번호를 설정하세요</h1>
-            </div>
+            <h1 className="head-4 text-center md:!text-[36px]">비밀번호를 설정하세요</h1>
 
             {/* 입력 영역 */}
-            <div className="flex flex-col gap-[10px]">
+            <div className="flex w-full flex-col gap-[10px] md:w-[350px]">
               {/* 이메일 표시 */}
               <div className="mb-[10px] rounded-[4px] bg-gray-100 p-3">
                 <input

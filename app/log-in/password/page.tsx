@@ -9,17 +9,15 @@ function LoginPasswordContent() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header title="로그인" showPrevButton showHomeButton />
-      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px]">
-        <div className="flex w-full flex-col items-center px-[20px] xl:w-[370px]">
-          <div className="flex w-full flex-col justify-center gap-[60px]">
-            {/* 헤더 */}
-            <div className="head-4 text-center">
-              <h1>비밀번호를 입력하세요</h1>
-            </div>
-
-            {/* 로그인 폼 */}
-            <LoginForm />
+      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px] md:pt-[100px] xl:pt-[80px]">
+        <div className="flex w-full flex-col items-center justify-center gap-[60px] px-[20px]">
+          {/* 헤더 */}
+          <div className="head-4 text-center md:!text-[36px]">
+            <h1>비밀번호를 입력하세요</h1>
           </div>
+
+          {/* 로그인 폼 */}
+          <LoginForm />
         </div>
 
         {/* 약관 동의 */}

@@ -26,16 +26,16 @@ export default function LoginOrCreateAccount() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header title="로그인 또는 회원가입" showPrevButton showHomeButton showBorder />
-      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px]">
-        <div className="flex w-full flex-col items-center gap-[24px] px-[20px] xl:w-[430px]">
-          <div className="flex w-full flex-col justify-center gap-[60px]">
+      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px] md:pt-[100px] xl:pt-[80px]">
+        <div className="flex w-full flex-col items-center gap-[24px] px-[20px]">
+          <div className="flex w-full flex-col items-center justify-center gap-[60px]">
             {/* 헤더 */}
-            <div className="head-4 text-center">
+            <div className="head-4 text-center md:!text-[36px]">
               <h1>교환닷컴에 오신 걸 환영합니다</h1>
             </div>
 
-            <div className="flex flex-col gap-[20px]">
-              <div className="flex flex-col gap-[8px] pb-[20px]">
+            <div className="flex w-full flex-col items-center gap-[20px] md:w-[350px]">
+              <div className="flex w-full flex-col gap-[8px] pb-[20px]">
                 {/* 구글 로그인 */}
                 <GoogleLoginButton />
 
@@ -44,7 +44,7 @@ export default function LoginOrCreateAccount() {
               </div>
 
               {/* 구분선 */}
-              <div className="relative">
+              <div className="relative w-full">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300"></div>
                 </div>

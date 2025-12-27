@@ -50,7 +50,7 @@ export default function PasswordStep({
   };
 
   return (
-    <div className="flex flex-col gap-[10px]">
+    <div className="flex w-full flex-col gap-[10px] md:w-[350px]">
       {/* 이메일 표시 */}
       <div className="mb-[10px] flex items-center gap-2 rounded-[4px] bg-gray-100 p-3">
         <input type="email" value={email} disabled className="flex-1 bg-transparent text-gray-700 outline-none" />
@@ -108,7 +108,11 @@ export default function PasswordStep({
       {error && <p className="text-error-red">{error}</p>}
 
       {/* 계속 버튼 */}
-      <button onClick={onSubmit} disabled={!isSubmitEnabled} className="btn-secondary w-full rounded-[4px] p-[12px]">
+      <button
+        onClick={onSubmit}
+        disabled={!isSubmitEnabled}
+        className="btn-secondary mt-[44px] w-full rounded-[4px] p-[12px]"
+      >
         {isLoading ? "처리 중..." : "계속"}
       </button>
     </div>

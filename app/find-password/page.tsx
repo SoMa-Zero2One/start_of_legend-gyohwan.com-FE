@@ -59,19 +59,17 @@ function FindPasswordContent() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header title="비밀번호 찾기" showPrevButton showHomeButton />
-      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px]">
-        <div className="flex w-full flex-col items-center gap-[24px] px-[20px] xl:w-[370px]">
-          <div className="flex w-full flex-col justify-center gap-[60px]">
+      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px] md:pt-[100px] xl:pt-[80px]">
+        <div className="flex w-full flex-col items-center gap-[24px] px-[20px]">
+          <div className="flex w-full flex-col items-center justify-center gap-[60px]">
             {/* 헤더 */}
             <div className="flex flex-col gap-[12px] text-center">
-              <div className="head-4">
-                <h1>비밀번호를 잊으셨나요?</h1>
-              </div>
+              <h1 className="head-4 md:!text-[36px]">비밀번호를 잊으셨나요?</h1>
               <p className="body-2 text-gray-900">비밀번호를 초기화하려면 &quot;계속&quot;을 클릭하세요.</p>
             </div>
 
             {/* 버튼 영역 */}
-            <div className="flex flex-col gap-[20px]">
+            <div className="flex w-full flex-col gap-[20px] md:w-[350px]">
               {/* 에러 메시지 */}
               {error && <p className="text-error-red text-center">{error}</p>}
 
@@ -85,7 +83,10 @@ function FindPasswordContent() {
               </button>
 
               {/* 로그인으로 돌아가기 */}
-              <button onClick={handleBackToLogin} className="body-2 cursor-pointer text-center hover:underline">
+              <button
+                onClick={handleBackToLogin}
+                className="medium-body-3 cursor-pointer text-center hover:underline md:mt-[20px]"
+              >
                 로그인으로 돌아가기
               </button>
             </div>

@@ -33,18 +33,19 @@ function CompletePasswordResetContent() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header title="비밀번호 찾기" showPrevButton showHomeButton showBorder />
-      <div className="flex flex-1 flex-col items-center justify-center pt-[60px] pb-[36px]">
-        <div className="flex w-full flex-col items-center gap-[60px] px-[20px] xl:w-[370px]">
+      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px] md:pt-[100px] xl:pt-[80px]">
+        <div className="flex w-full flex-col items-center gap-[60px] px-[20px]">
           {/* 헤더 */}
           <div className="flex flex-col gap-[12px] text-center">
-            <div className="head-4">
-              <h1>비밀번호가 재설정 되었습니다</h1>
-            </div>
+            <h1 className="head-4 md:!text-[36px]">비밀번호가 재설정 되었습니다</h1>
             <p className="body-2 text-gray-900">새로운 비밀번호로 로그인해주세요.</p>
           </div>
 
           {/* 버튼 영역 */}
-          <button onClick={handleGoToLogin} className="btn-secondary w-full cursor-pointer rounded-[4px] p-[12px]">
+          <button
+            onClick={handleGoToLogin}
+            className="btn-secondary w-full cursor-pointer rounded-[4px] p-[12px] md:w-[350px]"
+          >
             로그인 하러가기
           </button>
         </div>
