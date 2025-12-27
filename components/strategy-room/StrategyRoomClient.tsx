@@ -236,12 +236,7 @@ export default function StrategyRoomClient() {
           </section>
 
           <section className="flex flex-col gap-[12px] xl:flex-row xl:items-center xl:justify-between">
-            <Tabs
-              tabs={TAB_OPTIONS}
-              selectedTab={selectedTab}
-              onTabChange={handleTabChange}
-              counts={tabCounts}
-            />
+            <Tabs tabs={TAB_OPTIONS} selectedTab={selectedTab} onTabChange={handleTabChange} counts={tabCounts} />
             {renderDesktopSearch()}
           </section>
 
@@ -270,7 +265,7 @@ export default function StrategyRoomClient() {
             )}
 
             {!shouldShowBlur && filteredSlots.length > 0 && (
-              <div className="grid grid-cols-1 gap-[16px] xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-[16px] md:grid-cols-2 xl:grid-cols-4">
                 {filteredSlots.map((slot) => (
                   <UniversitySlotCard key={slot.slotId} slot={slot} />
                 ))}

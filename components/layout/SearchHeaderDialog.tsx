@@ -59,7 +59,7 @@ export default function SearchHeaderDialog({
         ref={containerRef}
         role="dialog"
         aria-modal="true"
-        className="flex h-[50px] w-full max-w-[430px] items-center gap-3 border-b border-gray-300 px-5"
+        className="flex h-[50px] w-full max-w-[440px] items-center gap-3 border-b border-gray-300 px-5 md:max-w-[880px]"
       >
         {showBackButton && (
           <button
