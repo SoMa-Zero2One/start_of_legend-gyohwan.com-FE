@@ -33,12 +33,12 @@ export function useMediaQuery(query: string): boolean {
 /**
  * Tailwind 브레이크포인트에 따른 디바이스 타입 반환
  * - mobile: < 768px
- * - tablet: 768px ~ 1023px (md ~ lg 미만)
+ * - tablet: 768px ~ 1279px (md ~ lg 미만)
  * - desktop: >= 1280px (lg)
  */
 export function useBreakpoint(): "mobile" | "tablet" | "desktop" {
   const isDesktop = useMediaQuery("(min-width: 1280px)");
-  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
+  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1279px)");
 
   if (isDesktop) return "desktop";
   if (isTablet) return "tablet";

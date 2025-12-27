@@ -24,7 +24,7 @@ export default function HeroSection() {
           fill
           priority
           className="object-cover"
-          sizes="(min-width: 1280px) 1280px, 390px"
+          sizes="(min-width: 1280px) 1280px, (min-width: 768px) 780px, 390px"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-[10px] text-center text-white">
           <h1 className="g-head-3 md:!text-[48px] xl:!text-[60px]">

@@ -26,14 +26,14 @@ export default function FeatureSection() {
       </div>
 
       {/* 이미지 */}
-      <div className="relative h-[192px] w-[350px] overflow-hidden rounded-[10px] md:h-[400px] md:w-[350px] xl:h-[400px] xl:w-[540px]">
+      <div className="relative h-[192px] w-[350px] overflow-hidden rounded-[10px] md:h-[400px] xl:h-[400px] xl:w-[540px]">
         <Image
           src="/images/mainPage-2.png"
           alt="교환닷컴"
           fill
           priority
           className="object-cover"
-          sizes="(min-width: 1280x) 540px, (min-width: 768px) 400px, 350px"
+          sizes="(min-width: 1280px) 540px, 350px"
         />
       </div>
     </div>
