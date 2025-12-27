@@ -89,7 +89,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="flex flex-col gap-[10px]">
+    <div className="flex w-full flex-col gap-[10px] md:w-[350px]">
       {/* 이메일 표시 */}
       <div className="mb-[10px] flex items-center gap-2 rounded-[4px] bg-gray-100 p-3">
         <input type="email" value={email} disabled className="flex-1 bg-transparent text-gray-700 outline-none" />
@@ -116,7 +116,7 @@ export default function LoginForm() {
       {/* 비밀번호 찾기 */}
       <button
         type="button"
-        onClick={() => router.push(`/find-password?email=${encodeURIComponent(email)}`)}
+        onClick={() => router.push(`/reset-password?email=${encodeURIComponent(email)}`)}
         className="body-2 mb-[10px] cursor-pointer text-left hover:underline"
       >
         비밀번호를 잊으셨나요?
@@ -126,7 +126,7 @@ export default function LoginForm() {
       <button
         onClick={handleLogin}
         disabled={!password || isLoading}
-        className="medium-body-3 w-full cursor-pointer rounded-lg bg-black px-4 py-3 text-white disabled:cursor-default disabled:bg-gray-300 disabled:text-gray-700"
+        className="medium-body-3 rounded-lg w-full cursor-pointer bg-black px-4 py-3 text-white disabled:cursor-default disabled:bg-gray-300 disabled:text-gray-700"
       >
         {isLoading ? "로그인 중..." : "계속"}
       </button>

@@ -54,12 +54,12 @@ export default function SearchHeaderDialog({
   }
 
   return createPortal(
-    <div className="fixed inset-x-0 top-0 z-50 flex justify-center bg-white lg:hidden">
+    <div className="fixed inset-x-0 top-0 z-50 flex justify-center bg-white xl:hidden">
       <div
         ref={containerRef}
         role="dialog"
         aria-modal="true"
-        className="flex h-[50px] w-full max-w-[430px] items-center gap-3 border-b border-gray-300 px-5"
+        className="flex h-[50px] w-full max-w-[440px] items-center gap-3 border-b border-gray-300 px-5 md:max-w-[880px]"
       >
         {showBackButton && (
           <button

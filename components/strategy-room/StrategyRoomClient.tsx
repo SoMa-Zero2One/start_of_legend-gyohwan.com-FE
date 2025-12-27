@@ -177,7 +177,7 @@ export default function StrategyRoomClient() {
   };
 
   const renderDesktopSearch = () => (
-    <div className="relative hidden w-full max-w-[260px] lg:block">
+    <div className="relative hidden w-full max-w-[260px] xl:block">
       <SearchIcon size={18} className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-500" />
       <input
         value={searchQuery}
@@ -212,12 +212,12 @@ export default function StrategyRoomClient() {
           placeholder="대학명 또는 국가로 검색..."
         />
 
-        <div className="flex w-full flex-1 flex-col gap-[24px] px-[20px] py-[24px] lg:gap-[32px] lg:py-[40px]">
-          <section className="flex flex-col gap-[8px] lg:gap-[12px]">
-            <p className="caption-1 lg:!text-[16px]">{parsedSemester}</p>
-            <div className="flex flex-col gap-[12px] lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex w-full flex-1 flex-col gap-[24px] px-[20px] py-[24px] xl:gap-[32px] xl:py-[40px]">
+          <section className="flex flex-col gap-[8px] xl:gap-[12px]">
+            <p className="caption-1 xl:!text-[16px]">{parsedSemester}</p>
+            <div className="flex flex-col gap-[12px] xl:flex-row xl:items-center xl:justify-between">
               <div>
-                <h1 className="head-4 text-[26px] lg:text-[36px]">{universityName} 교환학생</h1>
+                <h1 className="head-4 text-[26px] xl:text-[36px]">{universityName} 교환학생</h1>
               </div>
               {hasSharedGrade && (
                 <Link
@@ -235,13 +235,8 @@ export default function StrategyRoomClient() {
             </div>
           </section>
 
-          <section className="flex flex-col gap-[12px] lg:flex-row lg:items-center lg:justify-between">
-            <Tabs
-              tabs={TAB_OPTIONS}
-              selectedTab={selectedTab}
-              onTabChange={handleTabChange}
-              counts={tabCounts}
-            />
+          <section className="flex flex-col gap-[12px] xl:flex-row xl:items-center xl:justify-between">
+            <Tabs tabs={TAB_OPTIONS} selectedTab={selectedTab} onTabChange={handleTabChange} counts={tabCounts} />
             {renderDesktopSearch()}
           </section>
 
@@ -249,7 +244,7 @@ export default function StrategyRoomClient() {
             {shouldShowBlur && (
               <>
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                  <div className="grid grid-cols-1 gap-[16px] blur-sm lg:grid-cols-4">
+                  <div className="grid grid-cols-1 gap-[16px] blur-sm xl:grid-cols-4">
                     {backgroundSlots.map((slot) => (
                       <UniversitySlotCard key={slot.slotId} slot={slot} />
                     ))}
@@ -270,7 +265,7 @@ export default function StrategyRoomClient() {
             )}
 
             {!shouldShowBlur && filteredSlots.length > 0 && (
-              <div className="grid grid-cols-1 gap-[16px] lg:grid-cols-4">
+              <div className="grid grid-cols-1 gap-[16px] md:grid-cols-2 xl:grid-cols-4">
                 {filteredSlots.map((slot) => (
                   <UniversitySlotCard key={slot.slotId} slot={slot} />
                 ))}

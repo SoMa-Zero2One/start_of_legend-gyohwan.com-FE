@@ -190,11 +190,11 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
   return (
     <div className="px-[20px] pt-[24px] pb-[100px]">
       {/* Step 타이틀 */}
-      <p className="caption-1 text-primary-blue mb-[8px] lg:!text-[20px] lg:!font-bold">Step 01</p>
-      <h1 className="head-4 mb-[32px] lg:!text-[36px]">성적 등록하기</h1>
+      <p className="caption-1 text-primary-blue mb-[8px] xl:!text-[20px] xl:!font-bold">Step 01</p>
+      <h1 className="head-4 mb-[32px] xl:!text-[36px]">성적 등록하기</h1>
 
       {/* 학점 입력 */}
-      <div className="flex flex-col gap-[32px] lg:mx-auto lg:w-[820px] lg:rounded-[16px] lg:border lg:border-gray-300 lg:p-[40px]">
+      <div className="flex flex-col gap-[32px] xl:mx-auto xl:w-[820px] xl:rounded-[16px] xl:border xl:border-gray-300 xl:p-[40px]">
         <section>
           <label className="body-2 mb-[12px] block font-semibold">학점</label>
           <div className="flex gap-[12px]">

@@ -54,21 +54,19 @@ export default function CreateAccountComplete() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header showLogo />
-      <div className="flex flex-1 flex-col items-center pt-[80px] pb-[36px]">
-        <div className="flex w-full flex-col items-center gap-[60px] px-[20px] lg:w-[430px]">
+      <div className="flex flex-1 flex-col items-center pt-[80px] pb-[36px] md:pt-[100px] xl:pt-[80px]">
+        <div className="flex w-full flex-col items-center gap-[60px] px-[20px]">
           {/* 헤더 */}
           <div className="flex flex-col items-center gap-[12px] text-center">
-            <div className="head-4">
-              <h1>
-                {user?.nickname}님
-                <br /> 환영합니다
-              </h1>
-            </div>
+            <h1 className="head-4 md:!text-[36px]">
+              {user?.nickname}님
+              <br /> 환영합니다
+            </h1>
             <p className="body-2 text-gray-900">교환학생 준비, 교환닷컴과 함께하세요.</p>
           </div>
 
           {/* 버튼 영역 */}
-          <div className="flex w-full flex-col gap-[12px]">
+          <div className="flex w-full flex-col gap-[12px] md:w-[350px]">
             {redirectUrl && (
               <button onClick={handleGoToRedirect} className="btn-primary w-full rounded-[4px] p-[12px]">
                 회원가입 전 페이지로 돌아가기

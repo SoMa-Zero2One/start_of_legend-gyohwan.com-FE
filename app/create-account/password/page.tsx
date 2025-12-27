@@ -46,14 +46,12 @@ function PasswordSignupContent() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header title="회원 가입" showPrevButton showHomeButton />
-      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px]">
-        <div className="flex w-full flex-col items-center gap-[24px] px-[20px] lg:w-[430px]">
-          <div className="flex w-full flex-col justify-center gap-[60px]">
+      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px] md:pt-[100px] xl:pt-[80px]">
+        <div className="flex w-full flex-col items-center gap-[24px] px-[20px]">
+          <div className="flex w-full flex-col items-center justify-center gap-[40px]">
             {/* 헤더 */}
             <div className="flex flex-col gap-[12px] text-center">
-              <div className="head-4">
-                <h1>{headerContent[currentStep].title}</h1>
-              </div>
+              <h1 className="head-4 md:!text-[36px]">{headerContent[currentStep].title}</h1>
               <p className="body-2 whitespace-pre-line text-gray-900">{headerContent[currentStep].subtitle}</p>
             </div>
 

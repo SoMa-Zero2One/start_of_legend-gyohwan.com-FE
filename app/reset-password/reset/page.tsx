@@ -71,7 +71,7 @@ function ResetPasswordContent() {
       await confirmPasswordReset(email, code, password);
 
       // 성공 시 완료 페이지로 이동
-      router.push(`/find-password/complete?email=${encodeURIComponent(email)}`);
+      router.push(`/reset-password/complete?email=${encodeURIComponent(email)}`);
     } catch (error) {
       // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
       const errorMessage = handleApiError(error);
@@ -105,19 +105,22 @@ function ResetPasswordContent() {
     }
   };
 
+  // 로그인으로 돌아가기
+  const handleBackToLogin = () => {
+    router.push(`/log-in/password?email=${encodeURIComponent(email)}`);
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header title="비밀번호 찾기" showPrevButton showHomeButton />
-      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px]">
-        <div className="flex w-full flex-col items-center gap-[24px] px-[20px] lg:w-[370px]">
-          <div className="flex w-full flex-col justify-center gap-[60px]">
+      <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px] md:pt-[100px] xl:pt-[80px]">
+        <div className="flex w-full flex-col items-center gap-[24px] px-[20px]">
+          <div className="flex w-full flex-col items-center justify-center gap-[60px]">
             {/* 헤더 */}
-            <div className="head-4 text-center">
-              <h1>비밀번호를 설정하세요</h1>
-            </div>
+            <h1 className="head-4 text-center md:!text-[36px]">비밀번호를 설정하세요</h1>
 
             {/* 입력 영역 */}
-            <div className="flex flex-col gap-[10px]">
+            <div className="flex w-full flex-col gap-[10px] md:w-[350px]">
               {/* 이메일 표시 */}
               <div className="mb-[10px] rounded-[4px] bg-gray-100 p-3">
                 <input
@@ -210,6 +213,12 @@ function ResetPasswordContent() {
                 className="btn-secondary mt-[10px] w-full cursor-pointer rounded-[4px] p-[12px]"
               >
                 {isLoading ? "재설정 중..." : "계속"}
+              </button>
+              <button
+                onClick={handleBackToLogin}
+                className="medium-body-3 cursor-pointer text-center hover:underline md:mt-[20px]"
+              >
+                로그인으로 돌아가기
               </button>
             </div>
           </div>

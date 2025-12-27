@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 /**
  * matchMedia를 사용한 미디어 쿼리 감지 훅
- * @param query - CSS 미디어 쿼리 문자열 (예: "(min-width: 1024px)")
+ * @param query - CSS 미디어 쿼리 문자열 (예: "(min-width: 1280px)")
  * @returns 미디어 쿼리 매칭 여부
  */
 export function useMediaQuery(query: string): boolean {
@@ -33,12 +33,12 @@ export function useMediaQuery(query: string): boolean {
 /**
  * Tailwind 브레이크포인트에 따른 디바이스 타입 반환
  * - mobile: < 768px
- * - tablet: 768px ~ 1023px (md ~ lg 미만)
- * - desktop: >= 1024px (lg)
+ * - tablet: 768px ~ 1279px (md ~ lg 미만)
+ * - desktop: >= 1280px (lg)
  */
 export function useBreakpoint(): "mobile" | "tablet" | "desktop" {
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
+  const isDesktop = useMediaQuery("(min-width: 1280px)");
+  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1279px)");
 
   if (isDesktop) return "desktop";
   if (isTablet) return "tablet";
@@ -46,10 +46,10 @@ export function useBreakpoint(): "mobile" | "tablet" | "desktop" {
 }
 
 /**
- * Tailwind lg 브레이크포인트 (1024px) 이상인지 확인
+ * Tailwind lg 브레이크포인트 (1280px) 이상인지 확인
  */
 export function useIsDesktop(): boolean {
-  return useMediaQuery("(min-width: 1024px)");
+  return useMediaQuery("(min-width: 1280px)");
 }
 
 /**

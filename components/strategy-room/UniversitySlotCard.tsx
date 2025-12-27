@@ -26,18 +26,20 @@ export default function UniversitySlotCard({ slot, variant = "responsive" }: Uni
     <Link href={`/strategy-room/${seasonId}/slots/${slot.slotId}`}>
       <div
         className={`flex cursor-pointer flex-col items-end gap-[16px] rounded-[10px] border border-gray-100 p-[16px] shadow-[0_0_8px_rgba(0,0,0,0.06)] hover:bg-gray-100 ${
-          isMobileVariant ? "" : "lg:items-center lg:gap-[20px]"
+          isMobileVariant ? "" : "xl:items-center xl:gap-[20px]"
         }`}
       >
-        <div className={`flex w-full items-center justify-between ${isMobileVariant ? "" : "lg:flex-col lg:gap-[8px]"}`}>
+        <div
+          className={`flex w-full items-center justify-between ${isMobileVariant ? "" : "xl:flex-col xl:gap-[8px]"}`}
+        >
           <div
             className={`flex items-center justify-center gap-[8px] ${
-              isMobileVariant ? "" : "lg:flex-col lg:gap-[12px]"
+              isMobileVariant ? "" : "xl:flex-col xl:gap-[12px]"
             }`}
           >
             <div
               className={`relative h-[20px] w-[20px] overflow-hidden rounded-full ${
-                isMobileVariant ? "" : "lg:h-[60px] lg:w-[60px]"
+                isMobileVariant ? "" : "xl:h-[60px] xl:w-[60px]"
               }`}
             >
               {/* 학교 로고 */}
@@ -45,13 +47,13 @@ export default function UniversitySlotCard({ slot, variant = "responsive" }: Uni
                 src={logoUrl}
                 alt={`${name} 로고`}
                 fill
-                sizes={isMobileVariant ? "20px" : "(min-width:1024px) 60px, 20px"}
-                className={`h-[20px] w-[20px] object-contain ${isMobileVariant ? "" : "lg:h-[60px] lg:w-[60px]"}`}
+                sizes={isMobileVariant ? "20px" : "(min-width:1280px) 60px, 20px"}
+                className={`h-[20px] w-[20px] object-contain ${isMobileVariant ? "" : "xl:h-[60px] xl:w-[60px]"}`}
               />
             </div>
             <h3
               className={`subhead-2 line-clamp-1 max-w-[200px] leading-[24px] ${
-                isMobileVariant ? "" : "lg:line-clamp-2 lg:min-h-[48px] lg:text-center"
+                isMobileVariant ? "" : "xl:line-clamp-2 xl:min-h-[48px] xl:text-center"
               }`}
             >
               {name}
@@ -63,17 +65,15 @@ export default function UniversitySlotCard({ slot, variant = "responsive" }: Uni
           </div>
         </div>
         <div
-          className={`flex w-[286px] justify-between ${
-            isMobileVariant ? "" : "lg:w-full lg:flex-col lg:items-center"
-          }`}
+          className={`flex w-[286px] justify-between ${isMobileVariant ? "" : "xl:w-full xl:flex-col xl:items-center"}`}
         >
-          <div className={`flex w-[130px] justify-between ${isMobileVariant ? "" : "lg:w-full"}`}>
+          <div className={`flex w-[130px] justify-between ${isMobileVariant ? "" : "xl:w-full"}`}>
             <span className="caption-1 text-gray-700">지원자 수</span>
-            <span className={`medium-body-3 ${isMobileVariant ? "" : "lg:!font-bold"}`}>{choiceCountDisplay}</span>
+            <span className={`medium-body-3 ${isMobileVariant ? "" : "xl:!font-bold"}`}>{choiceCountDisplay}</span>
           </div>
-          <div className={`flex w-[130px] justify-between ${isMobileVariant ? "" : "lg:w-full"}`}>
+          <div className={`flex w-[130px] justify-between ${isMobileVariant ? "" : "xl:w-full"}`}>
             <span className="caption-1 text-gray-700">모집인원</span>
-            <span className={`medium-body-3 ${isMobileVariant ? "" : "lg:!font-bold"}`}>{slotCountDisplay}</span>
+            <span className={`medium-body-3 ${isMobileVariant ? "" : "xl:!font-bold"}`}>{slotCountDisplay}</span>
           </div>
         </div>
       </div>

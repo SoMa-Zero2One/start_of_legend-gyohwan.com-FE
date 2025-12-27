@@ -225,56 +225,56 @@ export default function SlotDetailPage() {
           {isDesktop && <HeaderAuthSection />}
         </Header>
 
-        <section className="flex flex-col border-b border-gray-100 p-[20px] lg:flex-row lg:gap-[40px]">
-          <div className="head-4 mb-[20px] lg:mb-[24px] lg:line-clamp-2 lg:flex-1 lg:text-ellipsis">
-            <div className="relative mb-[8px] h-[40px] w-[40px] overflow-hidden rounded-full lg:h-[60px] lg:w-[60px]">
+        <section className="flex flex-col border-b border-gray-100 p-[20px] xl:flex-row xl:gap-[40px]">
+          <div className="head-4 mb-[20px] xl:mb-[24px] xl:line-clamp-2 xl:flex-1 xl:text-ellipsis">
+            <div className="relative mb-[8px] h-[40px] w-[40px] overflow-hidden rounded-full xl:h-[60px] xl:w-[60px]">
               <SchoolLogoWithFallback
                 src={logoUrl}
                 alt={`${name} 로고`}
                 fill
-                sizes="(min-width:1024px) 60px, 40px"
-                className="h-[40px] w-[40px] object-contain lg:h-[60px] lg:w-[60px]"
+                sizes="(min-width:1280px) 60px, 40px"
+                className="h-[40px] w-[40px] object-contain xl:h-[60px] xl:w-[60px]"
               />
             </div>
 
             <h2>{name}</h2>
           </div>
 
-          <div className="flex flex-col gap-[12px] lg:flex-row lg:justify-between">
-            <div className="flex justify-between rounded-[16px] lg:w-[254px] lg:flex-col lg:border lg:border-gray-300 lg:p-[24px] lg:shadow-[0_0_8px_0_rgba(0_0_0_/_0.06)]">
-              <div className="flex items-center gap-[8px] text-gray-700 lg:!text-[18px] lg:!font-bold lg:text-black">
+          <div className="flex flex-col gap-[12px] xl:flex-row xl:justify-between">
+            <div className="flex justify-between rounded-[16px] xl:w-[254px] xl:flex-col xl:border xl:border-gray-300 xl:p-[24px] xl:shadow-[0_0_8px_0_rgba(0_0_0_/_0.06)]">
+              <div className="flex items-center gap-[8px] text-gray-700 xl:!text-[18px] xl:!font-bold xl:text-black">
                 {isDesktop && <GlobeIcon size={18} />}
                 <span>국가</span>
               </div>
               <div className="flex flex-col items-end">
-                <div className="flex gap-[8px] lg:!text-[24px]">
+                <div className="flex gap-[8px] xl:!text-[24px]">
                   {isDesktop && <CountryFlag country={country} size={30} />}
                   <span className="font-bold">{country}</span>
                 </div>
               </div>
             </div>
-            <div className="flex justify-between rounded-[16px] lg:w-[254px] lg:flex-col lg:border lg:border-gray-300 lg:p-[24px] lg:shadow-[0_0_8px_0_rgba(0_0_0_/_0.06)]">
-              <div className="flex items-center gap-[8px] text-gray-700 lg:!text-[18px] lg:!font-bold lg:text-black">
+            <div className="flex justify-between rounded-[16px] xl:w-[254px] xl:flex-col xl:border xl:border-gray-300 xl:p-[24px] xl:shadow-[0_0_8px_0_rgba(0_0_0_/_0.06)]">
+              <div className="flex items-center gap-[8px] text-gray-700 xl:!text-[18px] xl:!font-bold xl:text-black">
                 {isDesktop && <HandIcon size={18} />}
                 <span>지원자 수</span>
               </div>
-              <div className="flex flex-col items-end lg:!text-[24px]">
+              <div className="flex flex-col items-end xl:!text-[24px]">
                 <span className="font-bold">{choiceCountDisplay}</span>
               </div>
             </div>
-            <div className="flex justify-between rounded-[16px] lg:w-[254px] lg:flex-col lg:border lg:border-gray-300 lg:p-[24px] lg:shadow-[0_0_8px_0_rgba(0_0_0_/_0.06)]">
-              <div className="flex items-center gap-[8px] text-gray-700 lg:!text-[18px] lg:!font-bold lg:text-black">
+            <div className="flex justify-between rounded-[16px] xl:w-[254px] xl:flex-col xl:border xl:border-gray-300 xl:p-[24px] xl:shadow-[0_0_8px_0_rgba(0_0_0_/_0.06)]">
+              <div className="flex items-center gap-[8px] text-gray-700 xl:!text-[18px] xl:!font-bold xl:text-black">
                 {isDesktop && <UserIcon size={18} />}
                 <span>모집인원</span>
               </div>
-              <div className="flex flex-col items-end lg:!text-[24px]">
+              <div className="flex flex-col items-end xl:!text-[24px]">
                 <span className="font-bold">{slotCountDisplay}</span>
               </div>
             </div>
           </div>
         </section>
 
-        <div className="mt-[12px] flex flex-col items-start justify-between gap-[8px] rounded-[12px] border border-gray-100 bg-gray-50 p-[12px] text-gray-700 lg:flex-row lg:items-center lg:px-[24px] lg:py-[16px]">
+        <div className="flex flex-col items-start justify-between gap-[8px] border border-gray-100 bg-gray-50 p-[12px] text-gray-700 xl:mt-[12px] xl:flex-row xl:items-center xl:rounded-[12px] xl:px-[24px] xl:py-[16px]">
           <p>홈페이지와 커뮤니티에서 학교 정보와 선배들의 파견 생생 후기를 확인할 수 있어요.</p>
           <div className="flex gap-[12px]">
             {data.homepageUrl && (
@@ -282,7 +282,7 @@ export default function SlotDetailPage() {
                 href={data.homepageUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="caption-2 inline-flex cursor-pointer items-center gap-[4px] rounded-full bg-gray-300 px-[12px] py-[6px] hover:bg-gray-500 lg:gap-[6px] lg:px-[16px] lg:py-[10px] lg:!text-[13px]"
+                className="caption-2 inline-flex cursor-pointer items-center gap-[4px] rounded-full bg-gray-300 px-[12px] py-[6px] hover:bg-gray-500 xl:gap-[6px] xl:px-[16px] xl:py-[10px] xl:!text-[13px]"
               >
                 홈페이지 바로가기
                 <ExternalLinkIcon size={isDesktop ? 16 : 12} />
@@ -291,7 +291,7 @@ export default function SlotDetailPage() {
 
             <Link
               href={data.universityId ? `/community/university/${data.universityId}` : "/community?tabs=대학"}
-              className="caption-2 btn-primary inline-flex cursor-pointer items-center gap-[4px] rounded-full px-[12px] py-[6px] lg:gap-[6px] lg:px-[16px] lg:py-[10px] lg:!text-[13px]"
+              className="caption-2 btn-primary inline-flex cursor-pointer items-center gap-[4px] rounded-full px-[12px] py-[6px] xl:gap-[6px] xl:px-[16px] xl:py-[10px] xl:!text-[13px]"
             >
               파견 생활 알아보기
               <CommunityIcon size={isDesktop ? 16 : 12} className="text-white" />
@@ -300,12 +300,12 @@ export default function SlotDetailPage() {
         </div>
 
         <section className="px-[20px] pt-[16px]">
-          <h3 className="subhead-2 lg:!text-[20px]">지원자 목록 ({data.choices.length}명)</h3>
-          <p className="mt-[4px] text-gray-700 lg:!text-[16px]">모든 지원자들의 성적 정보를 확인하세요.</p>
+          <h3 className="subhead-2 xl:!text-[20px]">지원자 목록 ({data.choices.length}명)</h3>
+          <p className="mt-[4px] text-gray-700 xl:!text-[16px]">모든 지원자들의 성적 정보를 확인하세요.</p>
         </section>
 
-        <Tabs className="lg:p-[20px]" tabs={availableTabs} selectedTab={selectedTab} onTabChange={handleSortChange} />
-        <div className="grid grid-cols-1 gap-[10px] px-[20px] py-[20px] pb-[100px] lg:grid-cols-3">
+        <Tabs className="xl:p-[20px]" tabs={availableTabs} selectedTab={selectedTab} onTabChange={handleSortChange} />
+        <div className="grid grid-cols-1 gap-[10px] px-[20px] py-[20px] pb-[100px] md:grid-cols-2 xl:grid-cols-3">
           {sortedChoices.length === 0 ? (
             <p className="col-span-full text-center text-gray-500">지원자가 없습니다.</p>
           ) : (

@@ -30,7 +30,7 @@ export default function TermsStep({
     onAgreePrivacyChange(checked);
   };
   return (
-    <div className="flex flex-col gap-[20px]">
+    <div className="flex w-full flex-col gap-[40px] md:w-[350px]">
       {/* 약관 체크박스 */}
       <div className="flex flex-col gap-[12px]">
         {/* 이용약관 */}
