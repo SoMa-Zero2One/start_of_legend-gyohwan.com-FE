@@ -41,7 +41,7 @@ function FindPasswordContent() {
       await requestPasswordReset(email);
 
       // 성공 시 다음 페이지로 이동
-      router.push(`/find-password/reset?email=${encodeURIComponent(email)}`);
+      router.push(`/reset-password/reset?email=${encodeURIComponent(email)}`);
     } catch (error) {
       // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
       const errorMessage = handleApiError(error);

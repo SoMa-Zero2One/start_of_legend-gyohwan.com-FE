@@ -71,7 +71,7 @@ function ResetPasswordContent() {
       await confirmPasswordReset(email, code, password);
 
       // 성공 시 완료 페이지로 이동
-      router.push(`/find-password/complete?email=${encodeURIComponent(email)}`);
+      router.push(`/reset-password/complete?email=${encodeURIComponent(email)}`);
     } catch (error) {
       // 모든 에러 타입 처리 (네트워크 에러, API 에러 등)
       const errorMessage = handleApiError(error);
@@ -103,6 +103,11 @@ function ResetPasswordContent() {
     } finally {
       setIsResending(false);
     }
+  };
+
+  // 로그인으로 돌아가기
+  const handleBackToLogin = () => {
+    router.push(`/log-in/password?email=${encodeURIComponent(email)}`);
   };
 
   return (
@@ -208,6 +213,12 @@ function ResetPasswordContent() {
                 className="btn-secondary mt-[10px] w-full cursor-pointer rounded-[4px] p-[12px]"
               >
                 {isLoading ? "재설정 중..." : "계속"}
+              </button>
+              <button
+                onClick={handleBackToLogin}
+                className="medium-body-3 cursor-pointer text-center hover:underline md:mt-[20px]"
+              >
+                로그인으로 돌아가기
               </button>
             </div>
           </div>
