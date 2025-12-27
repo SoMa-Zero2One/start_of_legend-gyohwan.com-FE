@@ -274,7 +274,7 @@ export default function SlotDetailPage() {
           </div>
         </section>
 
-        <div className="mt-[12px] flex flex-col items-start justify-between gap-[8px] rounded-[12px] border border-gray-100 bg-gray-50 p-[12px] text-gray-700 xl:flex-row xl:items-center xl:px-[24px] xl:py-[16px]">
+        <div className="flex flex-col items-start justify-between gap-[8px] border border-gray-100 bg-gray-50 p-[12px] text-gray-700 xl:mt-[12px] xl:flex-row xl:items-center xl:rounded-[12px] xl:px-[24px] xl:py-[16px]">
           <p>홈페이지와 커뮤니티에서 학교 정보와 선배들의 파견 생생 후기를 확인할 수 있어요.</p>
           <div className="flex gap-[12px]">
             {data.homepageUrl && (
@@ -305,7 +305,7 @@ export default function SlotDetailPage() {
         </section>
 
         <Tabs className="xl:p-[20px]" tabs={availableTabs} selectedTab={selectedTab} onTabChange={handleSortChange} />
-        <div className="grid grid-cols-1 gap-[10px] px-[20px] py-[20px] pb-[100px] xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-[10px] px-[20px] py-[20px] pb-[100px] md:grid-cols-2 xl:grid-cols-3">
           {sortedChoices.length === 0 ? (
             <p className="col-span-full text-center text-gray-500">지원자가 없습니다.</p>
           ) : (
