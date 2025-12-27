@@ -94,10 +94,10 @@ export default function MyInfoPage() {
     <div className="flex min-h-screen flex-col bg-gray-50">
       <Header title="내 정보 관리" showPrevButton showHomeButton showBorder />
 
-      <main className="flex flex-1 flex-col pt-[30px] pb-[40px] lg:px-[20px]">
-        <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-[24px] px-[20px] lg:flex-row lg:items-start lg:gap-[32px]">
+      <main className="flex flex-1 flex-col pt-[30px] pb-[40px] xl:px-[20px]">
+        <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-[24px] px-[20px] xl:flex-row xl:items-start xl:gap-[32px]">
           {/* Desktop-only navigation */}
-          <aside className="hidden w-full rounded-[20px] border border-gray-200 bg-white px-[24px] py-[32px] shadow-sm lg:flex lg:w-[260px] lg:flex-col">
+          <aside className="hidden w-full rounded-[20px] border border-gray-200 bg-white px-[24px] py-[32px] shadow-sm xl:flex xl:w-[260px] xl:flex-col">
             <p className="subhead-1 mb-[24px] text-gray-900">프로필</p>
             <div className="flex flex-col gap-[12px]">
               {navigationItems
@@ -129,9 +129,9 @@ export default function MyInfoPage() {
                 <p className="medium-body-3 text-gray-600">프로필과 인증 상태를 확인하세요.</p>
               </div>
 
-              <div className="flex flex-col gap-[24px] lg:flex-row lg:gap-[48px]">
+              <div className="flex flex-col gap-[24px] xl:flex-row xl:gap-[48px]">
                 {/* 프로필 이미지 */}
-                <div className="flex flex-col items-center gap-[12px] lg:w-[260px] lg:items-center">
+                <div className="flex flex-col items-center gap-[12px] xl:w-[260px] xl:items-center">
                   <div className="relative">
                     <ProfileIconWithFallback profileUrl={user.profileUrl} size={130} />
                     {/* <button
@@ -182,7 +182,7 @@ export default function MyInfoPage() {
 
               {/* Mobile actions */}
               {mobileActions.length > 0 && (
-                <div className="flex flex-col divide-y divide-gray-200 rounded-[12px] border border-gray-200 lg:hidden">
+                <div className="flex flex-col divide-y divide-gray-200 rounded-[12px] border border-gray-200 xl:hidden">
                   {mobileActions.map((item) => (
                     <button
                       key={item.key}

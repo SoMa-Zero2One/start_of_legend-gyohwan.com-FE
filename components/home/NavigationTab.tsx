@@ -10,7 +10,7 @@ export default function NavigationTab() {
   const handleGradeShareClick = useGradeShareAction();
 
   return (
-    <div className="flex items-center gap-[16px] bg-gradient-to-b from-[#F7F8FA] to-white px-[20px] py-[16px] lg:hidden">
+    <div className="flex items-center gap-[16px] bg-gradient-to-b from-[#F7F8FA] to-white px-[20px] py-[16px] xl:hidden">
       {/* 커뮤니티 버튼 */}
       <NavigationCard href="/community" label="커뮤니티" showNewBadge>
         <CommunityIcon />

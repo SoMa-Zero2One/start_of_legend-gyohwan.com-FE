@@ -55,7 +55,7 @@ export default function CreateAccountComplete() {
     <div className="flex min-h-screen flex-col">
       <Header showLogo />
       <div className="flex flex-1 flex-col items-center pt-[80px] pb-[36px]">
-        <div className="flex w-full flex-col items-center gap-[60px] px-[20px] lg:w-[430px]">
+        <div className="flex w-full flex-col items-center gap-[60px] px-[20px] xl:w-[430px]">
           {/* 헤더 */}
           <div className="flex flex-col items-center gap-[12px] text-center">
             <div className="head-4">

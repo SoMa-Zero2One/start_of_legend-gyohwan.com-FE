@@ -113,58 +113,58 @@ export default function ApplicationDetailPage() {
           >
             {isDesktop && <HeaderAuthSection />}
           </Header>
-          <main className="flex flex-1 flex-col px-[20px] pb-[40px] lg:pb-[80px]">
-            <div className="flex flex-col gap-[20px] py-[20px] lg:gap-[24px] lg:py-[32px]">
+          <main className="flex flex-1 flex-col px-[20px] pb-[40px] xl:pb-[80px]">
+            <div className="flex flex-col gap-[20px] py-[20px] xl:gap-[24px] xl:py-[32px]">
               {/* 상단 요약 */}
-              <section className="flex flex-col gap-[20px] border-b-[8px] border-gray-300 py-[20px] lg:flex-row lg:items-center lg:border-0 lg:bg-[#FAFAFA] lg:p-[40px]">
-                <div className="flex flex-1 gap-[4px] lg:gap-[8px]">
-                  <h1 className="text-[24px] font-bold lg:text-[36px]">{data.nickname}</h1>
-                  <div className="flex items-start lg:items-center">
+              <section className="flex flex-col gap-[20px] border-b-[8px] border-gray-300 py-[20px] xl:flex-row xl:items-center xl:border-0 xl:bg-[#FAFAFA] xl:p-[40px]">
+                <div className="flex flex-1 gap-[4px] xl:gap-[8px]">
+                  <h1 className="text-[24px] font-bold xl:text-[36px]">{data.nickname}</h1>
+                  <div className="flex items-start xl:items-center">
                     {isMe && (
-                      <span className="bg-primary-blue rounded-full px-[6px] py-[2px] text-[10px] font-bold text-white lg:text-[12px]">
+                      <span className="bg-primary-blue rounded-full px-[6px] py-[2px] text-[10px] font-bold text-white xl:text-[12px]">
                         ME
                       </span>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-[24px] text-gray-700 lg:text-black">
-                  <div className="flex flex-1 justify-between rounded-[16px] lg:w-[254px] lg:flex-none lg:flex-col lg:bg-white lg:p-[24px]">
-                    <div className="flex items-center gap-[8px] text-gray-700 lg:!text-[18px] lg:!font-bold lg:text-black">
+                <div className="flex items-center gap-[24px] text-gray-700 xl:text-black">
+                  <div className="flex flex-1 justify-between rounded-[16px] xl:w-[254px] xl:flex-none xl:flex-col xl:bg-white xl:p-[24px]">
+                    <div className="flex items-center gap-[8px] text-gray-700 xl:!text-[18px] xl:!font-bold xl:text-black">
                       {isDesktop && <SchoolIcon size={18} />}
                       <span>지망 대학교</span>
                     </div>
-                    <div className="subhead-3 flex flex-col items-end text-black lg:!text-[24px]">
+                    <div className="subhead-3 flex flex-col items-end text-black xl:!text-[24px]">
                       <span>{data.choices.length}</span>
                     </div>
                   </div>
-                  <div className="flex flex-1 justify-between rounded-[16px] lg:w-[254px] lg:flex-none lg:flex-col lg:bg-white lg:p-[24px]">
-                    <div className="flex items-center gap-[8px] text-gray-700 lg:!text-[18px] lg:!font-bold lg:text-black">
+                  <div className="flex flex-1 justify-between rounded-[16px] xl:w-[254px] xl:flex-none xl:flex-col xl:bg-white xl:p-[24px]">
+                    <div className="flex items-center gap-[8px] text-gray-700 xl:!text-[18px] xl:!font-bold xl:text-black">
                       {isDesktop && <PencilIcon size={18} />}
                       <span>어학 성적</span>
                     </div>
-                    <div className="subhead-3 flex flex-col items-end text-black lg:!text-[24px]">
+                    <div className="subhead-3 flex flex-col items-end text-black xl:!text-[24px]">
                       <span>{languageCount}</span>
                     </div>
                   </div>
                 </div>
               </section>
 
-              <div className="flex flex-col gap-[20px] lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-start lg:gap-[24px]">
-                <div className="flex flex-col lg:gap-[20px]">
-                  <h2 className="border-gray-100 text-[18px] font-bold lg:border-b-1 lg:pb-[20px] lg:text-[20px]">
+              <div className="flex flex-col gap-[20px] xl:grid xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] xl:items-start xl:gap-[24px]">
+                <div className="flex flex-col xl:gap-[20px]">
+                  <h2 className="border-gray-100 text-[18px] font-bold xl:border-b-1 xl:pb-[20px] xl:text-[20px]">
                     성적 정보
                   </h2>
                   {/* 성적 정보 */}
-                  <section className="flex flex-col gap-[8px] border-b border-gray-300 py-[20px] lg:rounded-[16px] lg:border lg:p-[24px]">
-                    <h3 className="text-[16px] lg:text-[18px] lg:font-bold">학점</h3>
+                  <section className="flex flex-col gap-[8px] border-b border-gray-300 py-[20px] xl:rounded-[16px] xl:border xl:p-[24px]">
+                    <h3 className="text-[16px] xl:text-[18px] xl:font-bold">학점</h3>
                     <GradeProgressBar score={data.gpa.score} criteria={data.gpa.criteria} />
                   </section>
 
                   {/* 어학 */}
                   {languageCount < 0 ? (
-                    <section className="flex flex-col gap-[12px] border-b-[8px] border-gray-300 py-[20px] lg:rounded-[16px] lg:border lg:p-[24px]">
-                      <h3 className="text-[16px] lg:text-[18px] lg:font-bold">어학</h3>
+                    <section className="flex flex-col gap-[12px] border-b-[8px] border-gray-300 py-[20px] xl:rounded-[16px] xl:border xl:p-[24px]">
+                      <h3 className="text-[16px] xl:text-[18px] xl:font-bold">어학</h3>
                       <LanguageChart
                         testType={data.language.testType}
                         score={data.language.score}
@@ -172,17 +172,17 @@ export default function ApplicationDetailPage() {
                       />
                     </section>
                   ) : (
-                    <section className="flex flex-col gap-[12px] border-b-[8px] border-gray-300 py-[20px] text-gray-700 lg:rounded-[16px] lg:border lg:p-[24px]">
-                      <h3 className="text-[16px] lg:text-[18px] lg:font-bold">어학</h3>
+                    <section className="flex flex-col gap-[12px] border-b-[8px] border-gray-300 py-[20px] text-gray-700 xl:rounded-[16px] xl:border xl:p-[24px]">
+                      <h3 className="text-[16px] xl:text-[18px] xl:font-bold">어학</h3>
                       <p className="body-3 text-gray-700">등록된 어학 성적이 없어요.</p>
                     </section>
                   )}
                 </div>
 
                 {/* 지망한 대학교 */}
-                <div className="flex flex-col gap-[16px] lg:gap-[20px]">
-                  <div className="flex items-center justify-between border-gray-100 lg:border-b-1 lg:pb-[20px]">
-                    <h2 className="subhead-2 lg:!text-[20px]">지망한 대학교 ({data.choices.length}개)</h2>
+                <div className="flex flex-col gap-[16px] xl:gap-[20px]">
+                  <div className="flex items-center justify-between border-gray-100 xl:border-b-1 xl:pb-[20px]">
+                    <h2 className="subhead-2 xl:!text-[20px]">지망한 대학교 ({data.choices.length}개)</h2>
                     <div className="flex items-center justify-between">
                       {isMe && (
                         <Link

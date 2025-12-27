@@ -10,7 +10,7 @@ function LoginPasswordContent() {
     <div className="flex min-h-screen flex-col">
       <Header title="로그인" showPrevButton showHomeButton />
       <div className="flex flex-1 flex-col items-center justify-between pt-[60px] pb-[36px]">
-        <div className="flex w-full flex-col items-center px-[20px] lg:w-[370px]">
+        <div className="flex w-full flex-col items-center px-[20px] xl:w-[370px]">
           <div className="flex w-full flex-col justify-center gap-[60px]">
             {/* 헤더 */}
             <div className="head-4 text-center">

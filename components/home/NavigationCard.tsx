@@ -43,7 +43,7 @@ export default function NavigationCard({
   const content = (
     <>
       {/* 모바일 레이아웃: 세로 카드 */}
-      <div className="flex flex-col items-center justify-between gap-[8px] lg:hidden">
+      <div className="flex flex-col items-center justify-between gap-[8px] xl:hidden">
         <div className="relative rounded-[10px] bg-white p-[12px] shadow-[0_0_8px_0_rgba(0,0,0,0.06)] group-hover:shadow-md">
           {children}
           {showNewBadge && (
@@ -56,7 +56,7 @@ export default function NavigationCard({
       </div>
 
       {/* 데스크탑 레이아웃: 텍스트 링크 */}
-      <div className="hover:text-primary-blue relative hidden items-center gap-[8px] text-gray-900 transition-colors duration-200 lg:flex">
+      <div className="hover:text-primary-blue relative hidden items-center gap-[8px] text-gray-900 transition-colors duration-200 xl:flex">
         {shouldShowDesktopIcon && <span className="flex items-center justify-center">{desktopIcon}</span>}
         {showNewBadge && (
           <div className="flex h-[16px] w-[32px] items-center justify-center rounded-[4px] bg-[#FF2D62] text-[10px] leading-none font-bold text-white">

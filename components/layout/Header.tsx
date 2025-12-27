@@ -50,7 +50,7 @@ export default function Header({
     <header
       className={`relative flex h-[50px] items-center justify-between px-[20px] ${
         showBorder ? "border-b-[1px] border-b-gray-300" : ""
-      } lg:hidden`}
+      } xl:hidden`}
     >
       {/* 왼쪽: 로고 또는 뒤로가기/홈 버튼 */}
       <div className="flex items-center gap-[12px]">
@@ -96,7 +96,7 @@ export default function Header({
 
   const desktopHeader = (
     <header
-      className={`hidden h-[70px] items-center bg-white px-[20px] lg:flex ${
+      className={`hidden h-[70px] items-center bg-white px-[20px] xl:flex ${
         showBorder ? "border-b-[1px] border-b-gray-300" : ""
       }`}
     >

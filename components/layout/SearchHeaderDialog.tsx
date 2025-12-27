@@ -54,7 +54,7 @@ export default function SearchHeaderDialog({
   }
 
   return createPortal(
-    <div className="fixed inset-x-0 top-0 z-50 flex justify-center bg-white lg:hidden">
+    <div className="fixed inset-x-0 top-0 z-50 flex justify-center bg-white xl:hidden">
       <div
         ref={containerRef}
         role="dialog"

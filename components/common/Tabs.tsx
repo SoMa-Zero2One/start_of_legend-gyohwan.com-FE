@@ -64,8 +64,8 @@ export default function Tabs<T extends string>({
 
   return (
     <div className={`flex w-full flex-col gap-[12px] ${className}`}>
-      <div className="lg:hidden">{renderUnderlineTabs()}</div>
-      <div className="hidden lg:block">{renderPillTabs()}</div>
+      <div className="xl:hidden">{renderUnderlineTabs()}</div>
+      <div className="hidden xl:block">{renderPillTabs()}</div>
     </div>
   );
 }

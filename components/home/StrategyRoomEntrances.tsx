@@ -102,7 +102,7 @@ export default function StrategyRoomEntrances({
     <div id="strategy-room-entrances" className="relative flex flex-col gap-[40px] px-[20px] pb-[100px]">
       {/* 헤더 */}
       <div className="flex flex-col items-center gap-[12px]">
-        <h2 className="head-4 lg:!text-[36px]">
+        <h2 className="head-4 xl:!text-[36px]">
           {activeTab === "current" ? "교환학생 모집 중인 대학" : "과거 진행한 대학"}
         </h2>
 
@@ -128,7 +128,7 @@ export default function StrategyRoomEntrances({
 
         {/* 개수 표시 */}
         {activeTab === "current" ? (
-          <p className="g-head-2 text-primary-blue lg:text-[48px]">{sortedSeasons.length}개 대학</p>
+          <p className="g-head-2 text-primary-blue xl:text-[48px]">{sortedSeasons.length}개 대학</p>
         ) : (
           <div className="flex flex-col items-center gap-[4px]">
             <p className="g-head-2 text-primary-blue">{sortedPastSeasons.length}개 대학</p>
@@ -138,7 +138,7 @@ export default function StrategyRoomEntrances({
       </div>
 
       {/* 카드 리스트 */}
-      <div className="grid grid-cols-1 gap-[12px] lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-[12px] xl:grid-cols-3">
         {activeTab === "current"
           ? sortedSeasons.map((season) => <StrategyRoomCard key={season.seasonId} data={season} />)
           : sortedPastSeasons.map((season) => <PastSeasonCard key={season.seasonId} data={season} />)}

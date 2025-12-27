@@ -55,11 +55,11 @@ export default function HeaderAuthSection() {
         <LoginIcon size={20} />
         <span>로그인</span>
       </button>
-      <span className="hidden h-[16px] w-px bg-gray-200 lg:block" aria-hidden="true" />
+      <span className="hidden h-[16px] w-px bg-gray-200 xl:block" aria-hidden="true" />
       <button
         type="button"
         onClick={handleSignup}
-        className="body-2 hover:text-primary-blue hidden cursor-pointer text-gray-900 transition-colors duration-200 lg:block"
+        className="body-2 hover:text-primary-blue hidden cursor-pointer text-gray-900 transition-colors duration-200 xl:block"
       >
         <span>회원가입</span>
       </button>
