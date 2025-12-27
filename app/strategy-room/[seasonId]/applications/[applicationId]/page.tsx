@@ -195,7 +195,7 @@ export default function ApplicationDetailPage() {
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-[12px]">
+                  <div className="grid grid-cols-1 gap-[12px] md:grid-cols-2 xl:grid-cols-1">
                     {data.choices.map((choiceItem) => (
                       <UniversitySlotCard key={choiceItem.choice} slot={choiceItem.slot} variant="mobile" />
                     ))}
