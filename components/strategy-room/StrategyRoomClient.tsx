@@ -20,6 +20,18 @@ import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
 const TAB_OPTIONS = ["지망한 대학", "지원자가 있는 대학", "모든 대학"] as const;
 type TabType = (typeof TAB_OPTIONS)[number];
 
+const getSafeOpenchatUrl = (raw?: string | null) => {
+  if (!raw) return null;
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "https:") return null;
+    if (url.hostname !== "open.kakao.com") return null;
+    return url.toString();
+  } catch {
+    return null;
+  }
+};
+
 export default function StrategyRoomClient() {
   const params = useParams();
   const router = useRouter();
@@ -48,6 +60,7 @@ export default function StrategyRoomClient() {
 
   // API에서 받아온 성적 공유 여부
   const hasSharedGrade = data?.hasApplied ?? false;
+  const safeOpenchatUrl = getSafeOpenchatUrl(data?.openchatUrl);
 
   // 내가 지원한 대학 목록 (slotId 배열)
   const myChosenUniversities = useMemo(() => {
@@ -237,9 +250,9 @@ export default function StrategyRoomClient() {
               </div>
 
               {/* 오픈채팅방 버튼 */}
-              {data.openchatUrl && (
+              {safeOpenchatUrl && (
                 <a
-                  href={data.openchatUrl}
+                  href={safeOpenchatUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="caption-2 inline-flex cursor-pointer items-center justify-center rounded-full bg-gradient-to-r from-[#FFD75E] to-[#FFA84E] px-[20px] py-[10px] text-gray-900 xl:px-[24px] xl:py-[6px]"
