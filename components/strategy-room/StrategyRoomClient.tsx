@@ -20,6 +20,18 @@ import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
 const TAB_OPTIONS = ["지망한 대학", "지원자가 있는 대학", "모든 대학"] as const;
 type TabType = (typeof TAB_OPTIONS)[number];
 
+const getSafeOpenchatUrl = (raw?: string | null) => {
+  if (!raw) return null;
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "https:") return null;
+    if (url.hostname !== "open.kakao.com") return null;
+    return url.toString();
+  } catch {
+    return null;
+  }
+};
+
 export default function StrategyRoomClient() {
   const params = useParams();
   const router = useRouter();
@@ -48,6 +60,7 @@ export default function StrategyRoomClient() {
 
   // API에서 받아온 성적 공유 여부
   const hasSharedGrade = data?.hasApplied ?? false;
+  const safeOpenchatUrl = getSafeOpenchatUrl(data?.openchatUrl);
 
   // 내가 지원한 대학 목록 (slotId 배열)
   const myChosenUniversities = useMemo(() => {
@@ -228,10 +241,25 @@ export default function StrategyRoomClient() {
                 </Link>
               )}
             </div>
-            <div className="relative inline-block w-fit overflow-hidden rounded-full bg-gradient-to-r from-[#056DFF] via-[#029EFA] to-[#00D0FF] p-[1px]">
-              <span className="caption-2 text-primary-blue block rounded-full bg-[#E9F1FF] px-3 py-1">
-                🔥 총 {data.applicantCount}명 성적 공유 참여 중!
-              </span>
+            <div className="flex flex-col gap-[12px] xl:flex-row xl:items-center xl:gap-[12px]">
+              {/* 성적 공유 참여 배지 */}
+              <div className="relative inline-block w-fit overflow-hidden rounded-full bg-gradient-to-r from-[#056DFF] via-[#029EFA] to-[#00D0FF] p-[1px]">
+                <span className="caption-2 text-primary-blue block rounded-full bg-[#E9F1FF] px-3 py-1">
+                  🔥 총 {data.applicantCount}명 성적 공유 참여 중!
+                </span>
+              </div>
+
+              {/* 오픈채팅방 버튼 */}
+              {safeOpenchatUrl && (
+                <a
+                  href={safeOpenchatUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="caption-2 inline-flex cursor-pointer items-center justify-center rounded-full bg-gradient-to-r from-[#FFD75E] to-[#FFA84E] px-[20px] py-[10px] text-gray-900 xl:px-[24px] xl:py-[6px]"
+                >
+                  💬 {universityName} 교환학생 함께 준비하기
+                </a>
+              )}
             </div>
           </section>
 

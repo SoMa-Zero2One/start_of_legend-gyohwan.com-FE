@@ -21,7 +21,8 @@ export interface SeasonSlotsResponse {
   seasonId: number;
   seasonName: string;
   hasApplied: boolean; // 사용자가 이미 지원했는지 여부
-  applicantCount: number;
+  applicantCount: number; // 성적 공유 참여자 수
+  openchatUrl?: string | null; // 오픈채팅방 URL (선택적)
   slots: Slot[];
 }
 
