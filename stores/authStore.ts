@@ -33,6 +33,10 @@ export const useAuthStore = create<AuthStore>((set) => ({
     set({ isLoading: true });
     try {
       const user = await getUserMe();
+      if (!user) {
+        set({ user: null, isLoggedIn: false, isLoading: false });
+        return;
+      }
       set({ user, isLoggedIn: true, isLoading: false });
     } catch (error) {
       console.error("Failed to fetch user:", error);

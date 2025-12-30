@@ -4,16 +4,20 @@ import { parseApiError } from "@/lib/utils/apiError";
 
 /**
  * 현재 로그인한 사용자 정보 조회
- * @returns 사용자 정보
+ * @returns 사용자 정보 (로그아웃 상태면 null)
  * @throws {Error} API 호출 실패 시
  */
-export const getUserMe = async (): Promise<User> => {
+export const getUserMe = async (): Promise<User | null> => {
   const backendUrl = getBackendUrl();
 
   const response = await fetch(`${backendUrl}/v1/users/me`, {
     method: "GET",
     credentials: "include", // 쿠키 포함
   });
+
+  if (response.status === 401 || response.status === 403) {
+    return null;
+  }
 
   if (!response.ok) {
     const errorMessage = await parseApiError(response);
