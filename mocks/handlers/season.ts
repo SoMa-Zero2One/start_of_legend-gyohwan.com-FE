@@ -152,11 +152,21 @@ export const seasonHandlers = [
       ];
     });
 
+    // 오픈채팅방 URL 매핑 (시즌별로 다를 수 있음)
+    const openchatUrlMap: Record<number, string | null> = {
+      1: "https://open.kakao.com/o/gABCD1234",
+      2: "https://open.kakao.com/o/gEFGH5678",
+      3: "https://open.kakao.com/o/gGFH29Yh", // 실제 API 예시와 동일
+      4: null, // 오픈채팅방 없음
+      5: null, // 테스트용
+    };
+
     return HttpResponse.json({
       seasonId,
       seasonName: season.name,
       hasApplied,
       applicantCount,
+      openchatUrl: openchatUrlMap[seasonId] ?? null, // 오픈채팅방 URL (선택적)
       slots,
     });
   }),
