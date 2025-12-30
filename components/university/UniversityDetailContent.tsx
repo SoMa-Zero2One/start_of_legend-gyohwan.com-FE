@@ -7,7 +7,6 @@ import Markdown from "react-markdown";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 import Tabs from "@/components/common/Tabs";
 import CommunityPostList from "@/components/country/CommunityPostList";
-// import UniversityMap from "./UniversityMap";
 import type { UniversityDetailResponse } from "@/types/university";
 import type { CommunityPost } from "@/types/communityPost";
 // import ChevronRightIcon from "../icons/ChevronRightIcon";
@@ -183,13 +182,6 @@ export default function UniversityDetailContent({ universityData, communityPosts
         </div>
       </div>
 
-      {/* 위치 섹션 (주석 처리) */}
-      {/* <div ref={locationRef} className="flex flex-col border-b-[1px] border-gray-300">
-        <h2 className="head-4 px-[20px] pb-[16px]">위치</h2>
-        <div className="px-[20px] pb-[20px]">
-          <UniversityMap universityName={universityName} countryName={universityData.countryName} />
-        </div>
-      </div> */}
     </div>
   );
 }
