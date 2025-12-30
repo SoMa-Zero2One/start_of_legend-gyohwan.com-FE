@@ -34,7 +34,7 @@
 - [ ] UI - 대학 선택: `components/application/UniversitySelectionStep.tsx` (순서 변경)
 - [ ] UI - 커뮤니티: `components/community/PostCreateModal.tsx` (회원/비회원 분기)
 - [ ] Server - 액션: `app/actions/*` (revalidate 호출)
-- [ ] Server - 라우트: `app/api/revalidate/route.ts`, `app/api/geocode/route.ts`
+- [ ] Server - 라우트: `app/api/revalidate/route.ts`
 - [ ] Integration - 플로우: 로그인 -> 리다이렉트, 신청서 제출 -> 갱신, 글 작성 -> 목록 갱신
 - [ ] E2E - 핵심 플로우: 회원가입/로그인, 신청서 제출, 게시글/댓글
 
