@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
 import ProfileIconWithFallback from "@/components/icons/ProfileIconWithFallback";
+import { useToast } from "@/hooks/useToast";
+import Toast from "@/components/common/Toast";
 
 export default function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,6 +16,7 @@ export default function ProfileMenu() {
   // Selector를 사용하여 필요한 값만 구독
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
@@ -27,8 +30,12 @@ export default function ProfileMenu() {
   }, []);
 
   const handleLogout = async () => {
-    await logout();
+    const result = await logout();
     setIsMenuOpen(false);
+    if (!result.ok) {
+      showMessage(result.message, "error");
+      return;
+    }
     router.push("/");
   };
 
@@ -50,6 +57,8 @@ export default function ProfileMenu() {
           </button>
         </div>
       )}
+
+      <Toast message={message} type={messageType} isExiting={isExiting} onClose={hideToast} />
     </div>
   );
 }
