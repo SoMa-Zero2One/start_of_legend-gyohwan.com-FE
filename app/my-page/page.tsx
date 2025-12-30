@@ -11,11 +11,14 @@ import ProfileIconWithFallback from "@/components/icons/ProfileIconWithFallback"
 import ProfileField from "@/components/my-page/ProfileField";
 import { useAuthStore } from "@/stores/authStore";
 import { saveRedirectUrl } from "@/lib/utils/redirect";
+import { useToast } from "@/hooks/useToast";
+import Toast from "@/components/common/Toast";
 
 export default function MyInfoPage() {
   const { user, isLoading: authLoading, logout } = useAuthStore();
   const router = useRouter();
   const isLoggingOutRef = useRef(false);
+  const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
   // 로그인 체크 - Hard-gate
   useEffect(() => {
@@ -35,6 +38,7 @@ export default function MyInfoPage() {
         <div className="flex flex-1 items-center justify-center">
           <p className="text-gray-500">로딩 중...</p>
         </div>
+        <Toast message={message} type={messageType} isExiting={isExiting} onClose={hideToast} />
       </div>
     );
   }
@@ -51,13 +55,13 @@ export default function MyInfoPage() {
 
   const handleLogout = async () => {
     isLoggingOutRef.current = true;
-    try {
-      await logout();
-      router.replace("/");
-    } catch (error) {
-      console.error("Failed to logout:", error);
+    const result = await logout();
+    if (!result.ok) {
+      showMessage(result.message, "error");
       isLoggingOutRef.current = false;
+      return;
     }
+    router.replace("/");
   };
 
   const navigationItems = [
@@ -199,6 +203,8 @@ export default function MyInfoPage() {
           </section>
         </div>
       </main>
+
+      <Toast message={message} type={messageType} isExiting={isExiting} onClose={hideToast} />
     </div>
   );
 }

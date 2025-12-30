@@ -144,6 +144,19 @@ export const mockResponsiveTesterUser: User = {
   profileUrl: null,
 };
 
+// 로그아웃 실패 테스트용 유저
+export const mockLogoutFailUser: User = {
+  userId: 12,
+  email: "logoutfail@example.com",
+  schoolEmail: null,
+  nickname: "LogoutFail",
+  domesticUniversity: "교환대학교",
+  schoolVerified: true,
+  loginType: "BASIC",
+  socialType: null,
+  profileUrl: null,
+};
+
 // 전체 유저 목록 (userId로 조회 가능)
 export const mockUsers: Record<number, User> = {
   1: mockCurrentUser,
@@ -157,6 +170,7 @@ export const mockUsers: Record<number, User> = {
   9: mockApplicantWhaleUser,
   10: mockApplicantGiraffeUser,
   11: mockResponsiveTesterUser,
+  12: mockLogoutFailUser,
 };
 
 /**
@@ -261,6 +275,7 @@ export const mockGpas: Record<number, Gpa[]> = {
     },
   ],
   11: [],
+  12: [],
 };
 
 /**
@@ -376,6 +391,7 @@ export const mockLanguages: Record<number, Language[]> = {
     },
   ],
   11: [],
+  12: [],
 };
 
 /**
@@ -386,6 +402,7 @@ export const mockCredentials: Record<string, string> = {
   "unverified@example.com": "password123456",
   "existing@example.com": "password123456", // 이미 가입된 이메일 테스트용
   "responsive@test.com": "password123456",
+  "logoutfail@example.com": "password123456",
 };
 
 export const SIGNUP_VERIFICATION_CODE = "123456";

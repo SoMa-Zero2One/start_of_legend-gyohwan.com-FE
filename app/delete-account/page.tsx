@@ -68,7 +68,7 @@ function DeleteAccountContent() {
       await withdrawAccount();
 
       // 탈퇴 성공 - 로그아웃 처리
-      logout();
+      await logout({ force: true });
 
       // isWithdrawing 플래그로 인해 useEffect가 간섭하지 않음
       router.push("/");

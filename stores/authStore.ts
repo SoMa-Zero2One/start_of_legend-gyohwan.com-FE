@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { getUserMe } from "@/lib/api/user";
 import { logout as apiLogout } from "@/lib/api/auth";
+import { handleApiError } from "@/lib/utils/apiError";
 import { clearRedirectUrl } from "@/lib/utils/redirect";
 import type { User } from "@/types/user";
 
@@ -10,10 +11,13 @@ interface AuthState {
   isLoggedIn: boolean;
 }
 
+type LogoutOptions = { force?: boolean };
+type LogoutResult = { ok: true } | { ok: false; message: string };
+
 interface AuthActions {
   fetchUser: () => Promise<void>;
   setUser: (user: User | null) => void;
-  logout: () => void;
+  logout: (options?: LogoutOptions) => Promise<LogoutResult>;
 }
 
 type AuthStore = AuthState & AuthActions;
@@ -40,18 +44,21 @@ export const useAuthStore = create<AuthStore>((set) => ({
     set({ user, isLoggedIn: !!user, isLoading: false });
   },
 
-  logout: async () => {
+  logout: async (options) => {
     try {
       await apiLogout();
       clearRedirectUrl(); // 로그아웃 시 저장된 리다이렉트 URL 삭제
       set({ user: null, isLoggedIn: false, isLoading: false });
+      return { ok: true };
     } catch (error) {
-      // 서버에서 받은 에러 메시지 로깅
-      const errorMessage = (error as Error).message;
+      const errorMessage = handleApiError(error);
       console.error("Failed to logout:", errorMessage);
-      // 로그아웃 API 실패해도 클라이언트 상태는 초기화
-      clearRedirectUrl();
-      set({ user: null, isLoggedIn: false, isLoading: false });
+      // 실패 시에는 로그인 상태 유지 (force 옵션이면 상태 초기화)
+      if (options?.force) {
+        clearRedirectUrl();
+        set({ user: null, isLoggedIn: false, isLoading: false });
+      }
+      return { ok: false, message: errorMessage };
     }
   },
 }));

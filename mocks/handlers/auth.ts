@@ -6,6 +6,7 @@ import {
   SIGNUP_VERIFICATION_CODE,
   PASSWORD_RESET_VERIFICATION_CODE,
   setCurrentUserId,
+  getCurrentUser,
   ensureMockBasicUser,
   findMockUserByEmail,
 } from "../data/users";
@@ -372,8 +373,16 @@ export const authHandlers = [
   /**
    * POST /v1/auth/logout
    * 로그아웃
+   *
+   * 에러 테스트:
+   * - logoutfail@example.com → 500 LOGOUT_FAILED
    */
   http.post(`${BACKEND_URL}/v1/auth/logout`, () => {
+    const currentUser = getCurrentUser();
+    if (currentUser?.email === "logoutfail@example.com") {
+      return createErrorResponse(500, "로그아웃 처리 중 오류가 발생했습니다.");
+    }
+
     setCurrentUserId(null);
 
     return HttpResponse.json(
