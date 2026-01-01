@@ -9,6 +9,7 @@ import GoogleIcon from "@/components/icons/GoogleIcon";
 import KakaoIcon from "@/components/icons/KakaoIcon";
 import ProfileIconWithFallback from "@/components/icons/ProfileIconWithFallback";
 import ProfileField from "@/components/my-page/ProfileField";
+import { trackEvent } from "@/lib/analytics/gtag";
 import { useAuthStore } from "@/stores/authStore";
 import { saveRedirectUrl } from "@/lib/utils/redirect";
 import { useToast } from "@/hooks/useToast";
@@ -18,6 +19,7 @@ export default function MyInfoPage() {
   const { user, isLoading: authLoading, logout } = useAuthStore();
   const router = useRouter();
   const isLoggingOutRef = useRef(false);
+  const myPageUnverifiedSessionKey = "gyohwan_my_page_unverified_view";
   const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
   // 로그인 체크 - Hard-gate
@@ -45,13 +47,42 @@ export default function MyInfoPage() {
 
   const isBasicLogin = user.loginType === "BASIC";
   const isSocialLogin = user.loginType === "SOCIAL";
+  const schoolVerifyCtaParams = {
+    cta_id: "school_verify_cta_mypage",
+    cta_location: "my_page",
+    cta_label: "인증하기",
+  };
 
   // 학교 인증 버튼 클릭 핸들러
   const handleSchoolVerification = () => {
     // 리다이렉트 URL 저장 후 학교 인증 페이지로 이동
     saveRedirectUrl("/my-page");
+    trackEvent("cta_click", schoolVerifyCtaParams);
     router.push("/school-verification");
   };
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) return;
+    if (user.schoolVerified) return;
+
+    if (typeof window !== "undefined") {
+      try {
+        if (sessionStorage.getItem(myPageUnverifiedSessionKey)) return;
+      } catch {
+        // sessionStorage may be unavailable
+      }
+    }
+
+    const didTrack = trackEvent("my_page_unverified_view", { page_path: "/my-page" });
+    if (didTrack && typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(myPageUnverifiedSessionKey, "1");
+      } catch {
+        // sessionStorage may be unavailable
+      }
+    }
+  }, [authLoading, user, myPageUnverifiedSessionKey]);
 
   const handleLogout = async () => {
     isLoggingOutRef.current = true;
