@@ -155,21 +155,28 @@ function ApplicationNewContent() {
     if (hasApplied) return;
     if (eligibilityErrorMessage) return;
     if (hasTrackedStartRef.current) return;
-
     if (typeof window !== "undefined") {
       try {
         if (sessionStorage.getItem(gradeShareStartSessionKey)) return;
-        sessionStorage.setItem(gradeShareStartSessionKey, "1");
       } catch {
         // sessionStorage may be unavailable
       }
     }
 
-    trackEvent("grade_share_start", {
+    const didTrack = trackEvent("grade_share_start", {
       season_id: seasonId,
       season_name: seasonName,
     });
-    hasTrackedStartRef.current = true;
+    if (didTrack) {
+      if (typeof window !== "undefined") {
+        try {
+          sessionStorage.setItem(gradeShareStartSessionKey, "1");
+        } catch {
+          // sessionStorage may be unavailable
+        }
+      }
+      hasTrackedStartRef.current = true;
+    }
   }, [eligibilityErrorMessage, hasApplied, isLoading, seasonId, seasonName, gradeShareStartSessionKey, step]);
 
   // Eligibility 모달이 닫히면 전략방으로 리다이렉트

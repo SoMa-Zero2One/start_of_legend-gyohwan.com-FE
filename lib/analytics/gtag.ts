@@ -21,10 +21,11 @@ const getBaseParams = (): GtagEventParams => {
   };
 };
 
-export const trackEvent = (eventName: string, params: GtagEventParams = {}) => {
-  if (typeof window === "undefined") return;
-  if (typeof window.gtag !== "function") return;
+export const trackEvent = (eventName: string, params: GtagEventParams = {}): boolean => {
+  if (typeof window === "undefined") return false;
+  if (typeof window.gtag !== "function") return false;
 
   const baseParams = getBaseParams();
   window.gtag("event", eventName, { ...baseParams, ...params });
+  return true;
 };

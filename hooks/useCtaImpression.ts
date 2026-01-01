@@ -36,8 +36,9 @@ export const useCtaImpression = (
     if (typeof window === "undefined") return;
 
     if (!("IntersectionObserver" in window)) {
-      trackEvent("cta_impression", params);
-      hasTrackedRef.current = true;
+      if (trackEvent("cta_impression", params)) {
+        hasTrackedRef.current = true;
+      }
       return;
     }
 
@@ -46,9 +47,10 @@ export const useCtaImpression = (
         entries.forEach((entry) => {
           if (hasTrackedRef.current) return;
           if (entry.isIntersecting && entry.intersectionRatio >= threshold) {
-            trackEvent("cta_impression", params);
-            hasTrackedRef.current = true;
-            observer.disconnect();
+            if (trackEvent("cta_impression", params)) {
+              hasTrackedRef.current = true;
+              observer.disconnect();
+            }
           }
         });
       },
