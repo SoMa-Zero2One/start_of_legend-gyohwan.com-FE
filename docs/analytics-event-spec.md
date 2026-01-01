@@ -14,11 +14,11 @@ PII(이메일, 닉네임, 상세 GPA 등)는 GA로 전송하지 않습니다.
 | 학교 인증 완료율           | 접근 권한 전환 성과 확인       | `school_verification_complete / school_verification_start`               |
 | 버튼 의미 전달 지표        | CTA 의도 전달 여부 확인        | `cta_click / cta_impression`                                             |
 | CTA → 행동 전환율          | 클릭 이후 실제 행동 유도 확인  | `grade_share_start / cta_click` (성적 공유 CTA 기준)                     |
-| 지원 대학 변경 버튼 클릭률 | 변경 니즈 및 관심도 확인       | `cta_click / cta_impression` (`cta_id=university_reselect_cta`)          |
+| 지원 대학 변경 버튼 클릭률 | 변경 니즈 및 관심도 확인       | `cta_click` (유니크 사용자 기준, `cta_id=university_reselect_cta`)       |
 | 게이트 원인 분석           | 로그인/학교인증 장벽 여부 파악 | `gate_redirect` (reason별 비율)                                          |
 
 권장 세그먼트:
-`user_status(guest|member)`, `school_verified(true|false)`, `season_id`, `season_name`
+`user_status(guest|member)`, `school_verified(true|false)`, `season_id`, `season_name`, `domestic_university`
 
 ---
 
@@ -34,6 +34,7 @@ PII(이메일, 닉네임, 상세 GPA 등)는 GA로 전송하지 않습니다.
 
 | param                 | type          | 예시                               | 설명                                 |
 | --------------------- | ------------- | ---------------------------------- | ------------------------------------ |
+| `user_id`             | string        | `12345`                            | 사용자 식별자(로그인 사용자만 전송)  |
 | `user_status`         | string        | `guest`, `member`                  | 로그인 여부 구분(닉네임 대신)        |
 | `school_verified`     | boolean       | `true`                             | 학교 인증 여부(로그인 사용자만 전송) |
 | `domestic_university` | string        | `인천대학교`                       | 사용자 소속 학교(로그인 사용자만)    |
@@ -87,6 +88,9 @@ PII 금지:
 
 `step` 권장 값:
 `grade_registration`, `university_selection`
+
+추가 정책:
+- `grade_share_start`는 같은 탭 세션에서 1회만 전송(새로고침으로는 중복 전송하지 않음)
 
 ### 5.3 학교 인증
 
