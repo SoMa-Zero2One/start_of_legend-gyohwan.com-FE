@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
+import { trackEvent } from "@/lib/analytics/gtag";
 
 interface ShareGradeCTAProps {
   seasonId: string;
@@ -17,9 +18,15 @@ export default function ShareGradeCTA({
   tooltipMessage,
 }: ShareGradeCTAProps) {
   const router = useRouter();
-  const ctaButtonRef = useRef<HTMLButtonElement>(null);
   const [opacity, setOpacity] = useState(1);
   const footerRef = useRef<HTMLElement | null>(null);
+  const ctaParams = {
+    cta_id: "grade_share_cta_bottom_bar",
+    cta_location: "grade_share_page",
+    cta_label: "성적 공유하고 전체 확인하기 🚀",
+    season_id: seasonId,
+    entry_point: "strategy_room_bottom_bar",
+  };
 
   useEffect(() => {
     // Footer 요소 찾기
@@ -53,6 +60,7 @@ export default function ShareGradeCTA({
 
   // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
   const handleClick = () => {
+    trackEvent("cta_click", ctaParams);
     router.push(`/strategy-room/${seasonId}/applications/new`);
   };
 
@@ -75,7 +83,6 @@ export default function ShareGradeCTA({
       )}
 
       <button
-        ref={ctaButtonRef}
         onClick={handleClick}
         className={`btn-primary w-full cursor-pointer rounded-[4px] p-[12px] shadow-[0_0_8px_rgba(0,0,0,0.06)] xl:w-[420px] xl:rounded-[12px] xl:py-[16px] ${
           shouldShake ? "animate-shake" : ""

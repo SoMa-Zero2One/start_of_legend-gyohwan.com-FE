@@ -33,6 +33,14 @@ export default function ApplicationDetailPage() {
   const isMe = myApplication?.applicationId === applicationId;
   const hasApplied = seasonData?.hasApplied ?? false;
   const languageCount = data?.language?.testType ? 1 : 0;
+  const overlayCtaParams = {
+    cta_id: "grade_share_cta_profile_overlay",
+    cta_location: "application_detail",
+    cta_label: "성적 공유하고 전체 확인하기 🚀",
+    season_id: seasonId,
+    season_name: seasonData?.seasonName,
+    entry_point: "application_detail_overlay",
+  };
   const reselectCtaParams = {
     cta_id: "university_reselect_cta",
     cta_location: "application_detail",
@@ -73,6 +81,7 @@ export default function ApplicationDetailPage() {
   // CTA 버튼 클릭 핸들러
   // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
   const handleCTAClick = () => {
+    trackEvent("cta_click", overlayCtaParams);
     router.push(`/strategy-room/${seasonId}/applications/new`);
   };
 
@@ -102,7 +111,7 @@ export default function ApplicationDetailPage() {
             <div className="text-center">성적 공유하고 지금 바로 경쟁률을 확인하세요.</div>
             <button
               onClick={handleCTAClick}
-              className="bg-primary-blue w-full rounded-[8px] py-[16px] text-white shadow-[0_4px_12px_rgba(5,109,255,0.3)]"
+              className="bg-primary-blue w-full cursor-pointer rounded-[8px] py-[16px] text-white shadow-[0_4px_12px_rgba(5,109,255,0.3)]"
             >
               성적 공유하고 전체 확인하기 🚀
             </button>

@@ -69,6 +69,14 @@ export default function StrategyRoomClient() {
     season_id: Number(seasonId),
     season_name: data?.seasonName,
   };
+  const overlayCtaParams = {
+    cta_id: "grade_share_cta_overlay",
+    cta_location: "grade_share_page",
+    cta_label: "성적 공유하고 전체 확인하기 🚀",
+    season_id: Number(seasonId),
+    season_name: data?.seasonName,
+    entry_point: "strategy_room_overlay",
+  };
 
   // 내가 지원한 대학 목록 (slotId 배열)
   const myChosenUniversities = useMemo(() => {
@@ -167,6 +175,7 @@ export default function StrategyRoomClient() {
   // CTA 버튼 클릭 핸들러
   // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
   const handleCTAClick = () => {
+    trackEvent("cta_click", overlayCtaParams);
     router.push(`/strategy-room/${seasonId}/applications/new`);
   };
 
