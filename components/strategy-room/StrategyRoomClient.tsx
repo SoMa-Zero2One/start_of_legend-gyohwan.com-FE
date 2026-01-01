@@ -91,20 +91,6 @@ export default function StrategyRoomClient() {
     entry_point: "strategy_room_overlay",
   };
 
-  useEffect(() => {
-    if (!data) return;
-    if (hasTrackedPageViewRef.current) return;
-
-    const didTrack = trackEvent("grade_share_page_view", {
-      season_id: Number(seasonId),
-      season_name: data.seasonName,
-      tab: TAB_VALUE_MAP[selectedTab],
-    });
-    if (didTrack) {
-      hasTrackedPageViewRef.current = true;
-    }
-  }, [data, seasonId, selectedTab]);
-
   // 내가 지원한 대학 목록 (slotId 배열)
   const myChosenUniversities = useMemo(() => {
     if (!myApplication) return [];
@@ -142,25 +128,32 @@ export default function StrategyRoomClient() {
 
   const hasApplicantSlots = applicantSlotCount > 0;
 
+  const initialTab = useMemo<TabType>(() => {
+    if (tabFromUrl) return tabFromUrl;
+    if (data?.hasApplied) return "지망한 대학";
+    if (hasApplicantSlots) return "지원자가 있는 대학";
+    return "모든 대학";
+  }, [tabFromUrl, data?.hasApplied, hasApplicantSlots]);
+
   // URL -> 성적 공유 여부 -> 지원자 수 순으로 초기 탭 결정
   useEffect(() => {
-    if (tabFromUrl) {
-      setSelectedTab(tabFromUrl);
-      return;
-    }
+    setSelectedTab(initialTab);
+  }, [initialTab]);
 
-    if (data?.hasApplied) {
-      setSelectedTab("지망한 대학");
-      return;
-    }
+  useEffect(() => {
+    if (!data) return;
+    if (hasTrackedPageViewRef.current) return;
+    if (selectedTab !== initialTab) return;
 
-    if (hasApplicantSlots) {
-      setSelectedTab("지원자가 있는 대학");
-      return;
+    const didTrack = trackEvent("grade_share_page_view", {
+      season_id: Number(seasonId),
+      season_name: data.seasonName,
+      tab: TAB_VALUE_MAP[initialTab],
+    });
+    if (didTrack) {
+      hasTrackedPageViewRef.current = true;
     }
-
-    setSelectedTab("모든 대학");
-  }, [tabFromUrl, data?.hasApplied, hasApplicantSlots]);
+  }, [data, seasonId, initialTab, selectedTab]);
 
   // 필터링된 슬롯 목록 (탭 + 검색)
   const filteredSlots = useMemo(() => {
