@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
+import { trackEvent } from "@/lib/analytics/gtag";
 import { saveRedirectUrl } from "@/lib/utils/redirect";
 
 export default function ApplicationsLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+  const params = useParams();
+  const seasonId = params.seasonId ? Number(params.seasonId) : undefined;
   const { user, isLoggedIn, isLoading: authLoading } = useAuthStore();
 
   useEffect(() => {
@@ -18,6 +21,12 @@ export default function ApplicationsLayout({ children }: { children: React.React
 
     // 1. 로그인 체크
     if (!isLoggedIn || !user) {
+      trackEvent("gate_redirect", {
+        reason: "login_required",
+        from_path: currentUrl,
+        target_path: "/log-in-or-create-account",
+        season_id: seasonId,
+      });
       saveRedirectUrl(currentUrl);
       router.replace("/log-in-or-create-account");
       return;
@@ -25,11 +34,17 @@ export default function ApplicationsLayout({ children }: { children: React.React
 
     // 2. 학교 인증 체크
     if (!user.schoolVerified) {
+      trackEvent("gate_redirect", {
+        reason: "school_verification_required",
+        from_path: currentUrl,
+        target_path: "/school-verification",
+        season_id: seasonId,
+      });
       saveRedirectUrl(currentUrl);
       router.replace("/school-verification");
       return;
     }
-  }, [authLoading, isLoggedIn, user, router, pathname]);
+  }, [authLoading, isLoggedIn, user, router, pathname, seasonId]);
 
   // 로딩 중이거나 인증 미완료 시 빈 화면 (리다이렉트 진행 중)
   if (authLoading || !isLoggedIn || !user || !user.schoolVerified) {

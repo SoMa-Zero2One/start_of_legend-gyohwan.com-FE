@@ -1,9 +1,9 @@
 "use client";
-
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Season } from "@/types/season";
 import { calculateDDay, formatDate } from "@/lib/utils/date";
+import { trackEvent } from "@/lib/analytics/gtag";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 
 interface StrategyRoomCardProps {
@@ -16,6 +16,14 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
 
   // null 안전 처리
   const safeDomesticUniversity = domesticUniversity ?? "대학교";
+  const shareCtaParams = {
+    cta_id: "grade_share_cta_card",
+    cta_location: "home_strategy_card",
+    cta_label: "성적 공유하기",
+    season_id: seasonId,
+    season_name: data.name ?? undefined,
+    entry_point: "home_card",
+  };
 
   // 날짜 포맷 (yyyy.mm.dd ~ yyyy.mm.dd)
   const formattedDate = startDate && endDate ? `${formatDate(startDate)} ~ ${formatDate(endDate)}` : "일정 미정";
@@ -25,6 +33,7 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
 
   // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
   const handleShareClick = () => {
+    trackEvent("cta_click", shareCtaParams);
     router.push(`/strategy-room/${seasonId}/applications/new`);
   };
 

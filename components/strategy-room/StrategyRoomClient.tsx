@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import HeaderAuthSection from "@/components/layout/HeaderAuthSection";
@@ -20,6 +20,11 @@ import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
 
 const TAB_OPTIONS = ["지망한 대학", "지원자가 있는 대학", "모든 대학"] as const;
 type TabType = (typeof TAB_OPTIONS)[number];
+const TAB_VALUE_MAP: Record<TabType, "my_choices" | "has_applicants" | "all"> = {
+  "지망한 대학": "my_choices",
+  "지원자가 있는 대학": "has_applicants",
+  "모든 대학": "all",
+};
 
 const getSafeOpenchatUrl = (raw?: string | null) => {
   if (!raw) return null;
@@ -50,9 +55,17 @@ export default function StrategyRoomClient() {
   const [selectedTab, setSelectedTab] = useState<TabType>(tabFromUrl ?? "모든 대학");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
+  const hasTrackedPageViewRef = useRef(false);
 
   // 탭 변경 핸들러 (URL 업데이트 포함)
   const handleTabChange = (tab: TabType) => {
+    if (tab === selectedTab) return;
+    trackEvent("grade_share_page_tab_change", {
+      season_id: Number(seasonId),
+      season_name: data?.seasonName,
+      tab: TAB_VALUE_MAP[tab],
+      prev_tab: TAB_VALUE_MAP[selectedTab],
+    });
     setSelectedTab(tab);
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", tab);
@@ -68,6 +81,14 @@ export default function StrategyRoomClient() {
     cta_label: "지원 대학교 변경",
     season_id: Number(seasonId),
     season_name: data?.seasonName,
+  };
+  const overlayCtaParams = {
+    cta_id: "grade_share_cta_overlay",
+    cta_location: "grade_share_page",
+    cta_label: "성적 공유하고 전체 확인하기 🚀",
+    season_id: Number(seasonId),
+    season_name: data?.seasonName,
+    entry_point: "strategy_room_overlay",
   };
 
   // 내가 지원한 대학 목록 (slotId 배열)
@@ -107,25 +128,32 @@ export default function StrategyRoomClient() {
 
   const hasApplicantSlots = applicantSlotCount > 0;
 
+  const initialTab = useMemo<TabType>(() => {
+    if (tabFromUrl) return tabFromUrl;
+    if (data?.hasApplied) return "지망한 대학";
+    if (hasApplicantSlots) return "지원자가 있는 대학";
+    return "모든 대학";
+  }, [tabFromUrl, data?.hasApplied, hasApplicantSlots]);
+
   // URL -> 성적 공유 여부 -> 지원자 수 순으로 초기 탭 결정
   useEffect(() => {
-    if (tabFromUrl) {
-      setSelectedTab(tabFromUrl);
-      return;
-    }
+    setSelectedTab(initialTab);
+  }, [initialTab]);
 
-    if (data?.hasApplied) {
-      setSelectedTab("지망한 대학");
-      return;
-    }
+  useEffect(() => {
+    if (!data) return;
+    if (hasTrackedPageViewRef.current) return;
+    if (selectedTab !== initialTab) return;
 
-    if (hasApplicantSlots) {
-      setSelectedTab("지원자가 있는 대학");
-      return;
+    const didTrack = trackEvent("grade_share_page_view", {
+      season_id: Number(seasonId),
+      season_name: data.seasonName,
+      tab: TAB_VALUE_MAP[initialTab],
+    });
+    if (didTrack) {
+      hasTrackedPageViewRef.current = true;
     }
-
-    setSelectedTab("모든 대학");
-  }, [tabFromUrl, data?.hasApplied, hasApplicantSlots]);
+  }, [data, seasonId, initialTab, selectedTab]);
 
   // 필터링된 슬롯 목록 (탭 + 검색)
   const filteredSlots = useMemo(() => {
@@ -164,9 +192,27 @@ export default function StrategyRoomClient() {
     return data.slots.filter((slot) => slot.choiceCount !== null && slot.choiceCount >= 1);
   }, [data]);
 
+  useEffect(() => {
+    if (!data) return;
+    const query = searchQuery.trim();
+    if (!query) return;
+
+    const timer = setTimeout(() => {
+      trackEvent("grade_share_page_search", {
+        season_id: Number(seasonId),
+        season_name: data.seasonName,
+        query_length: query.length,
+        result_count: filteredSlots.length,
+      });
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [data, seasonId, searchQuery, filteredSlots.length]);
+
   // CTA 버튼 클릭 핸들러
   // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
   const handleCTAClick = () => {
+    trackEvent("cta_click", overlayCtaParams);
     router.push(`/strategy-room/${seasonId}/applications/new`);
   };
 
@@ -264,6 +310,13 @@ export default function StrategyRoomClient() {
                   href={safeOpenchatUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent("openchat_click", {
+                      season_id: Number(seasonId),
+                      season_name: data?.seasonName,
+                      cta_location: "grade_share_page",
+                    })
+                  }
                   className="caption-2 inline-flex cursor-pointer items-center justify-center rounded-full bg-gradient-to-r from-[#FFD75E] to-[#FFA84E] px-[20px] py-[10px] text-gray-900 xl:px-[24px] xl:py-[6px]"
                 >
                   💬 {universityName} 교환학생 함께 준비하기

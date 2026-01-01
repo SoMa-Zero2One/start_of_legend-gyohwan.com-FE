@@ -1,12 +1,13 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import EmailStep from "@/components/school-verification/EmailStep";
 import VerificationStep from "@/components/school-verification/VerificationStep";
 import { sendSchoolEmailVerification, confirmSchoolEmailVerification } from "@/lib/api/user";
 import { handleApiError } from "@/lib/utils/apiError";
+import { trackEvent } from "@/lib/analytics/gtag";
 import { getRedirectUrl, clearRedirectUrl, saveRedirectUrl } from "@/lib/utils/redirect";
 import { useAuthStore } from "@/stores/authStore";
 import TermsAgreement from "@/components/auth/TermsAgreement";
@@ -24,6 +25,7 @@ function SchoolVerificationContent() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const hasTrackedStartRef = useRef(false);
 
   // 로그인 체크: 로그인되지 않은 경우 리다이렉트
   useEffect(() => {
@@ -33,9 +35,34 @@ function SchoolVerificationContent() {
     if (!isLoggedIn || !user) {
       const currentUrl = "/school-verification";
       saveRedirectUrl(currentUrl);
+      trackEvent("gate_redirect", {
+        reason: "login_required",
+        from_path: currentUrl,
+        target_path: "/log-in-or-create-account",
+      });
       router.replace("/log-in-or-create-account");
     }
   }, [isLoggedIn, user, router, authLoading]);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!isLoggedIn || !user) return;
+    if (hasTrackedStartRef.current) return;
+
+    const didTrack = trackEvent("school_verification_start", {
+      page_path: "/school-verification",
+    });
+    if (didTrack) {
+      hasTrackedStartRef.current = true;
+    }
+  }, [authLoading, isLoggedIn, user]);
+
+  const reportVerificationError = (currentStep: Step, errorCode: string) => {
+    trackEvent("school_verification_error", {
+      step: currentStep,
+      error_code: errorCode,
+    });
+  };
 
   // Step 1: 학교 이메일 입력 후 인증 코드 발송
   const handleEmailSubmit = async (schoolEmail: string) => {
@@ -43,6 +70,7 @@ function SchoolVerificationContent() {
     setIsLoading(true);
 
     try {
+      trackEvent("school_verification_email_submit", {});
       await sendSchoolEmailVerification(schoolEmail);
       setEmail(schoolEmail);
       // URL 업데이트로 step 변경
@@ -50,6 +78,7 @@ function SchoolVerificationContent() {
     } catch (error) {
       console.error("School email verification error:", error);
       const errorMessage = handleApiError(error);
+      reportVerificationError("email", "send_email_failed");
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -62,10 +91,12 @@ function SchoolVerificationContent() {
     setIsLoading(true);
 
     try {
+      trackEvent("school_verification_code_submit", {});
       await confirmSchoolEmailVerification(email, code);
 
       // 사용자 정보 업데이트 (schoolVerified = true로 변경됨)
       await fetchUser();
+      trackEvent("school_verification_complete", {});
 
       // 리다이렉트 URL 확인
       const redirectUrl = getRedirectUrl();
@@ -81,6 +112,7 @@ function SchoolVerificationContent() {
     } catch (error) {
       console.error("Code verification error:", error);
       const errorMessage = handleApiError(error);
+      reportVerificationError("verification", "verify_code_failed");
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -93,10 +125,12 @@ function SchoolVerificationContent() {
     setIsLoading(true);
 
     try {
+      trackEvent("school_verification_resend", {});
       await sendSchoolEmailVerification(email);
     } catch (error) {
       console.error("Resend email error:", error);
       const errorMessage = handleApiError(error);
+      reportVerificationError("verification", "resend_email_failed");
       setError(errorMessage);
     } finally {
       setIsLoading(false);
