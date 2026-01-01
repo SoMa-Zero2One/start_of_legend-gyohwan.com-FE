@@ -35,6 +35,11 @@ function SchoolVerificationContent() {
     if (!isLoggedIn || !user) {
       const currentUrl = "/school-verification";
       saveRedirectUrl(currentUrl);
+      trackEvent("gate_redirect", {
+        reason: "login_required",
+        from_path: currentUrl,
+        target_path: "/log-in-or-create-account",
+      });
       router.replace("/log-in-or-create-account");
     }
   }, [isLoggedIn, user, router, authLoading]);

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { validateState, cleanupOAuthSession } from "@/lib/oauth/config";
 import { loginWithGoogle, loginWithKakao } from "@/lib/api/auth";
 import { useAuthStore } from "@/stores/authStore";
+import { trackEvent } from "@/lib/analytics/gtag";
 import { getRedirectUrl, clearRedirectUrl } from "@/lib/utils/redirect";
 import { handleApiError } from "@/lib/utils/apiError";
 
@@ -77,6 +78,11 @@ function OAuthCallbackContent({ provider }: OAuthCallbackContentProps) {
           // 학교 인증 확인
           if (!user?.schoolVerified) {
             // 학교 인증 필요 - redirectUrl 유지하고 학교 인증 페이지로
+            trackEvent("gate_redirect", {
+              reason: "school_verification_required",
+              from_path: redirectUrl,
+              target_path: "/school-verification",
+            });
             router.push("/school-verification");
           } else {
             // 학교 인증 완료 - redirectUrl로 이동

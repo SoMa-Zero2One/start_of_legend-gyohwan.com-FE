@@ -12,7 +12,7 @@ PII(이메일, 닉네임, 상세 GPA 등)는 GA로 전송하지 않습니다.
 | 성적 공유 완료율           | 핵심 전환(가치 도달) 성과 확인 | `grade_share_complete / grade_share_start`                               |
 | 성적 공유 퍼널 누락 구간   | 퍼널 어디서 이탈하는지 파악    | `grade_share_start` → `grade_share_step_submit` → `grade_share_complete` |
 | 학교 인증 완료율           | 접근 권한 전환 성과 확인       | `school_verification_complete / school_verification_start`               |
-| 버튼 의미 전달 지표        | CTA 의도 전달 여부 확인        | `cta_click` (entry_point 구분)                                           |
+| 버튼 의미 전달 지표        | CTA 의도 전달 여부 확인        | `cta_click` (entry_point별 클릭 비교)                                   |
 | CTA → 행동 전환율          | 클릭 이후 실제 행동 유도 확인  | `grade_share_start / cta_click` (성적 공유 CTA 기준)                     |
 | 지원 대학 변경 버튼 클릭률 | 변경 니즈 및 관심도 확인       | `cta_click` (유니크 사용자 기준, `cta_id=university_reselect_cta`)       |
 | 학교 인증 CTA 시도율       | 미인증 사용자 인증 시도 확인   | `cta_click / my_page_unverified_view`                                    |
@@ -77,6 +77,9 @@ PII 금지:
 | event_name       | when                     | required params          | optional params                                        |
 | ---------------- | ------------------------ | ------------------------ | ------------------------------------------------------ |
 | `cta_click` | CTA 클릭 | `cta_id`, `cta_location` | `cta_label`, `cta_variant`, `season_id`, `season_name`, `entry_point` |
+
+`entry_point` 권장 값:
+`nav`, `home_card`, `strategy_room_bottom_bar`, `strategy_room_overlay`, `application_detail_overlay`
 
 ### 5.2 성적 공유
 
