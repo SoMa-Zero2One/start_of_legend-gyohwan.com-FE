@@ -15,6 +15,7 @@ import SearchIcon from "@/components/icons/SearchIcon";
 import { useIsDesktop } from "@/lib/hooks/useMediaQuery";
 import { getSeasonSlots, getMyApplication } from "@/lib/api/slot";
 import { handleApiError } from "@/lib/utils/apiError";
+import { trackEvent } from "@/lib/analytics/gtag";
 import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
 
 const TAB_OPTIONS = ["지망한 대학", "지원자가 있는 대학", "모든 대학"] as const;
@@ -61,6 +62,13 @@ export default function StrategyRoomClient() {
   // API에서 받아온 성적 공유 여부
   const hasSharedGrade = data?.hasApplied ?? false;
   const safeOpenchatUrl = getSafeOpenchatUrl(data?.openchatUrl);
+  const reselectCtaParams = {
+    cta_id: "university_reselect_cta",
+    cta_location: "grade_share_page",
+    cta_label: "지원 대학교 변경",
+    season_id: Number(seasonId),
+    season_name: data?.seasonName,
+  };
 
   // 내가 지원한 대학 목록 (slotId 배열)
   const myChosenUniversities = useMemo(() => {
@@ -235,6 +243,7 @@ export default function StrategyRoomClient() {
               {hasSharedGrade && (
                 <Link
                   href={`/strategy-room/${seasonId}/applications/re-select-university`}
+                  onClick={() => trackEvent("cta_click", reselectCtaParams)}
                   className="body-3 flex items-center justify-center rounded-full border border-gray-200 px-[20px] py-[10px] font-semibold text-gray-900 hover:bg-gray-100"
                 >
                   지원 대학교 변경

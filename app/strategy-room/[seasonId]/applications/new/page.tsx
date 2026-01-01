@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import ProgressBar from "@/components/common/ProgressBar";
@@ -16,6 +16,7 @@ import { checkEligibility } from "@/lib/api/season";
 import { submitApplication } from "@/lib/api/application";
 import { revalidateHomePage } from "@/app/actions/home";
 import { handleApiError } from "@/lib/utils/apiError";
+import { trackEvent } from "@/lib/analytics/gtag";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 import { useModalHistory } from "@/hooks/useModalHistory";
 import type { Gpa, Language } from "@/types/grade";
@@ -44,6 +45,8 @@ function ApplicationNewContent() {
   const [existingGpa, setExistingGpa] = useState<Gpa | null>(null);
   const [existingLanguage, setExistingLanguage] = useState<Language | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
+  const [seasonName, setSeasonName] = useState<string | null>(null);
+  const [hasApplied, setHasApplied] = useState<boolean | null>(null);
 
   // 모달 히스토리 관리
   const universitySearch = useModalHistory({ modalKey: "university-search" });
@@ -55,9 +58,29 @@ function ApplicationNewContent() {
   const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>([]);
   const [extraScore, setExtraScore] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const hasTrackedStartRef = useRef(false);
+  const gradeShareStartSessionKey = `gyohwan_grade_share_start_${seasonId}`;
 
   // 폼 에러 핸들러
   const { tooltipMessage, shouldShake, showMessage } = useFormErrorHandler();
+  const reportValidationError = (field: string, reason: string) => {
+    trackEvent("grade_share_validation_error", {
+      season_id: seasonId,
+      season_name: seasonName,
+      step: "university_selection",
+      field,
+      reason,
+    });
+  };
+
+  const reportSubmitError = (errorCode: string) => {
+    trackEvent("grade_share_error", {
+      season_id: seasonId,
+      season_name: seasonName,
+      step: "university_selection",
+      error_code: errorCode,
+    });
+  };
 
   // 초기 데이터 로드 및 hasApplied 확인
   useEffect(() => {
@@ -80,6 +103,8 @@ function ApplicationNewContent() {
         // 2. hasApplied 확인 및 slots 데이터 저장
         const slotsData = await getSeasonSlots(seasonId);
         setSlots(slotsData.slots);
+        setSeasonName(slotsData.seasonName ?? null);
+        setHasApplied(slotsData.hasApplied);
 
         if (slotsData.hasApplied) {
           // 이미 지원한 경우 -> 실시간 경쟁률 페이지로 리다이렉트
@@ -122,6 +147,37 @@ function ApplicationNewContent() {
     // showMessage 역시 커스텀 훅에서 생성된 함수라 dependency에 추가하지 않음.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seasonId, router, step]);
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (step !== "grade-registration") return;
+    if (hasApplied === null) return;
+    if (hasApplied) return;
+    if (eligibilityErrorMessage) return;
+    if (hasTrackedStartRef.current) return;
+    if (typeof window !== "undefined") {
+      try {
+        if (sessionStorage.getItem(gradeShareStartSessionKey)) return;
+      } catch {
+        // sessionStorage may be unavailable
+      }
+    }
+
+    const didTrack = trackEvent("grade_share_start", {
+      season_id: seasonId,
+      season_name: seasonName,
+    });
+    if (didTrack) {
+      if (typeof window !== "undefined") {
+        try {
+          sessionStorage.setItem(gradeShareStartSessionKey, "1");
+        } catch {
+          // sessionStorage may be unavailable
+        }
+      }
+      hasTrackedStartRef.current = true;
+    }
+  }, [eligibilityErrorMessage, hasApplied, isLoading, seasonId, seasonName, gradeShareStartSessionKey, step]);
 
   // Eligibility 모달이 닫히면 전략방으로 리다이렉트
   // (뒤로 가기로 모달만 닫고 페이지에 남아있는 경우 방지)
@@ -263,11 +319,13 @@ function ApplicationNewContent() {
   const handleSubmit = () => {
     // Validation
     if (!gpaId || !languageId) {
+      reportValidationError("gpa_language", "missing_gpa_language");
       showMessage("성적 정보가 없습니다. Step 1부터 다시 진행해주세요.");
       return;
     }
 
     if (selectedUniversities.length === 0) {
+      reportValidationError("choices", "empty");
       showMessage("최소 1개 이상의 지망 대학을 선택해주세요.");
       return;
     }
@@ -276,11 +334,18 @@ function ApplicationNewContent() {
     const sortedChoices = selectedUniversities.map((u) => u.choice).sort((a, b) => a - b);
     for (let i = 0; i < sortedChoices.length; i++) {
       if (sortedChoices[i] !== i + 1) {
+        reportValidationError("choices", "non_sequential");
         showMessage("1지망부터 순서대로 채워주세요.");
         return;
       }
     }
 
+    trackEvent("grade_share_step_submit", {
+      season_id: seasonId,
+      season_name: seasonName,
+      step: "university_selection",
+      has_extra_score: Boolean(extraScore),
+    });
     submit.openModal();
   };
 
@@ -289,6 +354,7 @@ function ApplicationNewContent() {
     // 보안: URL 조작으로 모달을 열었을 경우를 대비한 재검증
     if (!gpaId || !languageId) {
       submit.closeModal({ skipNavigation: true });
+      reportValidationError("gpa_language", "missing_gpa_language");
       showMessage("성적 정보가 없습니다. 다시 입력해주세요.");
       router.replace(`/strategy-room/${seasonId}/applications/new?step=grade-registration`);
       return;
@@ -296,6 +362,7 @@ function ApplicationNewContent() {
 
     if (selectedUniversities.length === 0) {
       submit.closeModal({ skipNavigation: true });
+      reportValidationError("choices", "empty");
       showMessage("최소 1개 이상의 지망 대학을 선택해주세요.");
       return;
     }
@@ -305,6 +372,7 @@ function ApplicationNewContent() {
     for (let i = 0; i < sortedChoices.length; i++) {
       if (sortedChoices[i] !== i + 1) {
         submit.closeModal({ skipNavigation: true });
+        reportValidationError("choices", "non_sequential");
         showMessage("1지망부터 순서대로 채워주세요.");
         return;
       }
@@ -328,6 +396,12 @@ function ApplicationNewContent() {
       };
 
       await submitApplication(seasonId, requestData);
+      trackEvent("grade_share_complete", {
+        season_id: seasonId,
+        season_name: seasonName,
+        choices_count: selectedUniversities.length,
+        has_extra_score: Boolean(extraScore),
+      });
 
       try {
         await revalidateHomePage();
@@ -349,6 +423,7 @@ function ApplicationNewContent() {
     } catch (error) {
       console.error("Application submission error:", error);
       const errorMessage = handleApiError(error);
+      reportSubmitError("submit_application_failed");
       showMessage(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -387,6 +462,8 @@ function ApplicationNewContent() {
       {/* Step 1: 성적 등록 */}
       {step === "grade-registration" && (
         <GradeRegistrationStep
+          seasonId={seasonId}
+          seasonName={seasonName}
           existingGpa={existingGpa}
           existingLanguage={existingLanguage}
           onSubmit={handleGradeSubmit}

@@ -13,6 +13,7 @@ import PencilIcon from "@/components/icons/PencilIcon";
 import { useIsDesktop } from "@/lib/hooks/useMediaQuery";
 import { getApplicationDetail, getMyApplication, getSeasonSlots } from "@/lib/api/slot";
 import { handleApiError } from "@/lib/utils/apiError";
+import { trackEvent } from "@/lib/analytics/gtag";
 import { ApplicationDetailResponse, MyApplicationResponse, SeasonSlotsResponse } from "@/types/slot";
 import Footer from "@/components/layout/Footer";
 
@@ -32,6 +33,13 @@ export default function ApplicationDetailPage() {
   const isMe = myApplication?.applicationId === applicationId;
   const hasApplied = seasonData?.hasApplied ?? false;
   const languageCount = data?.language?.testType ? 1 : 0;
+  const reselectCtaParams = {
+    cta_id: "university_reselect_cta",
+    cta_location: "application_detail",
+    cta_label: "지원 대학교 변경",
+    season_id: seasonId,
+    season_name: seasonData?.seasonName,
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -187,6 +195,7 @@ export default function ApplicationDetailPage() {
                       {isMe && (
                         <Link
                           href={`/strategy-room/${data.seasonId}/applications/re-select-university`}
+                          onClick={() => trackEvent("cta_click", reselectCtaParams)}
                           className="cursor-pointer rounded-full bg-gray-300 px-[12px] py-[6px]"
                         >
                           지원 대학교 변경
