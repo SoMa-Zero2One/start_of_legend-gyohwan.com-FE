@@ -5,10 +5,13 @@ import CTAButton from "@/components/common/CTAButton";
 import { createGpa } from "@/lib/api/gpa";
 import { createLanguage } from "@/lib/api/language";
 import { handleApiError } from "@/lib/utils/apiError";
+import { trackEvent } from "@/lib/analytics/gtag";
 import type { Gpa, Language, CreateLanguageRequest } from "@/types/grade";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 
 interface GradeRegistrationStepProps {
+  seasonId: number;
+  seasonName?: string | null;
   existingGpa: Gpa | null;
   existingLanguage: Language | null;
   onSubmit: (gpaId: number, languageId: number) => void;
@@ -44,7 +47,13 @@ const LANGUAGE_SCORE_RANGES: Record<string, { min: number; max: number }> = {
   "HSK 6급": { min: 0, max: 300 },
 };
 
-export default function GradeRegistrationStep({ existingGpa, existingLanguage, onSubmit }: GradeRegistrationStepProps) {
+export default function GradeRegistrationStep({
+  seasonId,
+  seasonName,
+  existingGpa,
+  existingLanguage,
+  onSubmit,
+}: GradeRegistrationStepProps) {
   const { tooltipMessage, shouldShake, showMessage, clearMessage } = useFormErrorHandler();
 
   // GPA 상태
@@ -56,6 +65,16 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
   const [score, setScore] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const reportValidationError = (field: string, reason: string) => {
+    trackEvent("grade_share_validation_error", {
+      season_id: seasonId,
+      season_name: seasonName,
+      step: "grade_registration",
+      field,
+      reason,
+    });
+  };
 
   // 기존 데이터로 초기화
   useEffect(() => {
@@ -90,17 +109,20 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
     // 학점 유효성 검사
     const gpaValue = parseFloat(gpaScore);
     if (!gpaScore || isNaN(gpaValue)) {
+      reportValidationError("gpa_score", "missing_or_invalid");
       showMessage("학점을 입력해주세요.");
       return;
     }
 
     if (gpaValue < 0 || gpaValue > gpaCriteria) {
+      reportValidationError("gpa_score", "out_of_range");
       showMessage(`학점은 0 ~ ${gpaCriteria} 사이의 값이어야 합니다.`);
       return;
     }
 
     // 어학 시험 종류 검사
     if (!testType) {
+      reportValidationError("language_test_type", "missing");
       showMessage("어학 시험 종류를 선택해주세요.");
       return;
     }
@@ -108,11 +130,13 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
     // 어학 점수 검사
     if (testType === "기타") {
       if (!score) {
+        reportValidationError("language_score", "missing_other");
         showMessage("어학 시험과 점수를 입력해주세요.");
         return;
       }
     } else {
       if (!score) {
+        reportValidationError("language_score", "missing");
         showMessage("점수를 입력해주세요.");
         return;
       }
@@ -123,11 +147,13 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
 
       if (scoreRange) {
         if (isNaN(scoreValue)) {
+          reportValidationError("language_score", "invalid_format");
           showMessage("올바른 점수를 입력해주세요.");
           return;
         }
 
         if (scoreValue < scoreRange.min || scoreValue > scoreRange.max) {
+          reportValidationError("language_score", "out_of_range");
           showMessage(`${testType} 점수는 ${scoreRange.min} ~ ${scoreRange.max} 사이의 값이어야 합니다.`);
           return;
         }
@@ -176,11 +202,24 @@ export default function GradeRegistrationStep({ existingGpa, existingLanguage, o
 
       const languageResponse = await createLanguage(languageRequest);
 
+      trackEvent("grade_share_step_submit", {
+        season_id: seasonId,
+        season_name: seasonName,
+        step: "grade_registration",
+        has_language: Boolean(score),
+      });
+
       // 성공 시 부모 컴포넌트로 ID 전달
       onSubmit(gpaResponse.gpaId, languageResponse.languageId);
     } catch (error) {
       console.error("Submit error:", error);
       const errorMessage = handleApiError(error);
+      trackEvent("grade_share_error", {
+        season_id: seasonId,
+        season_name: seasonName,
+        step: "grade_registration",
+        error_code: "create_grade_failed",
+      });
       showMessage(errorMessage);
     } finally {
       setIsSubmitting(false);
