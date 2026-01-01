@@ -5,8 +5,8 @@ export default function FeatureSection() {
   return (
     <div className="relative flex flex-col gap-[40px] overflow-hidden px-[20px] py-[60px] md:flex-row md:justify-between md:py-[80px] xl:py-[100px] xl:pr-[20px] xl:pl-[80px]">
       {/* 그라데이션 배경 */}
-      <div className="absolute top-[220px] -right-[40px] h-[80px] w-[80px] rounded-full bg-gradient-to-br from-[#00D0FF] via-[#029EFA] to-[#056DFF] opacity-10 xl:hidden"></div>
-      <div className="absolute top-[530px] -left-[40px] h-[80px] w-[80px] rounded-full bg-gradient-to-br from-[#00D0FF] via-[#029EFA] to-[#056DFF] opacity-10 xl:hidden"></div>
+      <div className="absolute top-[220px] -right-[40px] h-[80px] w-[80px] rounded-full bg-gradient-to-br from-[#00D0FF] via-[#029EFA] to-[#056DFF] opacity-10 md:hidden"></div>
+      <div className="absolute top-[530px] -left-[40px] h-[80px] w-[80px] rounded-full bg-gradient-to-br from-[#00D0FF] via-[#029EFA] to-[#056DFF] opacity-10 md:hidden"></div>
 
       {/* 텍스트 */}
       <div className="flex flex-col gap-[40px]">
