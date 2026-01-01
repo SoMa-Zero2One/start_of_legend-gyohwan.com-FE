@@ -206,7 +206,6 @@ export default function GradeRegistrationStep({
         season_id: seasonId,
         season_name: seasonName,
         step: "grade_registration",
-        has_language: Boolean(score),
       });
 
       // 성공 시 부모 컴포넌트로 ID 전달
