@@ -86,7 +86,7 @@ PII 금지:
 | event_name                     | when                  | required params              | optional params                   |
 | ------------------------------ | --------------------- | ---------------------------- | --------------------------------- |
 | `grade_share_start`            | 성적 공유 플로우 진입 | `season_id`                  | `season_name`, `entry_point`      |
-| `grade_share_step_submit`      | Step 제출 성공        | `season_id`, `step`          | `has_language`, `has_extra_score` |
+| `grade_share_step_submit`      | Step 제출 성공        | `season_id`, `step`          | `has_extra_score` |
 | `grade_share_complete`         | 최종 제출 성공        | `season_id`, `choices_count` | `has_extra_score`                 |
 | `grade_share_validation_error` | 유효성 실패           | `season_id`, `step`, `field` | `reason`                          |
 | `grade_share_error`            | API/서버 실패         | `season_id`, `step`          | `error_code`                      |
