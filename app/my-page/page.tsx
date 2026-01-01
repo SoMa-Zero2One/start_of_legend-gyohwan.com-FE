@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import ChevronRightIcon from "@/components/icons/ChevronRightIcon";
-import PencilIcon from "@/components/icons/PencilIcon";
 import GoogleIcon from "@/components/icons/GoogleIcon";
 import KakaoIcon from "@/components/icons/KakaoIcon";
 import ProfileIconWithFallback from "@/components/icons/ProfileIconWithFallback";
@@ -31,6 +30,29 @@ export default function MyInfoPage() {
       router.replace("/log-in-or-create-account");
     }
   }, [authLoading, user, router]);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) return;
+    if (user.schoolVerified) return;
+
+    if (typeof window !== "undefined") {
+      try {
+        if (sessionStorage.getItem(myPageUnverifiedSessionKey)) return;
+      } catch {
+        // sessionStorage may be unavailable
+      }
+    }
+
+    const didTrack = trackEvent("my_page_unverified_view", { page_path: "/my-page" });
+    if (didTrack && typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(myPageUnverifiedSessionKey, "1");
+      } catch {
+        // sessionStorage may be unavailable
+      }
+    }
+  }, [authLoading, user, myPageUnverifiedSessionKey]);
 
   // 로딩 중이거나 리다이렉트 진행 중
   if (authLoading || !user) {
@@ -60,29 +82,6 @@ export default function MyInfoPage() {
     trackEvent("cta_click", schoolVerifyCtaParams);
     router.push("/school-verification");
   };
-
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user) return;
-    if (user.schoolVerified) return;
-
-    if (typeof window !== "undefined") {
-      try {
-        if (sessionStorage.getItem(myPageUnverifiedSessionKey)) return;
-      } catch {
-        // sessionStorage may be unavailable
-      }
-    }
-
-    const didTrack = trackEvent("my_page_unverified_view", { page_path: "/my-page" });
-    if (didTrack && typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem(myPageUnverifiedSessionKey, "1");
-      } catch {
-        // sessionStorage may be unavailable
-      }
-    }
-  }, [authLoading, user, myPageUnverifiedSessionKey]);
 
   const handleLogout = async () => {
     isLoggingOutRef.current = true;
