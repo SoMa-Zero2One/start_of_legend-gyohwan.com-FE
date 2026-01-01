@@ -63,7 +63,12 @@ export default function StrategyRoomEntrances({ initialSeasons, initialPastSeaso
         if (!aMatch && bMatch) return 1;
       }
 
-      // 둘 다 사용자 학교이거나 둘 다 아닐 경우, 마감일 기준으로 정렬
+      // 나머지는 참여 인원 순으로 정렬 (많은 순)
+      const countA = a.applicationCount ?? 0;
+      const countB = b.applicationCount ?? 0;
+      if (countA !== countB) return countB - countA;
+
+      // 참여 인원이 같으면 마감일 기준으로 정렬
       const aHasDate = a.endDate !== null;
       const bHasDate = b.endDate !== null;
 
