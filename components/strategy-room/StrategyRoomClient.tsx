@@ -284,7 +284,7 @@ export default function StrategyRoomClient() {
         <div className="flex w-full flex-1 flex-col gap-[24px] px-[20px] py-[24px] xl:gap-[32px] xl:py-[40px]">
           <section className="flex flex-col gap-[8px] xl:gap-[12px]">
             <p className="caption-1 xl:!text-[16px]">{parsedSemester}</p>
-            <div className="flex flex-col gap-[12px] xl:flex-row xl:items-center xl:justify-between">
+            <div className="flex justify-between gap-[12px] xl:items-center">
               <div>
                 <h1 className="head-4 text-[26px] xl:text-[36px]">{universityName} 교환학생</h1>
               </div>
@@ -292,7 +292,7 @@ export default function StrategyRoomClient() {
                 <Link
                   href={`/strategy-room/${seasonId}/applications/re-select-university`}
                   onClick={() => trackEvent("cta_click", reselectCtaParams)}
-                  className="body-3 flex items-center justify-center rounded-full border border-gray-200 px-[20px] py-[10px] font-semibold text-gray-900 hover:bg-gray-100"
+                  className="body-3 items-center justify-center rounded-full border border-gray-200 px-[20px] py-[10px] text-center font-semibold text-gray-900 hover:bg-gray-100"
                 >
                   지원 대학교 변경
                 </Link>
