@@ -9,9 +9,15 @@ import * as Sentry from "@sentry/nextjs";
  */
 export function SentryProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+    const isProduction = process.env.NODE_ENV === "production";
+    if (!isProduction || !dsn) {
+      return;
+    }
+
     // Sentry 클라이언트 초기화
     Sentry.init({
-      dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+      dsn,
 
       // 클라이언트 사이드 에러 추적 설정
       integrations: [
