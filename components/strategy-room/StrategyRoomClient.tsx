@@ -12,10 +12,12 @@ import StrategyRoomPageSkeleton from "@/components/strategy-room/StrategyRoomPag
 import Tabs from "@/components/common/Tabs";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
 import SearchIcon from "@/components/icons/SearchIcon";
+import ExternalLinkIcon from "@/components/icons/ExternalLinkIcon";
 import { useIsDesktop } from "@/lib/hooks/useMediaQuery";
 import { getSeasonSlots, getMyApplication } from "@/lib/api/slot";
 import { handleApiError } from "@/lib/utils/apiError";
 import { trackEvent } from "@/lib/analytics/gtag";
+import { GRADE_CORRECTION_FORM_URL } from "@/lib/constants/externalLinks";
 import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
 
 const TAB_OPTIONS = ["지망한 대학", "지원자가 있는 대학", "모든 대학"] as const;
@@ -320,6 +322,17 @@ export default function StrategyRoomClient() {
                   className="caption-2 inline-flex cursor-pointer items-center justify-center rounded-full bg-gradient-to-r from-[#FFD75E] to-[#FFA84E] px-[20px] py-[10px] text-gray-900 xl:px-[24px] xl:py-[6px]"
                 >
                   💬 {universityName} 교환학생 함께 준비하기
+                </a>
+              )}
+              {hasSharedGrade && (
+                <a
+                  href={GRADE_CORRECTION_FORM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="caption-2 inline-flex cursor-pointer items-center justify-center gap-[6px] rounded-full border border-gray-200 px-[16px] py-[10px] text-gray-700 hover:bg-gray-100 xl:px-[20px] xl:py-[6px]"
+                >
+                  성적 정정 요청
+                  <ExternalLinkIcon size={isDesktop ? 14 : 12} />
                 </a>
               )}
             </div>

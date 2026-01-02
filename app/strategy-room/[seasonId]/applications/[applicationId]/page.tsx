@@ -10,12 +10,14 @@ import LanguageChart from "@/components/application/LanguageChart";
 import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
 import SchoolIcon from "@/components/icons/SchoolIcon";
 import PencilIcon from "@/components/icons/PencilIcon";
+import ExternalLinkIcon from "@/components/icons/ExternalLinkIcon";
 import { useIsDesktop } from "@/lib/hooks/useMediaQuery";
 import { getApplicationDetail, getMyApplication, getSeasonSlots } from "@/lib/api/slot";
 import { handleApiError } from "@/lib/utils/apiError";
 import { trackEvent } from "@/lib/analytics/gtag";
 import { ApplicationDetailResponse, MyApplicationResponse, SeasonSlotsResponse } from "@/types/slot";
 import Footer from "@/components/layout/Footer";
+import { GRADE_CORRECTION_FORM_URL } from "@/lib/constants/externalLinks";
 
 export default function ApplicationDetailPage() {
   const params = useParams();
@@ -169,9 +171,20 @@ export default function ApplicationDetailPage() {
 
               <div className="flex flex-col gap-[20px] xl:grid xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] xl:items-start xl:gap-[24px]">
                 <div className="flex flex-col xl:gap-[20px]">
-                  <h2 className="border-gray-100 text-[18px] font-bold xl:border-b-1 xl:pb-[20px] xl:text-[20px]">
-                    성적 정보
-                  </h2>
+                  <div className="flex items-center justify-between border-gray-100 xl:border-b-1 xl:pb-[20px]">
+                    <h2 className="text-[18px] font-bold xl:text-[20px]">성적 정보</h2>
+                    {isMe && (
+                      <a
+                        href={GRADE_CORRECTION_FORM_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="caption-2 inline-flex items-center gap-[4px] rounded-full border border-gray-200 px-[12px] py-[6px] text-gray-700 hover:bg-gray-100 xl:px-[14px]"
+                      >
+                        성적 정정 요청
+                        <ExternalLinkIcon size={isDesktop ? 14 : 12} />
+                      </a>
+                    )}
+                  </div>
                   {/* 성적 정보 */}
                   <section className="flex flex-col gap-[8px] border-b border-gray-300 py-[20px] xl:rounded-[16px] xl:border xl:p-[24px]">
                     <h3 className="text-[16px] xl:text-[18px] xl:font-bold">학점</h3>
