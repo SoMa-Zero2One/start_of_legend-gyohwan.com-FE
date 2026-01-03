@@ -32,33 +32,33 @@ export function MSWProvider({ children }: { children: React.ReactNode }) {
           } catch (error) {
             console.error("Failed to initialize MSW:", error);
           }
-        }
 
-        if (typeof window !== "undefined") {
-          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
+          if (typeof window !== "undefined") {
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
-          window.__setMockUser = async (userId) => {
-            try {
-              const response = await fetch(`${backendUrl}/__msw/auth/set-user`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify({ userId }),
-              });
+            window.__setMockUser = async (userId) => {
+              try {
+                const response = await fetch(`${backendUrl}/__msw/auth/set-user`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  credentials: "include",
+                  body: JSON.stringify({ userId }),
+                });
 
-              if (!response.ok) {
-                const message = await response.text();
-                throw new Error(message || "Failed to set mock user");
+                if (!response.ok) {
+                  const message = await response.text();
+                  throw new Error(message || "Failed to set mock user");
+                }
+
+                await useAuthStore.getState().fetchUser();
+                console.info("[MSW] mock user ->", userId);
+              } catch (error) {
+                console.error("[MSW] Failed to set mock user:", error);
               }
-
-              await useAuthStore.getState().fetchUser();
-              console.info("[MSW] mock user ->", userId);
-            } catch (error) {
-              console.error("[MSW] Failed to set mock user:", error);
-            }
-          };
+            };
+          }
         }
       }
       setIsReady(true);

@@ -443,7 +443,7 @@ export const authHandlers = [
       { message: "로그아웃되었습니다." },
       {
         headers: {
-          "Set-Cookie": buildAccessTokenCookie("", { maxAge: 0 }),
+          "Set-Cookie": buildAccessTokenCookie("", { maxAge: 0, sameSite: "Lax" }),
         },
       }
     );
