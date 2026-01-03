@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { getCurrentUser, mockGpas, mockLanguages } from "../data/users";
+import { getUserFromRequestCookies, mockGpas, mockLanguages } from "../data/users";
 import { findSlotById, getSlotApplicants, findSeasonIdBySlotId, getSlotChoiceCount } from "../data/slots";
 import { findApplicationById, mockApplications } from "../data/applications";
 import type { Gpa, Language } from "@/types/grade";
@@ -34,6 +34,20 @@ function getStatusText(status: number): string {
 }
 
 /**
+ * 인증 체크 헬퍼
+ */
+function requireAuth(cookies: Record<string, string | undefined>) {
+  const user = getUserFromRequestCookies(cookies);
+  if (!user) {
+    return {
+      user: null,
+      error: createErrorResponse(401, "Full authentication is required to access this resource", "Unauthorized"),
+    };
+  }
+  return { user, error: null };
+}
+
+/**
  * 유저가 해당 슬롯에 지원했는지 확인
  */
 function hasUserAppliedToSlot(userId: number, slotId: number): boolean {
@@ -61,7 +75,7 @@ export const slotHandlers = [
    * 에러 테스트:
    * - 존재하지 않는 slotId → 404 SLOT_NOT_FOUND
    */
-  http.get(`${BACKEND_URL}/v1/slots/:slotId`, ({ params }) => {
+  http.get(`${BACKEND_URL}/v1/slots/:slotId`, ({ params, cookies }) => {
     const slotId = Number(params.slotId);
     const slot = findSlotById(slotId);
 
@@ -69,7 +83,7 @@ export const slotHandlers = [
       return createErrorResponse(404, "슬롯을 찾을 수 없습니다.");
     }
 
-    const user = getCurrentUser();
+    const user = getUserFromRequestCookies(cookies);
 
     // 사용자가 이 슬롯에 지원했는지 확인
     const hasApplied = user ? hasUserAppliedToSlot(user.userId, slotId) : false;
@@ -112,7 +126,10 @@ export const slotHandlers = [
    * 에러 테스트:
    * - 존재하지 않는 applicationId → 404 APPLICATION_NOT_FOUND
    */
-  http.get(`${BACKEND_URL}/v1/applications/:applicationId`, ({ params }) => {
+  http.get(`${BACKEND_URL}/v1/applications/:applicationId`, ({ params, cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
+
     const applicationId = Number(params.applicationId);
     const application = findApplicationById(applicationId);
 

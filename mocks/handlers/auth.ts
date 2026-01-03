@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import {
   mockCredentials,
+  mockUsers,
   mockSignupVerificationCodes,
   mockPasswordResetCodes,
   SIGNUP_VERIFICATION_CODE,
@@ -12,6 +13,27 @@ import {
 } from "../data/users";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
+
+function buildAccessTokenCookie(
+  accessToken: string,
+  options?: {
+    maxAge?: number;
+    sameSite?: "Lax" | "Strict" | "None";
+  }
+) {
+  const parts = [`accessToken=${accessToken}`, "Path=/"];
+
+  if (options?.sameSite) {
+    parts.push(`SameSite=${options.sameSite}`);
+  }
+
+  if (options?.maxAge !== undefined) {
+    parts.push(`Max-Age=${options.maxAge}`);
+  }
+
+  parts.push("HttpOnly");
+  return parts.join("; ");
+}
 
 /**
  * ProblemDetail 에러 응답 생성 헬퍼
@@ -69,6 +91,47 @@ export const authHandlers = [
     const exists = normalizedEmail in mockCredentials;
 
     return HttpResponse.json({ exists });
+  }),
+
+  /**
+   * POST /__msw/auth/set-user
+   * 개발용: userId로 로그인 상태 전환
+   */
+  http.post(`${BACKEND_URL}/__msw/auth/set-user`, async ({ request }) => {
+    const body = (await request.json()) as { userId?: number | null };
+
+    if (body.userId === null) {
+      setCurrentUserId(null);
+      return HttpResponse.json(
+        { userId: null },
+        {
+          headers: {
+            "Set-Cookie": buildAccessTokenCookie("", { maxAge: 0, sameSite: "Lax" }),
+          },
+        }
+      );
+    }
+
+    if (typeof body.userId !== "number") {
+      return createErrorResponse(400, "userId가 필요합니다.");
+    }
+
+    const user = mockUsers[body.userId];
+    if (!user) {
+      return createErrorResponse(404, "사용자를 찾을 수 없습니다.");
+    }
+
+    const accessToken = generateMockToken(body.userId);
+    setCurrentUserId(body.userId);
+
+    return HttpResponse.json(
+      { userId: body.userId, accessToken },
+      {
+        headers: {
+          "Set-Cookie": buildAccessTokenCookie(accessToken, { sameSite: "Lax" }),
+        },
+      }
+    );
   }),
 
   /**
@@ -160,7 +223,7 @@ export const authHandlers = [
       { accessToken },
       {
         headers: {
-          "Set-Cookie": `accessToken=${accessToken}; Path=/; HttpOnly; SameSite=Lax`,
+          "Set-Cookie": buildAccessTokenCookie(accessToken, { sameSite: "Lax" }),
         },
       }
     );
@@ -211,7 +274,7 @@ export const authHandlers = [
       { accessToken },
       {
         headers: {
-          "Set-Cookie": `accessToken=${accessToken}; Path=/; HttpOnly; SameSite=Lax`,
+          "Set-Cookie": buildAccessTokenCookie(accessToken, { sameSite: "Lax" }),
         },
       }
     );
@@ -328,7 +391,7 @@ export const authHandlers = [
       { accessToken },
       {
         headers: {
-          "Set-Cookie": `accessToken=${accessToken}; Path=/; HttpOnly; SameSite=Lax`,
+          "Set-Cookie": buildAccessTokenCookie(accessToken, { sameSite: "Lax" }),
         },
       }
     );
@@ -364,7 +427,7 @@ export const authHandlers = [
       { accessToken },
       {
         headers: {
-          "Set-Cookie": `accessToken=${accessToken}; Path=/; HttpOnly; SameSite=Lax`,
+          "Set-Cookie": buildAccessTokenCookie(accessToken, { sameSite: "Lax" }),
         },
       }
     );
@@ -389,7 +452,7 @@ export const authHandlers = [
       { message: "로그아웃되었습니다." },
       {
         headers: {
-          "Set-Cookie": "accessToken=; Path=/; HttpOnly; Max-Age=0",
+          "Set-Cookie": buildAccessTokenCookie("", { maxAge: 0, sameSite: "Lax" }),
         },
       }
     );

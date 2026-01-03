@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { setCurrentUserId } from "@/mocks/data/users";
 import { useAuthStore } from "@/stores/authStore";
 
 declare global {
   interface Window {
-    __setMockUser?: (userId: number | null) => void;
+    __setMockUser?: (userId: number | null) => Promise<void>;
   }
 }
 
@@ -29,17 +28,37 @@ export function MSWProvider({ children }: { children: React.ReactNode }) {
             const { enableMocking } = await import("@/mocks/browser");
             await enableMocking();
             console.log("🔶 MSW is enabled for development");
+            await useAuthStore.getState().fetchUser();
           } catch (error) {
             console.error("Failed to initialize MSW:", error);
           }
-        }
 
-        if (typeof window !== "undefined") {
-          window.__setMockUser = (userId) => {
-            setCurrentUserId(userId);
-            useAuthStore.getState().fetchUser();
-            console.info("[MSW] currentUserId ->", userId);
-          };
+          if (typeof window !== "undefined") {
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
+
+            window.__setMockUser = async (userId) => {
+              try {
+                const response = await fetch(`${backendUrl}/__msw/auth/set-user`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  credentials: "include",
+                  body: JSON.stringify({ userId }),
+                });
+
+                if (!response.ok) {
+                  const message = await response.text();
+                  throw new Error(message || "Failed to set mock user");
+                }
+
+                await useAuthStore.getState().fetchUser();
+                console.info("[MSW] mock user ->", userId);
+              } catch (error) {
+                console.error("[MSW] Failed to set mock user:", error);
+              }
+            };
+          }
         }
       }
       setIsReady(true);

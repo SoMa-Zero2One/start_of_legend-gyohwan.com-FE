@@ -451,6 +451,20 @@ export function getCurrentUser(): User | null {
   return mockUsers[currentUserId] || null;
 }
 
+const accessTokenUserIdPattern = /^mock-jwt-token-user-(\d+)-/;
+
+export function getUserFromAccessToken(accessToken?: string | null): User | null {
+  if (!accessToken) return null;
+  const match = accessToken.match(accessTokenUserIdPattern);
+  if (!match) return null;
+  const userId = Number(match[1]);
+  return mockUsers[userId] || null;
+}
+
+export function getUserFromRequestCookies(cookies: Record<string, string | undefined>): User | null {
+  return getUserFromAccessToken(cookies.accessToken);
+}
+
 export function findMockUserByEmail(email: string): User | undefined {
   return Object.values(mockUsers).find((user) => user.email?.toLowerCase() === email.toLowerCase());
 }

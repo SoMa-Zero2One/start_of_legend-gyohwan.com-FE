@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { getCurrentUser, mockGpas, mockLanguages } from "../data/users";
+import { getUserFromRequestCookies, mockGpas, mockLanguages } from "../data/users";
 import { mockSeasons, findSeasonById } from "../data/seasons";
 import { mockPastSeasons } from "../data/pastSeasons";
 import { mockSeasonSlots, findSlotById, getSlotChoiceCount } from "../data/slots";
@@ -42,12 +42,15 @@ function getStatusText(status: number): string {
 /**
  * 인증 체크 헬퍼
  */
-function checkAuth() {
-  const user = getCurrentUser();
+function requireAuth(cookies: Record<string, string | undefined>) {
+  const user = getUserFromRequestCookies(cookies);
   if (!user) {
-    return createErrorResponse(401, "Full authentication is required to access this resource", "Unauthorized");
+    return {
+      user: null,
+      error: createErrorResponse(401, "Full authentication is required to access this resource", "Unauthorized"),
+    };
   }
-  return null;
+  return { user, error: null };
 }
 
 /**
@@ -58,7 +61,7 @@ export const seasonHandlers = [
    * GET /v1/seasons
    * 시즌 목록 조회 (인증 선택)
    */
-  http.get(`${BACKEND_URL}/v1/seasons`, ({ request }) => {
+  http.get(`${BACKEND_URL}/v1/seasons`, ({ request, cookies }) => {
     const url = new URL(request.url);
     const expired = url.searchParams.get("expired") === "true";
 
@@ -68,7 +71,7 @@ export const seasonHandlers = [
       });
     }
 
-    const user = getCurrentUser();
+    const user = getUserFromRequestCookies(cookies);
 
     // 사용자별 hasApplied 업데이트
     const seasonsWithApplied = mockSeasons.map((season) => {
@@ -94,7 +97,7 @@ export const seasonHandlers = [
    * 에러 테스트:
    * - 존재하지 않는 seasonId → 404 SEASON_NOT_FOUND
    */
-  http.get(`${BACKEND_URL}/v1/seasons/:seasonId`, ({ params }) => {
+  http.get(`${BACKEND_URL}/v1/seasons/:seasonId`, ({ params, cookies }) => {
     const seasonId = Number(params.seasonId);
     const season = findSeasonById(seasonId);
 
@@ -102,7 +105,7 @@ export const seasonHandlers = [
       return createErrorResponse(404, "시즌을 찾을 수 없습니다.");
     }
 
-    const user = getCurrentUser();
+    const user = getUserFromRequestCookies(cookies);
     const hasApplied = user ? !!findApplicationByUserAndSeason(user.userId, seasonId) : false;
 
     const applicantCount = countApplicantsBySeason(seasonId);
@@ -126,7 +129,7 @@ export const seasonHandlers = [
    * 에러 테스트:
    * - 존재하지 않는 seasonId → 404 SEASON_NOT_FOUND
    */
-  http.get(`${BACKEND_URL}/v1/seasons/:seasonId/slots`, ({ params }) => {
+  http.get(`${BACKEND_URL}/v1/seasons/:seasonId/slots`, ({ params, cookies }) => {
     const seasonId = Number(params.seasonId);
     const season = findSeasonById(seasonId);
 
@@ -134,7 +137,7 @@ export const seasonHandlers = [
       return createErrorResponse(404, "시즌을 찾을 수 없습니다.");
     }
 
-    const user = getCurrentUser();
+    const user = getUserFromRequestCookies(cookies);
     const hasApplied = user ? !!findApplicationByUserAndSeason(user.userId, seasonId) : false;
 
     const applicantCount = countApplicantsBySeason(seasonId);
@@ -181,11 +184,11 @@ export const seasonHandlers = [
    * - 이미 지원한 시즌 → 409 ALREADY_APPLIED
    * - 존재하지 않는 seasonId → 404 SEASON_NOT_FOUND
    */
-  http.get(`${BACKEND_URL}/v1/seasons/:seasonId/eligibility`, ({ params }) => {
-    const authError = checkAuth();
-    if (authError) return authError;
+  http.get(`${BACKEND_URL}/v1/seasons/:seasonId/eligibility`, ({ params, cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
+    const user = auth.user;
 
-    const user = getCurrentUser()!;
     const seasonId = Number(params.seasonId);
     const season = findSeasonById(seasonId);
 
@@ -230,11 +233,11 @@ export const seasonHandlers = [
    * - 존재하지 않는 slotId → 404 SLOT_NOT_FOUND
    * - 이미 지원함 → 409 ALREADY_APPLIED
    */
-  http.post(`${BACKEND_URL}/v1/seasons/:seasonId`, async ({ params, request }) => {
-    const authError = checkAuth();
-    if (authError) return authError;
+  http.post(`${BACKEND_URL}/v1/seasons/:seasonId`, async ({ params, request, cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
+    const user = auth.user;
 
-    const user = getCurrentUser()!;
     const seasonId = Number(params.seasonId);
     const season = findSeasonById(seasonId);
 
@@ -335,11 +338,11 @@ export const seasonHandlers = [
    * - 존재하지 않는 seasonId → 404 SEASON_NOT_FOUND
    * - 지원서 없음 → 404 APPLICATION_NOT_FOUND
    */
-  http.get(`${BACKEND_URL}/v1/seasons/:seasonId/my-application`, ({ params }) => {
-    const authError = checkAuth();
-    if (authError) return authError;
+  http.get(`${BACKEND_URL}/v1/seasons/:seasonId/my-application`, ({ params, cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
+    const user = auth.user;
 
-    const user = getCurrentUser()!;
     const seasonId = Number(params.seasonId);
     const season = findSeasonById(seasonId);
 
@@ -392,11 +395,11 @@ export const seasonHandlers = [
    * - 지원서 없음 → 404 APPLICATION_NOT_FOUND
    * - 존재하지 않는 slotId → 404 SLOT_NOT_FOUND
    */
-  http.put(`${BACKEND_URL}/v1/seasons/:seasonId/my-application`, async ({ params, request }) => {
-    const authError = checkAuth();
-    if (authError) return authError;
+  http.put(`${BACKEND_URL}/v1/seasons/:seasonId/my-application`, async ({ params, request, cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
+    const user = auth.user;
 
-    const user = getCurrentUser()!;
     const seasonId = Number(params.seasonId);
     const season = findSeasonById(seasonId);
 
