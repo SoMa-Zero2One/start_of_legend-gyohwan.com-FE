@@ -29,6 +29,7 @@ export function MSWProvider({ children }: { children: React.ReactNode }) {
             const { enableMocking } = await import("@/mocks/browser");
             await enableMocking();
             console.log("🔶 MSW is enabled for development");
+            await useAuthStore.getState().fetchUser();
           } catch (error) {
             console.error("Failed to initialize MSW:", error);
           }

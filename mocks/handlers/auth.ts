@@ -12,6 +12,26 @@ import {
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
+function buildAccessTokenCookie(
+  accessToken: string,
+  options?: {
+    maxAge?: number;
+    sameSite?: "Lax" | "Strict" | "None";
+  }
+) {
+  const parts = [`accessToken=${accessToken}`, "Path=/"];
+
+  if (options?.sameSite) {
+    parts.push(`SameSite=${options.sameSite}`);
+  }
+
+  if (options?.maxAge !== undefined) {
+    parts.push(`Max-Age=${options.maxAge}`);
+  }
+
+  return parts.join("; ");
+}
+
 /**
  * ProblemDetail 에러 응답 생성 헬퍼
  */
@@ -159,7 +179,7 @@ export const authHandlers = [
       { accessToken },
       {
         headers: {
-          "Set-Cookie": `accessToken=${accessToken}; Path=/; HttpOnly; SameSite=Lax`,
+          "Set-Cookie": buildAccessTokenCookie(accessToken, { sameSite: "Lax" }),
         },
       }
     );
@@ -210,7 +230,7 @@ export const authHandlers = [
       { accessToken },
       {
         headers: {
-          "Set-Cookie": `accessToken=${accessToken}; Path=/; HttpOnly; SameSite=Lax`,
+          "Set-Cookie": buildAccessTokenCookie(accessToken, { sameSite: "Lax" }),
         },
       }
     );
@@ -327,7 +347,7 @@ export const authHandlers = [
       { accessToken },
       {
         headers: {
-          "Set-Cookie": `accessToken=${accessToken}; Path=/; HttpOnly; SameSite=Lax`,
+          "Set-Cookie": buildAccessTokenCookie(accessToken, { sameSite: "Lax" }),
         },
       }
     );
@@ -363,7 +383,7 @@ export const authHandlers = [
       { accessToken },
       {
         headers: {
-          "Set-Cookie": `accessToken=${accessToken}; Path=/; HttpOnly; SameSite=Lax`,
+          "Set-Cookie": buildAccessTokenCookie(accessToken, { sameSite: "Lax" }),
         },
       }
     );
@@ -380,7 +400,7 @@ export const authHandlers = [
       { message: "로그아웃되었습니다." },
       {
         headers: {
-          "Set-Cookie": "accessToken=; Path=/; HttpOnly; Max-Age=0",
+          "Set-Cookie": buildAccessTokenCookie("", { maxAge: 0 }),
         },
       }
     );

@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import {
-  getCurrentUser,
+  getUserFromRequestCookies,
   mockUsers,
   mockGpas,
   mockLanguages,
@@ -40,12 +40,15 @@ function getStatusText(status: number): string {
 /**
  * 인증 체크 헬퍼
  */
-function checkAuth() {
-  const user = getCurrentUser();
+function requireAuth(cookies: Record<string, string | undefined>) {
+  const user = getUserFromRequestCookies(cookies);
   if (!user) {
-    return createErrorResponse(401, "로그인이 필요한 요청입니다.", "Unauthorized");
+    return {
+      user: null,
+      error: createErrorResponse(401, "로그인이 필요한 요청입니다.", "Unauthorized"),
+    };
   }
-  return null; // 인증 성공
+  return { user, error: null };
 }
 
 /**
@@ -59,11 +62,10 @@ export const userHandlers = [
    * 에러 테스트:
    * - 로그인하지 않은 상태 → 401 Unauthorized
    */
-  http.get(`${BACKEND_URL}/v1/users/me`, () => {
-    const authError = checkAuth();
-    if (authError) return authError;
-
-    const user = getCurrentUser()!;
+  http.get(`${BACKEND_URL}/v1/users/me`, ({ cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
+    const user = auth.user;
 
     return HttpResponse.json({
       userId: user.userId,
@@ -85,11 +87,11 @@ export const userHandlers = [
    * 에러 테스트:
    * - 로그인하지 않은 상태 → 401 Unauthorized
    */
-  http.get(`${BACKEND_URL}/v1/users/me/gpas`, () => {
-    const authError = checkAuth();
-    if (authError) return authError;
+  http.get(`${BACKEND_URL}/v1/users/me/gpas`, ({ cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
+    const user = auth.user;
 
-    const user = getCurrentUser()!;
     const gpas = mockGpas[user.userId] || [];
 
     return HttpResponse.json({
@@ -107,11 +109,11 @@ export const userHandlers = [
    * - score 또는 criteria 누락 → 400 Bean Validation
    * - score가 0 이하 → 400 Bean Validation
    */
-  http.post(`${BACKEND_URL}/v1/users/me/gpas`, async ({ request }) => {
-    const authError = checkAuth();
-    if (authError) return authError;
+  http.post(`${BACKEND_URL}/v1/users/me/gpas`, async ({ request, cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
+    const user = auth.user;
 
-    const user = getCurrentUser()!;
     const body = (await request.json()) as { score: number; criteria: number };
 
     // Validation
@@ -155,11 +157,11 @@ export const userHandlers = [
    * GET /v1/users/me/languages
    * 내 어학 성적 목록 조회
    */
-  http.get(`${BACKEND_URL}/v1/users/me/languages`, () => {
-    const authError = checkAuth();
-    if (authError) return authError;
+  http.get(`${BACKEND_URL}/v1/users/me/languages`, ({ cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
+    const user = auth.user;
 
-    const user = getCurrentUser()!;
     const languages = mockLanguages[user.userId] || [];
 
     return HttpResponse.json({
@@ -176,11 +178,11 @@ export const userHandlers = [
    * - testType 누락 → 400 Bean Validation
    * - 지원하지 않는 testType → 400 INVALID_LANGUAGE_TEST_TYPE
    */
-  http.post(`${BACKEND_URL}/v1/users/me/languages`, async ({ request }) => {
-    const authError = checkAuth();
-    if (authError) return authError;
+  http.post(`${BACKEND_URL}/v1/users/me/languages`, async ({ request, cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
+    const user = auth.user;
 
-    const user = getCurrentUser()!;
     const body = (await request.json()) as {
       testType: string;
       score?: string;
@@ -225,10 +227,10 @@ export const userHandlers = [
    * - currentPassword가 틀린 경우 → 400 PASSWORD_CHANGE_FAILED
    * - newPassword가 8자 미만 → 400 INVALID_PASSWORD_FORMAT
    * - 필드 누락 → 400 Bean Validation
-   */
-  http.post(`${BACKEND_URL}/v1/users/me/password`, async ({ request }) => {
-    const authError = checkAuth();
-    if (authError) return authError;
+  */
+  http.post(`${BACKEND_URL}/v1/users/me/password`, async ({ request, cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
 
     const body = (await request.json()) as {
       currentPassword: string;
@@ -266,12 +268,12 @@ export const userHandlers = [
    * - unsupported@wrongdomain.com → 400 SCHOOL_EMAIL_DOMAIN_NOT_SUPPORTED
    * - 이미 인증된 유저 → 409 SCHOOL_EMAIL_ALREADY_VERIFIED
    * - 빈 이메일 → 400 Bean Validation
-   */
-  http.post(`${BACKEND_URL}/v1/users/me/school-email`, async ({ request }) => {
-    const authError = checkAuth();
-    if (authError) return authError;
+  */
+  http.post(`${BACKEND_URL}/v1/users/me/school-email`, async ({ request, cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
+    const user = auth.user;
 
-    const user = getCurrentUser()!;
     const body = (await request.json()) as { schoolEmail: string };
 
     // Validation
@@ -310,12 +312,12 @@ export const userHandlers = [
    * - 잘못된 코드 → 400 SCHOOL_EMAIL_CONFIRM_CODE_DIFFERENT
    * - 만료된 코드 → 400 SCHOOL_EMAIL_CONFIRM_REQUEST_NOT_FOUND
    * - 빈 코드 → 400 Bean Validation
-   */
-  http.post(`${BACKEND_URL}/v1/users/me/school-email/confirm`, async ({ request }) => {
-    const authError = checkAuth();
-    if (authError) return authError;
+  */
+  http.post(`${BACKEND_URL}/v1/users/me/school-email/confirm`, async ({ request, cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
+    const user = auth.user;
 
-    const user = getCurrentUser()!;
     const body = (await request.json()) as { code: string };
 
     // Validation
@@ -351,12 +353,11 @@ export const userHandlers = [
   /**
    * DELETE /v1/users/me/withdraw
    * 회원 탈퇴
-   */
-  http.delete(`${BACKEND_URL}/v1/users/me/withdraw`, () => {
-    const authError = checkAuth();
-    if (authError) return authError;
-
-    const user = getCurrentUser()!;
+  */
+  http.delete(`${BACKEND_URL}/v1/users/me/withdraw`, ({ cookies }) => {
+    const auth = requireAuth(cookies);
+    if (auth.error) return auth.error;
+    const user = auth.user;
 
     // Mock 데이터에서 유저 삭제
     delete mockUsers[user.userId];
