@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import {
   mockCredentials,
+  mockUsers,
   mockSignupVerificationCodes,
   mockPasswordResetCodes,
   SIGNUP_VERIFICATION_CODE,
@@ -29,6 +30,7 @@ function buildAccessTokenCookie(
     parts.push(`Max-Age=${options.maxAge}`);
   }
 
+  parts.push("HttpOnly");
   return parts.join("; ");
 }
 
@@ -88,6 +90,47 @@ export const authHandlers = [
     const exists = normalizedEmail in mockCredentials;
 
     return HttpResponse.json({ exists });
+  }),
+
+  /**
+   * POST /__msw/auth/set-user
+   * 개발용: userId로 로그인 상태 전환
+   */
+  http.post(`${BACKEND_URL}/__msw/auth/set-user`, async ({ request }) => {
+    const body = (await request.json()) as { userId?: number | null };
+
+    if (body.userId === null) {
+      setCurrentUserId(null);
+      return HttpResponse.json(
+        { userId: null },
+        {
+          headers: {
+            "Set-Cookie": buildAccessTokenCookie("", { maxAge: 0, sameSite: "Lax" }),
+          },
+        }
+      );
+    }
+
+    if (typeof body.userId !== "number") {
+      return createErrorResponse(400, "userId가 필요합니다.");
+    }
+
+    const user = mockUsers[body.userId];
+    if (!user) {
+      return createErrorResponse(404, "사용자를 찾을 수 없습니다.");
+    }
+
+    const accessToken = generateMockToken(body.userId);
+    setCurrentUserId(body.userId);
+
+    return HttpResponse.json(
+      { userId: body.userId, accessToken },
+      {
+        headers: {
+          "Set-Cookie": buildAccessTokenCookie(accessToken, { sameSite: "Lax" }),
+        },
+      }
+    );
   }),
 
   /**
