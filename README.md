@@ -15,7 +15,7 @@
 #### 1. API 호출을 통해 캐시 무효화
 
 ```bash
-curl -X POST "https://gyohwan.com/api/revalidate?secret=YOUR_SECRET"
+curl -X POST "https://www.gyohwan.com/api/revalidate?secret=YOUR_SECRET"
 ```
 
 **응답 예시:**
