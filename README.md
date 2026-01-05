@@ -1,8 +1,10 @@
 ## 📦 ISR 캐싱 및 On-demand Revalidation
 
-홈페이지(`/`)는 **24시간마다 자동으로 재생성**되는 ISR(Incremental Static Regeneration) 캐싱이 적용되어 있습니다.
+홈페이지(`/`)는 **12시간마다 자동으로 재생성**되는 ISR(Incremental Static Regeneration) 캐싱이 적용되어 있습니다.
 
-### 자동 재생성 (24시간마다)
+- 지원서 제출 시에도 적용이 됩니다.
+
+### 자동 재생성 (12시간마다)
 
 - 첫 빌드 시 정적 페이지 생성
 - 이후 24시간 동안 캐시된 HTML 제공 (초고속)
