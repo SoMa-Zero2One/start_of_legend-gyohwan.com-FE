@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import HeaderAuthSection from "@/components/layout/HeaderAuthSection";
@@ -13,22 +13,22 @@ import PencilIcon from "@/components/icons/PencilIcon";
 import ExternalLinkIcon from "@/components/icons/ExternalLinkIcon";
 import { useIsDesktop } from "@/lib/hooks/useMediaQuery";
 import { getApplicationDetail, getMyApplication, getSeasonSlots } from "@/lib/api/slot";
-import { checkEligibility } from "@/lib/api/season";
 import { handleApiError } from "@/lib/utils/apiError";
-import { setToastMessage } from "@/lib/utils/toastStorage";
 import { trackEvent } from "@/lib/analytics/gtag";
 import { ApplicationDetailResponse, MyApplicationResponse, SeasonSlotsResponse } from "@/types/slot";
 import Footer from "@/components/layout/Footer";
 import { GRADE_CORRECTION_FORM_URL } from "@/lib/constants/externalLinks";
-import { useAuthStore } from "@/stores/authStore";
+import { useEligibilityGuard } from "@/hooks/useEligibilityGuard";
+import { useToast } from "@/hooks/useToast";
+import Toast from "@/components/common/Toast";
 
 export default function ApplicationDetailPage() {
   const params = useParams();
   const router = useRouter();
   const seasonId = parseInt(params.seasonId as string);
   const applicationId = parseInt(params.applicationId as string);
-  const { user, isLoggedIn, isLoading: isAuthLoading } = useAuthStore();
-  const isCheckingEligibilityRef = useRef(false);
+  const { guardEligibility } = useEligibilityGuard();
+  const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
   const [data, setData] = useState<ApplicationDetailResponse | null>(null);
   const [myApplication, setMyApplication] = useState<MyApplicationResponse | null>(null);
@@ -86,27 +86,14 @@ export default function ApplicationDetailPage() {
   }, [applicationId, seasonId]);
 
   // CTA 버튼 클릭 핸들러
-  // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
-  const handleCTAClick = async () => {
+  // 로그인/학교인증은 Layout에서 체크하고, 여기서는 eligibility만 사전 확인
+  const handleCTAClick = () => {
     trackEvent("cta_click", overlayCtaParams);
-
-    if (isCheckingEligibilityRef.current) return;
-
-    if (!isAuthLoading && isLoggedIn && user?.schoolVerified) {
-      isCheckingEligibilityRef.current = true;
-      try {
-        await checkEligibility(seasonId);
-      } catch (error) {
-        const errorMessage = handleApiError(error) || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
-        setToastMessage({ message: errorMessage, type: "error", seasonId });
-        router.replace(`/strategy-room/${seasonId}?toast=true`);
-        return;
-      } finally {
-        isCheckingEligibilityRef.current = false;
-      }
-    }
-
-    router.push(`/strategy-room/${seasonId}/applications/new`);
+    void guardEligibility(seasonId, () => {
+      router.push(`/strategy-room/${seasonId}/applications/new`);
+    }, {
+      onFail: (message) => showMessage(message, "error"),
+    });
   };
 
   if (isLoading) {
@@ -260,6 +247,7 @@ export default function ApplicationDetailPage() {
           <Footer />
         </>
       )}
+      <Toast message={message} type={messageType} isExiting={isExiting} onClose={hideToast} />
     </div>
   );
 }
