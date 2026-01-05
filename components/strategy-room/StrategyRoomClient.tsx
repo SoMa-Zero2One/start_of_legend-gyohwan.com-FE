@@ -16,9 +16,12 @@ import SearchIcon from "@/components/icons/SearchIcon";
 import ExternalLinkIcon from "@/components/icons/ExternalLinkIcon";
 import { useIsDesktop } from "@/lib/hooks/useMediaQuery";
 import { getSeasonSlots, getMyApplication } from "@/lib/api/slot";
+import { checkEligibility } from "@/lib/api/season";
 import { handleApiError } from "@/lib/utils/apiError";
+import { consumeToastMessage, setToastMessage } from "@/lib/utils/toastStorage";
 import { trackEvent } from "@/lib/analytics/gtag";
 import { GRADE_CORRECTION_FORM_URL } from "@/lib/constants/externalLinks";
+import { useAuthStore } from "@/stores/authStore";
 import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
 import { useToast } from "@/hooks/useToast";
 
@@ -47,10 +50,11 @@ export default function StrategyRoomClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
-  const reason = searchParams.get("reason");
+  const toastParam = searchParams.get("toast");
   const tabFromUrl = TAB_OPTIONS.find((tab) => tab === tabParam) ?? null;
   const seasonId = params.seasonId as string;
   const isDesktop = useIsDesktop();
+  const { user, isLoggedIn, isLoading: isAuthLoading } = useAuthStore();
 
   const [data, setData] = useState<SeasonSlotsResponse | null>(null);
   const [myApplication, setMyApplication] = useState<MyApplicationResponse | null>(null);
@@ -61,7 +65,8 @@ export default function StrategyRoomClient() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
   const hasTrackedPageViewRef = useRef(false);
-  const hasShownReasonRef = useRef(false);
+  const hasShownToastRef = useRef(false);
+  const isCheckingEligibilityRef = useRef(false);
   const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
   // 탭 변경 핸들러 (URL 업데이트 포함)
@@ -148,18 +153,20 @@ export default function StrategyRoomClient() {
   }, [initialTab]);
 
   useEffect(() => {
-    if (!reason || hasShownReasonRef.current) return;
-    if (reason !== "not-eligible") return;
+    if (!toastParam || hasShownToastRef.current) return;
 
-    showMessage("해당 학교는 참여할 수 없습니다.", "error");
-    hasShownReasonRef.current = true;
+    const payload = consumeToastMessage();
+    if (payload && (!payload.seasonId || payload.seasonId === Number(seasonId))) {
+      showMessage(payload.message, payload.type ?? "error");
+    }
+    hasShownToastRef.current = true;
 
     const params = new URLSearchParams(searchParams.toString());
-    params.delete("reason");
+    params.delete("toast");
     const nextQuery = params.toString();
     const nextUrl = nextQuery ? `/strategy-room/${seasonId}?${nextQuery}` : `/strategy-room/${seasonId}`;
     router.replace(nextUrl, { scroll: false });
-  }, [reason, searchParams, router, seasonId, showMessage]);
+  }, [toastParam, searchParams, router, seasonId, showMessage]);
 
   useEffect(() => {
     if (!data) return;
@@ -232,8 +239,25 @@ export default function StrategyRoomClient() {
 
   // CTA 버튼 클릭 핸들러
   // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
-  const handleCTAClick = () => {
+  const handleCTAClick = async () => {
     trackEvent("cta_click", overlayCtaParams);
+
+    if (isCheckingEligibilityRef.current) return;
+
+    if (!isAuthLoading && isLoggedIn && user?.schoolVerified) {
+      isCheckingEligibilityRef.current = true;
+      try {
+        await checkEligibility(Number(seasonId));
+      } catch (error) {
+        const errorMessage = handleApiError(error) || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
+        setToastMessage({ message: errorMessage, type: "error", seasonId: Number(seasonId) });
+        router.replace(`/strategy-room/${seasonId}?toast=true`);
+        return;
+      } finally {
+        isCheckingEligibilityRef.current = false;
+      }
+    }
+
     router.push(`/strategy-room/${seasonId}/applications/new`);
   };
 

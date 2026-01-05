@@ -15,6 +15,7 @@ import { checkEligibility } from "@/lib/api/season";
 import { submitApplication } from "@/lib/api/application";
 import { revalidateHomePage } from "@/app/actions/home";
 import { handleApiError } from "@/lib/utils/apiError";
+import { setToastMessage } from "@/lib/utils/toastStorage";
 import { trackEvent } from "@/lib/analytics/gtag";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 import { useModalHistory } from "@/hooks/useModalHistory";
@@ -90,7 +91,8 @@ function ApplicationNewContent() {
           await checkEligibility(seasonId);
         } catch (error) {
           const errorMessage = handleApiError(error) || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
-          router.replace(`/strategy-room/${seasonId}?reason=not-eligible`);
+          setToastMessage({ message: errorMessage, type: "error", seasonId });
+          router.replace(`/strategy-room/${seasonId}?toast=true`);
           return;
         }
 

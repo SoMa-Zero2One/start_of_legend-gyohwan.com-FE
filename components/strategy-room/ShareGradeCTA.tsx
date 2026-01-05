@@ -3,6 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { trackEvent } from "@/lib/analytics/gtag";
+import { checkEligibility } from "@/lib/api/season";
+import { handleApiError } from "@/lib/utils/apiError";
+import { setToastMessage } from "@/lib/utils/toastStorage";
+import { useAuthStore } from "@/stores/authStore";
 
 interface ShareGradeCTAProps {
   seasonId: string;
@@ -18,8 +22,10 @@ export default function ShareGradeCTA({
   tooltipMessage,
 }: ShareGradeCTAProps) {
   const router = useRouter();
+  const { user, isLoggedIn, isLoading: isAuthLoading } = useAuthStore();
   const [opacity, setOpacity] = useState(1);
   const footerRef = useRef<HTMLElement | null>(null);
+  const isCheckingEligibilityRef = useRef(false);
   const ctaParams = {
     cta_id: "grade_share_cta_bottom_bar",
     cta_location: "grade_share_page",
@@ -59,8 +65,25 @@ export default function ShareGradeCTA({
   }, []);
 
   // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
-  const handleClick = () => {
+  const handleClick = async () => {
     trackEvent("cta_click", ctaParams);
+
+    if (isCheckingEligibilityRef.current) return;
+
+    if (!isAuthLoading && isLoggedIn && user?.schoolVerified) {
+      isCheckingEligibilityRef.current = true;
+      try {
+        await checkEligibility(Number(seasonId));
+      } catch (error) {
+        const errorMessage = handleApiError(error) || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
+        setToastMessage({ message: errorMessage, type: "error", seasonId: Number(seasonId) });
+        router.replace(`/strategy-room/${seasonId}?toast=true`);
+        return;
+      } finally {
+        isCheckingEligibilityRef.current = false;
+      }
+    }
+
     router.push(`/strategy-room/${seasonId}/applications/new`);
   };
 
