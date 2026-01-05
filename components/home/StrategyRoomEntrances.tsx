@@ -1,8 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Season } from "@/types/season";
 import { useAuthStore } from "@/stores/authStore";
+import { checkEligibility } from "@/lib/api/season";
+import { handleApiError } from "@/lib/utils/apiError";
+import { trackEvent } from "@/lib/analytics/gtag";
+import { useToast } from "@/hooks/useToast";
+import Toast from "@/components/common/Toast";
 import StrategyRoomCard from "./StrategyRoomCard";
 import PastSeasonCard from "./PastSeasonCard";
 
@@ -12,9 +18,12 @@ interface StrategyRoomEntrancesProps {
 }
 
 export default function StrategyRoomEntrances({ initialSeasons, initialPastSeasons }: StrategyRoomEntrancesProps) {
-  const { user } = useAuthStore();
+  const router = useRouter();
+  const { user, isLoggedIn, isLoading: isAuthLoading } = useAuthStore();
   const [activeTab, setActiveTab] = useState<"current" | "past">("current");
   const [pastSeasons, setPastSeasons] = useState<Season[]>(initialPastSeasons);
+  const { message, messageType, isExiting, showMessage, hideToast } = useToast();
+  const isCheckingEligibilityRef = useRef(false);
 
   useEffect(() => {
     if (initialPastSeasons.length > 0) {
@@ -100,6 +109,36 @@ export default function StrategyRoomEntrances({ initialSeasons, initialPastSeaso
     return sum + (season.applicationCount ?? 0);
   }, 0);
 
+  const handleShareClick = async (season: Season) => {
+    const shareCtaParams = {
+      cta_id: "grade_share_cta_card",
+      cta_location: "home_strategy_card",
+      cta_label: "성적 공유하기",
+      season_id: season.seasonId,
+      season_name: season.name ?? undefined,
+      entry_point: "home_card",
+    };
+
+    trackEvent("cta_click", shareCtaParams);
+
+    if (isCheckingEligibilityRef.current) return;
+
+    if (!isAuthLoading && isLoggedIn && user?.schoolVerified) {
+      isCheckingEligibilityRef.current = true;
+      try {
+        await checkEligibility(season.seasonId);
+      } catch (error) {
+        const errorMessage = handleApiError(error) || "해당 학교는 참여할 수 없습니다.";
+        showMessage(errorMessage, "error");
+        return;
+      } finally {
+        isCheckingEligibilityRef.current = false;
+      }
+    }
+
+    router.push(`/strategy-room/${season.seasonId}/applications/new`);
+  };
+
   return (
     <div id="strategy-room-entrances" className="relative flex flex-col gap-[40px] px-[20px] pb-[100px]">
       {/* 헤더 */}
@@ -142,9 +181,13 @@ export default function StrategyRoomEntrances({ initialSeasons, initialPastSeaso
       {/* 카드 리스트 */}
       <div className="grid grid-cols-1 gap-[12px] md:grid-cols-2 xl:grid-cols-3">
         {activeTab === "current"
-          ? sortedSeasons.map((season) => <StrategyRoomCard key={season.seasonId} data={season} />)
+          ? sortedSeasons.map((season) => (
+              <StrategyRoomCard key={season.seasonId} data={season} onShareClick={handleShareClick} />
+            ))
           : sortedPastSeasons.map((season) => <PastSeasonCard key={season.seasonId} data={season} />)}
       </div>
+
+      <Toast message={message} type={messageType} isExiting={isExiting} onClose={hideToast} />
     </div>
   );
 }

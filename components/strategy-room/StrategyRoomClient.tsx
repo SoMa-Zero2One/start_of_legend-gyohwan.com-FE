@@ -11,6 +11,7 @@ import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
 import StrategyRoomPageSkeleton from "@/components/strategy-room/StrategyRoomPageSkeleton";
 import Tabs from "@/components/common/Tabs";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
+import Toast from "@/components/common/Toast";
 import SearchIcon from "@/components/icons/SearchIcon";
 import ExternalLinkIcon from "@/components/icons/ExternalLinkIcon";
 import { useIsDesktop } from "@/lib/hooks/useMediaQuery";
@@ -19,6 +20,7 @@ import { handleApiError } from "@/lib/utils/apiError";
 import { trackEvent } from "@/lib/analytics/gtag";
 import { GRADE_CORRECTION_FORM_URL } from "@/lib/constants/externalLinks";
 import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
+import { useToast } from "@/hooks/useToast";
 
 const TAB_OPTIONS = ["지망한 대학", "지원자가 있는 대학", "모든 대학"] as const;
 type TabType = (typeof TAB_OPTIONS)[number];
@@ -45,6 +47,7 @@ export default function StrategyRoomClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
+  const reason = searchParams.get("reason");
   const tabFromUrl = TAB_OPTIONS.find((tab) => tab === tabParam) ?? null;
   const seasonId = params.seasonId as string;
   const isDesktop = useIsDesktop();
@@ -58,6 +61,8 @@ export default function StrategyRoomClient() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
   const hasTrackedPageViewRef = useRef(false);
+  const hasShownReasonRef = useRef(false);
+  const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
   // 탭 변경 핸들러 (URL 업데이트 포함)
   const handleTabChange = (tab: TabType) => {
@@ -141,6 +146,20 @@ export default function StrategyRoomClient() {
   useEffect(() => {
     setSelectedTab(initialTab);
   }, [initialTab]);
+
+  useEffect(() => {
+    if (!reason || hasShownReasonRef.current) return;
+    if (reason !== "not-eligible") return;
+
+    showMessage("해당 학교는 참여할 수 없습니다.", "error");
+    hasShownReasonRef.current = true;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("reason");
+    const nextQuery = params.toString();
+    const nextUrl = nextQuery ? `/strategy-room/${seasonId}?${nextQuery}` : `/strategy-room/${seasonId}`;
+    router.replace(nextUrl, { scroll: false });
+  }, [reason, searchParams, router, seasonId, showMessage]);
 
   useEffect(() => {
     if (!data) return;
@@ -381,6 +400,8 @@ export default function StrategyRoomClient() {
       </div>
 
       <Footer />
+
+      <Toast message={message} type={messageType} isExiting={isExiting} onClose={hideToast} />
     </>
   );
 }
