@@ -4,7 +4,6 @@ import { Suspense, useEffect, useState, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import ProgressBar from "@/components/common/ProgressBar";
-import ConfirmModal from "@/components/common/ConfirmModal";
 import GradeRegistrationStep from "@/components/application/GradeRegistrationStep";
 import UniversitySelectionStep from "@/components/application/UniversitySelectionStep";
 import UniversitySearchModal from "@/components/application/UniversitySearchModal";
@@ -16,6 +15,7 @@ import { checkEligibility } from "@/lib/api/season";
 import { submitApplication } from "@/lib/api/application";
 import { revalidateHomePage } from "@/app/actions/home";
 import { handleApiError } from "@/lib/utils/apiError";
+import { setToastMessage } from "@/lib/utils/toastStorage";
 import { trackEvent } from "@/lib/analytics/gtag";
 import { useFormErrorHandler } from "@/hooks/useFormErrorHandler";
 import { useModalHistory } from "@/hooks/useModalHistory";
@@ -51,8 +51,6 @@ function ApplicationNewContent() {
   // 모달 히스토리 관리
   const universitySearch = useModalHistory({ modalKey: "university-search" });
   const submit = useModalHistory({ modalKey: "submit" });
-  const eligibility = useModalHistory({ modalKey: "eligibility" });
-  const [eligibilityErrorMessage, setEligibilityErrorMessage] = useState("");
 
   // 대학 선택 관리
   const [selectedUniversities, setSelectedUniversities] = useState<SelectedUniversity[]>([]);
@@ -92,11 +90,9 @@ function ApplicationNewContent() {
         try {
           await checkEligibility(seasonId);
         } catch (error) {
-          // 지원 불가(403 등) → 모달 표시
-          const errorMessage =
-            handleApiError(error) || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
-          setEligibilityErrorMessage(errorMessage);
-          eligibility.openModal();
+          const errorMessage = handleApiError(error) || "해당 시즌은 귀하의 학교에서 지원할 수 없습니다.";
+          setToastMessage({ message: errorMessage, type: "error", seasonId });
+          router.replace(`/strategy-room/${seasonId}?toast=true`);
           return;
         }
 
@@ -141,10 +137,7 @@ function ApplicationNewContent() {
     };
 
     checkApplicationStatus();
-    // eligibility는 useModalHistory 반환 객체로 매 렌더마다 재생성되므로
-    // 의존성에 추가하면 무한 루프 발생. eligibility.openModal()은 조건부로
-    // 한 번만 실행되고 return으로 빠져나가므로 실제로는 안전함.
-    // showMessage 역시 커스텀 훅에서 생성된 함수라 dependency에 추가하지 않음.
+    // showMessage는 커스텀 훅에서 생성된 함수라 dependency에 추가하지 않음.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seasonId, router, step]);
 
@@ -153,7 +146,6 @@ function ApplicationNewContent() {
     if (step !== "grade-registration") return;
     if (hasApplied === null) return;
     if (hasApplied) return;
-    if (eligibilityErrorMessage) return;
     if (hasTrackedStartRef.current) return;
     if (typeof window !== "undefined") {
       try {
@@ -177,18 +169,7 @@ function ApplicationNewContent() {
       }
       hasTrackedStartRef.current = true;
     }
-  }, [eligibilityErrorMessage, hasApplied, isLoading, seasonId, seasonName, gradeShareStartSessionKey, step]);
-
-  // Eligibility 모달이 닫히면 전략방으로 리다이렉트
-  // (뒤로 가기로 모달만 닫고 페이지에 남아있는 경우 방지)
-  useEffect(() => {
-    const modal = searchParams.get("modal");
-
-    // eligibilityErrorMessage가 있는데 modal이 없으면 = 모달이 닫힌 상태
-    if (eligibilityErrorMessage && modal !== "eligibility") {
-      router.replace(`/strategy-room/${seasonId}`);
-    }
-  }, [searchParams, eligibilityErrorMessage, seasonId, router]);
+  }, [hasApplied, isLoading, seasonId, seasonName, gradeShareStartSessionKey, step]);
 
   // sessionStorage 키
   const STORAGE_KEY = `gyohwan_selected_universities_${seasonId}`;
@@ -519,22 +500,6 @@ function ApplicationNewContent() {
           )}
         </>
       )}
-
-      {/* 지원 불가 모달 */}
-      <ConfirmModal
-        isOpen={eligibility.isOpen}
-        title="지원할 수 없습니다"
-        message={eligibilityErrorMessage}
-        confirmText="확인"
-        onConfirm={() => {
-          eligibility.closeModal({ skipNavigation: true });
-          router.replace(`/strategy-room/${seasonId}`);
-        }}
-        onCancel={() => {
-          eligibility.closeModal({ skipNavigation: true });
-          router.replace(`/strategy-room/${seasonId}`);
-        }}
-      />
     </div>
   );
 }

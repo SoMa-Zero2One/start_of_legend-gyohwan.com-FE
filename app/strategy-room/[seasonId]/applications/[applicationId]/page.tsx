@@ -18,12 +18,17 @@ import { trackEvent } from "@/lib/analytics/gtag";
 import { ApplicationDetailResponse, MyApplicationResponse, SeasonSlotsResponse } from "@/types/slot";
 import Footer from "@/components/layout/Footer";
 import { GRADE_CORRECTION_FORM_URL } from "@/lib/constants/externalLinks";
+import { useEligibilityGuard } from "@/hooks/useEligibilityGuard";
+import { useToast } from "@/hooks/useToast";
+import Toast from "@/components/common/Toast";
 
 export default function ApplicationDetailPage() {
   const params = useParams();
   const router = useRouter();
   const seasonId = parseInt(params.seasonId as string);
   const applicationId = parseInt(params.applicationId as string);
+  const { guardEligibility } = useEligibilityGuard();
+  const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
   const [data, setData] = useState<ApplicationDetailResponse | null>(null);
   const [myApplication, setMyApplication] = useState<MyApplicationResponse | null>(null);
@@ -81,10 +86,14 @@ export default function ApplicationDetailPage() {
   }, [applicationId, seasonId]);
 
   // CTA 버튼 클릭 핸들러
-  // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
+  // 로그인/학교인증은 Layout에서 체크하고, 여기서는 eligibility만 사전 확인
   const handleCTAClick = () => {
     trackEvent("cta_click", overlayCtaParams);
-    router.push(`/strategy-room/${seasonId}/applications/new`);
+    void guardEligibility(seasonId, () => {
+      router.push(`/strategy-room/${seasonId}/applications/new`);
+    }, {
+      onFail: (message) => showMessage(message, "error"),
+    });
   };
 
   if (isLoading) {
@@ -238,6 +247,7 @@ export default function ApplicationDetailPage() {
           <Footer />
         </>
       )}
+      <Toast message={message} type={messageType} isExiting={isExiting} onClose={hideToast} />
     </div>
   );
 }

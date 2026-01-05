@@ -1,41 +1,25 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Season } from "@/types/season";
 import { calculateDDay, formatDate } from "@/lib/utils/date";
-import { trackEvent } from "@/lib/analytics/gtag";
 import SchoolLogoWithFallback from "@/components/common/SchoolLogoWithFallback";
 
 interface StrategyRoomCardProps {
   data: Season;
+  onShareClick: (season: Season) => void;
 }
 
-export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
+export default function StrategyRoomCard({ data, onShareClick }: StrategyRoomCardProps) {
   const { seasonId, domesticUniversity, domesticUniversityLogoUri, applicationCount, startDate, endDate } = data;
-  const router = useRouter();
 
   // null 안전 처리
   const safeDomesticUniversity = domesticUniversity ?? "대학교";
-  const shareCtaParams = {
-    cta_id: "grade_share_cta_card",
-    cta_location: "home_strategy_card",
-    cta_label: "성적 공유하기",
-    season_id: seasonId,
-    season_name: data.name ?? undefined,
-    entry_point: "home_card",
-  };
 
   // 날짜 포맷 (yyyy.mm.dd ~ yyyy.mm.dd)
   const formattedDate = startDate && endDate ? `${formatDate(startDate)} ~ ${formatDate(endDate)}` : "일정 미정";
 
   // D-Day 계산 (마감일 기준)
   const dDay = endDate ? calculateDDay(endDate) : null;
-
-  // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
-  const handleShareClick = () => {
-    trackEvent("cta_click", shareCtaParams);
-    router.push(`/strategy-room/${seasonId}/applications/new`);
-  };
 
   return (
     <div className="flex w-full flex-col gap-[20px] rounded-[16px] border border-gray-300 p-[20px]">
@@ -78,7 +62,7 @@ export default function StrategyRoomCard({ data }: StrategyRoomCardProps) {
           </button>
         </Link>
         <button
-          onClick={handleShareClick}
+          onClick={() => onShareClick(data)}
           className="bg-primary-blue/15 text-primary-blue flex-1 cursor-pointer rounded-full py-[8px]"
         >
           성적 공유하기

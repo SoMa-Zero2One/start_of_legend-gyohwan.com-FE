@@ -3,6 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { trackEvent } from "@/lib/analytics/gtag";
+import { useEligibilityGuard } from "@/hooks/useEligibilityGuard";
+import { useToast } from "@/hooks/useToast";
+import Toast from "@/components/common/Toast";
 
 interface ShareGradeCTAProps {
   seasonId: string;
@@ -18,6 +21,8 @@ export default function ShareGradeCTA({
   tooltipMessage,
 }: ShareGradeCTAProps) {
   const router = useRouter();
+  const { guardEligibility } = useEligibilityGuard();
+  const { message, messageType, isExiting, showMessage, hideToast } = useToast();
   const [opacity, setOpacity] = useState(1);
   const footerRef = useRef<HTMLElement | null>(null);
   const ctaParams = {
@@ -58,10 +63,14 @@ export default function ShareGradeCTA({
     };
   }, []);
 
-  // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
+  // 로그인/학교인증은 Layout에서 체크하고, 여기서는 eligibility만 사전 확인
   const handleClick = () => {
     trackEvent("cta_click", ctaParams);
-    router.push(`/strategy-room/${seasonId}/applications/new`);
+    void guardEligibility(Number(seasonId), () => {
+      router.push(`/strategy-room/${seasonId}/applications/new`);
+    }, {
+      onFail: (message) => showMessage(message, "error"),
+    });
   };
 
   if (opacity === 0) return null;
@@ -90,6 +99,8 @@ export default function ShareGradeCTA({
       >
         성적 공유하고 전체 확인하기 🚀
       </button>
+
+      <Toast message={message} type={messageType} isExiting={isExiting} onClose={hideToast} />
     </div>
   );
 }

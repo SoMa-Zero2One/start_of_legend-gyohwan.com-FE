@@ -11,14 +11,18 @@ import UniversitySlotCard from "@/components/strategy-room/UniversitySlotCard";
 import StrategyRoomPageSkeleton from "@/components/strategy-room/StrategyRoomPageSkeleton";
 import Tabs from "@/components/common/Tabs";
 import ShareGradeCTA from "@/components/strategy-room/ShareGradeCTA";
+import Toast from "@/components/common/Toast";
 import SearchIcon from "@/components/icons/SearchIcon";
 import ExternalLinkIcon from "@/components/icons/ExternalLinkIcon";
 import { useIsDesktop } from "@/lib/hooks/useMediaQuery";
 import { getSeasonSlots, getMyApplication } from "@/lib/api/slot";
 import { handleApiError } from "@/lib/utils/apiError";
+import { consumeToastMessage } from "@/lib/utils/toastStorage";
 import { trackEvent } from "@/lib/analytics/gtag";
 import { GRADE_CORRECTION_FORM_URL } from "@/lib/constants/externalLinks";
 import { SeasonSlotsResponse, MyApplicationResponse } from "@/types/slot";
+import { useToast } from "@/hooks/useToast";
+import { useEligibilityGuard } from "@/hooks/useEligibilityGuard";
 
 const TAB_OPTIONS = ["지망한 대학", "지원자가 있는 대학", "모든 대학"] as const;
 type TabType = (typeof TAB_OPTIONS)[number];
@@ -45,9 +49,11 @@ export default function StrategyRoomClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
+  const toastParam = searchParams.get("toast");
   const tabFromUrl = TAB_OPTIONS.find((tab) => tab === tabParam) ?? null;
   const seasonId = params.seasonId as string;
   const isDesktop = useIsDesktop();
+  const { guardEligibility } = useEligibilityGuard();
 
   const [data, setData] = useState<SeasonSlotsResponse | null>(null);
   const [myApplication, setMyApplication] = useState<MyApplicationResponse | null>(null);
@@ -58,6 +64,8 @@ export default function StrategyRoomClient() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
   const hasTrackedPageViewRef = useRef(false);
+  const hasShownToastRef = useRef(false);
+  const { message, messageType, isExiting, showMessage, hideToast } = useToast();
 
   // 탭 변경 핸들러 (URL 업데이트 포함)
   const handleTabChange = (tab: TabType) => {
@@ -143,6 +151,22 @@ export default function StrategyRoomClient() {
   }, [initialTab]);
 
   useEffect(() => {
+    if (!toastParam || hasShownToastRef.current) return;
+
+    const payload = consumeToastMessage();
+    if (payload && (!payload.seasonId || payload.seasonId === Number(seasonId))) {
+      showMessage(payload.message, payload.type ?? "error");
+    }
+    hasShownToastRef.current = true;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("toast");
+    const nextQuery = params.toString();
+    const nextUrl = nextQuery ? `/strategy-room/${seasonId}?${nextQuery}` : `/strategy-room/${seasonId}`;
+    router.replace(nextUrl, { scroll: false });
+  }, [toastParam, searchParams, router, seasonId, showMessage]);
+
+  useEffect(() => {
     if (!data) return;
     if (hasTrackedPageViewRef.current) return;
     if (selectedTab !== initialTab) return;
@@ -212,10 +236,14 @@ export default function StrategyRoomClient() {
   }, [data, seasonId, searchQuery, filteredSlots.length]);
 
   // CTA 버튼 클릭 핸들러
-  // Layout에서 이미 로그인/학교인증을 체크하므로 직접 이동만 함
+  // 로그인/학교인증은 Layout에서 체크하고, 여기서는 eligibility만 사전 확인
   const handleCTAClick = () => {
     trackEvent("cta_click", overlayCtaParams);
-    router.push(`/strategy-room/${seasonId}/applications/new`);
+    void guardEligibility(Number(seasonId), () => {
+      router.push(`/strategy-room/${seasonId}/applications/new`);
+    }, {
+      onFail: (message) => showMessage(message, "error"),
+    });
   };
 
   if (isLoading) {
@@ -381,6 +409,8 @@ export default function StrategyRoomClient() {
       </div>
 
       <Footer />
+
+      <Toast message={message} type={messageType} isExiting={isExiting} onClose={hideToast} />
     </>
   );
 }
