@@ -51,8 +51,15 @@ export const metadata: Metadata = {
   },
   icons: {
     // 다크모드 지원 제거 - light 버전 아이콘만 사용
-    icon: "/favicon.svg",
-    apple: "/favicon.svg",
+    icon: [
+      { url: "/favicon.ico", type: "image/x-icon" },
+      { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
   },
 };
 
