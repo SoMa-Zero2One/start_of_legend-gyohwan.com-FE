@@ -69,4 +69,5 @@ export const COUNTRY_NAME_ALIASES: Record<string, string> = {
   요르단: "jo",
   이란: "ir",
   이라크: "iq",
+  "러시아 연방": "ru",
 };
